@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "HelloWorld",
-    "slug": "expo-template-default",
+    "name": "Cleaning App Frontend",
+    "slug": "cleaning-app-frontend",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -9,13 +9,15 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.danyalutixorg.cleaningappfrontend"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.danyalutixorg.cleaningappfrontend"
     },
     "web": {
       "bundler": "metro",
@@ -36,6 +38,18 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f5e9884c-12f3-48eb-a33a-427f77522c7e"
+      }
+    },
+    "owner": "danyalutix-org",
+    "updates": {
+      "url": "https://u.expo.dev/f5e9884c-12f3-48eb-a33a-427f77522c7e"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }
