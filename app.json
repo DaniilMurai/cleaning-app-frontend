@@ -47,9 +47,6 @@
     "owner": "danyalutix-org",
     "updates": {
       "url": "https://u.expo.dev/f5e9884c-12f3-48eb-a33a-427f77522c7e"
-    },
-    "runtimeVersion": {
-      "policy": "appVersion"
     }
   }
 }

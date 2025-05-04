@@ -1,18 +1,18 @@
-import {Link, Stack,} from "expo-router";
 import {StyleSheet, Text, View} from "react-native";
+import {Colors} from "@/constants/Colors";
 
 
-export default function NotFoundScreen() {
+export default function SettingsPage() {
+
 
     return (
+
         <View style={styles.container}>
-            <Stack.Screen options={{title: 'Oops, Not Found'}}/>
-            <Link href="/">
-                <Text>Not Found</Text>
-            </Link>
+            <Text style={{color: Colors.light.text}}>Это страница settings</Text>
         </View>
     )
 }
+
 
 const styles = StyleSheet.create({
     container: {
