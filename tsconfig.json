@@ -4,7 +4,13 @@
     "strict": true,
     "paths": {
       "@/*": [
-        "./*"
+        "./src/*"
+      ],
+      "@locale-type": [
+        "./locale-type.ts"
+      ],
+      "@assets/*": [
+        "./assets/*"
       ]
     }
   },
