@@ -1,11 +1,21 @@
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import Typography from "@/ui/Typography";
+import { Button } from "@/ui";
+import { useRouter } from "expo-router";
 
 export default function TasksPage() {
+
+	const router = useRouter()
+
+
+
 	return (
 		<View style={styles.container}>
 			<Typography>Это страница Tasks</Typography>
+			<Button onPress={() => router.push("/Login")}>
+				to Login
+			</Button>
 		</View>
 	);
 }

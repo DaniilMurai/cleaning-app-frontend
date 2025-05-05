@@ -40,10 +40,10 @@ export default defineConfig({
 		input: `${ApiUrl}/auth/openapi.json`,
 		output: {
 			mode: "tags-split",
-			workspace: "./src/api/auth/",
+			workspace: "./src/api/(auth)/",
 			target: "./requests.ts",
 			schemas: "./schemas",
-			baseUrl: "/auth",
+			baseUrl: "/(auth)",
 			client: "react-query",
 			prettier: true,
 			allParamsOptional: true,
