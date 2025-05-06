@@ -1,8 +1,8 @@
 import Typography from "@/ui/Typography";
-import { View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import Input from "@/ui/Input";
 import { Button } from "@/ui";
-import { Suspense, useState } from "react";
+import React, { useState } from "react";
 import { useLogin } from "@/api/auth";
 import { clearTokens, saveTokens } from "@/hooks/tokens";
 import { useRouter } from "expo-router";
@@ -29,9 +29,7 @@ export default function Login() {
 
 			await clearTokens();
 			await saveTokens(result.access_token, result.refresh_token);
-			await checkToken();
-			router.replace("/");
-			// Обработка успешной авторизации
+			if (await checkToken()) router.replace("/");
 		} catch (error) {
 			setError("Error logging in: " + error || "Unknown error");
 			console.error("Login error:", error);
@@ -46,9 +44,9 @@ export default function Login() {
 					margin: "auto",
 				}}
 			>
-				<Suspense>
-					<Typography>Loading...</Typography>
-				</Suspense>
+				<View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+					<ActivityIndicator size="large" />
+				</View>
 			</View>
 		);
 

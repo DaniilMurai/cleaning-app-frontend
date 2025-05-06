@@ -1,38 +1,61 @@
 import qs from "qs";
 import Axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { ApiUrl } from "@/constants";
+import { clearTokens, getTokens, refreshAccessToken } from "@/hooks/tokens";
+import { redirectToLogin } from "@/app/context/AuthContext";
 
 export const AXIOS_INSTANCE = Axios.create({
 	baseURL: ApiUrl,
 	withCredentials: true, // Важно для CORS
 	headers: {
-		'Content-Type': 'application/json',
-		'Accept': 'application/json',
-	}
+		"Content-Type": "application/json",
+		Accept: "application/json",
+	},
 });
 
 AXIOS_INSTANCE.defaults.params = {};
 
+// Интерцептор для добавления access-токена в заголовки
+AXIOS_INSTANCE.interceptors.request.use(async config => {
+	const tokens = await getTokens();
+	if (tokens.accessToken) {
+		config.headers.Authorization = `Bearer ${tokens.accessToken}`;
+	}
+	return config;
+});
 
 AXIOS_INSTANCE.interceptors.response.use(
-	(response) => {
-		console.log('✅ Response:', response.data);
-		return response;
-	},
-	(error) => {
-		console.error('❌ Response Error:', {
-			message: error.message,
-			response: error.response?.data,
-			status: error.response?.status
-		});
+	response => response,
+	async error => {
+		const originalRequest = error.config;
+
+		// Проверяем, что это ошибка авторизации и запрос еще не повторялся
+		if (error.response?.status === 401 && !originalRequest._retry) {
+			originalRequest._retry = true;
+
+			try {
+				const newAccessToken = await refreshAccessToken();
+				if (newAccessToken) {
+					originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+					return AXIOS_INSTANCE(originalRequest);
+				} else {
+					// Если не удалось получить новый токен
+					await clearTokens();
+					redirectToLogin();
+					return Promise.reject(error);
+				}
+			} catch (refreshError) {
+				await clearTokens();
+				redirectToLogin();
+				return Promise.reject(refreshError);
+			}
+		}
+
 		return Promise.reject(error);
 	}
 );
 
-// Остальной код остается без изменений
-
-
-export const getAxios = <T>(config: AxiosRequestConfig): Promise<T> => {
+export const getAxios = async <T>(config: AxiosRequestConfig): Promise<T> => {
 	const source = Axios.CancelToken.source();
 	return AXIOS_INSTANCE({
 		...config,
