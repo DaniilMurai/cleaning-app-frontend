@@ -18,7 +18,7 @@ import type {
 	LoginData,
 	RefreshTokenData,
 	TokenPair,
-} from ".././schemas";
+} from "@/api/auth";
 
 import { getAxios } from "../../instance";
 import type { ErrorType } from "../../instance";

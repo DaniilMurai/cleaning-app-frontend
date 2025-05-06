@@ -4,9 +4,9 @@ import { Stack } from "expo-router";
 // Обязательный default export
 export default function AuthLayout() {
 	return (
-		<Stack >
-			<Stack.Screen name="ActivateScreen" />
-			<Stack.Screen name="LoginScreen"  />
+		<Stack>
+			<Stack.Screen name="Activate" />
+			<Stack.Screen name="Login" />
 		</Stack>
 	);
 }

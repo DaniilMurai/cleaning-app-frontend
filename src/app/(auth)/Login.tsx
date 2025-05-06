@@ -2,68 +2,102 @@ import Typography from "@/ui/Typography";
 import { View } from "react-native";
 import Input from "@/ui/Input";
 import { Button } from "@/ui";
-import { useState } from "react";
-import { useAuth } from "../context/AuthContext"
-import { LoginData } from "@/api/auth";
+import { Suspense, useState } from "react";
+import { useLogin } from "@/api/auth";
+import { clearTokens, saveTokens } from "@/hooks/tokens";
+import { useRouter } from "expo-router";
+import useAuth from "@/app/context/AuthContext";
 
 export default function Login() {
-    const [login, setLogin] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const { login: loginFn } = useAuth();
+	const [login, setLogin] = useState("");
+	const [password, setPassword] = useState("");
+	const [error, setError] = useState("");
 
-        const handleSubmit = async () => {
-            const loginData: LoginData = {
-                nickname: login,
-                password: password
-            };
+	const router = useRouter();
+	const loginMutation = useLogin();
+	const { checkToken } = useAuth();
 
-            try {
-                setError('');
-                await loginFn(loginData);
-            } catch (err) {
-                setError('Неверный логин или пароль');
-                console.error('Login error:', err);
-            }
-        }
+	const handleLogin = async () => {
+		try {
+			setError("");
+			const result = await loginMutation.mutateAsync({
+				data: {
+					nickname: login,
+					password: password,
+				},
+			});
 
-    return (
-        <View style={{
-            display: 'flex',
-            flexDirection: 'column',
-            margin: 'auto',
-            gap: 16, // Добавим отступы между элементами
-        }}>
-            <Typography variant="h5">Вход в систему</Typography>
+			await clearTokens();
+			await saveTokens(result.access_token, result.refresh_token);
+			await checkToken();
+			router.replace("/");
+			// Обработка успешной авторизации
+		} catch (error) {
+			setError("Error logging in: " + error || "Unknown error");
+			console.error("Login error:", error);
+		}
+	};
 
-            <Input
-                placeholder="Введите login"
-                variant="outlined"
-                color="primary"
-                size="medium"
-                value={login}
-                onChangeText={setLogin}
-                error={error}
-            />
+	if (loginMutation.isPending)
+		return (
+			<View
+				style={{
+					display: "flex",
+					margin: "auto",
+				}}
+			>
+				<Suspense>
+					<Typography>Loading...</Typography>
+				</Suspense>
+			</View>
+		);
 
-            <Input
-                placeholder="Введите password"
-                variant="outlined"
-                color="primary"
-                size="medium"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={true} // Скрываем пароль
-                error={error}
-            />
+	return (
+		<View
+			style={{
+				display: "flex",
+				flexDirection: "column",
+				margin: "auto",
+				gap: 16, // Добавим отступы между элементами
+			}}
+		>
+			<Typography variant="h5">Вход в систему</Typography>
 
-            <Button
-                variant="contained"
-                onPress={handleSubmit}
-                disabled={!login || !password} // Кнопка неактивна если поля пустые
-            >
-                Войти
-            </Button>
-        </View>
-    );
+			<Input
+				placeholder="Введите login"
+				variant="outlined"
+				color="primary"
+				size="medium"
+				value={login}
+				onChangeText={setLogin}
+				error={error}
+			/>
+
+			<Input
+				placeholder="Введите password"
+				variant="outlined"
+				color="primary"
+				size="medium"
+				value={password}
+				onChangeText={setPassword}
+				secureTextEntry={true} // Скрываем пароль
+				error={error}
+			/>
+
+			{loginMutation.isError ? (
+				<Typography>
+					An error occurred:
+					{loginMutation.error.message}
+				</Typography>
+			) : null}
+
+			<Button
+				variant="contained"
+				onPress={() => handleLogin()}
+				disabled={!login || !password} // Кнопка неактивна если поля пустые
+			>
+				<Typography>Войти</Typography>
+			</Button>
+		</View>
+	);
 }
