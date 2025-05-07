@@ -37,11 +37,11 @@ import type { ErrorType } from "../../instance";
  * @summary Get Current User
  */
 export const getCurrentUser = (signal?: AbortSignal) => {
-	return getAxios<UserSchema>({ url: `/user/users/me`, method: "GET", signal });
+	return getAxios<UserSchema>({ url: `/users/me`, method: "GET", signal });
 };
 
 export const getGetCurrentUserQueryKey = () => {
-	return [`/user/users/me`] as const;
+	return [`/users/me`] as const;
 };
 
 export const getGetCurrentUserQueryOptions = <
@@ -228,7 +228,7 @@ export function useGetCurrentUserSuspense<
  */
 export const updateCurrentUser = (updateUserData: UpdateUserData, signal?: AbortSignal) => {
 	return getAxios<UserSchema>({
-		url: `/user/users/me`,
+		url: `/users/me`,
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		data: updateUserData,
@@ -305,7 +305,7 @@ export const useUpdateCurrentUser = <TError = ErrorType<HTTPValidationError>, TC
  */
 export const changePassword = (userUpdatePassword: UserUpdatePassword, signal?: AbortSignal) => {
 	return getAxios<SuccessResponse>({
-		url: `/user/users/change_password`,
+		url: `/users/change_password`,
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		data: userUpdatePassword,

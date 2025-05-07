@@ -41,11 +41,11 @@ import type { ErrorType } from "../../instance";
  * @summary Get Users
  */
 export const getUsers = (params?: GetUsersParams, signal?: AbortSignal) => {
-	return getAxios<UserSchema[]>({ url: `/user/users/`, method: "GET", params, signal });
+	return getAxios<UserSchema[]>({ url: `/admin/users/`, method: "GET", params, signal });
 };
 
 export const getGetUsersQueryKey = (params?: GetUsersParams) => {
-	return [`/user/users/`, ...(params ? [params] : [])] as const;
+	return [`/admin/users/`, ...(params ? [params] : [])] as const;
 };
 
 export const getGetUsersQueryOptions = <
@@ -242,7 +242,7 @@ export function useGetUsersSuspense<
  */
 export const createUser = (registerUserData: RegisterUserData, signal?: AbortSignal) => {
 	return getAxios<InviteLink>({
-		url: `/user/users/`,
+		url: `/admin/users/`,
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		data: registerUserData,
@@ -317,7 +317,7 @@ export const useCreateUser = <TError = ErrorType<HTTPValidationError>, TContext 
  */
 export const updateUser = (userUpdateData: UserUpdateData, params: UpdateUserParams) => {
 	return getAxios<UserSchema>({
-		url: `/user/users/`,
+		url: `/admin/users/`,
 		method: "PATCH",
 		headers: { "Content-Type": "application/json" },
 		data: userUpdateData,
@@ -391,7 +391,7 @@ export const useUpdateUser = <TError = ErrorType<HTTPValidationError>, TContext 
  * @summary Delete User
  */
 export const deleteUser = (params: DeleteUserParams) => {
-	return getAxios<SuccessResponse>({ url: `/user/users/`, method: "DELETE", params });
+	return getAxios<SuccessResponse>({ url: `/admin/users/`, method: "DELETE", params });
 };
 
 export const getDeleteUserMutationOptions = <
