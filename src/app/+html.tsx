@@ -9,7 +9,6 @@ export default function Root({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="en" translate="no">
 			<head>
-				<script src="https://telegram.org/js/telegram-web-app.js"></script>
 				<meta charSet="utf-8" />
 				<meta httpEquiv="X-UA-Compatible" content="IE=edge" />
 				<meta
