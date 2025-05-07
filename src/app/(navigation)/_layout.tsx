@@ -1,20 +1,33 @@
 // src/(navigation)/RootNavigator.tsx
 import React from "react";
 import useAuth from "../context/AuthContext";
-import AuthNavigator from "./AuthNavigator";
-import AppNavigator from "./AppNavigator";
 import { ActivityIndicator, View } from "react-native";
 import { Stack } from "expo-router";
+
+// type Tokens = {
+// 	accessToken: string | null;
+// 	refreshToken: string | null;
+// };
 
 export default function RootNavigator() {
 	const { token, loading } = useAuth();
 
-	if (token) {
-		console.log(token);
-	} else {
-		console.log("no token");
-	}
-	console.log(token);
+	// useEffect(() => {
+	// 	const bootstrap = async () => {
+	// 		const tokens: Tokens = await getTokens();
+	// 		if (tokens.accessToken) {
+	// 			const response = await getCurrentUser();
+	// 			console.log(response);
+	// 			setToken(tokens.accessToken);
+	// 		} else {
+	// 			console.log("no token");
+	// 			setToken(null);
+	// 			await logout();
+	// 		}
+	// 		setChecking(false);
+	// 	};
+	// 	bootstrap();
+	// }, []);
 
 	if (loading) {
 		return (
@@ -24,5 +37,10 @@ export default function RootNavigator() {
 		);
 	}
 
-	return <Stack>{token ? <AppNavigator /> : <AuthNavigator />}</Stack>;
+	return (
+		<Stack>
+			{token ? <Stack.Screen name="(authorized)" /> : <Stack.Screen name="(auth)" />}
+		</Stack>
+	);
+	// return <Stack></Stack>;
 }

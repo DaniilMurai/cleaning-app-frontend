@@ -1,8 +1,8 @@
 // src/context/AuthContext.tsx
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
 // import * as SecureStore from 'expo-secure-store'; // вместо AsyncStorage
-import { getTokens } from "@/hooks/tokens";
-import { useRouter } from "expo-router";
+import { clearTokens, getTokens } from "@/hooks/tokens";
+import { router, useRouter } from "expo-router";
 
 interface AuthContextValue {
 	token: string | null;
@@ -17,16 +17,32 @@ interface AuthProviderProps {
 	children: ReactNode;
 }
 
-export const redirectToLogin = () => {
-	// Очищаем историю навигации и перенаправляем на логин
-	const router = useRouter();
+export const redirectToLogin = (router: ReturnType<typeof useRouter>) => {
 	router.replace("/Login");
 };
 
 export function AuthProvider({ children }: AuthProviderProps) {
 	const [token, setToken] = useState<string | null>(null);
-	const [user, setUser] = useState<unknown>(null);
 	const [loading, setLoading] = useState(true);
+
+	// Добавьте эффект для начальной проверки токена
+	useEffect(() => {
+		const initializeAuth = async () => {
+			setLoading(true);
+			try {
+				const tokens = await getTokens();
+
+				setToken(tokens?.accessToken || null);
+			} catch (e) {
+				console.error("Ошибка при инициализации auth:", e);
+				setToken(null);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		initializeAuth();
+	}, []);
 
 	const checkToken = async () => {
 		setLoading(true);
@@ -46,7 +62,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 	};
 
 	const logout = async () => {
+		await clearTokens();
 		setToken(null);
+		router.replace("/Login");
+
+		// NavigationService.navigate("/Login");
 		// setUser(null);
 		// await SecureStore.deleteItemAsync('authToken');
 	};

@@ -2,7 +2,7 @@ import qs from "qs";
 import Axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { ApiUrl } from "@/constants";
 import { clearTokens, getTokens, refreshAccessToken } from "@/hooks/tokens";
-import { redirectToLogin } from "@/app/context/AuthContext";
+import NavigationService from "@/app/services/navigationService";
 
 export const AXIOS_INSTANCE = Axios.create({
 	baseURL: ApiUrl,
@@ -41,12 +41,13 @@ AXIOS_INSTANCE.interceptors.response.use(
 				} else {
 					// Если не удалось получить новый токен
 					await clearTokens();
-					redirectToLogin();
+					NavigationService.navigate("/Login");
+
 					return Promise.reject(error);
 				}
 			} catch (refreshError) {
 				await clearTokens();
-				redirectToLogin();
+				NavigationService.navigate("/Login");
 				return Promise.reject(refreshError);
 			}
 		}

@@ -28,7 +28,7 @@ export default function RootLayout() {
 						},
 					}}
 				>
-					<Stack screenOptions={{ headerShown: false }}>
+					<Stack initialRouteName="(navigation)" screenOptions={{ headerShown: false }}>
 						<Stack.Screen name="(navigation)" options={{ headerShown: false }} />
 					</Stack>
 				</ThemeProvider>

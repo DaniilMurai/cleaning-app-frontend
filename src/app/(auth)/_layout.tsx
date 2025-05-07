@@ -1,8 +1,18 @@
 // (auth)/_layout.tsx
-import { Stack } from "expo-router";
+import { Redirect, Stack } from "expo-router";
+import useAuth from "@/app/context/AuthContext";
 
 // Обязательный default export
 export default function AuthLayout() {
+	const { token, loading } = useAuth();
+
+	if (loading) {
+		return null; // или компонент загрузки
+	}
+
+	if (token) {
+		return <Redirect href={"/"} />;
+	}
 	return (
 		<Stack>
 			<Stack.Screen name="Activate" />

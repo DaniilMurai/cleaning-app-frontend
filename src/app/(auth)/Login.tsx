@@ -29,7 +29,9 @@ export default function Login() {
 
 			await clearTokens();
 			await saveTokens(result.access_token, result.refresh_token);
-			if (await checkToken()) router.replace("/");
+			if (await checkToken()) {
+				router.replace("/");
+			}
 		} catch (error) {
 			setError("Error logging in: " + error || "Unknown error");
 			console.error("Login error:", error);
@@ -94,7 +96,7 @@ export default function Login() {
 				onPress={() => handleLogin()}
 				disabled={!login || !password} // Кнопка неактивна если поля пустые
 			>
-				<Typography>Войти</Typography>
+				Войти
 			</Button>
 		</View>
 	);

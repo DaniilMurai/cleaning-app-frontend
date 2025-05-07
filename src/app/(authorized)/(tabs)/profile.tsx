@@ -1,19 +1,21 @@
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import Typography from "@/ui/Typography";
-import { clearTokens } from "@/hooks/tokens";
 import { useState } from "react";
 import { Button } from "@/ui";
 import { useRouter } from "expo-router";
+import useAuth from "@/app/context/AuthContext";
 
 export default function ProfilePage() {
 	const [error, setError] = useState("");
 	const router = useRouter();
+	const { logout } = useAuth();
 
-	const logout = async () => {
+	const handleLogout = async () => {
 		try {
 			setError("");
-			await clearTokens();
+
+			await logout();
 			router.replace("/Login");
 		} catch (error) {
 			setError("Couldn't log out" + error);
@@ -23,7 +25,7 @@ export default function ProfilePage() {
 	return (
 		<View style={styles.container}>
 			<Typography>Это страница профиля</Typography>
-			<Button variant={"contained"} onPress={() => logout()}>
+			<Button variant={"contained"} onPress={() => handleLogout()}>
 				<Typography>Выйти</Typography>
 			</Button>
 
