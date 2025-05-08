@@ -2,7 +2,7 @@ import qs from "qs";
 import Axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { ApiUrl } from "@/constants";
 import { clearTokens, getTokens, refreshAccessToken } from "@/hooks/tokens";
-import NavigationService from "@/app/services/navigationService";
+import NavigationService from "@/services/navigationService";
 
 export const AXIOS_INSTANCE = Axios.create({
 	baseURL: ApiUrl,

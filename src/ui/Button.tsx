@@ -1,4 +1,4 @@
-import { Pressable, PressableProps, Text, TextProps, View } from "react-native";
+import { ActivityIndicator, Pressable, PressableProps, Text, TextProps, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { forwardRef } from "react";
 
@@ -15,6 +15,9 @@ export interface ButtonProps extends PressableProps {
 
 	// default: true
 	wrapText?: boolean;
+
+	loading?: boolean;
+	spinnerColor?: string;
 }
 
 const Button = forwardRef<View, ButtonProps>(function Button(
@@ -25,6 +28,8 @@ const Button = forwardRef<View, ButtonProps>(function Button(
 		textProps,
 		children,
 		wrapText = true,
+		loading = false,
+		spinnerColor,
 		...props
 	},
 	ref
@@ -41,16 +46,24 @@ const Button = forwardRef<View, ButtonProps>(function Button(
 			ref={ref}
 			style={state => [
 				styles.button,
+				loading && styles.buttonLoading,
 				typeof props.style === "function" ? props.style(state) : props.style,
 			]}
 		>
-			{wrapText
-				? state => (
-						<Text {...textProps} style={[styles.text, textProps?.style]}>
-							{typeof children === "function" ? children(state) : children}
-						</Text>
-					)
-				: children}
+			{loading ? (
+				<ActivityIndicator
+					size={size === "small" ? "small" : "small"}
+					color={spinnerColor}
+				/>
+			) : wrapText ? (
+				state => (
+					<Text {...textProps} style={[styles.text, textProps?.style]}>
+						{typeof children === "function" ? children(state) : children}
+					</Text>
+				)
+			) : (
+				children
+			)}
 		</Pressable>
 	);
 });
@@ -58,6 +71,10 @@ const Button = forwardRef<View, ButtonProps>(function Button(
 export default Button;
 
 const styles = StyleSheet.create((theme, rt) => ({
+	buttonLoading: {
+		opacity: 0.7,
+	},
+
 	button: {
 		variants: {
 			size: {

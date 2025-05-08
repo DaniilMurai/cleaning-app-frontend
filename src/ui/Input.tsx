@@ -49,8 +49,8 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
 			<TextInput
 				ref={ref}
 				{...props}
-				// placeholderTextColor={theme => theme.colors.text.secondary}
 				style={[styles.input, props.style]}
+				// placeholderTextColor={theme => theme.colors.text.secondary}
 			/>
 			{(error || helperText) && (
 				<Typography
@@ -65,7 +65,7 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
 	);
 });
 
-const styles = StyleSheet.create((theme) => ({
+const styles = StyleSheet.create(theme => ({
 	container: {
 		gap: theme.spacing(0.5),
 	},
@@ -121,6 +121,7 @@ const styles = StyleSheet.create((theme) => ({
 				error: false,
 				styles: {
 					backgroundColor: `${theme.colors.text.secondary}15`,
+					color: theme.colors.text.primary,
 				},
 			},
 			{
@@ -128,6 +129,7 @@ const styles = StyleSheet.create((theme) => ({
 				variant: "outlined",
 				error: false,
 				styles: {
+					color: theme.colors.text.primary,
 					":focus": {
 						borderColor: theme.colors.primary.main,
 					},
@@ -138,6 +140,7 @@ const styles = StyleSheet.create((theme) => ({
 				variant: "outlined",
 				error: false,
 				styles: {
+					color: theme.colors.text.secondary,
 					":focus": {
 						borderColor: theme.colors.secondary.main,
 					},

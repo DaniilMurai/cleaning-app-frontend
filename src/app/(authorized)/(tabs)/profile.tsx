@@ -4,7 +4,7 @@ import Typography from "@/ui/Typography";
 import { useState } from "react";
 import { Button } from "@/ui";
 import { useRouter } from "expo-router";
-import useAuth from "@/app/context/AuthContext";
+import useAuth from "@/context/AuthContext";
 
 export default function ProfilePage() {
 	const [error, setError] = useState("");
@@ -26,7 +26,7 @@ export default function ProfilePage() {
 		<View style={styles.container}>
 			<Typography>Это страница профиля</Typography>
 			<Button variant={"contained"} onPress={() => handleLogout()}>
-				<Typography>Выйти</Typography>
+				Выйти
 			</Button>
 
 			{error ? <Typography>Error occurred: {error}</Typography> : null}

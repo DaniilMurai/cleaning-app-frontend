@@ -2,7 +2,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native
 import { useUnistyles } from "react-native-unistyles";
 
 import { Stack, usePathname } from "expo-router";
-import { AuthProvider } from "@/app/context/AuthContext";
+import { AuthProvider } from "@/context/AuthContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 export default function RootLayout() {
