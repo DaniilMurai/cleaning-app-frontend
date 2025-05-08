@@ -28,7 +28,7 @@ import type { ErrorType } from "../../instance";
  */
 export const login = (loginData: LoginData, signal?: AbortSignal) => {
 	return getAxios<TokenPair>({
-		url: `/auth/auth/login`,
+		url: `/auth/login`,
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		data: loginData,
@@ -98,7 +98,7 @@ export const useLogin = <TError = ErrorType<HTTPValidationError>, TContext = unk
  */
 export const activate = (activateUserData: ActivateUserData, signal?: AbortSignal) => {
 	return getAxios<TokenPair>({
-		url: `/auth/auth/activate`,
+		url: `/auth/activate`,
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		data: activateUserData,
@@ -173,7 +173,7 @@ export const useActivate = <TError = ErrorType<HTTPValidationError>, TContext = 
  */
 export const refreshTokens = (refreshTokenData: RefreshTokenData, signal?: AbortSignal) => {
 	return getAxios<TokenPair>({
-		url: `/auth/auth/refresh_tokens`,
+		url: `/auth/refresh_tokens`,
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		data: refreshTokenData,
