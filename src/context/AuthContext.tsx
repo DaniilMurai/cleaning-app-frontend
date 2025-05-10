@@ -114,9 +114,9 @@ export default function useAuth(): AuthContextValue {
 }
 
 // Вспомогательный хук для проверки роли пользователя
-export function useIsAdmin() {
+export function useIsAdmin(): boolean {
 	const { user } = useAuth();
-	return user?.role === "admin";
+	return user?.role === "admin" || user?.role === "superadmin";
 }
 
 // Вспомогательный хук для проверки статуса пользователя

@@ -13,17 +13,17 @@ export default function TabsLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="tasks"
-				options={{
-					title: "Tasks",
-					tabBarIcon: getTabBarIcon(FontAwesome5, "tasks"),
-				}}
-			/>
-			<Tabs.Screen
 				name="profile"
 				options={{
 					title: "Profile",
 					tabBarIcon: getTabBarIcon(FontAwesome5, "user-alt"),
+				}}
+			/>
+			<Tabs.Screen
+				name="tasks"
+				options={{
+					title: "Tasks",
+					tabBarIcon: getTabBarIcon(FontAwesome5, "tasks"),
 				}}
 			/>
 			<Tabs.Screen
