@@ -71,6 +71,7 @@ const styles = StyleSheet.create(theme => ({
 	},
 	label: {
 		marginBottom: theme.spacing(0.5),
+		color: theme.colors.text.secondary,
 	},
 	helperText: {
 		marginTop: theme.spacing(0.5),
