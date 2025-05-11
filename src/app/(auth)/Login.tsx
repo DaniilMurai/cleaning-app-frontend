@@ -8,6 +8,7 @@ import { clearTokens, saveTokens } from "@/hooks/tokens";
 import { Redirect, useRouter } from "expo-router";
 import useAuth from "@/context/AuthContext";
 import Card from "@/ui/Card";
+import Loading from "@/ui/Loading";
 
 export default function Login() {
 	const [login, setLogin] = useState("");
@@ -17,26 +18,17 @@ export default function Login() {
 	const loginMutation = useLogin();
 	const { checkToken, token, loading } = useAuth();
 
-	// if (loading) {
-	// 	return (
-	// 		<View
-	// 			style={{
-	// 				display: "flex",
-	// 				margin: "auto",
-	// 			}}
-	// 		>
-	// 			<View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-	// 				<ActivityIndicator size="large" />
-	// 			</View>
-	// 		</View>
-	// 	);
-	// }
+	if (loading) {
+		return <Loading />;
+	}
 
 	if (token) {
+		console.log("Token is valid");
 		return <Redirect href={"/"} />;
 	}
 
 	const handleLogin = async () => {
+		console.log("handleLogin");
 		try {
 			const result = await loginMutation.mutateAsync({
 				data: {
@@ -45,10 +37,13 @@ export default function Login() {
 				},
 			});
 
-			await clearTokens();
-			await saveTokens(result.access_token, result.refresh_token);
-			if (await checkToken()) {
-				router.replace("/");
+			if (result.access_token) {
+				await clearTokens();
+				await saveTokens(result.access_token, result.refresh_token);
+				const isValid = await checkToken();
+				if (isValid) {
+					router.replace("/");
+				}
 			}
 		} catch (error) {
 			console.error("Login error:", error);

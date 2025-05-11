@@ -1,8 +1,12 @@
 import { Tabs } from "expo-router";
 import { getTabBarIcon } from "@/ui/TabBarIcon";
-import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { useIsAdmin } from "@/context/AuthContext";
 
 export default function TabsLayout() {
+	const isAdmin = useIsAdmin();
+	console.log("isAdmin:", isAdmin);
+
 	return (
 		<Tabs>
 			<Tabs.Screen
@@ -24,13 +28,15 @@ export default function TabsLayout() {
 				options={{
 					title: "Tasks",
 					tabBarIcon: getTabBarIcon(FontAwesome5, "tasks"),
+					href: isAdmin ? "/tasks" : null,
 				}}
 			/>
 			<Tabs.Screen
-				name="settings"
+				name="admin-panel"
 				options={{
-					title: "Settings",
-					tabBarIcon: getTabBarIcon(FontAwesome, "gear"),
+					title: "Admin Panel",
+					tabBarIcon: getTabBarIcon(FontAwesome5, "shield-alt"),
+					href: isAdmin ? "/admin-panel" : null,
 				}}
 			/>
 		</Tabs>

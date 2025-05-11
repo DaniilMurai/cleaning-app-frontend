@@ -40,6 +40,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
 	// Обновляем данные пользователя при их изменении
 	useEffect(() => {
+		console.log("User data updated:", userData);
 		if (userData) {
 			setUser(userData);
 		}
@@ -47,34 +48,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
 	// Инициализация при загрузке приложения
 	useEffect(() => {
-		initializeAuth();
-	}, []);
-
-	const initializeAuth = async () => {
-		setLoading(true);
-		try {
-			const tokens = await getTokens();
-			if (tokens?.accessToken) {
-				setToken(tokens.accessToken);
+		console.log("Initializing auth...");
+		const initAuth = async () => {
+			try {
+				const tokens = await getTokens();
+				setToken(tokens?.accessToken || null);
+				console.log("Token:", token);
+			} catch (e) {
+				console.error("Ошибка при инициализации auth:", e);
+				setToken(null);
+				setUser(null);
+			} finally {
+				setLoading(false);
 			}
-		} catch (e) {
-			console.error("Ошибка при инициализации auth:", e);
-			setToken(null);
-			setUser(null);
-		} finally {
-			setLoading(false);
-		}
-	};
+		};
+
+		initAuth();
+	}, []);
 
 	const checkToken = async () => {
 		setLoading(true);
 		try {
 			const tokens = await getTokens();
-			if (tokens?.accessToken) {
+			if (tokens?.accessToken && tokens.accessToken !== token) {
 				setToken(tokens.accessToken);
 				return true;
 			}
-			return false;
+			return !!tokens?.accessToken;
 		} catch (e) {
 			console.error("Ошибка при загрузке токена:", e);
 			return false;
@@ -116,6 +116,7 @@ export default function useAuth(): AuthContextValue {
 // Вспомогательный хук для проверки роли пользователя
 export function useIsAdmin(): boolean {
 	const { user } = useAuth();
+	console.log("user:", user);
 	return user?.role === "admin" || user?.role === "superadmin";
 }
 
