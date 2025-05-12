@@ -9,7 +9,7 @@ import useAuth from "@/context/AuthContext";
 export default function ProfilePage() {
 	const [error, setError] = useState("");
 	const router = useRouter();
-	const { logout } = useAuth();
+	const { logout, user } = useAuth();
 
 	const handleLogout = async () => {
 		try {
@@ -25,6 +25,9 @@ export default function ProfilePage() {
 	return (
 		<View style={styles.container}>
 			<Typography>Это страница профиля</Typography>
+			<Typography>
+				Current user: id: {user?.id}, nickname: {user?.nickname}, role: {user?.role}
+			</Typography>
 			<Button variant={"contained"} onPress={() => handleLogout()}>
 				Выйти
 			</Button>

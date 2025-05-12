@@ -15,11 +15,16 @@ import {
 import Loading from "@/ui/Loading";
 import EditUserForm from "@/ui/formComponents/EditUserForm";
 import CreateUserForm from "@/ui/formComponents/CreateUserForm";
+import GetInviteLinkForm from "@/ui/formComponents/GetInviteLinkForm";
 
 export default function AdminPanelPage() {
 	const [selectedUser, setSelectedUser] = useState<UserSchema | null>(null);
 	const [isEditMode, setIsEditMode] = useState(false);
 	const [isCreateMode, setIsCreateMode] = useState(false);
+
+	const [inviteLink, setInviteLink] = useState("");
+	const [showInviteLinkModal, setShowInviteLinkModal] = useState(false);
+
 	// Получаем список пользователей
 	const { data: users, isLoading, refetch } = useGetUsers({});
 
@@ -49,16 +54,8 @@ export default function AdminPanelPage() {
 		mutation: {
 			onSuccess: data => {
 				const invite_link = data.invite_link;
-				if (Platform.OS === "web") {
-					window.alert(
-						`Success, User created successfully.\nInvite link: ${invite_link}`
-					);
-				} else {
-					Alert.alert(
-						"Success",
-						"User created successfully.\nInvite link: ${invite_link}"
-					);
-				}
+				setInviteLink(invite_link);
+				setShowInviteLinkModal(true);
 				setIsCreateMode(false);
 				refetch();
 			},
@@ -168,6 +165,22 @@ export default function AdminPanelPage() {
 								isLoading={updateMutation.isPending}
 							/>
 						)}
+					</View>
+				</View>
+			</Modal>
+
+			<Modal
+				visible={showInviteLinkModal}
+				transparent={true}
+				animationType="fade"
+				onRequestClose={() => setShowInviteLinkModal(false)}
+			>
+				<View style={styles.modalOverlay}>
+					<View style={styles.modalContent}>
+						<GetInviteLinkForm
+							inviteLink={inviteLink}
+							onClose={() => setShowInviteLinkModal(false)}
+						/>
 					</View>
 				</View>
 			</Modal>
