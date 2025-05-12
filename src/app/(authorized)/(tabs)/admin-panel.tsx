@@ -150,9 +150,10 @@ const styles = StyleSheet.create(theme => ({
 	},
 	buttonsContainer: {
 		flexDirection: "row",
+		flexWrap: "wrap", // Важно: разрешаем перенос элементов
 		justifyContent: "flex-end",
-		alignItems: "center",
-		marginBottom: theme.spacing(2),
+		marginBottom: theme.spacing(1),
+		gap: theme.spacing(2), // Используем gap вместо marginHorizontal
 	},
 	header: {
 		flexDirection: "row",
