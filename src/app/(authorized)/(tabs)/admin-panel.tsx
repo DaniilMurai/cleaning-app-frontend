@@ -1,140 +1,64 @@
-import { Alert, Modal, Platform, ScrollView, View } from "react-native";
+// src/pages/AdminPanelPage.tsx
+import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import Card from "@/ui/Card";
-import Typography from "@/ui/Typography";
-import { Button } from "@/ui";
+import { Button, Loading, ModalContainer } from "@/ui";
 import { useState } from "react";
 import { UserSchema } from "@/api/admin/schemas/userSchema";
-import {
-	RegisterUserData,
-	useCreateUser,
-	useDeleteUser,
-	useGetUsers,
-	useUpdateUser,
-} from "@/api/admin";
-import Loading from "@/ui/Loading";
+import { RegisterUserData, useGetUsers } from "@/api/admin";
 import EditUserForm from "@/ui/formComponents/EditUserForm";
 import CreateUserForm from "@/ui/formComponents/CreateUserForm";
 import GetInviteLinkForm from "@/ui/formComponents/GetInviteLinkForm";
+import UsersList from "@/ui/components/admin/UsersList";
+import { useAdminMutations } from "@/hooks/useAdminMutations";
 
 export default function AdminPanelPage() {
 	const [selectedUser, setSelectedUser] = useState<UserSchema | null>(null);
-	const [isEditMode, setIsEditMode] = useState(false);
-	const [isCreateMode, setIsCreateMode] = useState(false);
-
 	const [inviteLink, setInviteLink] = useState("");
-	const [showInviteLinkModal, setShowInviteLinkModal] = useState(false);
 
+	const [modalState, setModalState] = useState({
+		editMode: false,
+		createMode: false,
+		inviteLinkModal: false,
+	});
 	// Получаем список пользователей
 	const { data: users, isLoading, refetch } = useGetUsers({});
 
-	const updateMutation = useUpdateUser({
-		mutation: {
-			onSuccess: () => {
-				if (Platform.OS === "web") {
-					window.alert("Success, User updated successfully");
-				} else {
-					Alert.alert("Success", "User updated successfully");
-				}
-				setIsEditMode(false);
-				setSelectedUser(null);
-				refetch();
-			},
-			onError: error => {
-				if (Platform.OS === "web") {
-					window.alert("Error: " + error.message || "Failed to update user");
-				} else {
-					Alert.alert("Error", error.message || "Failed to update user");
-				}
-			},
-		},
-	});
-
-	const createMutation = useCreateUser({
-		mutation: {
-			onSuccess: data => {
-				const invite_link = data.invite_link;
+	const { handleUpdateUser, handleCreateUser, handleDeleteUser, updateMutation, createMutation } =
+		useAdminMutations({
+			onSuccessCreate: invite_link => {
 				setInviteLink(invite_link);
-				setShowInviteLinkModal(true);
-				setIsCreateMode(false);
-				refetch();
+				setModalState(prev => ({ ...prev, inviteLinkModal: true }));
+				setModalState(prev => ({ ...prev, createMode: false }));
 			},
-			onError: error => {
-				if (Platform.OS === "web") {
-					window.alert("Error: " + error.message || "Failed to create user");
-				} else {
-					Alert.alert("Error", error.message || "Failed to create user");
-				}
+			onSuccessUpdate: () => {
+				setModalState(prev => ({ ...prev, editMode: false }));
+				setSelectedUser(null);
 			},
-		},
-	});
+			refetch,
+		});
 
 	const handleEditUser = (user: UserSchema) => {
 		setSelectedUser(user);
-		setIsEditMode(true);
+		setModalState(prev => ({ ...prev, editMode: true }));
 	};
 
-	const handleCreateUser = () => {
-		setIsCreateMode(true);
+	const handleCreateUserClick = () => {
+		setModalState(prev => ({ ...prev, createMode: true }));
 	};
 
-	const handleUpdateUser = async (userData: Partial<UserSchema>) => {
+	const handleUpdateUserSubmit = async (userData: Partial<UserSchema>) => {
 		if (selectedUser) {
-			await updateMutation.mutateAsync({
-				params: { user_id: selectedUser.id },
-				data: userData,
-			});
+			await handleUpdateUser(selectedUser, userData);
 		}
 	};
 
-	const handleCreateUserMutation = async (userData: RegisterUserData) => {
-		await createMutation.mutateAsync({
-			data: userData,
-		});
+	const handleCreateUserSubmit = async (userData: RegisterUserData) => {
+		await handleCreateUser(userData);
 	};
 
-	// Мутация для удаления пользователя
-	const deleteMutation = useDeleteUser({
-		mutation: {
-			onSuccess: () => {
-				if (Platform.OS === "web") {
-					window.alert("Success, User deleted successfully");
-				} else {
-					Alert.alert("Success", "User deleted successfully");
-				}
-				refetch(); // Обновляем список после удаления
-			},
-			onError: error => {
-				if (Platform.OS === "web") {
-					window.alert("Error: " + error.message || "Failed to delete user");
-				} else {
-					Alert.alert("Error", error.message || "Failed to delete user");
-				}
-			},
-		},
-	});
-
-	const handleDeleteUser = async (user_id: number) => {
-		if (Platform.OS === "web") {
-			const response: boolean = window.confirm("Confirm Delete");
-
-			if (response) {
-				console.log("Deleting user: " + user_id);
-				await deleteMutation.mutateAsync({ params: { user_id } });
-			}
-		} else {
-			Alert.alert("Confirm Delete", "Are you sure you want to delete this user?", [
-				{ text: "Cancel", style: "cancel" },
-				{
-					text: "Delete",
-					style: "destructive",
-					onPress: async () => {
-						console.log("Deleting user: " + user_id);
-						await deleteMutation.mutateAsync({ params: { user_id } });
-					},
-				},
-			]);
-		}
+	const handleRefetchUsers = async () => {
+		console.log("Refetching users...");
+		const {} = await refetch();
 	};
 
 	if (isLoading) {
@@ -143,125 +67,75 @@ export default function AdminPanelPage() {
 
 	return (
 		<View style={styles.container}>
-			<Modal
-				visible={isEditMode}
-				transparent={true}
-				animationType="fade"
-				onRequestClose={() => {
-					setIsEditMode(false);
-					setSelectedUser(null);
-				}}
-			>
-				<View style={styles.modalOverlay}>
-					<View style={styles.modalContent}>
-						{selectedUser && (
-							<EditUserForm
-								user={selectedUser}
-								onClose={() => {
-									setIsEditMode(false);
-									setSelectedUser(null);
-								}}
-								onSubmit={handleUpdateUser}
-								isLoading={updateMutation.isPending}
-							/>
-						)}
-					</View>
-				</View>
-			</Modal>
-
-			<Modal
-				visible={showInviteLinkModal}
-				transparent={true}
-				animationType="fade"
-				onRequestClose={() => setShowInviteLinkModal(false)}
-			>
-				<View style={styles.modalOverlay}>
-					<View style={styles.modalContent}>
-						<GetInviteLinkForm
-							inviteLink={inviteLink}
-							onClose={() => setShowInviteLinkModal(false)}
-						/>
-					</View>
-				</View>
-			</Modal>
-
-			<Modal
-				visible={isCreateMode}
-				transparent={true}
-				animationType="fade"
-				onRequestClose={() => {
-					setIsCreateMode(false);
-				}}
-			>
-				<View style={styles.modalOverlay}>
-					<View style={styles.modalContent}>
-						<CreateUserForm
-							onSubmit={handleCreateUserMutation}
-							onClose={() => {
-								setIsCreateMode(false);
-							}}
-							isLoading={updateMutation.isPending}
-						/>
-					</View>
-				</View>
-			</Modal>
-
-			<ScrollView style={styles.container}>
-				<Card size="large" style={styles.card}>
-					<Typography variant="h4" style={styles.title}>
-						Users Management
-					</Typography>
-
+			<ScrollView contentContainerStyle={styles.scrollContent}>
+				<View style={styles.buttonsContainer}>
 					<Button
 						variant="contained"
-						onPress={() => {
-							handleCreateUser();
-						}}
-						style={styles.addButton}
+						style={{ marginHorizontal: 10 }}
+						onPress={handleCreateUserClick}
 					>
-						Add New User
+						Create User
 					</Button>
-
-					{users?.map(user => (
-						<Card
-							key={user.id}
-							size="small"
-							variant={"outlined"}
-							style={styles.userCard}
-						>
-							<View style={styles.userInfo}>
-								<Typography variant="subtitle1">{user.nickname}</Typography>
-								<Typography variant="body2">Id: {user.id}</Typography>
-								<Typography variant="body2">Role: {user.role}</Typography>
-								<Typography variant="body2">Status: {user.status}</Typography>
-								<Typography variant="body2">Full name: {user.full_name}</Typography>
-								<Typography variant="body2">
-									Created at: {user.created_at}
-								</Typography>
-								<Typography variant="body2">
-									Admin`s note: {user.admin_note}
-								</Typography>
-							</View>
-
-							<View style={styles.actions}>
-								<Button
-									variant="outlined"
-									onPress={() => {
-										console.log("isEditedMode: " + isEditMode);
-										handleEditUser(user);
-										console.log("selected user: " + selectedUser);
-									}}
-								>
-									Edit
-								</Button>
-								<Button variant="tint" onPress={() => handleDeleteUser(user.id)}>
-									Delete
-								</Button>
-							</View>
-						</Card>
-					))}
-				</Card>
+					<Button
+						variant="outlined"
+						style={{ marginHorizontal: 10 }}
+						onPress={() => setModalState(prev => ({ ...prev, inviteLinkModal: true }))}
+					>
+						Get Last Invite Link
+					</Button>
+					<Button
+						variant={"outlined"}
+						onPress={() => handleRefetchUsers()}
+						loading={isLoading}
+						style={{ marginHorizontal: 10 }}
+					>
+						Refetch Users
+					</Button>
+				</View>
+				<UsersList
+					users={users || []}
+					onEditUser={handleEditUser}
+					onDeleteUser={handleDeleteUser}
+				/>
 			</ScrollView>
+
+			{/* Edit User Modal */}
+			<ModalContainer
+				visible={modalState.editMode}
+				onClose={() => setModalState(prev => ({ ...prev, editMode: false }))}
+			>
+				{selectedUser && (
+					<EditUserForm
+						user={selectedUser}
+						onSubmit={handleUpdateUserSubmit}
+						onClose={() => setModalState(prev => ({ ...prev, editMode: false }))}
+						isLoading={updateMutation.isPending}
+					/>
+				)}
+			</ModalContainer>
+
+			{/* Create User Modal */}
+			<ModalContainer
+				visible={modalState.createMode}
+				onClose={() => setModalState(prev => ({ ...prev, createMode: false }))}
+			>
+				<CreateUserForm
+					onSubmit={handleCreateUserSubmit}
+					onClose={() => setModalState(prev => ({ ...prev, createMode: false }))}
+					isLoading={createMutation.isPending}
+				/>
+			</ModalContainer>
+
+			{/* Invite Link Modal */}
+			<ModalContainer
+				visible={modalState.inviteLinkModal}
+				onClose={() => setModalState(prev => ({ ...prev, inviteLinkModal: false }))}
+			>
+				<GetInviteLinkForm
+					inviteLink={inviteLink}
+					onClose={() => setModalState(prev => ({ ...prev, inviteLinkModal: false }))}
+				/>
+			</ModalContainer>
 		</View>
 	);
 }
@@ -269,40 +143,21 @@ export default function AdminPanelPage() {
 const styles = StyleSheet.create(theme => ({
 	container: {
 		flex: 1,
-		backgroundColor: theme.colors.background.main,
+		padding: theme.spacing(3),
 	},
-	modalOverlay: {
-		flex: 1,
-		backgroundColor: "rgba(0, 0, 0, 0.5)",
-		justifyContent: "center",
-		alignItems: "center",
-		padding: theme.spacing(2),
+	scrollContent: {
+		paddingBottom: theme.spacing(5),
 	},
-	modalContent: {
-		width: "100%",
-		maxWidth: 600,
-		// Не добавляем backgroundColor, так как Card уже имеет свой фон
-	},
-
-	card: {
-		margin: theme.spacing(2),
-	},
-	title: {
-		marginBottom: theme.spacing(2),
-	},
-	addButton: {
-		marginBottom: theme.spacing(3),
-	},
-	userCard: {
-		marginBottom: theme.spacing(2),
-		padding: theme.spacing(2),
-	},
-	userInfo: {
-		marginBottom: theme.spacing(2),
-	},
-	actions: {
+	buttonsContainer: {
 		flexDirection: "row",
 		justifyContent: "flex-end",
-		gap: theme.spacing(1),
+		alignItems: "center",
+		marginBottom: theme.spacing(2),
+	},
+	header: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		marginBottom: theme.spacing(4),
 	},
 }));
