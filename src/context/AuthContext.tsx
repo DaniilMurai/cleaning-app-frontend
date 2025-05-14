@@ -99,6 +99,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 			}
 		} else {
 			console.error("Token is missing in refreshUserData");
+			await handleLogout();
 		}
 	};
 

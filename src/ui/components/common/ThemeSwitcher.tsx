@@ -43,19 +43,21 @@ export default function ThemeSwitcher() {
 				/>
 			</Button>
 
-			<Button
-				variant="outlined"
-				onPress={() => {
-					UnistylesRuntime.setAdaptiveThemes(true);
-				}}
-				style={[styles.button, UnistylesRuntime.hasAdaptiveThemes && styles.buttonActive]}
-			>
-				<FontAwesome5
-					name="adjust"
-					size={20}
-					style={[styles.icon, UnistylesRuntime.hasAdaptiveThemes && styles.iconActive]}
-				/>
-			</Button>
+			{/*adaptive themes button*/}
+			
+			{/*<Button*/}
+			{/*	variant="outlined"*/}
+			{/*	onPress={() => {*/}
+			{/*		UnistylesRuntime.setAdaptiveThemes(true);*/}
+			{/*	}}*/}
+			{/*	style={[styles.button, UnistylesRuntime.hasAdaptiveThemes && styles.buttonActive]}*/}
+			{/*>*/}
+			{/*	<FontAwesome5*/}
+			{/*		name="adjust"*/}
+			{/*		size={20}*/}
+			{/*		style={[styles.icon, UnistylesRuntime.hasAdaptiveThemes && styles.iconActive]}*/}
+			{/*	/>*/}
+			{/*</Button>*/}
 		</View>
 	);
 }
