@@ -13,6 +13,7 @@ interface EditUserFormProps {
 	onClose: () => void;
 	onSubmit: (userData: Partial<UpdateUserData>) => void;
 	isLoading?: boolean;
+	error?: string;
 }
 
 export default function UpdateCurrentUserForm({
@@ -20,6 +21,7 @@ export default function UpdateCurrentUserForm({
 	onClose,
 	onSubmit,
 	isLoading,
+	error,
 }: EditUserFormProps) {
 	const [formData, setFormData] = useState<Partial<UpdateUserData>>({
 		nickname: user.nickname,
@@ -49,6 +51,9 @@ export default function UpdateCurrentUserForm({
 				onChangeText={text => setFormData({ ...formData, full_name: text })}
 				style={styles.input}
 			/>
+
+			{error && <Typography color={"error"}>{error}</Typography>}
+
 			<View style={styles.buttonsContainer}>
 				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
 					Save Changes

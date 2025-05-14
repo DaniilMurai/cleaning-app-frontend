@@ -40,6 +40,7 @@ export default function Login() {
 			});
 
 			if (result.access_token) {
+				console.log("access_token: " + result.access_token);
 				await clearTokens();
 				await saveTokens(result.access_token, result.refresh_token);
 				const isValid = await checkToken();

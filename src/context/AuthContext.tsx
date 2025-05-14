@@ -49,6 +49,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 	// Инициализация при загрузке приложения
 	useEffect(() => {
 		console.log("Initializing auth...");
+		setLoading(true);
 		const initAuth = async () => {
 			try {
 				const tokens = await getTokens();
@@ -71,8 +72,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		setLoading(true);
 		try {
 			const tokens = await getTokens();
+			console.log("Token:", tokens.accessToken, "Current token:", token);
 			if (tokens?.accessToken && tokens.accessToken !== token) {
-				setToken(tokens.accessToken);
+				const newToken = tokens.accessToken;
+				setToken(newToken);
+				console.log("Token updated:", token);
+				await refreshUserData(newToken);
 				return true;
 			}
 			return !!tokens?.accessToken;
@@ -84,9 +89,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		}
 	};
 
-	const refreshUserData = async () => {
-		if (token) {
+	const refreshUserData = async (access_token?: string) => {
+		if (access_token || token) {
 			await refetchUser();
+			console.log("User data refetched:", userData);
+			if (userData) {
+				setUser(userData);
+				console.log("User data updated:", userData);
+			}
+		} else {
+			console.error("Token is missing in refreshUserData");
 		}
 	};
 

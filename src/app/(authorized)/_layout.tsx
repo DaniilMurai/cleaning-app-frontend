@@ -6,6 +6,7 @@ export default function AuthorizedLayout() {
 	const { token, loading } = useAuth();
 
 	if (!token) {
+		console.log("No token: " + token);
 		return <Redirect href={"/Login"} />;
 	}
 

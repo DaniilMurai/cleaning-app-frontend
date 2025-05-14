@@ -8,19 +8,31 @@ import { UpdateUserData, UserUpdatePassword } from "@/api/users";
 import UpdateCurrentUserForm from "@/ui/formComponents/UpdateCurrentUserForm";
 import { useCurrentUserMutations } from "@/hooks/useCurrentUserMutations";
 import UpdateCurrentUserPasswordForm from "@/ui/formComponents/UpdateCurrentUserPasswordForm";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function ProfilePage() {
-	const [error, setError] = useState("");
 	const [isEditing, setIsEditing] = useState(false);
 	const [isChangingPassword, setIsChangingPassword] = useState(false);
 	const { logout, user, refreshUserData } = useAuth();
 
+	const [errorState, setErrorState] = useState({
+		logoutError: "",
+		updateError: "",
+		changePasswordError: "",
+	});
+
 	const handleLogout = async () => {
 		try {
-			setError("");
+			setErrorState(prevState => ({
+				...prevState,
+				logoutError: "",
+			}));
 			await logout();
 		} catch (error) {
-			setError("Couldn't log out: " + error);
+			setErrorState(prevState => ({
+				...prevState,
+				logoutError: "Couldn't log out: " + error,
+			}));
 		}
 	};
 
@@ -45,7 +57,10 @@ export default function ProfilePage() {
 			console.log("Update user data:", userData);
 			// setIsEditing(false);
 		} catch (error) {
-			setError("Failed to update user data: " + error);
+			setErrorState(prevState => ({
+				...prevState,
+				updateError: "Failed to update user data: " + error,
+			}));
 		}
 	};
 
@@ -54,7 +69,10 @@ export default function ProfilePage() {
 			await handleChangePassword(userData as UserUpdatePassword);
 			console.log("Update user password:", userData);
 		} catch (error) {
-			setError("Failed to update user password: " + error);
+			setErrorState(prevState => ({
+				...prevState,
+				changePasswordError: "Failed to update user password: " + error,
+			}));
 		}
 	};
 
@@ -66,8 +84,12 @@ export default function ProfilePage() {
 						{user?.full_name || user?.nickname || "User"}
 					</Typography>
 					<View style={{ flex: 1 }} />
-					<Button variant="outlined" onPress={handleLogout}>
-						Выйти
+					<Button variant="outlined">
+						<FontAwesome5 name="cog" size={20} />
+					</Button>
+
+					<Button variant="contained" onPress={handleLogout}>
+						<FontAwesome5 name="sign-out-alt" size={20} />
 					</Button>
 				</View>
 
@@ -98,30 +120,53 @@ export default function ProfilePage() {
 					</Button>
 				</View>
 
-				{error ? (
+				{errorState.logoutError ? (
 					<Typography color="error" style={styles.errorText}>
-						Ошибка: {error}
+						Ошибка: {errorState.logoutError}
 					</Typography>
 				) : null}
 			</Card>
 
-			<ModalContainer onClose={() => setIsEditing(false)} visible={isEditing}>
+			<ModalContainer
+				onClose={() => {
+					setErrorState(prevState => ({ ...prevState, updateError: "" }));
+					setIsEditing(false);
+				}}
+				visible={isEditing}
+			>
 				<UpdateCurrentUserForm
 					user={user as UpdateUserData}
-					onClose={() => setIsEditing(false)}
+					onClose={() => {
+						setErrorState(prevState => ({ ...prevState, updateError: "" }));
+						setIsEditing(false);
+					}}
 					onSubmit={handleEditSubmit}
 					isLoading={updateMutation.isPending}
+					error={errorState.updateError}
 				/>
 			</ModalContainer>
 
 			<ModalContainer
-				onClose={() => setIsChangingPassword(false)}
+				onClose={() => {
+					setIsChangingPassword(false);
+					setErrorState(prevState => ({
+						...prevState,
+						changePasswordError: "",
+					}));
+				}}
 				visible={isChangingPassword}
 			>
 				<UpdateCurrentUserPasswordForm
-					onClose={() => setIsChangingPassword(false)}
+					onClose={() => {
+						setIsChangingPassword(false);
+						setErrorState(prevState => ({
+							...prevState,
+							changePasswordError: "",
+						}));
+					}}
 					onSubmit={handleChangingPasswordSubmit}
 					isLoading={changePasswordMutation.isPending}
+					error={errorState.changePasswordError}
 				/>
 			</ModalContainer>
 		</View>
@@ -170,6 +215,7 @@ const styles = StyleSheet.create(theme => ({
 		alignItems: "center",
 		justifyContent: "center",
 		marginBottom: theme.spacing(3),
+		gap: theme.spacing(2),
 	},
 	avatarContainer: {
 		marginRight: theme.spacing(3),

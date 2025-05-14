@@ -2,13 +2,23 @@ import { Tabs } from "expo-router";
 import { getTabBarIcon } from "@/ui/TabBarIcon";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useIsAdmin } from "@/context/AuthContext";
+import { View } from "react-native";
+import ThemeSwitcher from "@/ui/components/common/ThemeSwitcher";
 
 export default function TabsLayout() {
 	const isAdmin = useIsAdmin();
 	console.log("isAdmin:", isAdmin);
 
 	return (
-		<Tabs>
+		<Tabs
+			screenOptions={{
+				headerRight: () => (
+					<View style={{ marginRight: 10 }}>
+						<ThemeSwitcher />
+					</View>
+				),
+			}}
+		>
 			<Tabs.Screen
 				name="index"
 				options={{

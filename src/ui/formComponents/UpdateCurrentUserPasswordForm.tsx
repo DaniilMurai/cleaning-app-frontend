@@ -12,25 +12,27 @@ interface EditUserFormProps {
 	onClose: () => void;
 	onSubmit: (userData: UserUpdatePassword) => void;
 	isLoading?: boolean;
+	error?: string;
 }
 
 export default function UpdateCurrentUserPasswordForm({
 	onClose,
 	onSubmit,
 	isLoading,
+	error,
 }: EditUserFormProps) {
 	const [formData, setFormData] = useState<UserUpdatePassword>({
 		old_password: "",
 		new_password: "",
 	});
-	const [error, setError] = useState<string>("");
+	const [repeatedPasswordError, setRepeatedPasswordError] = useState<string>("");
 
 	const [repeatedPassword, setRepeatPassword] = useState<string>("");
 
 	const handleSubmit = () => {
-		setError("");
+		setRepeatedPasswordError("");
 		if (formData.new_password !== repeatedPassword) {
-			setError("Passwords do not match");
+			setRepeatedPasswordError("Passwords do not match");
 			return;
 		} else {
 			onSubmit(formData);
@@ -67,11 +69,21 @@ export default function UpdateCurrentUserPasswordForm({
 				secureTextEntry={true}
 			/>
 
-			{error && (
+			{repeatedPasswordError ? (
+				<Typography variant={"body1"} color={"error"}>
+					{repeatedPasswordError}
+				</Typography>
+			) : error ? (
 				<Typography variant={"body1"} color={"error"}>
 					{error}
 				</Typography>
-			)}
+			) : null}
+
+			{/*{error && (*/}
+			{/*	<Typography variant={"body1"} color={"error"}>*/}
+			{/*		{error}*/}
+			{/*	</Typography>*/}
+			{/*)}*/}
 
 			<View style={styles.buttonsContainer}>
 				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
