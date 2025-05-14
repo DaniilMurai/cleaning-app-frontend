@@ -9,6 +9,7 @@ import { Redirect, useRouter } from "expo-router";
 import useAuth from "@/context/AuthContext";
 import Card from "@/ui/Card";
 import Loading from "@/ui/Loading";
+import { StyleSheet } from "react-native-unistyles";
 
 export default function Login() {
 	const [login, setLogin] = useState("");
@@ -23,6 +24,7 @@ export default function Login() {
 	}
 
 	if (token) {
+		console.log(token);
 		console.log("Token is valid");
 		return <Redirect href={"/"} />;
 	}
@@ -51,8 +53,8 @@ export default function Login() {
 	};
 
 	return (
-		<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-			<Card variant="contained" size="medium" style={{ width: "100%", maxWidth: 400 }}>
+		<View style={styles.container}>
+			<Card variant="contained" size="medium" style={styles.card}>
 				<Typography style={{ textAlign: "center" }} variant="h5">
 					Вход в систему
 				</Typography>
@@ -63,6 +65,7 @@ export default function Login() {
 					color="primary"
 					size="medium"
 					value={login}
+					style={styles.input}
 					onChangeText={setLogin}
 				/>
 
@@ -73,6 +76,7 @@ export default function Login() {
 					size="medium"
 					value={password}
 					onChangeText={setPassword}
+					style={styles.input}
 					secureTextEntry={true} // Скрываем пароль
 				/>
 
@@ -91,7 +95,7 @@ export default function Login() {
 				<Button
 					variant="contained"
 					onPress={() => handleLogin()}
-					style={{ alignItems: "center" }}
+					style={styles.button}
 					size="small"
 					loading={loginMutation.isPending}
 					disabled={!login || !password} // Кнопка неактивна если поля пустые
@@ -102,3 +106,22 @@ export default function Login() {
 		</View>
 	);
 }
+
+const styles = StyleSheet.create(theme => ({
+	container: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		paddingHorizontal: theme.spacing(2),
+	},
+	input: {
+		marginBottom: theme.spacing(0.5),
+	},
+	button: {
+		alignItems: "center",
+	},
+	card: {
+		width: "100%",
+		maxWidth: 400,
+	},
+}));

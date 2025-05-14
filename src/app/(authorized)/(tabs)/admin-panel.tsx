@@ -10,6 +10,7 @@ import CreateUserForm from "@/ui/formComponents/CreateUserForm";
 import GetInviteLinkForm from "@/ui/formComponents/GetInviteLinkForm";
 import UsersList from "@/ui/components/admin/UsersList";
 import { useAdminMutations } from "@/hooks/useAdminMutations";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function AdminPanelPage() {
 	const [selectedUser, setSelectedUser] = useState<UserSchema | null>(null);
@@ -58,7 +59,7 @@ export default function AdminPanelPage() {
 
 	const handleRefetchUsers = async () => {
 		console.log("Refetching users...");
-		const {} = await refetch();
+		await refetch();
 	};
 
 	if (isLoading) {
@@ -74,22 +75,22 @@ export default function AdminPanelPage() {
 						style={{ marginHorizontal: 10 }}
 						onPress={handleCreateUserClick}
 					>
-						Create User
+						<FontAwesome5 name="user-plus" size={20} style={styles.addUserIcon} />
 					</Button>
 					<Button
 						variant="outlined"
 						style={{ marginHorizontal: 10 }}
 						onPress={() => setModalState(prev => ({ ...prev, inviteLinkModal: true }))}
 					>
-						Get Last Invite Link
+						<FontAwesome5 name="link" size={20} style={styles.icon} />
 					</Button>
 					<Button
 						variant={"outlined"}
-						onPress={() => handleRefetchUsers()}
+						onPress={handleRefetchUsers}
 						loading={isLoading}
 						style={{ marginHorizontal: 10 }}
 					>
-						Refetch Users
+						<FontAwesome5 name="sync" size={20} style={styles.icon} />
 					</Button>
 				</View>
 				<UsersList
@@ -152,13 +153,23 @@ const styles = StyleSheet.create(theme => ({
 		flexDirection: "row",
 		flexWrap: "wrap", // Важно: разрешаем перенос элементов
 		justifyContent: "flex-end",
-		marginBottom: theme.spacing(1),
-		gap: theme.spacing(2), // Используем gap вместо marginHorizontal
+		marginBottom: theme.spacing(2),
 	},
 	header: {
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center",
 		marginBottom: theme.spacing(4),
+	},
+	icon: {
+		color: theme.colors.primary.main,
+	},
+	addUserIcon: {
+		color: theme.colors.background.main,
+	},
+	heading: {
+		marginBottom: theme.spacing(2),
+		flexDirection: "row",
+		justifyContent: "center",
 	},
 }));

@@ -54,6 +54,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 				const tokens = await getTokens();
 				setToken(tokens?.accessToken || null);
 				console.log("Token:", token);
+				await refreshUserData();
 			} catch (e) {
 				console.error("Ошибка при инициализации auth:", e);
 				setToken(null);

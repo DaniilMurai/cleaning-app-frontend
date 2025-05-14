@@ -15,9 +15,6 @@ interface UsersListProps {
 export default function UsersList({ users, onEditUser, onDeleteUser }: UsersListProps) {
 	return (
 		<>
-			<Typography variant="h4" style={styles.heading}>
-				Users Management
-			</Typography>
 			{users?.map(user => (
 				<Card key={user.id} style={styles.userCard}>
 					<View style={styles.userInfo}>
@@ -46,6 +43,8 @@ export default function UsersList({ users, onEditUser, onDeleteUser }: UsersList
 const styles = StyleSheet.create(theme => ({
 	heading: {
 		marginBottom: theme.spacing(3),
+		flexDirection: "row",
+		justifyContent: "space-between",
 	},
 	userCard: {
 		marginBottom: theme.spacing(2),
@@ -64,5 +63,8 @@ const styles = StyleSheet.create(theme => ({
 		flexDirection: "row",
 		gap: theme.spacing(1),
 		alignItems: "center",
+	},
+	icon: {
+		color: theme.colors.primary.main,
 	},
 }));
