@@ -3,7 +3,7 @@ import Transformer from "./src/api/transformer";
 import dotenv from "dotenv";
 
 dotenv.config({
-	path: [".env.local", ".env"],
+	path: [".env.development", ".env"],
 });
 
 const ApiUrl = process.env.EXPO_PUBLIC_API_URL;
