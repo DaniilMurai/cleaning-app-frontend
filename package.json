@@ -11,7 +11,8 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
-    "orval": "node node_modules/orval/dist/bin/orval.js"
+    "orval": "node node_modules/orval/dist/bin/orval.js",
+    "web-build": "npx expo export --platform web && cp ./.surgeignore ./dist/.surgeignore && cp ./dist/index.html ./dist/200.html"
   },
   "jest": {
     "preset": "jest-expo"
