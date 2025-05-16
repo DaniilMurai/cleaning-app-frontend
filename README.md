@@ -1,50 +1,68 @@
-# Welcome to your Expo app 👋
+# Web Deployment Guide
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This README provides step-by-step instructions to build and deploy your Expo React Native web application to Surge.sh.
 
-## Get started
+## Deployment Process
 
-1. Install dependencies
+Follow these steps to deploy your application to the web:
 
-   ```bash
-   npm install
-   ```
+### 1. Build the Web Application
 
-2. Start the app
+First, export your Expo project for web deployment:
 
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```shell script
+npx expo export --platform web
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+This command builds your project and creates a `dist` directory containing all the necessary files for web deployment.
 
-## Learn more
+### 2. Navigate to the Build Directory
 
-To learn more about developing your project with Expo, look at the following resources:
+Change to the distribution directory:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```shell script
+cd ./dist/
+```
 
-## Join the community
+### 3. Create a SPA Fallback Page
 
-Join our community of developers creating universal apps.
+For single-page applications (SPAs), create a fallback page to handle client-side routing:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```shell script
+cp index.html 200.html
+```
+
+This copies your main HTML file to a file named `200.html`, which Surge uses to serve the correct content regardless of
+the URL path.
+
+### 4. Deploy to Surge
+
+Deploy your application to Surge:
+
+```shell script
+npx surge
+```
+
+When prompted:
+
+- Enter your domain as: `neuer-standart.surge.sh`
+- Sign in with your Surge account (or create one if needed)
+
+## Notes
+
+- The deployment process takes a few minutes to complete
+- After deployment, your application will be available at `https://neuer-standart.surge.sh`
+- If you encounter any issues with fonts or assets, ensure they are properly included in your build configuration
+
+## Troubleshooting
+
+If you encounter issues with missing assets or 404 errors:
+
+1. Check that all assets are properly imported in your application
+2. Verify that your routing configuration is correct
+3. Make sure any required environment variables are set correctly
+
+## Updating Your Deployment
+
+To update your deployment, simply repeat the steps above. Surge will overwrite the previous deployment with your new
+build.

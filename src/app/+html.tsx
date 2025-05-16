@@ -52,4 +52,18 @@ const style = `
 			background-color: ${themes.dark.colors.background.main}!important
 	    }
 	}
+	@font-face {
+	  font-family: 'FontAwesome5_Solid';
+	  src: url('../node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf') format('truetype');
+	}
+	@font-face {
+	  font-family: 'FontAwesome5_Brands';
+	  src: url('../node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf') format('truetype');
+	}
+	@font-face {
+	  font-family: 'FontAwesome5_Regular';
+	  src: url('../node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf') format('truetype');
+	}
+	/* Add other icon fonts if needed */
+
 }`;
