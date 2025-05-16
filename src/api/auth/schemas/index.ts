@@ -7,6 +7,7 @@
 
 export * from "./activateUserData";
 export * from "./activateUserDataFullName";
+export * from "./forgetPasswordData";
 export * from "./hTTPValidationError";
 export * from "./loginData";
 export * from "./refreshTokenData";

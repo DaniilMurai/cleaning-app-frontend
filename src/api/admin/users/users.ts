@@ -23,7 +23,10 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+	AdminReadUser,
 	DeleteUserParams,
+	ForgetPasswordLink,
+	ForgetPasswordLinkParams,
 	GetUsersParams,
 	HTTPValidationError,
 	InviteLink,
@@ -41,7 +44,7 @@ import type { ErrorType } from "../../instance";
  * @summary Get Users
  */
 export const getUsers = (params?: GetUsersParams, signal?: AbortSignal) => {
-	return getAxios<UserSchema[]>({ url: `/admin/users/`, method: "GET", params, signal });
+	return getAxios<AdminReadUser[]>({ url: `/admin/users/`, method: "GET", params, signal });
 };
 
 export const getGetUsersQueryKey = (params?: GetUsersParams) => {
@@ -453,6 +456,82 @@ export const useDeleteUser = <TError = ErrorType<HTTPValidationError>, TContext 
 	TContext
 > => {
 	const mutationOptions = getDeleteUserMutationOptions(options);
+
+	return useMutation(mutationOptions, queryClient);
+};
+/**
+ * @summary Forget Password Link
+ */
+export const forgetPasswordLink = (params: ForgetPasswordLinkParams, signal?: AbortSignal) => {
+	return getAxios<ForgetPasswordLink>({
+		url: `/admin/users/change-password`,
+		method: "POST",
+		params,
+		signal,
+	});
+};
+
+export const getForgetPasswordLinkMutationOptions = <
+	TError = ErrorType<HTTPValidationError>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof forgetPasswordLink>>,
+		TError,
+		{ params: ForgetPasswordLinkParams },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof forgetPasswordLink>>,
+	TError,
+	{ params: ForgetPasswordLinkParams },
+	TContext
+> => {
+	const mutationKey = ["forgetPasswordLink"];
+	const { mutation: mutationOptions } = options
+		? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+			? options
+			: { ...options, mutation: { ...options.mutation, mutationKey } }
+		: { mutation: { mutationKey } };
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof forgetPasswordLink>>,
+		{ params: ForgetPasswordLinkParams }
+	> = props => {
+		const { params } = props ?? {};
+
+		return forgetPasswordLink(params);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type ForgetPasswordLinkMutationResult = NonNullable<
+	Awaited<ReturnType<typeof forgetPasswordLink>>
+>;
+
+export type ForgetPasswordLinkMutationError = ErrorType<HTTPValidationError>;
+
+/**
+ * @summary Forget Password Link
+ */
+export const useForgetPasswordLink = <TError = ErrorType<HTTPValidationError>, TContext = unknown>(
+	options?: {
+		mutation?: UseMutationOptions<
+			Awaited<ReturnType<typeof forgetPasswordLink>>,
+			TError,
+			{ params: ForgetPasswordLinkParams },
+			TContext
+		>;
+	},
+	queryClient?: QueryClient
+): UseMutationResult<
+	Awaited<ReturnType<typeof forgetPasswordLink>>,
+	TError,
+	{ params: ForgetPasswordLinkParams },
+	TContext
+> => {
+	const mutationOptions = getForgetPasswordLinkMutationOptions(options);
 
 	return useMutation(mutationOptions, queryClient);
 };

@@ -14,11 +14,12 @@ import type {
 
 import type {
 	ActivateUserData,
+	ForgetPasswordData,
 	HTTPValidationError,
 	LoginData,
 	RefreshTokenData,
 	TokenPair,
-} from "@/api/auth";
+} from ".././schemas";
 
 import { getAxios } from "../../instance";
 import type { ErrorType } from "../../instance";
@@ -240,6 +241,81 @@ export const useRefreshTokens = <TError = ErrorType<HTTPValidationError>, TConte
 	TContext
 > => {
 	const mutationOptions = getRefreshTokensMutationOptions(options);
+
+	return useMutation(mutationOptions, queryClient);
+};
+/**
+ * @summary Forget Password
+ */
+export const forgetPassword = (forgetPasswordData: ForgetPasswordData, signal?: AbortSignal) => {
+	return getAxios<TokenPair>({
+		url: `/auth/forget-password`,
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		data: forgetPasswordData,
+		signal,
+	});
+};
+
+export const getForgetPasswordMutationOptions = <
+	TError = ErrorType<HTTPValidationError>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof forgetPassword>>,
+		TError,
+		{ data: ForgetPasswordData },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof forgetPassword>>,
+	TError,
+	{ data: ForgetPasswordData },
+	TContext
+> => {
+	const mutationKey = ["forgetPassword"];
+	const { mutation: mutationOptions } = options
+		? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+			? options
+			: { ...options, mutation: { ...options.mutation, mutationKey } }
+		: { mutation: { mutationKey } };
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof forgetPassword>>,
+		{ data: ForgetPasswordData }
+	> = props => {
+		const { data } = props ?? {};
+
+		return forgetPassword(data);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type ForgetPasswordMutationResult = NonNullable<Awaited<ReturnType<typeof forgetPassword>>>;
+export type ForgetPasswordMutationBody = ForgetPasswordData;
+export type ForgetPasswordMutationError = ErrorType<HTTPValidationError>;
+
+/**
+ * @summary Forget Password
+ */
+export const useForgetPassword = <TError = ErrorType<HTTPValidationError>, TContext = unknown>(
+	options?: {
+		mutation?: UseMutationOptions<
+			Awaited<ReturnType<typeof forgetPassword>>,
+			TError,
+			{ data: ForgetPasswordData },
+			TContext
+		>;
+	},
+	queryClient?: QueryClient
+): UseMutationResult<
+	Awaited<ReturnType<typeof forgetPassword>>,
+	TError,
+	{ data: ForgetPasswordData },
+	TContext
+> => {
+	const mutationOptions = getForgetPasswordMutationOptions(options);
 
 	return useMutation(mutationOptions, queryClient);
 };
