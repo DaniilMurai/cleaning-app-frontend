@@ -63,7 +63,7 @@ export default function ResetPassword() {
 		<View style={styles.container}>
 			<Card style={styles.card}>
 				<Typography variant="h5" style={styles.title}>
-					{t("userList.resetPassword")}
+					{t("components.userList.resetPassword")}
 				</Typography>
 
 				<PasswordInputs
@@ -84,7 +84,7 @@ export default function ResetPassword() {
 					disabled={ForgetPasswordMutation.isPending}
 					style={styles.button}
 				>
-					{t("usersList.resetPassword")}
+					{t("components.usersList.resetPassword")}
 				</Button>
 			</Card>
 		</View>
