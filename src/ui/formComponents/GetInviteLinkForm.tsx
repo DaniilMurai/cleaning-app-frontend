@@ -4,6 +4,7 @@ import Typography from "@/ui/Typography";
 import { Button } from "@/ui";
 import { Alert, Platform, View } from "react-native";
 import * as Clipboard from "expo-clipboard";
+import { useState } from "react";
 
 interface GetLinkFormProps {
 	linkName: string;
@@ -12,27 +13,33 @@ interface GetLinkFormProps {
 }
 
 export default function GetLinkForm({ linkName, link, onClose }: GetLinkFormProps) {
+	const [error, setError] = useState<string | null>(null);
 	return (
 		<Card size={"medium"} style={styles.container}>
 			<Typography variant="body1">
 				{linkName}: {link}
 			</Typography>
+			{error && <Typography style={styles.error}>{error}</Typography>}
 
 			<View style={styles.buttonsContainer}>
 				<Button
 					onPress={async () => {
+						setError(null);
 						// Для веб
-						if (Platform.OS === "web") {
-							navigator.clipboard.writeText(link);
-						} else {
-							// Для React Native потребуется установка пакета
-							await Clipboard.setStringAsync(link);
-						}
-
-						if (Platform.OS === "web") {
-							window.alert("Link copied to clipboard!");
-						} else {
-							Alert.alert("Success", "Link copied to clipboard!");
+						try {
+							if (Platform.OS === "web") {
+								navigator.clipboard.writeText(link);
+							} else {
+								// Для React Native потребуется установка пакета
+								await Clipboard.setStringAsync(link);
+							}
+							if (Platform.OS === "web") {
+								window.alert("Link copied to clipboard!");
+							} else {
+								Alert.alert("Success", "Link copied to clipboard!");
+							}
+						} catch (e) {
+							setError("Error copying link to clipboard");
 						}
 					}}
 				>
@@ -62,5 +69,8 @@ const styles = StyleSheet.create(theme => ({
 		justifyContent: "flex-end",
 		gap: theme.spacing(2),
 		marginTop: theme.spacing(3),
+	},
+	error: {
+		color: theme.colors.error.main,
 	},
 }));
