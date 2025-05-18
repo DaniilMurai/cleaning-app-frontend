@@ -19,6 +19,7 @@
     "edit": "Bearbeiten",
     "loading": "Laden...",
     "error": "Fehler",
+    "errorCopyingToClipboard": "Fehler beim Kopieren in die Zwischenablage",
     "success": "Erfolgreich",
     "confirm": "Bestätigen",
     "settings": "Einstellungen",

@@ -5,6 +5,7 @@ import { Button } from "@/ui";
 import { Alert, Platform, View } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface GetLinkFormProps {
 	linkName: string;
@@ -13,18 +14,22 @@ interface GetLinkFormProps {
 }
 
 export default function GetLinkForm({ linkName, link, onClose }: GetLinkFormProps) {
-	const [error, setError] = useState<string | null>(null);
+	const { t } = useTranslation();
+
+	const [isError, setIsError] = useState<boolean>(false);
 	return (
 		<Card size={"medium"} style={styles.container}>
 			<Typography variant="body1">
 				{linkName}: {link}
 			</Typography>
-			{error && <Typography style={styles.error}>{error}</Typography>}
+			{isError && (
+				<Typography style={styles.error}>{t("common.errorCopyingToClipboard")}</Typography>
+			)}
 
 			<View style={styles.buttonsContainer}>
 				<Button
 					onPress={async () => {
-						setError(null);
+						setIsError(false);
 						// Для веб
 						try {
 							if (Platform.OS === "web") {
@@ -39,7 +44,7 @@ export default function GetLinkForm({ linkName, link, onClose }: GetLinkFormProp
 								Alert.alert("Success", "Link copied to clipboard!");
 							}
 						} catch (e) {
-							setError("Error copying link to clipboard");
+							setIsError(true);
 						}
 					}}
 				>

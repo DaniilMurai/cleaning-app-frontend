@@ -19,6 +19,7 @@
     "edit": "Редактировать",
     "loading": "Загрузка...",
     "error": "Ошибка",
+    "errorCopyingToClipboard": "Ошибка копирования в буфер",
     "success": "Успешно",
     "confirm": "Подтвердить",
     "settings": "Настройки",
