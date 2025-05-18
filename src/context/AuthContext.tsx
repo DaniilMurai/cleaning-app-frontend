@@ -134,6 +134,12 @@ export function useIsAdmin(): boolean {
 	return user?.role === "admin" || user?.role === "superadmin";
 }
 
+export function useIsSuperAdmin(): boolean {
+	const { user } = useAuth();
+	console.log("user:", user);
+	return user?.role === "superadmin";
+}
+
 // Вспомогательный хук для проверки статуса пользователя
 export function useUserStatus() {
 	const { user } = useAuth();

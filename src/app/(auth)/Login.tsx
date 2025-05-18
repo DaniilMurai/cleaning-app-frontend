@@ -10,8 +10,11 @@ import useAuth from "@/context/AuthContext";
 import Card from "@/ui/Card";
 import Loading from "@/ui/Loading";
 import { StyleSheet } from "react-native-unistyles";
+import { useTranslation } from "react-i18next";
 
 export default function Login() {
+	const { t } = useTranslation();
+
 	const [login, setLogin] = useState("");
 	const [password, setPassword] = useState("");
 
@@ -57,11 +60,11 @@ export default function Login() {
 		<View style={styles.container}>
 			<Card variant="contained" size="medium" style={styles.card}>
 				<Typography style={{ textAlign: "center" }} variant="h5">
-					Вход в систему
+					{t("auth.signIn")}
 				</Typography>
 
 				<Input
-					placeholder="Введите login"
+					placeholder={t("auth.login")}
 					variant="outlined"
 					color="primary"
 					size="medium"
@@ -71,7 +74,7 @@ export default function Login() {
 				/>
 
 				<Input
-					placeholder="Введите password"
+					placeholder={t("auth.password")}
 					variant="outlined"
 					color="primary"
 					size="medium"
@@ -84,11 +87,11 @@ export default function Login() {
 				{loginMutation.isError ? (
 					loginMutation.error.status === 401 ? (
 						<Typography variant="body2" color="error">
-							Incorrect login or password
+							{t("auth.invalidCredentials")}
 						</Typography>
 					) : (
 						<Typography variant="body2" color="error">
-							An error occurred: {loginMutation.error.message}
+							{t("auth.loginError")} {loginMutation.error.message}
 						</Typography>
 					)
 				) : null}
@@ -101,7 +104,7 @@ export default function Login() {
 					loading={loginMutation.isPending}
 					disabled={!login || !password} // Кнопка неактивна если поля пустые
 				>
-					Войти
+					{t("auth.signIn")}
 				</Button>
 			</Card>
 		</View>

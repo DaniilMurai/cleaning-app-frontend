@@ -8,6 +8,7 @@ import Typography from "@/ui/Typography";
 import { StyleSheet } from "react-native-unistyles";
 import { UserUpdatePassword } from "@/api/users";
 import PasswordInputs, { PasswordInputsRef } from "@/ui/components/common/2PasswordInputs";
+import { useTranslation } from "react-i18next";
 
 interface EditUserFormProps {
 	onClose: () => void;
@@ -31,6 +32,8 @@ export default function UpdateCurrentUserPasswordForm({
 		new_password: "",
 	});
 
+	const { t } = useTranslation();
+
 	const passwordInputsRef = useRef<PasswordInputsRef>(null);
 
 	const handleSubmit = () => {
@@ -44,7 +47,7 @@ export default function UpdateCurrentUserPasswordForm({
 		if (!formData.old_password || formData.old_password.trim() === "") {
 			setFormErrors(prev => ({
 				...prev,
-				old_password: "Please enter your current password",
+				old_password: t("validation.required"),
 			}));
 			return;
 		}
@@ -69,11 +72,11 @@ export default function UpdateCurrentUserPasswordForm({
 	return (
 		<Card size="large" style={styles.container}>
 			<Typography variant="h5" style={styles.title}>
-				Change Password
+				{t("profile.changePassword")}
 			</Typography>
 
 			<Input
-				placeholder="Current password"
+				placeholder={t("auth.oldPassword")}
 				value={formData.old_password}
 				onChangeText={text => setFormData({ ...formData, old_password: text })}
 				style={styles.input}
@@ -82,6 +85,8 @@ export default function UpdateCurrentUserPasswordForm({
 			/>
 
 			<PasswordInputs
+				placeholder1={t("auth.newPassword")}
+				placeholder2={t("auth.confirmPassword")}
 				ref={passwordInputsRef}
 				minLength={8}
 				statusMessages={{
@@ -97,10 +102,10 @@ export default function UpdateCurrentUserPasswordForm({
 
 			<View style={styles.buttonsContainer}>
 				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
-					Save Changes
+					{t("common.save")}
 				</Button>
 				<Button variant="outlined" onPress={onClose}>
-					Cancel
+					{t("common.close")}
 				</Button>
 			</View>
 		</Card>

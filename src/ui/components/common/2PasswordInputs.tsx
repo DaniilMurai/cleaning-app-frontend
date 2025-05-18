@@ -14,6 +14,8 @@ export interface PasswordInputsProps {
 		error?: string | null;
 	};
 	style?: any;
+	placeholder1?: string;
+	placeholder2?: string;
 }
 
 export interface PasswordInputsRef {
@@ -23,7 +25,10 @@ export interface PasswordInputsRef {
 }
 
 const PasswordInputs = forwardRef<PasswordInputsRef, PasswordInputsProps>(
-	({ style, onValidate, minLength = 8, statusMessages = {} }, ref) => {
+	(
+		{ style, onValidate, minLength = 8, statusMessages = {}, placeholder1, placeholder2 },
+		ref
+	) => {
 		const [newPassword, setNewPassword] = useState<string>("");
 		const [repeatedPassword, setRepeatPassword] = useState<string>("");
 		const [error, setError] = useState<string>("");
@@ -70,7 +75,7 @@ const PasswordInputs = forwardRef<PasswordInputsRef, PasswordInputsProps>(
 		return (
 			<>
 				<Input
-					placeholder="New password"
+					placeholder={placeholder1 ? placeholder1 : "new password"}
 					value={newPassword}
 					onChangeText={text => setNewPassword(text)}
 					style={style || styles.input}
@@ -78,7 +83,7 @@ const PasswordInputs = forwardRef<PasswordInputsRef, PasswordInputsProps>(
 				/>
 
 				<Input
-					placeholder="Repeat new password"
+					placeholder={placeholder2 ? placeholder2 : "confirm password"}
 					value={repeatedPassword}
 					onChangeText={text => setRepeatPassword(text)}
 					style={style || styles.input}

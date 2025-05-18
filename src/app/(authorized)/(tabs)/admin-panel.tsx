@@ -11,8 +11,11 @@ import UsersList from "@/ui/components/admin/UsersList";
 import { useAdminMutations } from "@/hooks/useAdminMutations";
 import { FontAwesome5 } from "@expo/vector-icons";
 import GetLinkForm from "@/ui/formComponents/GetInviteLinkForm";
+import { useTranslation } from "react-i18next";
 
 export default function AdminPanelPage() {
+	const { t } = useTranslation();
+
 	const [selectedUser, setSelectedUser] = useState<UserSchema | null>(null);
 	const [inviteLink, setInviteLink] = useState("");
 	const [resetLink, setResetLink] = useState("");
@@ -151,7 +154,7 @@ export default function AdminPanelPage() {
 				onClose={() => setModalState(prev => ({ ...prev, resetLinkModal: false }))}
 			>
 				<GetLinkForm
-					linkName={"Reset"}
+					linkName={t("admin.resetLink")}
 					link={resetLink}
 					onClose={() => setModalState(prev => ({ ...prev, resetLinkModal: false }))}
 				/>
@@ -163,7 +166,7 @@ export default function AdminPanelPage() {
 				onClose={() => setModalState(prev => ({ ...prev, inviteLinkModal: false }))}
 			>
 				<GetLinkForm
-					linkName={"Invite"}
+					linkName={t("admin.inviteLink")}
 					link={inviteLink}
 					onClose={() => setModalState(prev => ({ ...prev, inviteLinkModal: false }))}
 				/>

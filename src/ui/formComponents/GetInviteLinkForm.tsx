@@ -15,7 +15,7 @@ export default function GetLinkForm({ linkName, link, onClose }: GetLinkFormProp
 	return (
 		<Card size={"medium"} style={styles.container}>
 			<Typography variant="body1">
-				{linkName} link: {link}
+				{linkName}: {link}
 			</Typography>
 
 			<View style={styles.buttonsContainer}>

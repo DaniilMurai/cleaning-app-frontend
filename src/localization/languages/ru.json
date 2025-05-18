@@ -1,4 +1,17 @@
 {
+  "settings": {
+    "title": "Настройки",
+    "theme": "Тема",
+    "lightTheme": "Светлая",
+    "darkTheme": "Темная",
+    "language": "Язык"
+  },
+  "tabs": {
+    "home": "Главная",
+    "profile": "Профиль",
+    "tasks": "Задания",
+    "adminPanel": "Админ панель"
+  },
   "common": {
     "save": "Сохранить",
     "cancel": "Отмена",
@@ -27,7 +40,8 @@
     "signUp": "Зарегистрироваться",
     "forgotPassword": "Забыли пароль?",
     "resetPassword": "Сбросить пароль",
-    "activate": "Активировать аккаунт",
+    "activateAccount": "Активация аккаунта",
+    "activate": "Активировать",
     "loginError": "Ошибка входа",
     "invalidCredentials": "Неверный логин или пароль",
     "activationCode": "Код активации"
