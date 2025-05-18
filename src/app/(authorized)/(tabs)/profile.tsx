@@ -66,6 +66,12 @@ export default function ProfilePage() {
 
 	const handleChangingPasswordSubmit = async (userData: UserUpdatePassword) => {
 		try {
+			// Сбрасываем ошибку при начале запроса
+			setErrorState(prevState => ({
+				...prevState,
+				changePasswordError: "",
+			}));
+
 			await handleChangePassword(userData as UserUpdatePassword);
 			console.log("Update user password:", userData);
 		} catch (error) {
@@ -80,7 +86,7 @@ export default function ProfilePage() {
 		<View style={styles.container}>
 			<Card size="large" variant="outlined" style={styles.cardContainer}>
 				<View style={styles.header}>
-					<Typography variant="h4" style={styles.userName}>
+					<Typography variant="h5" style={styles.userName}>
 						{user?.full_name || user?.nickname || "User"}
 					</Typography>
 					<View style={{ flex: 1 }} />
@@ -196,7 +202,6 @@ const styles = StyleSheet.create(theme => ({
 		backgroundColor: theme.colors.background.main,
 	},
 	cardContainer: {
-		flex: 1,
 		padding: theme.spacing(3),
 		margin: theme.spacing(3),
 		backgroundColor: theme.colors.background.main,
@@ -241,10 +246,10 @@ const styles = StyleSheet.create(theme => ({
 	divider: {
 		height: 1,
 		backgroundColor: theme.colors.divider,
-		marginVertical: theme.spacing(2),
+		marginVertical: theme.spacing(0.5),
 	},
 	infoSection: {
-		marginVertical: theme.spacing(2),
+		marginVertical: theme.spacing(0.5),
 	},
 	infoItem: {
 		flexDirection: "row",
@@ -261,6 +266,7 @@ const styles = StyleSheet.create(theme => ({
 		color: theme.colors.text.primary,
 	},
 	buttonsContainer: {
+		flexWrap: "wrap",
 		flexDirection: "row",
 		justifyContent: "flex-end",
 		gap: theme.spacing(2),

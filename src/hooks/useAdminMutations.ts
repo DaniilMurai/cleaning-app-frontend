@@ -1,5 +1,11 @@
 // src/hooks/useAdminMutations.ts
-import { RegisterUserData, useCreateUser, useDeleteUser, useUpdateUser } from "@/api/admin";
+import {
+	RegisterUserData,
+	useCreateUser,
+	useDeleteUser,
+	useForgetPasswordLink,
+	useUpdateUser,
+} from "@/api/admin";
 import { UserSchema } from "@/api/admin/schemas/userSchema";
 import { AlertUtils } from "@/utils/alerts";
 
@@ -7,9 +13,23 @@ export function useAdminMutations(options: {
 	onSuccessCreate?: (invite_link: string) => void;
 	onSuccessUpdate?: () => void;
 	onSuccessDelete?: () => void;
+	onSuccessResetPassword?: (reset_link: string) => void;
 	refetch: () => void;
 }) {
-	const { onSuccessCreate, onSuccessUpdate, onSuccessDelete, refetch } = options;
+	const { onSuccessCreate, onSuccessUpdate, onSuccessDelete, onSuccessResetPassword, refetch } =
+		options;
+
+	const forgetPasswordMutation = useForgetPasswordLink({
+		mutation: {
+			onSuccess: data => {
+				const reset_link = data.forget_password_link;
+				onSuccessResetPassword?.(reset_link);
+			},
+			onError: error => {
+				AlertUtils.showError(error.message || "Failed to send password reset link");
+			},
+		},
+	});
 
 	const updateMutation = useUpdateUser({
 		mutation: {
@@ -72,12 +92,18 @@ export function useAdminMutations(options: {
 		);
 	};
 
+	const handleForgetPassword = async (user_id: number) => {
+		await forgetPasswordMutation.mutateAsync({ params: { user_id } });
+	};
+
 	return {
 		handleUpdateUser,
 		handleCreateUser,
 		handleDeleteUser,
+		handleForgetPassword,
 		updateMutation,
 		createMutation,
 		deleteMutation,
+		forgetPasswordMutation,
 	};
 }

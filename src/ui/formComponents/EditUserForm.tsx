@@ -1,17 +1,16 @@
 // EditUserForm.tsx
 import { View } from "react-native";
-import { UserSchema } from "@/api/admin/schemas/userSchema";
 import { Button } from "@/ui";
 import Input from "@/ui/Input";
 import { useState } from "react";
-import { UserRole } from "@/api/admin/schemas/userRole";
-import { UserStatus } from "@/api/admin/schemas/userStatus";
+
 import Select from "@/ui/Select";
 import Card from "@/ui/Card";
 import Typography from "@/ui/Typography";
 
 import { roleOptions, statusOptions } from "@/ui/formComponents/Role-StatusOptions";
 import { StyleSheet } from "react-native-unistyles";
+import { UserRole, UserSchema, UserStatus } from "@/api/admin";
 
 interface EditUserFormProps {
 	user: UserSchema;

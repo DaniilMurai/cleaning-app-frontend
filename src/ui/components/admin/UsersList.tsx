@@ -4,15 +4,22 @@ import { StyleSheet } from "react-native-unistyles";
 import { Button } from "@/ui";
 import Card from "@/ui/Card";
 import Typography from "@/ui/Typography";
-import { UserSchema } from "@/api/admin/schemas/userSchema";
+import { UserSchema } from "@/api/admin";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 interface UsersListProps {
 	users: UserSchema[];
+	onForgetPassword: (userId: number) => void;
 	onEditUser: (user: UserSchema) => void;
 	onDeleteUser: (userId: number) => void;
 }
 
-export default function UsersList({ users, onEditUser, onDeleteUser }: UsersListProps) {
+export default function UsersList({
+	users,
+	onForgetPassword,
+	onEditUser,
+	onDeleteUser,
+}: UsersListProps) {
 	return (
 		<>
 			{users?.map(user => (
@@ -27,11 +34,14 @@ export default function UsersList({ users, onEditUser, onDeleteUser }: UsersList
 					</View>
 
 					<View style={styles.actionButtons}>
-						<Button variant="outlined" onPress={() => onEditUser(user)}>
-							Edit
+						<Button variant="tint" onPress={() => onForgetPassword(user.id)}>
+							<FontAwesome5 name="key" size={20} />
+						</Button>
+						<Button variant="tint" onPress={() => onEditUser(user)}>
+							<FontAwesome5 name="edit" size={20} />
 						</Button>
 						<Button variant="tint" onPress={() => onDeleteUser(user.id)}>
-							Delete
+							<FontAwesome5 name="trash-alt" size={20} />
 						</Button>
 					</View>
 				</Card>

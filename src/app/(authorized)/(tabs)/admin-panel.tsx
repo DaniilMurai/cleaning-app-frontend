@@ -3,40 +3,52 @@ import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { Button, Loading, ModalContainer } from "@/ui";
 import { useState } from "react";
-import { UserSchema } from "@/api/admin/schemas/userSchema";
-import { RegisterUserData, useGetUsers } from "@/api/admin";
+
+import { RegisterUserData, useGetUsers, UserSchema } from "@/api/admin";
 import EditUserForm from "@/ui/formComponents/EditUserForm";
 import CreateUserForm from "@/ui/formComponents/CreateUserForm";
-import GetInviteLinkForm from "@/ui/formComponents/GetInviteLinkForm";
 import UsersList from "@/ui/components/admin/UsersList";
 import { useAdminMutations } from "@/hooks/useAdminMutations";
 import { FontAwesome5 } from "@expo/vector-icons";
+import GetLinkForm from "@/ui/formComponents/GetInviteLinkForm";
 
 export default function AdminPanelPage() {
 	const [selectedUser, setSelectedUser] = useState<UserSchema | null>(null);
 	const [inviteLink, setInviteLink] = useState("");
+	const [resetLink, setResetLink] = useState("");
 
 	const [modalState, setModalState] = useState({
 		editMode: false,
 		createMode: false,
 		inviteLinkModal: false,
+		resetLinkModal: false,
 	});
 	// Получаем список пользователей
 	const { data: users, isLoading, refetch } = useGetUsers({});
 
-	const { handleUpdateUser, handleCreateUser, handleDeleteUser, updateMutation, createMutation } =
-		useAdminMutations({
-			onSuccessCreate: invite_link => {
-				setInviteLink(invite_link);
-				setModalState(prev => ({ ...prev, inviteLinkModal: true }));
-				setModalState(prev => ({ ...prev, createMode: false }));
-			},
-			onSuccessUpdate: () => {
-				setModalState(prev => ({ ...prev, editMode: false }));
-				setSelectedUser(null);
-			},
-			refetch,
-		});
+	const {
+		handleUpdateUser,
+		handleCreateUser,
+		handleDeleteUser,
+		handleForgetPassword,
+		updateMutation,
+		createMutation,
+	} = useAdminMutations({
+		onSuccessCreate: invite_link => {
+			setInviteLink(invite_link);
+			setModalState(prev => ({ ...prev, inviteLinkModal: true }));
+			setModalState(prev => ({ ...prev, createMode: false }));
+		},
+		onSuccessUpdate: () => {
+			setModalState(prev => ({ ...prev, editMode: false }));
+			setSelectedUser(null);
+		},
+		onSuccessResetPassword: reset_link => {
+			setResetLink(reset_link);
+			setModalState(prevState => ({ ...prevState, resetLinkModal: true }));
+		},
+		refetch,
+	});
 
 	const handleEditUser = (user: UserSchema) => {
 		setSelectedUser(user);
@@ -45,6 +57,11 @@ export default function AdminPanelPage() {
 
 	const handleCreateUserClick = () => {
 		setModalState(prev => ({ ...prev, createMode: true }));
+	};
+
+	const handleForgetPasswordClick = async (user_id: number) => {
+		await handleForgetPassword(user_id);
+		setModalState(prev => ({ ...prev, resetLinkModal: true }));
 	};
 
 	const handleUpdateUserSubmit = async (userData: Partial<UserSchema>) => {
@@ -97,6 +114,7 @@ export default function AdminPanelPage() {
 					users={users || []}
 					onEditUser={handleEditUser}
 					onDeleteUser={handleDeleteUser}
+					onForgetPassword={handleForgetPasswordClick}
 				/>
 			</ScrollView>
 
@@ -127,13 +145,26 @@ export default function AdminPanelPage() {
 				/>
 			</ModalContainer>
 
+			{/* Reset Link Modal */}
+			<ModalContainer
+				visible={modalState.resetLinkModal}
+				onClose={() => setModalState(prev => ({ ...prev, resetLinkModal: false }))}
+			>
+				<GetLinkForm
+					linkName={"Reset"}
+					link={resetLink}
+					onClose={() => setModalState(prev => ({ ...prev, resetLinkModal: false }))}
+				/>
+			</ModalContainer>
+
 			{/* Invite Link Modal */}
 			<ModalContainer
 				visible={modalState.inviteLinkModal}
 				onClose={() => setModalState(prev => ({ ...prev, inviteLinkModal: false }))}
 			>
-				<GetInviteLinkForm
-					inviteLink={inviteLink}
+				<GetLinkForm
+					linkName={"Invite"}
+					link={inviteLink}
 					onClose={() => setModalState(prev => ({ ...prev, inviteLinkModal: false }))}
 				/>
 			</ModalContainer>

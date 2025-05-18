@@ -5,12 +5,17 @@ import Loading from "@/ui/Loading";
 export default function AuthorizedLayout() {
 	const { token, loading } = useAuth();
 
+	if (loading) {
+		console.log("Loading...");
+		return <Loading />;
+	}
+
 	if (!token) {
 		console.log("No token: " + token);
 		return <Redirect href={"/Login"} />;
+	} else {
+		console.log("Token: " + token);
 	}
-
-	if (loading) return <Loading />;
 
 	return (
 		<Stack>

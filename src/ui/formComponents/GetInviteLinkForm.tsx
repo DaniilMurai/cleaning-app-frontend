@@ -5,28 +5,28 @@ import { Button } from "@/ui";
 import { Alert, Platform, View } from "react-native";
 import * as Clipboard from "expo-clipboard";
 
-interface GetInviteLinkFormProps {
-	inviteLink: string;
+interface GetLinkFormProps {
+	linkName: string;
+	link: string;
 	onClose: () => void;
 }
 
-export default function GetInviteLinkForm({ inviteLink, onClose }: GetInviteLinkFormProps) {
+export default function GetLinkForm({ linkName, link, onClose }: GetLinkFormProps) {
 	return (
 		<Card size={"medium"} style={styles.container}>
-			<Typography variant="h5" style={styles.title}>
-				User Created Successfully
+			<Typography variant="body1">
+				{linkName} link: {link}
 			</Typography>
-			<Typography variant="body1">Invite link: {inviteLink}</Typography>
 
 			<View style={styles.buttonsContainer}>
 				<Button
 					onPress={async () => {
 						// Для веб
 						if (Platform.OS === "web") {
-							navigator.clipboard.writeText(inviteLink);
+							navigator.clipboard.writeText(link);
 						} else {
 							// Для React Native потребуется установка пакета
-							await Clipboard.setStringAsync(inviteLink);
+							await Clipboard.setStringAsync(link);
 						}
 
 						if (Platform.OS === "web") {

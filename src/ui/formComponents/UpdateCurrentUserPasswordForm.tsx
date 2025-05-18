@@ -1,12 +1,13 @@
-// EditUserForm.tsx
+// UpdateCurrentUserPasswordForm.tsx
 import { View } from "react-native";
 import { Button } from "@/ui";
 import Input from "@/ui/Input";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Card from "@/ui/Card";
 import Typography from "@/ui/Typography";
 import { StyleSheet } from "react-native-unistyles";
 import { UserUpdatePassword } from "@/api/users";
+import PasswordInputs, { PasswordInputsRef } from "@/ui/components/common/2PasswordInputs";
 
 interface EditUserFormProps {
 	onClose: () => void;
@@ -25,17 +26,43 @@ export default function UpdateCurrentUserPasswordForm({
 		old_password: "",
 		new_password: "",
 	});
-	const [repeatedPasswordError, setRepeatedPasswordError] = useState<string>("");
+	const [formErrors, setFormErrors] = useState({
+		old_password: "",
+		new_password: "",
+	});
 
-	const [repeatedPassword, setRepeatPassword] = useState<string>("");
+	const passwordInputsRef = useRef<PasswordInputsRef>(null);
 
 	const handleSubmit = () => {
-		setRepeatedPasswordError("");
-		if (formData.new_password !== repeatedPassword) {
-			setRepeatedPasswordError("Passwords do not match");
+		// Сбросить ошибки
+		setFormErrors({
+			old_password: "",
+			new_password: "",
+		});
+
+		// Проверка старого пароля
+		if (!formData.old_password || formData.old_password.trim() === "") {
+			setFormErrors(prev => ({
+				...prev,
+				old_password: "Please enter your current password",
+			}));
 			return;
-		} else {
-			onSubmit(formData);
+		}
+
+		// Валидация нового пароля через PasswordInputs компонент
+		if (passwordInputsRef.current) {
+			const result = passwordInputsRef.current.validate();
+			if (result.isValid) {
+				// Обновляем состояние formData новым паролем и отправляем данные
+				const updatedData = {
+					old_password: formData.old_password,
+					new_password: result.password,
+				};
+
+				// Обновить состояние и отправить форму
+				setFormData(updatedData);
+				onSubmit(updatedData);
+			}
 		}
 	};
 
@@ -46,44 +73,27 @@ export default function UpdateCurrentUserPasswordForm({
 			</Typography>
 
 			<Input
-				label="Old password"
+				placeholder="Current password"
 				value={formData.old_password}
 				onChangeText={text => setFormData({ ...formData, old_password: text })}
 				style={styles.input}
 				secureTextEntry={true}
+				helperText={formErrors.old_password}
 			/>
 
-			<Input
-				label="New password"
-				value={formData.new_password}
-				onChangeText={text => setFormData({ ...formData, new_password: text })}
-				style={styles.input}
-				secureTextEntry={true}
+			<PasswordInputs
+				ref={passwordInputsRef}
+				minLength={8}
+				statusMessages={{
+					error: formErrors.new_password || null,
+				}}
 			/>
 
-			<Input
-				label="Repeat new password"
-				value={repeatedPassword}
-				onChangeText={text => setRepeatPassword(text)}
-				style={styles.input}
-				secureTextEntry={true}
-			/>
-
-			{repeatedPasswordError ? (
-				<Typography variant={"body1"} color={"error"}>
-					{repeatedPasswordError}
-				</Typography>
-			) : error ? (
-				<Typography variant={"body1"} color={"error"}>
+			{error ? (
+				<Typography variant={"body1"} color={"error"} style={styles.errorText}>
 					{error}
 				</Typography>
 			) : null}
-
-			{/*{error && (*/}
-			{/*	<Typography variant={"body1"} color={"error"}>*/}
-			{/*		{error}*/}
-			{/*	</Typography>*/}
-			{/*)}*/}
 
 			<View style={styles.buttonsContainer}>
 				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
@@ -108,7 +118,14 @@ const styles = StyleSheet.create(theme => ({
 		marginBottom: theme.spacing(3),
 	},
 	input: {
-		marginBottom: theme.spacing(2),
+		marginBottom: theme.spacing(0.5),
+	},
+	sectionLabel: {
+		marginBottom: theme.spacing(1),
+		fontWeight: "bold",
+	},
+	errorText: {
+		marginTop: theme.spacing(1),
 	},
 	buttonsContainer: {
 		flexDirection: "row",
