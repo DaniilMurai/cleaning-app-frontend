@@ -4,6 +4,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { useIsAdmin } from "@/context/AuthContext";
 import { View } from "react-native";
 import ThemeSwitcher from "@/ui/components/common/ThemeSwitcher";
+import LanguageSwitcher from "@/ui/components/common/LanguageSwitcher";
 
 export default function TabsLayout() {
 	const isAdmin = useIsAdmin();
@@ -13,8 +14,9 @@ export default function TabsLayout() {
 		<Tabs
 			screenOptions={{
 				headerRight: () => (
-					<View style={{ marginRight: 10 }}>
+					<View style={{ flexDirection: "row", marginRight: 10 }}>
 						<ThemeSwitcher />
+						<LanguageSwitcher />
 					</View>
 				),
 			}}

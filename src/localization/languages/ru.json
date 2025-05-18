@@ -1,0 +1,105 @@
+{
+  "common": {
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "success": "Успешно",
+    "confirm": "Подтвердить",
+    "settings": "Настройки",
+    "logout": "Выйти",
+    "close": "Закрыть",
+    "copy": "Копировать",
+    "refresh": "Обновить",
+    "submit": "Отправить",
+    "yes": "Да",
+    "no": "Нет"
+  },
+  "auth": {
+    "login": "Логин",
+    "password": "Пароль",
+    "oldPassword": "Текущий пароль",
+    "newPassword": "Новый пароль",
+    "confirmPassword": "Подтвердите пароль",
+    "signIn": "Войти",
+    "signUp": "Зарегистрироваться",
+    "forgotPassword": "Забыли пароль?",
+    "resetPassword": "Сбросить пароль",
+    "activate": "Активировать аккаунт",
+    "loginError": "Ошибка входа",
+    "invalidCredentials": "Неверный логин или пароль",
+    "activationCode": "Код активации"
+  },
+  "profile": {
+    "title": "Профиль",
+    "fullName": "Полное имя",
+    "username": "Имя пользователя",
+    "editProfile": "Редактировать профиль",
+    "changePassword": "Сменить пароль",
+    "userSettings": "Настройки пользователя",
+    "language": "Язык",
+    "theme": "Тема",
+    "notification": "Уведомления",
+    "personal": "Личная информация"
+  },
+  "admin": {
+    "panel": "Панель администратора",
+    "users": "Пользователи",
+    "createUser": "Создать пользователя",
+    "editUser": "Редактировать пользователя",
+    "deleteUser": "Удалить пользователя",
+    "adminNote": "Примечание администратора",
+    "inviteLink": "Пригласительная ссылка",
+    "resetLink": "Ссылка для сброса пароля",
+    "generateLink": "Сгенерировать ссылку",
+    "copyLink": "Копировать ссылку",
+    "linkCopied": "Ссылка скопирована в буфер обмена!"
+  },
+  "errors": {
+    "updateFailed": "Не удалось обновить данные пользователя: {{error}}",
+    "passwordChangeFailed": "Не удалось обновить пароль: {{error}}",
+    "logoutError": "Не удалось выйти: {{error}}",
+    "deleteError": "Не удалось удалить: {{error}}",
+    "createError": "Не удалось создать: {{error}}",
+    "invalidForm": "Пожалуйста, заполните форму корректно",
+    "passwordMismatch": "Пароли не совпадают",
+    "passwordTooShort": "Пароль должен содержать не менее 8 символов",
+    "passwordRequirements": "Пароль должен содержать как минимум одну заглавную букву, одну строчную букву и одну цифру",
+    "networkError": "Ошибка сети. Пожалуйста, проверьте ваше подключение к интернету"
+  },
+  "validation": {
+    "required": "Это поле обязательно для заполнения",
+    "email": "Пожалуйста, введите корректный email",
+    "minLength": "Минимальная длина - {{length}} символов",
+    "maxLength": "Максимальная длина - {{length}} символов",
+    "passwordMatch": "Пароли должны совпадать",
+    "invalidInput": "Некорректный ввод"
+  },
+  "ui": {
+    "darkMode": "Темный режим",
+    "lightMode": "Светлый режим",
+    "systemMode": "Системная тема",
+    "alertTitle": "Внимание",
+    "confirmDialog": "Вы уверены?",
+    "noData": "Нет данных",
+    "noResults": "Нет результатов"
+  },
+  "components": {
+    "infoItem": {
+      "notAvailable": "Н/Д"
+    },
+    "usersList": {
+      "name": "Имя",
+      "role": "Роль",
+      "status": "Статус",
+      "actions": "Действия",
+      "adminNote": "Примечание администратора",
+      "notAvailable": "Н/Д",
+      "edit": "Редактировать",
+      "delete": "Удалить",
+      "resetPassword": "Сбросить пароль"
+    }
+  }
+}

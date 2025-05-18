@@ -2,6 +2,7 @@
 import { Stack } from "expo-router";
 import { View } from "react-native";
 import ThemeSwitcher from "@/ui/components/common/ThemeSwitcher";
+import LanguageSwitcher from "@/ui/components/common/LanguageSwitcher";
 
 // Обязательный default export
 export default function AuthLayout() {
@@ -9,8 +10,9 @@ export default function AuthLayout() {
 		<Stack
 			screenOptions={{
 				headerRight: () => (
-					<View style={{ marginRight: 10 }}>
+					<View style={{ flexDirection: "row", marginRight: 10 }}>
 						<ThemeSwitcher />
+						<LanguageSwitcher />
 					</View>
 				),
 			}}

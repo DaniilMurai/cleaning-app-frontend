@@ -9,8 +9,11 @@ import UpdateCurrentUserForm from "@/ui/formComponents/UpdateCurrentUserForm";
 import { useCurrentUserMutations } from "@/hooks/useCurrentUserMutations";
 import UpdateCurrentUserPasswordForm from "@/ui/formComponents/UpdateCurrentUserPasswordForm";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 export default function ProfilePage() {
+	const { t } = useTranslation();
+
 	const [isEditing, setIsEditing] = useState(false);
 	const [isChangingPassword, setIsChangingPassword] = useState(false);
 	const { logout, user, refreshUserData } = useAuth();
@@ -102,8 +105,8 @@ export default function ProfilePage() {
 				<View style={styles.divider} />
 
 				<View style={styles.infoSection}>
-					<InfoItem label="Логин" value={user?.nickname || "-"} />
-					<InfoItem label="Полное имя" value={user?.full_name || "-"} />
+					<InfoItem label={t("auth.login")} value={user?.nickname || "-"} />
+					<InfoItem label={t("profile.fullName")} value={user?.full_name || "-"} />
 				</View>
 
 				<View style={styles.divider} />
@@ -115,20 +118,20 @@ export default function ProfilePage() {
 						onPress={() => setIsEditing(true)}
 						// startIcon={<AntDesign name="edit" size={16} />}
 					>
-						Редактировать
+						{t("profile.editProfile")}
 					</Button>
 					<Button
 						variant="outlined"
 						size="small"
 						onPress={() => setIsChangingPassword(true)}
 					>
-						Сменить пароль
+						{t("profile.changePassword")}
 					</Button>
 				</View>
 
 				{errorState.logoutError ? (
 					<Typography color="error" style={styles.errorText}>
-						Ошибка: {errorState.logoutError}
+						{t("common.error")}: {errorState.logoutError}
 					</Typography>
 				) : null}
 			</Card>
