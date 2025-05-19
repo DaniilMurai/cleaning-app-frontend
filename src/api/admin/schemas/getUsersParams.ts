@@ -6,6 +6,8 @@
  */
 import type { UserRole } from "./userRole";
 import type { UserStatus } from "./userStatus";
+import type { UserFields } from "./userFields";
+import type { SortDirection } from "./sortDirection";
 
 export type GetUsersParams = {
 	role?: UserRole | null;
@@ -14,4 +16,6 @@ export type GetUsersParams = {
 	search?: string | null;
 	offset?: number | null;
 	limit?: number | null;
+	order_by?: UserFields | null;
+	direction?: SortDirection | null;
 };

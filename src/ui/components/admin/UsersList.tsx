@@ -12,6 +12,7 @@ import { useIsSuperAdmin } from "@/context/AuthContext";
 interface UsersListProps {
 	users: UserSchema[];
 	onForgetPassword: (userId: number) => void;
+	onActivateUser: (userId: number) => void;
 	onEditUser: (user: UserSchema) => void;
 	onDeleteUser: (userId: number) => void;
 }
@@ -19,6 +20,7 @@ interface UsersListProps {
 export default function UsersList({
 	users,
 	onForgetPassword,
+	onActivateUser,
 	onEditUser,
 	onDeleteUser,
 }: UsersListProps) {
@@ -48,7 +50,10 @@ export default function UsersList({
 						<>
 							<View style={styles.actionButtons}>
 								<Button variant="tint" onPress={() => onForgetPassword(user.id)}>
-									<FontAwesome5 name="key" size={20} />
+									<FontAwesome5 name="unlock" size={20} />
+								</Button>
+								<Button variant="tint" onPress={() => onActivateUser(user.id)}>
+									<FontAwesome5 name="user-check" size={20} />
 								</Button>
 							</View>
 							<View style={styles.actionButtons}>

@@ -34,6 +34,7 @@ export default function AdminPanelPage() {
 		handleCreateUser,
 		handleDeleteUser,
 		handleForgetPassword,
+		handleGetInviteLink,
 		updateMutation,
 		createMutation,
 	} = useAdminMutations({
@@ -50,6 +51,10 @@ export default function AdminPanelPage() {
 			setResetLink(reset_link);
 			setModalState(prevState => ({ ...prevState, resetLinkModal: true }));
 		},
+		onSuccessGetInviteLink: inviteLink => {
+			setInviteLink(inviteLink);
+			setModalState(prevState => ({ ...prevState, inviteLinkModal: true }));
+		},
 		refetch,
 	});
 
@@ -63,8 +68,15 @@ export default function AdminPanelPage() {
 	};
 
 	const handleForgetPasswordClick = async (user_id: number) => {
-		await handleForgetPassword(user_id);
-		setModalState(prev => ({ ...prev, resetLinkModal: true }));
+		try {
+			await handleForgetPassword(user_id);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const handleGetInviteLinkClick = async (user_id: number) => {
+		await handleGetInviteLink(user_id);
 	};
 
 	const handleUpdateUserSubmit = async (userData: Partial<UserSchema>) => {
@@ -118,6 +130,7 @@ export default function AdminPanelPage() {
 					onEditUser={handleEditUser}
 					onDeleteUser={handleDeleteUser}
 					onForgetPassword={handleForgetPasswordClick}
+					onActivateUser={handleGetInviteLinkClick}
 				/>
 			</ScrollView>
 

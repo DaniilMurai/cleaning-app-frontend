@@ -27,6 +27,7 @@ import type {
 	DeleteUserParams,
 	ForgetPasswordLink,
 	ForgetPasswordLinkParams,
+	GetInviteLinkParams,
 	GetUsersParams,
 	HTTPValidationError,
 	InviteLink,
@@ -532,6 +533,80 @@ export const useForgetPasswordLink = <TError = ErrorType<HTTPValidationError>, T
 	TContext
 > => {
 	const mutationOptions = getForgetPasswordLinkMutationOptions(options);
+
+	return useMutation(mutationOptions, queryClient);
+};
+/**
+ * @summary Get Invite Link
+ */
+export const getInviteLink = (params: GetInviteLinkParams, signal?: AbortSignal) => {
+	return getAxios<InviteLink>({
+		url: `/admin/users/get-invite-link`,
+		method: "POST",
+		params,
+		signal,
+	});
+};
+
+export const getGetInviteLinkMutationOptions = <
+	TError = ErrorType<HTTPValidationError>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof getInviteLink>>,
+		TError,
+		{ params: GetInviteLinkParams },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof getInviteLink>>,
+	TError,
+	{ params: GetInviteLinkParams },
+	TContext
+> => {
+	const mutationKey = ["getInviteLink"];
+	const { mutation: mutationOptions } = options
+		? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+			? options
+			: { ...options, mutation: { ...options.mutation, mutationKey } }
+		: { mutation: { mutationKey } };
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof getInviteLink>>,
+		{ params: GetInviteLinkParams }
+	> = props => {
+		const { params } = props ?? {};
+
+		return getInviteLink(params);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type GetInviteLinkMutationResult = NonNullable<Awaited<ReturnType<typeof getInviteLink>>>;
+
+export type GetInviteLinkMutationError = ErrorType<HTTPValidationError>;
+
+/**
+ * @summary Get Invite Link
+ */
+export const useGetInviteLink = <TError = ErrorType<HTTPValidationError>, TContext = unknown>(
+	options?: {
+		mutation?: UseMutationOptions<
+			Awaited<ReturnType<typeof getInviteLink>>,
+			TError,
+			{ params: GetInviteLinkParams },
+			TContext
+		>;
+	},
+	queryClient?: QueryClient
+): UseMutationResult<
+	Awaited<ReturnType<typeof getInviteLink>>,
+	TError,
+	{ params: GetInviteLinkParams },
+	TContext
+> => {
+	const mutationOptions = getGetInviteLinkMutationOptions(options);
 
 	return useMutation(mutationOptions, queryClient);
 };
