@@ -4,6 +4,7 @@ import {
 	useCreateUser,
 	useDeleteUser,
 	useForgetPasswordLink,
+	useGetInviteLink,
 	useUpdateUser,
 } from "@/api/admin";
 import { UserSchema } from "@/api/admin/schemas/userSchema";
@@ -14,10 +15,17 @@ export function useAdminMutations(options: {
 	onSuccessUpdate?: () => void;
 	onSuccessDelete?: () => void;
 	onSuccessResetPassword?: (reset_link: string) => void;
+	onSuccessGetInviteLink?: (invite_link: string) => void;
 	refetch: () => void;
 }) {
-	const { onSuccessCreate, onSuccessUpdate, onSuccessDelete, onSuccessResetPassword, refetch } =
-		options;
+	const {
+		onSuccessCreate,
+		onSuccessUpdate,
+		onSuccessDelete,
+		onSuccessResetPassword,
+		onSuccessGetInviteLink,
+		refetch,
+	} = options;
 
 	const forgetPasswordMutation = useForgetPasswordLink({
 		mutation: {
@@ -27,6 +35,18 @@ export function useAdminMutations(options: {
 			},
 			onError: error => {
 				AlertUtils.showError(error.message || "Failed to send password reset link");
+			},
+		},
+	});
+
+	const getInviteLinkMutation = useGetInviteLink({
+		mutation: {
+			onSuccess: data => {
+				const invite_link = data.invite_link;
+				onSuccessGetInviteLink?.(invite_link);
+			},
+			onError: error => {
+				AlertUtils.showError(error.message || "Failed to get invite link");
 			},
 		},
 	});
@@ -96,14 +116,20 @@ export function useAdminMutations(options: {
 		await forgetPasswordMutation.mutateAsync({ params: { user_id } });
 	};
 
+	const handleGetInviteLink = async (user_id: number) => {
+		await getInviteLinkMutation.mutateAsync({ params: { user_id } });
+	};
+
 	return {
 		handleUpdateUser,
 		handleCreateUser,
 		handleDeleteUser,
 		handleForgetPassword,
+		handleGetInviteLink,
 		updateMutation,
 		createMutation,
 		deleteMutation,
 		forgetPasswordMutation,
+		getInviteLinkMutation,
 	};
 }

@@ -8,6 +8,8 @@ import { roleOptions } from "@/ui/formComponents/Role-StatusOptions";
 import { View } from "react-native";
 import { Button } from "@/ui";
 import { StyleSheet } from "react-native-unistyles";
+import { useTranslation } from "react-i18next";
+import { useIsSuperAdmin } from "@/context/AuthContext";
 
 interface CreateUserFormProps {
 	onSubmit: (userData: RegisterUserData) => void;
@@ -16,6 +18,9 @@ interface CreateUserFormProps {
 }
 
 export default function CreateUserForm({ onSubmit, onClose, isLoading }: CreateUserFormProps) {
+	const { t } = useTranslation();
+
+	const isSuperAdmin = useIsSuperAdmin();
 	const [formData, setFormData] = useState<RegisterUserData>({
 		full_name: "",
 		role: "employee",
@@ -29,26 +34,30 @@ export default function CreateUserForm({ onSubmit, onClose, isLoading }: CreateU
 	return (
 		<Card size="large" style={styles.container}>
 			<Typography variant="h5" style={styles.title}>
-				Create User
+				{t("admin.createUser")}
 			</Typography>
 
 			<Input
-				label="Full Name"
+				label={t("profile.fullName")}
 				value={formData.full_name}
 				onChangeText={text => setFormData({ ...formData, full_name: text })}
 				style={styles.input}
 			/>
 
 			<Select
-				label="Role"
+				label={t("components.usersList.role")}
 				value={formData.role ?? "employee"}
-				options={roleOptions}
+				options={
+					isSuperAdmin
+						? roleOptions
+						: roleOptions.filter(option => option.value !== "admin")
+				}
 				onChange={value => setFormData({ ...formData, role: value as UserRole })}
 				style={styles.input}
 			/>
 
 			<Input
-				label="Admin Note"
+				label={t("components.usersList.adminNote")}
 				value={formData.admin_note ?? undefined}
 				onChangeText={text => setFormData({ ...formData, admin_note: text })}
 				style={styles.input}
@@ -58,10 +67,10 @@ export default function CreateUserForm({ onSubmit, onClose, isLoading }: CreateU
 
 			<View style={styles.buttonsContainer}>
 				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
-					Create User
+					{t("admin.createUser")}
 				</Button>
 				<Button variant="outlined" onPress={onClose}>
-					Cancel
+					{t("common.close")}
 				</Button>
 			</View>
 		</Card>

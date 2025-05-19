@@ -10,8 +10,10 @@ import { clearTokens, saveTokens } from "@/hooks/tokens";
 import useAuth from "@/context/AuthContext";
 import PasswordInputs, { PasswordInputsRef } from "@/ui/components/common/2PasswordInputs";
 import { StyleSheet } from "react-native-unistyles";
+import { useTranslation } from "react-i18next";
 
 export default function Activate() {
+	const { t } = useTranslation();
 	const [nickname, setNickname] = useState("");
 	const activateMutation = useActivate();
 	const params = useLocalSearchParams();
@@ -62,10 +64,10 @@ export default function Activate() {
 		<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
 			<Card variant="outlined" size="medium" style={{ width: "100%", maxWidth: 400 }}>
 				<Typography variant={"h5"} style={{ textAlign: "center" }}>
-					Активация
+					{t("auth.activateAccount")}
 				</Typography>
 				<Input
-					placeholder="Введите nickname"
+					placeholder={t("profile.username")}
 					variant="outlined"
 					color="primary"
 					size="medium"
@@ -74,12 +76,17 @@ export default function Activate() {
 					onChangeText={setNickname}
 				/>
 
-				<PasswordInputs minLength={8} ref={passwordInputsRef} />
+				<PasswordInputs
+					placeholder1={t("auth.password")}
+					placeholder2={t("auth.confirmPassword")}
+					minLength={8}
+					ref={passwordInputsRef}
+				/>
 
 				{activateMutation.isError && (
 					<Typography variant="body2" color="error">
 						{String(activateMutation.failureReason?.response?.data.detail) ||
-							"An error occurred"}
+							t("common.error")}
 					</Typography>
 				)}
 
@@ -91,7 +98,7 @@ export default function Activate() {
 					onPress={handleActivate}
 					style={{ alignItems: "center" }}
 				>
-					Активировать
+					{t("auth.activate")}
 				</Button>
 			</Card>
 		</View>

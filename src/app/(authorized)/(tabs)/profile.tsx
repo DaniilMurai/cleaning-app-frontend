@@ -10,6 +10,7 @@ import { useCurrentUserMutations } from "@/hooks/useCurrentUserMutations";
 import UpdateCurrentUserPasswordForm from "@/ui/formComponents/UpdateCurrentUserPasswordForm";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
+import SettingsModal from "@/ui/components/settings/SettingsModal";
 
 export default function ProfilePage() {
 	const { t } = useTranslation();
@@ -17,6 +18,7 @@ export default function ProfilePage() {
 	const [isEditing, setIsEditing] = useState(false);
 	const [isChangingPassword, setIsChangingPassword] = useState(false);
 	const { logout, user, refreshUserData } = useAuth();
+	const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
 	const [errorState, setErrorState] = useState({
 		logoutError: "",
@@ -93,7 +95,7 @@ export default function ProfilePage() {
 						{user?.full_name || user?.nickname || "User"}
 					</Typography>
 					<View style={{ flex: 1 }} />
-					<Button variant="outlined">
+					<Button variant="outlined" onPress={() => setIsSettingsModalOpen(true)}>
 						<FontAwesome5 name="cog" size={20} />
 					</Button>
 
@@ -135,6 +137,11 @@ export default function ProfilePage() {
 					</Typography>
 				) : null}
 			</Card>
+
+			<SettingsModal
+				isVisible={isSettingsModalOpen}
+				onClose={() => setIsSettingsModalOpen(false)}
+			/>
 
 			<ModalContainer
 				onClose={() => {

@@ -4,6 +4,8 @@ import Typography from "@/ui/Typography";
 import { Button } from "@/ui";
 import { Alert, Platform, View } from "react-native";
 import * as Clipboard from "expo-clipboard";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface GetLinkFormProps {
 	linkName: string;
@@ -12,27 +14,37 @@ interface GetLinkFormProps {
 }
 
 export default function GetLinkForm({ linkName, link, onClose }: GetLinkFormProps) {
+	const { t } = useTranslation();
+
+	const [isError, setIsError] = useState<boolean>(false);
 	return (
 		<Card size={"medium"} style={styles.container}>
 			<Typography variant="body1">
-				{linkName} link: {link}
+				{linkName}: {link}
 			</Typography>
+			{isError && (
+				<Typography style={styles.error}>{t("common.errorCopyingToClipboard")}</Typography>
+			)}
 
 			<View style={styles.buttonsContainer}>
 				<Button
 					onPress={async () => {
+						setIsError(false);
 						// Для веб
-						if (Platform.OS === "web") {
-							navigator.clipboard.writeText(link);
-						} else {
-							// Для React Native потребуется установка пакета
-							await Clipboard.setStringAsync(link);
-						}
-
-						if (Platform.OS === "web") {
-							window.alert("Link copied to clipboard!");
-						} else {
-							Alert.alert("Success", "Link copied to clipboard!");
+						try {
+							if (Platform.OS === "web") {
+								navigator.clipboard.writeText(link);
+							} else {
+								// Для React Native потребуется установка пакета
+								await Clipboard.setStringAsync(link);
+							}
+							if (Platform.OS === "web") {
+								window.alert("Link copied to clipboard!");
+							} else {
+								Alert.alert("Success", "Link copied to clipboard!");
+							}
+						} catch (e) {
+							setIsError(true);
 						}
 					}}
 				>
@@ -62,5 +74,8 @@ const styles = StyleSheet.create(theme => ({
 		justifyContent: "flex-end",
 		gap: theme.spacing(2),
 		marginTop: theme.spacing(3),
+	},
+	error: {
+		color: theme.colors.error.main,
 	},
 }));

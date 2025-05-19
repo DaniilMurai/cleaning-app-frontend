@@ -1,7 +1,6 @@
 export const roleOptions = [
 	{ label: "Employee", value: "employee" },
 	{ label: "Admin", value: "admin" },
-	{ label: "Super Admin", value: "superadmin" },
 ];
 
 export const statusOptions = [

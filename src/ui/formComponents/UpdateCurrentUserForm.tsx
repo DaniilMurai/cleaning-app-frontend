@@ -7,6 +7,7 @@ import Card from "@/ui/Card";
 import Typography from "@/ui/Typography";
 import { StyleSheet } from "react-native-unistyles";
 import { UpdateUserData } from "@/api/users";
+import { useTranslation } from "react-i18next";
 
 interface EditUserFormProps {
 	user: UpdateUserData;
@@ -23,6 +24,8 @@ export default function UpdateCurrentUserForm({
 	isLoading,
 	error,
 }: EditUserFormProps) {
+	const { t } = useTranslation();
+
 	const [formData, setFormData] = useState<Partial<UpdateUserData>>({
 		nickname: user.nickname,
 		full_name: user.full_name,
@@ -35,18 +38,18 @@ export default function UpdateCurrentUserForm({
 	return (
 		<Card size="large" style={styles.container}>
 			<Typography variant="h5" style={styles.title}>
-				Edit User: {user.nickname}
+				{t("admin.editUser")}: {user.nickname}
 			</Typography>
 
 			<Input
-				label="Nickname"
+				label={t("profile.username") || "Username"}
 				value={formData.nickname ?? undefined}
 				onChangeText={text => setFormData({ ...formData, nickname: text })}
 				style={styles.input}
 			/>
 
 			<Input
-				label="Full Name"
+				label={t("profile.fullName") || "Full Name"}
 				value={formData.full_name ?? undefined}
 				onChangeText={text => setFormData({ ...formData, full_name: text })}
 				style={styles.input}
@@ -56,10 +59,10 @@ export default function UpdateCurrentUserForm({
 
 			<View style={styles.buttonsContainer}>
 				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
-					Save Changes
+					{t("common.save")}
 				</Button>
 				<Button variant="outlined" onPress={onClose}>
-					Cancel
+					{t("common.close")}
 				</Button>
 			</View>
 		</Card>

@@ -15,7 +15,7 @@ const LanguageSwitcher = () => {
 					key={lang.code}
 					style={[
 						styles.languageButton,
-						// currentLanguage === lang.code && styles.activeLanguage,
+						currentLanguage === lang.code && styles.activeLanguage,
 					]}
 					onPress={() => changeLanguage(lang.code)}
 				>
@@ -23,7 +23,7 @@ const LanguageSwitcher = () => {
 						variant="body2"
 						style={currentLanguage === lang.code ? styles.activeText : styles.text}
 					>
-						{lang.name}
+						{lang.code.toUpperCase()}
 					</Typography>
 				</TouchableOpacity>
 			))}
@@ -43,7 +43,7 @@ const styles = StyleSheet.create(theme => ({
 		borderRadius: theme.spacing(1),
 	},
 	activeLanguage: {
-		backgroundColor: theme.colors.primary,
+		backgroundColor: theme.colors.primary.main,
 	},
 	activeText: {
 		color: theme.colors.text.primary,

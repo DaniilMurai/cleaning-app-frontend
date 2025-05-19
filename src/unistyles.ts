@@ -7,6 +7,7 @@ const themedColors = {
 			light: "#65eee5",
 			dark: "#338883",
 			text: "#000",
+			contrastText: "#ffffff", // Добавлено
 		},
 		secondary: {
 			main: "#FF6B6B",
@@ -41,12 +42,15 @@ const themedColors = {
 		background: {
 			main: "#F5FCFF",
 			paper: "#F5FCFF",
+			default: "#FFFFFF", // Добавлено
 		},
 		text: {
 			primary: "#1A353C",
 			secondary: "#374348",
 		},
 		divider: "rgba(0, 0, 0, 0.12)",
+		shadow: "rgba(0, 0, 0, 0.1)", // Добавлено
+		border: "#e0e0e0", // Добавлено
 	},
 	dark: {
 		primary: {
@@ -54,6 +58,7 @@ const themedColors = {
 			light: "#6ac9c0",
 			dark: "#338883",
 			text: "#000",
+			contrastText: "#ffffff", // Добавлено
 		},
 		secondary: {
 			main: "#834a4a",
@@ -88,12 +93,15 @@ const themedColors = {
 		background: {
 			main: "#151718",
 			paper: "#292c2c",
+			default: "#1e2021", // Добавлено
 		},
 		text: {
 			primary: "#ECEDEE",
 			secondary: "#999a9a",
 		},
 		divider: "rgba(255, 255, 255, 0.12)",
+		shadow: "rgba(0, 0, 0, 0.3)", // Добавлено
+		border: "#444444", // Добавлено
 	},
 };
 

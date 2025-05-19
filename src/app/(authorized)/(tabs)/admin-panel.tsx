@@ -11,8 +11,11 @@ import UsersList from "@/ui/components/admin/UsersList";
 import { useAdminMutations } from "@/hooks/useAdminMutations";
 import { FontAwesome5 } from "@expo/vector-icons";
 import GetLinkForm from "@/ui/formComponents/GetInviteLinkForm";
+import { useTranslation } from "react-i18next";
 
 export default function AdminPanelPage() {
+	const { t } = useTranslation();
+
 	const [selectedUser, setSelectedUser] = useState<UserSchema | null>(null);
 	const [inviteLink, setInviteLink] = useState("");
 	const [resetLink, setResetLink] = useState("");
@@ -31,6 +34,7 @@ export default function AdminPanelPage() {
 		handleCreateUser,
 		handleDeleteUser,
 		handleForgetPassword,
+		handleGetInviteLink,
 		updateMutation,
 		createMutation,
 	} = useAdminMutations({
@@ -47,6 +51,10 @@ export default function AdminPanelPage() {
 			setResetLink(reset_link);
 			setModalState(prevState => ({ ...prevState, resetLinkModal: true }));
 		},
+		onSuccessGetInviteLink: inviteLink => {
+			setInviteLink(inviteLink);
+			setModalState(prevState => ({ ...prevState, inviteLinkModal: true }));
+		},
 		refetch,
 	});
 
@@ -60,8 +68,15 @@ export default function AdminPanelPage() {
 	};
 
 	const handleForgetPasswordClick = async (user_id: number) => {
-		await handleForgetPassword(user_id);
-		setModalState(prev => ({ ...prev, resetLinkModal: true }));
+		try {
+			await handleForgetPassword(user_id);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const handleGetInviteLinkClick = async (user_id: number) => {
+		await handleGetInviteLink(user_id);
 	};
 
 	const handleUpdateUserSubmit = async (userData: Partial<UserSchema>) => {
@@ -115,6 +130,7 @@ export default function AdminPanelPage() {
 					onEditUser={handleEditUser}
 					onDeleteUser={handleDeleteUser}
 					onForgetPassword={handleForgetPasswordClick}
+					onActivateUser={handleGetInviteLinkClick}
 				/>
 			</ScrollView>
 
@@ -151,7 +167,7 @@ export default function AdminPanelPage() {
 				onClose={() => setModalState(prev => ({ ...prev, resetLinkModal: false }))}
 			>
 				<GetLinkForm
-					linkName={"Reset"}
+					linkName={t("admin.resetLink")}
 					link={resetLink}
 					onClose={() => setModalState(prev => ({ ...prev, resetLinkModal: false }))}
 				/>
@@ -163,7 +179,7 @@ export default function AdminPanelPage() {
 				onClose={() => setModalState(prev => ({ ...prev, inviteLinkModal: false }))}
 			>
 				<GetLinkForm
-					linkName={"Invite"}
+					linkName={t("admin.inviteLink")}
 					link={inviteLink}
 					onClose={() => setModalState(prev => ({ ...prev, inviteLinkModal: false }))}
 				/>

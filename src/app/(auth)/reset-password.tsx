@@ -8,8 +8,10 @@ import PasswordInputs, { PasswordInputsRef } from "@/ui/components/common/2Passw
 import { View } from "react-native";
 import { clearTokens, saveTokens } from "@/hooks/tokens";
 import useAuth from "@/context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export default function ResetPassword() {
+	const { t } = useTranslation();
 	const params = useLocalSearchParams();
 	const token = typeof params.token === "string" ? params.token : params.token?.[0] || "";
 
@@ -18,7 +20,7 @@ export default function ResetPassword() {
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
 	const { checkToken } = useAuth();
-	
+
 	const ForgetPasswordMutation = useForgetPassword({
 		mutation: {
 			onSuccess: () => {
@@ -61,17 +63,17 @@ export default function ResetPassword() {
 		<View style={styles.container}>
 			<Card style={styles.card}>
 				<Typography variant="h5" style={styles.title}>
-					Reset Password
+					{t("components.userList.resetPassword")}
 				</Typography>
 
 				<PasswordInputs
+					placeholder1={t("auth.newPassword")}
+					placeholder2={t("auth.confirmPassword")}
 					ref={passwordInputsRef}
 					minLength={8}
 					statusMessages={{
-						success: ForgetPasswordMutation.isSuccess
-							? "Password successfully reset!"
-							: null,
-						processing: ForgetPasswordMutation.isPending ? "Processing..." : null,
+						success: ForgetPasswordMutation.isSuccess ? t("common.success") : null,
+						processing: ForgetPasswordMutation.isPending ? t("common.loading") : null,
 						error: errorMessage,
 					}}
 				/>
@@ -82,7 +84,7 @@ export default function ResetPassword() {
 					disabled={ForgetPasswordMutation.isPending}
 					style={styles.button}
 				>
-					Reset Password
+					{t("components.usersList.resetPassword")}
 				</Button>
 			</Card>
 		</View>

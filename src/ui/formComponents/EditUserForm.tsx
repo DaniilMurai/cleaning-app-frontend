@@ -11,6 +11,7 @@ import Typography from "@/ui/Typography";
 import { roleOptions, statusOptions } from "@/ui/formComponents/Role-StatusOptions";
 import { StyleSheet } from "react-native-unistyles";
 import { UserRole, UserSchema, UserStatus } from "@/api/admin";
+import { useIsSuperAdmin } from "@/context/AuthContext";
 
 interface EditUserFormProps {
 	user: UserSchema;
@@ -20,6 +21,8 @@ interface EditUserFormProps {
 }
 
 export default function EditUserForm({ user, onClose, onSubmit, isLoading }: EditUserFormProps) {
+	const isSuperAdmin = useIsSuperAdmin();
+
 	const [formData, setFormData] = useState<Partial<UserSchema>>({
 		nickname: user.nickname,
 		role: user.role,
@@ -48,7 +51,11 @@ export default function EditUserForm({ user, onClose, onSubmit, isLoading }: Edi
 			<Select
 				label="Role"
 				value={formData.role}
-				options={roleOptions}
+				options={
+					isSuperAdmin
+						? roleOptions
+						: roleOptions.filter(option => option.value !== "admin")
+				}
 				onChange={value => setFormData({ ...formData, role: value as UserRole })}
 				style={styles.input}
 			/>
