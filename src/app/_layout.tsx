@@ -6,6 +6,8 @@ import { AuthProvider } from "@/context/AuthContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { EventProvider } from "react-native-outside-press";
+import { PortalProvider } from "@/features/Portal";
+import PopperContextProvider from "@/ui/Popper/PopperContext";
 
 export default function RootLayout() {
 	const { theme, rt } = useUnistyles();
@@ -27,21 +29,25 @@ export default function RootLayout() {
 						},
 					}}
 				>
-					<LanguageProvider>
-						<EventProvider>
-							<Stack
-								initialRouteName="(navigation)"
-								screenOptions={{ headerShown: false }}
-							>
-								<Stack.Screen
-									name="(navigation)"
-									options={{ headerShown: false }}
-								/>
-							</Stack>
-						</EventProvider>
-					</LanguageProvider>
+					<EventProvider>
+						<PortalProvider>
+							<PopperContextProvider>
+								<RootLayoutNav />
+							</PopperContextProvider>
+						</PortalProvider>
+					</EventProvider>
 				</ThemeProvider>
 			</AuthProvider>
 		</QueryClientProvider>
+	);
+}
+
+function RootLayoutNav() {
+	return (
+		<LanguageProvider>
+			<Stack initialRouteName="(navigation)" screenOptions={{ headerShown: false }}>
+				<Stack.Screen name="(navigation)" options={{ headerShown: false }} />
+			</Stack>
+		</LanguageProvider>
 	);
 }

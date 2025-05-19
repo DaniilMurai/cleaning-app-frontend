@@ -45,7 +45,13 @@ export default function Index() {
 				Open Popper
 			</Button>
 
-			<Popper visible={popperVisible} setVisible={setPopperVisible}>
+			<Popper
+				visible={popperVisible}
+				setVisible={setPopperVisible}
+				anchorEl={popperAnchorRef.current}
+				anchorPosition={["top", "center"]}
+				contentPosition={["top", "center"]}
+			>
 				TEST
 			</Popper>
 		</View>
