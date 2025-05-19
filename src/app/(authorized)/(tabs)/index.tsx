@@ -2,8 +2,13 @@ import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { Button } from "@/ui";
 import Typography from "@/ui/Typography";
+import { useRef, useState } from "react";
+import Popper from "@/ui/Popper";
 
 export default function Index() {
+	const popperAnchorRef = useRef<View>(null);
+	const [popperVisible, setPopperVisible] = useState(false);
+
 	return (
 		<View style={styles.container}>
 			<Typography variant={"h1"} color={"primary"}>
@@ -35,6 +40,14 @@ export default function Index() {
 				<Button variant={"tint"}>tint</Button>
 				<Button variant={"contained"}>contained</Button>
 			</View>
+
+			<Button ref={popperAnchorRef} onPress={() => setPopperVisible(true)}>
+				Open Popper
+			</Button>
+
+			<Popper visible={popperVisible} setVisible={setPopperVisible}>
+				TEST
+			</Popper>
 		</View>
 	);
 }
