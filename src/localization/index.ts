@@ -14,10 +14,14 @@ const resources = {
 	},
 };
 
+const supportedLanguage = ["de", "ru"];
+const systemLang = Localization.locale.split("-")[0];
+const initialLanguage = supportedLanguage.includes(systemLang) ? systemLang : "ru";
+
 i18n.use(initReactI18next).init({
 	resources,
 	// Определяем язык устройства или используем английский по умолчанию
-	lng: Localization.locale.split("-")[0] || "ru",
+	lng: initialLanguage,
 	fallbackLng: "ru",
 	interpolation: {
 		escapeValue: false, // не экранировать HTML в переводах

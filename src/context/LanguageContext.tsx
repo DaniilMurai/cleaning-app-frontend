@@ -22,7 +22,7 @@ const LanguageContext = createContext<LanguageContextProps>({
 });
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-	const [currentLanguage, setCurrentLanguage] = useState<string | null>(null);
+	const [currentLanguage, setCurrentLanguage] = useState<string | null>("ru");
 	const [isLoading, setIsLoading] = useState(true);
 
 	const availableLanguages = [
