@@ -114,7 +114,8 @@
       "notAvailable": "Н/Д",
       "edit": "Редактировать",
       "delete": "Удалить",
-      "resetPassword": "Сбросить пароль"
+      "resetPassword": "Сбросить пароль",
+      "activate": "Активировать"
     }
   }
 }

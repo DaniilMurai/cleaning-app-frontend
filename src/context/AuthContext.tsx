@@ -53,9 +53,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		const initAuth = async () => {
 			try {
 				const tokens = await getTokens();
-				setToken(tokens?.accessToken || null);
+				const newToken = tokens?.accessToken || null;
+				setToken(tokens.accessToken);
 				console.log("Token:", token);
-				await refreshUserData();
+				if (newToken) {
+					await refreshUserData(newToken);
+				}
 			} catch (e) {
 				console.error("Ошибка при инициализации auth:", e);
 				setToken(null);
@@ -90,7 +93,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 	};
 
 	const refreshUserData = async (access_token?: string) => {
-		if (access_token || token) {
+		const tokenToUse = access_token || token;
+		if (tokenToUse) {
 			await refetchUser();
 			console.log("User data refetched:", userData);
 			if (userData) {

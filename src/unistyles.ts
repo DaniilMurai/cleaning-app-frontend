@@ -47,6 +47,7 @@ const themedColors = {
 		text: {
 			primary: "#1A353C",
 			secondary: "#374348",
+			disabled: "rgba(0, 0, 0, 0.38)", // Add this line
 		},
 		divider: "rgba(0, 0, 0, 0.12)",
 		shadow: "rgba(0, 0, 0, 0.1)", // Добавлено
@@ -98,6 +99,7 @@ const themedColors = {
 		text: {
 			primary: "#ECEDEE",
 			secondary: "#999a9a",
+			disabled: "rgba(255, 255, 255, 0.38)", // Add this line
 		},
 		divider: "rgba(255, 255, 255, 0.12)",
 		shadow: "rgba(0, 0, 0, 0.3)", // Добавлено

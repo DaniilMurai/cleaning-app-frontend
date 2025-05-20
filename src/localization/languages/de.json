@@ -114,7 +114,8 @@
       "notAvailable": "N/V",
       "edit": "Bearbeiten",
       "delete": "Löschen",
-      "resetPassword": "Passwort zurücksetzen"
+      "resetPassword": "Passwort zurücksetzen",
+      "activate": "Aktivieren"
     }
   }
 }

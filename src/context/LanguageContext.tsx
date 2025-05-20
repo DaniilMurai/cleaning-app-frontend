@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import i18n from "../localization";
+import { Loading } from "@/ui";
 
 interface LanguageContextProps {
 	currentLanguage: string;
@@ -63,7 +64,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
 	if (isLoading) {
 		// Можно вернуть загрузчик или null
-		return null;
+		return <Loading />;
 	}
 
 	return (
