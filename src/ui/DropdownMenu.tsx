@@ -126,7 +126,7 @@ export default function DropdownMenu({
 	return (
 		<>
 			<Pressable ref={buttonRef} onPress={showMenu} style={styles.menuButton}>
-				<FontAwesome5 name="ellipsis-v" size={iconSize} style={styles.icon} />
+				<FontAwesome5 name="ellipsis-v" size={iconSize} color={styles.icon.color} />
 			</Pressable>
 
 			<Modal visible={visible} transparent animationType="none" onRequestClose={hideMenu}>
@@ -189,7 +189,7 @@ const styles = StyleSheet.create(theme => ({
 		width: 180, // Фиксированная ширина меню
 		backgroundColor: theme.colors.background.paper,
 		borderRadius: theme.borderRadius(1),
-		shadowColor: "#000",
+		// shadowColor: "#000",
 		shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.25,
 		shadowRadius: 3.84,
@@ -208,6 +208,7 @@ const styles = StyleSheet.create(theme => ({
 	},
 	icon: {
 		color: theme.colors.text.primary, // Цвет иконки в соответствии с темой
+		backgroundColor: theme.colors.text.primary,
 	},
 	disabledItem: {
 		opacity: 0.5,

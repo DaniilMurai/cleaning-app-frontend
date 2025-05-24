@@ -37,19 +37,19 @@ export default function TabsLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="tasks"
+				name="admin"
 				options={{
-					title: t("tabs.tasks"),
+					title: t("tabs.admin"),
 					tabBarIcon: getTabBarIcon(FontAwesome5, "tasks"),
-					href: isAdmin ? "/tasks" : null,
+					href: isAdmin ? "/admin" : null,
 				}}
 			/>
 			<Tabs.Screen
-				name="admin-panel"
+				name="users"
 				options={{
-					title: t("tabs.adminPanel"),
+					title: t("tabs.users"),
 					tabBarIcon: getTabBarIcon(FontAwesome5, "shield-alt"),
-					href: isAdmin ? "/admin-panel" : null,
+					href: isAdmin ? "/users" : null,
 				}}
 			/>
 		</Tabs>

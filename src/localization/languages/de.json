@@ -9,8 +9,8 @@
   "tabs": {
     "home": "Startseite",
     "profile": "Profil",
-    "tasks": "Aufgaben",
-    "adminPanel": "Admin-Bereich"
+    "admin": "Admin",
+    "users": "Benutzer"
   },
   "common": {
     "save": "Speichern",

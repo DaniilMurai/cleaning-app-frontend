@@ -4,18 +4,13 @@ import Typography from "@/ui/Typography";
 import { Button } from "@/ui";
 import { useRouter } from "expo-router";
 
-export default function TasksPage() {
-
-	const router = useRouter()
-
-
+export default function AdminPage() {
+	const router = useRouter();
 
 	return (
 		<View style={styles.container}>
 			<Typography>Это страница Tasks</Typography>
-			<Button onPress={() => router.push("/Login")}>
-				to Login
-			</Button>
+			<Button onPress={() => router.push("/Login")}>to Login</Button>
 		</View>
 	);
 }

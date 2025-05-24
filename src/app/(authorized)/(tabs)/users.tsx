@@ -13,7 +13,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import GetLinkForm from "@/ui/formComponents/GetInviteLinkForm";
 import { useTranslation } from "react-i18next";
 
-export default function AdminPanelPage() {
+export default function UsersPage() {
 	const { t } = useTranslation();
 
 	const [selectedUser, setSelectedUser] = useState<UserSchema | null>(null);
