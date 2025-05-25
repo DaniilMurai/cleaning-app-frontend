@@ -4,10 +4,12 @@ import { Button } from "@/ui";
 import Typography from "@/ui/Typography";
 import { useRef, useState } from "react";
 import Popper from "@/ui/Popper";
+import Collapse from "@/ui/Collapse";
 
 export default function Index() {
 	const popperAnchorRef = useRef<View>(null);
 	const [popperVisible, setPopperVisible] = useState(false);
+	const [isExpanded, setIsExpanded] = useState(false);
 
 	return (
 		<View style={styles.container}>
@@ -29,10 +31,22 @@ export default function Index() {
 			<Typography variant={"h6"} color={"text.secondary"}>
 				H6
 			</Typography>
+			<>
+				<Button onPress={() => setIsExpanded(!isExpanded)}>
+					{isExpanded ? "Скрыть" : "Показать"}
+				</Button>
+
+				<Collapse expanded={isExpanded} variant={"bordered"} animationDuration={300}>
+					<Typography variant="body1">Содержимое</Typography>
+					<Typography>asdasd</Typography>
+				</Collapse>
+			</>
+
 			<Typography variant={"subtitle1"}>Subtitle1</Typography>
 			<Typography variant={"subtitle2"}>Subtitle2</Typography>
 			<Typography variant={"body1"}>Body1</Typography>
 			<Typography variant={"body2"}>Body2</Typography>
+
 			<Typography>Привет, Это страница Home</Typography>
 			<View style={styles.buttons}>
 				<Button variant={"text"}>Text</Button>

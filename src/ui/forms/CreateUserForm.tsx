@@ -4,7 +4,7 @@ import Card from "@/ui/Card";
 import Typography from "@/ui/Typography";
 import Input from "@/ui/Input";
 import Select from "@/ui/Select";
-import { roleOptions } from "@/ui/formComponents/Role-StatusOptions";
+import { roleOptions } from "@/ui/forms/Role-StatusOptions";
 import { View } from "react-native";
 import { Button } from "@/ui";
 import { StyleSheet } from "react-native-unistyles";

@@ -29,7 +29,8 @@
     "refresh": "Aktualisieren",
     "submit": "Senden",
     "yes": "Ja",
-    "no": "Nein"
+    "no": "Nein",
+    "noDescription": "Keine Beschreibung"
   },
   "auth": {
     "login": "Anmeldung",
@@ -70,7 +71,31 @@
     "resetLink": "Link zum Zurücksetzen des Passworts",
     "generateLink": "Link generieren",
     "copyLink": "Link kopieren",
-    "linkCopied": "Link wurde in die Zwischenablage kopiert!"
+    "linkCopied": "Link wurde in die Zwischenablage kopiert!",
+    "locations": "Standorte",
+    "addLocation": "Standort hinzufügen",
+    "rooms": "Räume",
+    "noRooms": "Keine Zimmer verfügbar",
+    "addRoom": "Raum hinzufügen",
+    "tasks": "Aufgaben",
+    "addTask": "Aufgabe hinzufügen",
+    "frequency": "Häufigkeit",
+    "daily": "Täglich",
+    "everyXDays": "Alle {{count}} Tage",
+    "assignedRooms": "Zugewiesene Räume",
+    "assignRoom": "Raum zuweisen",
+    "assignments": "Zuweisungen",
+    "createAssignment": "Zuweisung erstellen",
+    "upcomingAssignments": "Bevorstehende Zuweisungen",
+    "noAssignments": "Keine Zuweisungen",
+    "scheduleAssignment": "Zuweisung planen",
+    "taskDetails": "Aufgabendetails",
+    "timesSinceDone": "Mal erledigt",
+    "markAsDone": "Als erledigt markieren",
+    "assignmentDetails": "Zuweisungsdetails",
+    "date": "Datum",
+    "userNote": "Benutzerhinweis",
+    "dailyAssignment": "Tägliche Aufgabe"
   },
   "errors": {
     "updateFailed": "Aktualisierung der Benutzerdaten fehlgeschlagen: {{error}}",

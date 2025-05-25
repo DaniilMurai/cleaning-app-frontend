@@ -2,15 +2,15 @@
 import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { Button, Loading, ModalContainer } from "@/ui";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { RegisterUserData, useGetUsers, UserSchema } from "@/api/admin";
-import EditUserForm from "@/ui/formComponents/EditUserForm";
-import CreateUserForm from "@/ui/formComponents/CreateUserForm";
+import EditUserForm from "@/ui/forms/EditUserForm";
+import CreateUserForm from "@/ui/forms/CreateUserForm";
 import UsersList from "@/ui/components/admin/UsersList";
 import { useAdminMutations } from "@/hooks/useAdminMutations";
 import { FontAwesome5 } from "@expo/vector-icons";
-import GetLinkForm from "@/ui/formComponents/GetInviteLinkForm";
+import GetLinkForm from "@/ui/forms/GetInviteLinkForm";
 import { useTranslation } from "react-i18next";
 
 export default function UsersPage() {
@@ -84,6 +84,10 @@ export default function UsersPage() {
 			await handleUpdateUser(selectedUser, userData);
 		}
 	};
+
+	useEffect(() => {
+		console.log("render admin users page");
+	}, []);
 
 	const handleCreateUserSubmit = async (userData: RegisterUserData) => {
 		await handleCreateUser(userData);

@@ -1,16 +1,504 @@
-import { View } from "react-native";
+// src/app/(authorized)/(tabs)/admin.tsx
+import React, { useState } from "react";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import Typography from "@/ui/Typography";
-import { Button } from "@/ui";
-import { useRouter } from "expo-router";
+import { Button, Card } from "@/ui";
+import { useTranslation } from "react-i18next";
+import { FontAwesome5 } from "@expo/vector-icons";
+import Collapse from "@/ui/Collapse";
+import {
+	useGetDailyAssignments,
+	useGetLocations,
+	useGetRooms,
+	useGetRoomTasks,
+	useGetTasks,
+} from "@/api/admin";
+import { useLocationMutation } from "@/hooks/useLocationMutation";
+import useDailyAssignmentMutation from "@/hooks/useDailyAssignmentMutation";
+import useRoomMutation from "@/hooks/useRoomMutation";
+import useTaskMutation from "@/hooks/useTaskMutation";
+import useRoomTaskMutation from "@/hooks/useRoomTaskMutation"; // Импортируем компонент Collapse
 
 export default function AdminPage() {
-	const router = useRouter();
+	const { t } = useTranslation();
+	const [activeTab, setActiveTab] = useState("locations");
+
+	// Состояния для управления развернутыми/свернутыми элементами
+	const [expandedLocations, setExpandedLocations] = useState<Record<number, boolean>>({});
+	const [expandedRooms, setExpandedRooms] = useState<Record<string, boolean>>({});
+	const [expandedTasks, setExpandedTasks] = useState<Record<number, boolean>>({});
+	const [expandedAssignments, setExpandedAssignments] = useState<Record<number, boolean>>({});
+
+	// // Заменим четыре отдельных состояния на одно структурированное
+	// const [expandedItems, setExpandedItems] = useState({
+	// 	locations: {} as Record<number, boolean>,
+	// 	rooms: {} as Record<string, boolean>,
+	// 	tasks: {} as Record<number, boolean>,
+	// 	assignments: {} as Record<number, boolean>
+	// });
+	//
+	// // Функция для переключения состояния развернутого элемента
+	// const toggleExpanded = (section: 'locations' | 'rooms' | 'tasks' | 'assignments', id: string | number) => {
+	// 	setExpandedItems(prev => ({
+	// 		...prev,
+	// 		[section]: {
+	// 			...prev[section],
+	// 			[id]: !prev[section][id as keyof typeof prev[typeof section]]
+	// 		}
+	// 	}));
+	// };
+
+	const {
+		data: locations,
+		isLoading: locationsIsLoading,
+		refetch: locationsRefetch,
+	} = useGetLocations({});
+
+	const { data: rooms, isLoading: roomsIsLoading, refetch: roomsRefetch } = useGetRooms({});
+
+	const { data: tasks, isLoading: tasksIsLoading, refetch: tasksRefetch } = useGetTasks({});
+
+	const {
+		data: roomTasks,
+		isLoading: roomTasksIsLoading,
+		refetch: roomTasksRefetch,
+	} = useGetRoomTasks({});
+
+	const {
+		data: dailyAssignments,
+		isLoading: dailyAssignmentsIsLoading,
+		refetch: dailyAssignmentsRefetch,
+	} = useGetDailyAssignments({});
+
+	function useModals() {
+		const [modals, setModals] = useState({
+			createLocation: false,
+			createRoom: false,
+			createTask: false,
+			createAssignment: false,
+			editLocation: false,
+			editRoom: false,
+			editTask: false,
+			editAssignment: false,
+			deleteLocation: false,
+			deleteRoom: false,
+			deleteTask: false,
+			deleteAssignment: false,
+		});
+
+		const openModal = (modalName: any) => {
+			setModals(prev => ({ ...prev, [modalName]: true }));
+		};
+
+		const closeModal = (modalName: any) => {
+			setModals(prev => ({ ...prev, [modalName]: false }));
+		};
+
+		return { modals, openModal, closeModal };
+	}
+
+	const modal = useModals();
+
+	// Создадим функцию для стандартизации обработчиков мутаций
+	const createMutationHandlers = (entityName: string, { closeModalOnSuccess = true } = {}) => ({
+		onSuccessCreate: () => {
+			if (closeModalOnSuccess) modal.closeModal(`create${entityName}`);
+		},
+		onSuccessUpdate: () => {
+			if (closeModalOnSuccess) modal.closeModal(`edit${entityName}`);
+		},
+		onSuccessDelete: () => {
+			if (closeModalOnSuccess) modal.closeModal(`delete${entityName}`);
+		},
+	});
+
+	// Теперь используем эту функцию для всех мутаций
+	const locationMutationHandlers = {
+		...createMutationHandlers("Location"),
+		refetch: locationsRefetch,
+	};
+
+	const roomMutationHandlers = {
+		...createMutationHandlers("Room"),
+		refetch: roomsRefetch,
+	};
+
+	const taskMutationHandlers = {
+		...createMutationHandlers("Task"),
+		refetch: tasksRefetch,
+	};
+
+	const roomTaskMutationHandlers = {
+		...createMutationHandlers("RoomTask"),
+		refetch: roomTasksRefetch,
+	};
+
+	const dailyAssignmentMutationHandlers = {
+		...createMutationHandlers("Assignment"),
+		refetch: dailyAssignmentsRefetch,
+	};
+
+	// Теперь инициализируем все хуки мутаций
+	const locationMutation = useLocationMutation(locationMutationHandlers);
+	const roomMutation = useRoomMutation(roomMutationHandlers);
+	const taskMutation = useTaskMutation(taskMutationHandlers);
+	const roomTaskMutation = useRoomTaskMutation(roomTaskMutationHandlers);
+	const dailyAssignmentMutation = useDailyAssignmentMutation(dailyAssignmentMutationHandlers);
+
+	// Функции для переключения состояния развертывания
+	const toggleLocation = (id: number) => {
+		setExpandedLocations(prev => ({ ...prev, [id]: !prev[id] }));
+	};
+
+	const toggleRoom = (locationId: number, roomId: number) => {
+		const key = `${locationId}-${roomId}`;
+		setExpandedRooms(prev => ({ ...prev, [key]: !prev[key] }));
+	};
+
+	const toggleTask = (id: number) => {
+		setExpandedTasks(prev => ({ ...prev, [id]: !prev[id] }));
+	};
+
+	const toggleAssignment = (id: number) => {
+		setExpandedAssignments(prev => ({ ...prev, [id]: !prev[id] }));
+	};
+
+	// Находим задачи для комнаты
+	const getRoomTasks = (roomId: number) => {
+		if (roomTasks) {
+			const roomTaskIds = roomTasks.filter(rt => rt.room_id === roomId).map(rt => rt.task_id);
+
+			if (tasks) return tasks.filter(task => roomTaskIds.includes(task.id));
+		}
+		return [];
+	};
+
+	const renderLocations = () => (
+		<ScrollView style={styles.scrollContainer}>
+			<View style={styles.headerContainer}>
+				<Button variant="contained">
+					<FontAwesome5 name="plus" size={16} color={styles.iconColor.color} />
+				</Button>
+			</View>
+
+			{locations &&
+				locations.map(location => (
+					<Card key={location.id} style={styles.card}>
+						<TouchableOpacity
+							style={styles.cardHeader}
+							onPress={() => toggleLocation(location.id)}
+						>
+							<View style={styles.headerWithIcon}>
+								<FontAwesome5
+									name={
+										expandedLocations[location.id]
+											? "angle-down"
+											: "angle-right"
+									}
+									size={16}
+									color={styles.collapseIcon.color}
+								/>
+								<Typography variant="h5">{location.name}</Typography>
+							</View>
+							<View style={styles.actionButtons}>
+								<Button variant="outlined">
+									<FontAwesome5 name="edit" size={14} />
+								</Button>
+								<Button variant="outlined" style={styles.deleteButton}>
+									<FontAwesome5 name="trash" size={14} />
+								</Button>
+							</View>
+						</TouchableOpacity>
+
+						<Collapse expanded={expandedLocations[location.id]}>
+							<Typography>{location.address}</Typography>
+
+							<View style={styles.divider} />
+							<Typography variant="subtitle1">{t("admin.rooms")}</Typography>
+
+							{rooms &&
+							rooms.filter(room => room.location_id === location.id).length === 0 ? (
+								<Typography style={styles.emptyState}>
+									{t("admin.noRooms")}
+								</Typography>
+							) : (
+								rooms &&
+								rooms
+									.filter(room => room.location_id === location.id)
+									.map(room => (
+										<View key={room.id} style={styles.roomSection}>
+											<TouchableOpacity
+												style={styles.roomHeader}
+												onPress={() => toggleRoom(location.id, room.id)}
+											>
+												<View style={styles.headerWithIcon}>
+													<FontAwesome5
+														name={
+															expandedRooms[
+																`${location.id}-${room.id}`
+															]
+																? "angle-down"
+																: "angle-right"
+														}
+														size={14}
+														color={styles.collapseIcon.color}
+													/>
+													<Typography>{room.name}</Typography>
+												</View>
+												<View style={styles.actionButtons}>
+													<Button variant="text">
+														<FontAwesome5 name="edit" size={14} />
+													</Button>
+													<Button
+														variant="text"
+														style={styles.deleteButton}
+													>
+														<FontAwesome5 name="trash" size={14} />
+													</Button>
+												</View>
+											</TouchableOpacity>
+
+											<Collapse
+												expanded={
+													expandedRooms[`${location.id}-${room.id}`]
+												}
+											>
+												<View style={styles.roomTasks}>
+													<Typography variant="subtitle2">
+														{t("admin.tasks")}
+													</Typography>
+													{getRoomTasks(room.id).length > 0 ? (
+														getRoomTasks(room.id).map(task => (
+															<View
+																key={task.id}
+																style={styles.roomTaskItem}
+															>
+																<Typography>
+																	{task.title}
+																</Typography>
+																<View style={styles.actionButtons}>
+																	<Button
+																		variant="text"
+																		style={styles.deleteButton}
+																	>
+																		<FontAwesome5
+																			name="unlink"
+																			size={12}
+																		/>
+																	</Button>
+																</View>
+															</View>
+														))
+													) : (
+														<Typography style={styles.emptyState}>
+															{t("admin.noAssignments")}
+														</Typography>
+													)}
+													<Button variant="text" style={styles.addButton}>
+														<FontAwesome5 name="plus" size={14} />
+														{t("admin.addTask")}
+													</Button>
+												</View>
+											</Collapse>
+										</View>
+									))
+							)}
+
+							<Button variant="outlined" style={styles.addButton}>
+								<FontAwesome5 name="plus" size={14} />
+								{t("admin.addRoom")}
+							</Button>
+						</Collapse>
+					</Card>
+				))}
+		</ScrollView>
+	);
+
+	const renderTasks = () => (
+		<ScrollView style={styles.scrollContainer}>
+			<View style={styles.headerContainer}>
+				<Button variant="contained">
+					<FontAwesome5 name="plus" size={16} color={styles.iconColor.color} />
+				</Button>
+			</View>
+
+			{tasks &&
+				tasks.map(task => (
+					<Card key={task.id} style={styles.card}>
+						<TouchableOpacity
+							style={styles.cardHeader}
+							onPress={() => toggleTask(task.id)}
+						>
+							<View style={styles.headerWithIcon}>
+								<FontAwesome5
+									name={expandedTasks[task.id] ? "angle-down" : "angle-right"}
+									size={16}
+									color={styles.collapseIcon.color}
+								/>
+								<Typography variant="h5">{task.title}</Typography>
+							</View>
+							<View style={styles.actionButtons}>
+								<Button variant="outlined">
+									<FontAwesome5 name="edit" size={14} />
+								</Button>
+								<Button variant="outlined" style={styles.deleteButton}>
+									<FontAwesome5 name="trash" size={14} />
+								</Button>
+							</View>
+						</TouchableOpacity>
+
+						<Collapse expanded={expandedTasks[task.id]}>
+							<Typography>{task.description || t("common.noDescription")}</Typography>
+							<Typography variant="h5">
+								{t("admin.frequency")}:{" "}
+								{task.frequency === 1
+									? t("admin.daily")
+									: t("admin.everyXDays", { count: task.frequency })}
+							</Typography>
+
+							<View style={styles.divider} />
+							<Typography variant="subtitle2">{t("admin.assignedRooms")}</Typography>
+
+							{rooms &&
+								locations &&
+								roomTasks &&
+								roomTasks
+									.filter(rt => rt.task_id === task.id)
+									.map(roomTask => {
+										const room = rooms.find(r => r.id === roomTask.room_id);
+										const location = room
+											? locations.find(l => l.id === room.location_id)
+											: null;
+
+										return room && location ? (
+											<View key={roomTask.id} style={styles.assignmentItem}>
+												<Typography>
+													{location.name} - {room.name}
+												</Typography>
+												<Button variant="text" style={styles.deleteButton}>
+													<FontAwesome5 name="unlink" size={12} />
+												</Button>
+											</View>
+										) : null;
+									})}
+						</Collapse>
+					</Card>
+				))}
+		</ScrollView>
+	);
+
+	const renderAssignments = () => (
+		<ScrollView style={styles.scrollContainer}>
+			<View style={styles.headerContainer}>
+				<Button variant="contained">
+					<FontAwesome5 name="plus" size={16} color={styles.iconColor.color} />
+				</Button>
+			</View>
+
+			{dailyAssignments &&
+				locations &&
+				!dailyAssignmentsIsLoading &&
+				dailyAssignments.map(assignment => {
+					const location = locations.find(l => l.id === assignment.location_id);
+
+					if (!location) return null;
+
+					return (
+						<Card key={assignment.id} style={styles.card}>
+							<TouchableOpacity
+								style={styles.cardHeader}
+								onPress={() => toggleAssignment(assignment.id)}
+							>
+								<View style={styles.headerWithIcon}>
+									<FontAwesome5
+										name={
+											expandedAssignments[assignment.id]
+												? "angle-down"
+												: "angle-right"
+										}
+										size={16}
+										color={styles.collapseIcon.color}
+									/>
+									<Typography variant="h5">
+										{t("admin.dailyAssignment")} - {location.name}
+									</Typography>
+								</View>
+								<View style={styles.actionButtons}>
+									<Button variant="outlined">
+										<FontAwesome5 name="edit" size={14} />
+									</Button>
+									<Button variant="outlined" style={styles.deleteButton}>
+										<FontAwesome5 name="trash" size={14} />
+									</Button>
+								</View>
+							</TouchableOpacity>
+
+							<Collapse expanded={expandedAssignments[assignment.id]}>
+								<Typography variant="subtitle2">
+									{t("admin.assignmentDetails")}
+								</Typography>
+								<Typography>
+									{t("admin.date")}: {assignment.date}
+								</Typography>
+								{assignment.admin_note && (
+									<Typography>
+										{t("admin.adminNote")}: {assignment.admin_note}
+									</Typography>
+								)}
+								{assignment.user_note && (
+									<Typography>
+										{t("admin.userNote")}: {assignment.user_note}
+									</Typography>
+								)}
+							</Collapse>
+						</Card>
+					);
+				})}
+		</ScrollView>
+	);
 
 	return (
 		<View style={styles.container}>
-			<Typography>Это страница Tasks</Typography>
-			<Button onPress={() => router.push("/Login")}>to Login</Button>
+			<View style={styles.tabContainer}>
+				<TouchableOpacity
+					style={[styles.tab, activeTab === "locations" && styles.activeTab]}
+					onPress={() => setActiveTab("locations")}
+				>
+					<Typography
+						style={[styles.tabText, activeTab === "locations" && styles.activeTabText]}
+					>
+						{t("admin.locations")}
+					</Typography>
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={[styles.tab, activeTab === "tasks" && styles.activeTab]}
+					onPress={() => setActiveTab("tasks")}
+				>
+					<Typography
+						style={[styles.tabText, activeTab === "tasks" && styles.activeTabText]}
+					>
+						{t("admin.tasks")}
+					</Typography>
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={[styles.tab, activeTab === "assignments" && styles.activeTab]}
+					onPress={() => setActiveTab("assignments")}
+				>
+					<Typography
+						style={[
+							styles.tabText,
+							activeTab === "assignments" && styles.activeTabText,
+						]}
+					>
+						{t("admin.assignments")}
+					</Typography>
+				</TouchableOpacity>
+			</View>
+
+			{activeTab === "locations" && renderLocations()}
+			{activeTab === "tasks" && renderTasks()}
+			{activeTab === "assignments" && renderAssignments()}
 		</View>
 	);
 }
@@ -18,10 +506,137 @@ export default function AdminPage() {
 const styles = StyleSheet.create(theme => ({
 	container: {
 		flex: 1,
+		backgroundColor:
+			typeof theme.colors.background === "object"
+				? theme.colors.background.default
+				: theme.colors.background,
+	},
+	tabContainer: {
+		flexDirection: "row",
 		backgroundColor: theme.colors.background.main,
-		display: "flex",
-		flexDirection: "column",
-		justifyContent: "center",
+		elevation: 4,
+		shadowColor: theme.colors.shadow,
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.1,
+		shadowRadius: 2,
+	},
+	tab: {
+		flex: 1,
+		paddingVertical: theme.spacing(2),
 		alignItems: "center",
+	},
+	activeTab: {
+		borderBottomWidth: 2,
+		borderBottomColor:
+			typeof theme.colors.primary === "object"
+				? theme.colors.primary.main
+				: theme.colors.primary,
+	},
+	tabText: {
+		color:
+			typeof theme.colors.text === "object" ? theme.colors.text.primary : theme.colors.text,
+	},
+	activeTabText: {
+		color:
+			typeof theme.colors.primary === "object"
+				? theme.colors.primary.main
+				: theme.colors.primary,
+		fontWeight: "600",
+	},
+	scrollContainer: {
+		flex: 1,
+		padding: theme.spacing(2),
+	},
+	headerContainer: {
+		marginBottom: theme.spacing(2),
+		alignItems: "flex-end",
+	},
+	mainButton: {
+		paddingHorizontal: theme.spacing(2),
+	},
+	card: {
+		marginBottom: theme.spacing(2),
+		padding: theme.spacing(2),
+	},
+	cardHeader: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		flexWrap: "wrap",
+		alignItems: "center",
+		marginBottom: theme.spacing(1),
+	},
+	headerWithIcon: {
+		flexDirection: "row",
+		flex: 1,
+		alignItems: "center",
+		gap: theme.spacing(1),
+	},
+	collapseIcon: {
+		color: theme.colors.text.primary,
+	},
+	actionButtons: {
+		flexDirection: "row",
+		gap: theme.spacing(1),
+	},
+	deleteButton: {
+		borderColor: theme.colors.error.main,
+		color: theme.colors.error.main,
+	},
+	divider: {
+		height: 1,
+		backgroundColor: theme.colors.divider,
+		marginVertical: theme.spacing(2),
+	},
+	roomSection: {
+		marginTop: theme.spacing(1),
+	},
+	roomHeader: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		paddingVertical: theme.spacing(1),
+	},
+	roomItem: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		paddingVertical: theme.spacing(1),
+		borderBottomWidth: 1,
+		borderBottomColor: theme.colors.divider,
+	},
+	roomTasks: {
+		paddingLeft: theme.spacing(4),
+		marginTop: theme.spacing(1),
+		marginBottom: theme.spacing(2),
+	},
+	roomTaskItem: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		paddingVertical: theme.spacing(1),
+	},
+	addButton: {
+		marginTop: theme.spacing(1),
+		alignSelf: "flex-start",
+	},
+	assignmentItem: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		paddingVertical: theme.spacing(1),
+		borderBottomWidth: 1,
+		borderBottomColor: theme.colors.divider,
+	},
+	assignmentActions: {
+		marginTop: theme.spacing(2),
+		alignItems: "flex-end",
+	},
+	emptyState: {
+		fontStyle: "italic",
+		color: theme.colors.text.secondary,
+		marginVertical: theme.spacing(1),
+	},
+	iconColor: {
+		color: theme.colors.primary.text,
 	},
 }));

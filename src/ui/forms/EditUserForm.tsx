@@ -8,7 +8,7 @@ import Select from "@/ui/Select";
 import Card from "@/ui/Card";
 import Typography from "@/ui/Typography";
 
-import { roleOptions, statusOptions } from "@/ui/formComponents/Role-StatusOptions";
+import { roleOptions, statusOptions } from "@/ui/forms/Role-StatusOptions";
 import { StyleSheet } from "react-native-unistyles";
 import { UserRole, UserSchema, UserStatus } from "@/api/admin";
 import { useIsSuperAdmin } from "@/context/AuthContext";
