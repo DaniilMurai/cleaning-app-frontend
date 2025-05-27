@@ -22,7 +22,7 @@ export default function ModalContainer({ visible, onClose, children }: ModalCont
 const styles = StyleSheet.create(theme => ({
 	modalOverlay: {
 		flex: 1,
-		backgroundColor: "rgba(0, 0, 0, 0.5)",
+		backgroundColor: "rgba(0,0,0,0.3)",
 		justifyContent: "center",
 		alignItems: "center",
 		padding: theme.spacing(2),

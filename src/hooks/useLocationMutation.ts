@@ -3,6 +3,7 @@ import {
 	DeleteLocationParams,
 	EditLocationParams,
 	LocationCreate,
+	LocationUpdate,
 	useCreateLocation,
 	useDeleteLocation,
 	useEditLocation,
@@ -47,7 +48,7 @@ export function useLocationMutation(options: {
 		await createLocationMutation.mutateAsync({ data });
 	};
 
-	const handleUpdateLocation = async (location_id: EditLocationParams, data: LocationCreate) => {
+	const handleUpdateLocation = async (location_id: EditLocationParams, data: LocationUpdate) => {
 		await updateLocationMutation.mutateAsync({ data, params: location_id });
 	};
 

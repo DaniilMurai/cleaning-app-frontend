@@ -1,4 +1,3 @@
-// LocationForms.tsx
 import { View } from "react-native";
 import { Button } from "@/ui";
 import Input from "@/ui/Input";
@@ -7,31 +6,44 @@ import Card from "@/ui/Card";
 import Typography from "@/ui/Typography";
 import { StyleSheet } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
-import { DeleteLocationParams, EditLocationParams, LocationUpdate } from "@/api/admin";
 
 // Types based on the provided schemas
-export interface LocationCreate {
+export interface RoomCreate {
 	name: string;
-	address?: string;
+	location_id: number;
 }
 
-export interface LocationResponse {
+export interface RoomResponse {
 	id: number;
 	name: string;
-	address: string;
+	location_id: number;
 }
 
-interface CreateLocationFormProps {
-	onSubmit: (locationData: LocationCreate) => void;
+export interface EditRoomParams {
+	room_id: number;
+}
+
+export interface DeleteRoomParams {
+	room_id: number;
+}
+
+export interface RoomUpdate {
+	name?: string;
+	location_id?: number;
+}
+
+interface CreateRoomFormProps {
+	onSubmit: (roomData: RoomCreate) => void;
 	onClose: () => void;
 	isLoading?: boolean;
+	location_id: number;
 }
 
-export function CreateLocationForm({ onSubmit, onClose, isLoading }: CreateLocationFormProps) {
+export function CreateRoomForm({ onSubmit, onClose, isLoading, location_id }: CreateRoomFormProps) {
 	const { t } = useTranslation();
-	const [formData, setFormData] = useState<LocationCreate>({
+	const [formData, setFormData] = useState<RoomCreate>({
 		name: "",
-		address: "",
+		location_id: location_id,
 	});
 
 	const handleSubmit = () => {
@@ -41,27 +53,31 @@ export function CreateLocationForm({ onSubmit, onClose, isLoading }: CreateLocat
 	return (
 		<Card size="large" style={styles.container}>
 			<Typography variant="h5" style={styles.title}>
-				{t("admin.createLocation")}
+				{t("admin.createRoom")}
 			</Typography>
 
 			<Input
-				placeholder={t("components.locationsList.name")}
+				placeholder={t("components.roomsList.name")}
 				value={formData.name}
 				onChangeText={text => setFormData({ ...formData, name: text })}
 				style={styles.input}
 			/>
 
+			{/* Location dropdown/selector could be implemented here */}
+			{/* This is a simplified version - you might want to add a proper dropdown */}
 			<Input
-				placeholder={t("components.locationsList.address")}
-				value={formData.address}
-				onChangeText={text => setFormData({ ...formData, address: text })}
+				placeholder={t("components.roomsList.locationId")}
+				value={formData.location_id.toString()}
+				onChangeText={text =>
+					setFormData({ ...formData, location_id: parseInt(text) || 0 })
+				}
 				style={styles.input}
-				multiline
+				keyboardType="numeric"
 			/>
 
 			<View style={styles.buttonsContainer}>
 				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
-					{t("admin.createLocation")}
+					{t("admin.createRoom")}
 				</Button>
 				<Button variant="outlined" onPress={onClose}>
 					{t("common.close")}
@@ -71,48 +87,46 @@ export function CreateLocationForm({ onSubmit, onClose, isLoading }: CreateLocat
 	);
 }
 
-interface EditLocationFormProps {
-	location: LocationResponse;
-	onSubmit: (locationId: EditLocationParams, locationData: LocationUpdate) => void;
+interface EditRoomFormProps {
+	room: RoomResponse;
+	onSubmit: (roomId: EditRoomParams, roomData: RoomUpdate) => void;
 	onClose: () => void;
 	isLoading?: boolean;
 }
 
-export function EditLocationForm({
-	location,
-	onSubmit,
-	onClose,
-	isLoading,
-}: EditLocationFormProps) {
+export function EditRoomForm({ room, onSubmit, onClose, isLoading }: EditRoomFormProps) {
 	const { t } = useTranslation();
-	const [formData, setFormData] = useState<LocationCreate>({
-		name: location.name,
-		address: location.address,
+	const [formData, setFormData] = useState<RoomUpdate>({
+		name: room.name,
+		location_id: room.location_id,
 	});
 
 	const handleSubmit = () => {
-		onSubmit({ location_id: location.id }, formData);
+		onSubmit({ room_id: room.id }, formData);
 	};
 
 	return (
 		<Card size="large" style={styles.container}>
 			<Typography variant="h5" style={styles.title}>
-				{t("admin.editLocation")}
+				{t("admin.editRoom")}
 			</Typography>
 
 			<Input
-				placeholder={t("components.locationsList.name")}
+				placeholder={t("components.roomsList.name")}
 				value={formData.name}
 				onChangeText={text => setFormData({ ...formData, name: text })}
 				style={styles.input}
 			/>
 
+			{/* Location dropdown/selector could be implemented here */}
 			<Input
-				placeholder={t("components.locationsList.address")}
-				value={formData.address}
-				onChangeText={text => setFormData({ ...formData, address: text })}
+				placeholder={t("components.roomsList.locationId")}
+				value={formData.location_id?.toString()}
+				onChangeText={text =>
+					setFormData({ ...formData, location_id: parseInt(text) || 0 })
+				}
 				style={styles.input}
-				multiline
+				keyboardType="numeric"
 			/>
 
 			<View style={styles.buttonsContainer}>
@@ -127,36 +141,31 @@ export function EditLocationForm({
 	);
 }
 
-interface DeleteLocationConfirmProps {
-	location: LocationResponse;
-	onConfirm: (locationId: DeleteLocationParams) => void;
+interface DeleteRoomConfirmProps {
+	room: RoomResponse;
+	onConfirm: (roomId: DeleteRoomParams) => void;
 	onClose: () => void;
 	isLoading?: boolean;
 }
 
-export function DeleteLocationConfirm({
-	location,
-	onConfirm,
-	onClose,
-	isLoading,
-}: DeleteLocationConfirmProps) {
+export function DeleteRoomConfirm({ room, onConfirm, onClose, isLoading }: DeleteRoomConfirmProps) {
 	const { t } = useTranslation();
 
 	return (
 		<Card size="medium" style={styles.container}>
 			<Typography variant="h5" style={styles.title}>
-				{t("admin.deleteLocation")}
+				{t("admin.deleteRoom")}
 			</Typography>
 
 			<Typography variant="body1">
-				{t("admin.deleteLocationConfirmation", { name: location.name })}
+				{t("admin.deleteRoomConfirmation", { name: room.name })}
 			</Typography>
 
 			<View style={styles.buttonsContainer}>
 				<Button
 					variant="contained"
 					style={styles.buttonError}
-					onPress={() => onConfirm({ location_id: location.id })}
+					onPress={() => onConfirm({ room_id: room.id })}
 					loading={isLoading}
 				>
 					{t("common.delete")}
@@ -171,22 +180,19 @@ export function DeleteLocationConfirm({
 
 const styles = StyleSheet.create(theme => ({
 	container: {
-		padding: theme.spacing(3),
-		maxWidth: 600,
+		padding: theme.spacing(4),
 		width: "100%",
-		alignSelf: "center",
 	},
 	title: {
-		marginBottom: theme.spacing(3),
+		marginBottom: theme.spacing(4),
 	},
 	input: {
-		marginBottom: theme.spacing(2),
+		marginBottom: theme.spacing(4),
 	},
 	buttonsContainer: {
 		flexDirection: "row",
-		justifyContent: "flex-end",
-		gap: theme.spacing(2),
-		marginTop: theme.spacing(3),
+		justifyContent: "space-between",
+		marginTop: theme.spacing(4),
 	},
 	buttonError: {
 		backgroundColor: theme.colors.error.main,

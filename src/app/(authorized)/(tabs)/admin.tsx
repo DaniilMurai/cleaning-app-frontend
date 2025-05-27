@@ -3,11 +3,14 @@ import React, { useState } from "react";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import Typography from "@/ui/Typography";
-import { Button, Card } from "@/ui";
+import { Button, Card, ModalContainer } from "@/ui";
 import { useTranslation } from "react-i18next";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Collapse from "@/ui/Collapse";
 import {
+	LocationResponse,
+	RoomResponse,
+	TaskResponse,
 	useGetDailyAssignments,
 	useGetLocations,
 	useGetRooms,
@@ -18,7 +21,14 @@ import { useLocationMutation } from "@/hooks/useLocationMutation";
 import useDailyAssignmentMutation from "@/hooks/useDailyAssignmentMutation";
 import useRoomMutation from "@/hooks/useRoomMutation";
 import useTaskMutation from "@/hooks/useTaskMutation";
-import useRoomTaskMutation from "@/hooks/useRoomTaskMutation"; // Импортируем компонент Collapse
+import useRoomTaskMutation from "@/hooks/useRoomTaskMutation";
+import {
+	CreateLocationForm,
+	DeleteLocationConfirm,
+	EditLocationForm,
+} from "@/ui/forms/LocationForms";
+import { CreateRoomForm, DeleteRoomConfirm, EditRoomForm } from "@/ui/forms/RoomForms";
+import { CreateTaskForm, DeleteTaskConfirm, EditTaskForm } from "@/ui/forms/TaskForms"; // Импортируем компонент Collapse
 
 export default function AdminPage() {
 	const { t } = useTranslation();
@@ -173,219 +183,415 @@ export default function AdminPage() {
 		}
 		return [];
 	};
-
+	const [selectedLocation, setSelectedLocation] = useState<LocationResponse | null>(null);
+	const [selectedRoom, setSelectedRoom] = useState<RoomResponse | null>(null);
+	const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
 	const renderLocations = () => (
-		<ScrollView style={styles.scrollContainer}>
-			<View style={styles.headerContainer}>
-				<Button variant="contained">
-					<FontAwesome5 name="plus" size={16} color={styles.iconColor.color} />
-				</Button>
-			</View>
+		<View style={{ flex: 1 }}>
+			<ScrollView style={styles.scrollContainer}>
+				<View style={styles.headerContainer}>
+					<Button variant="contained" onPress={() => modal.openModal("createLocation")}>
+						<FontAwesome5 name="plus" size={16} color={styles.iconColor.color} />
+					</Button>
+				</View>
 
-			{locations &&
-				locations.map(location => (
-					<Card key={location.id} style={styles.card}>
-						<TouchableOpacity
-							style={styles.cardHeader}
-							onPress={() => toggleLocation(location.id)}
-						>
-							<View style={styles.headerWithIcon}>
-								<FontAwesome5
-									name={
-										expandedLocations[location.id]
-											? "angle-down"
-											: "angle-right"
-									}
-									size={16}
-									color={styles.collapseIcon.color}
-								/>
-								<Typography variant="h5">{location.name}</Typography>
-							</View>
-							<View style={styles.actionButtons}>
-								<Button variant="outlined">
-									<FontAwesome5 name="edit" size={14} />
+				{locations &&
+					locations.map(location => (
+						<Card key={location.id} style={styles.card}>
+							<TouchableOpacity
+								style={styles.cardHeader}
+								onPress={() => toggleLocation(location.id)}
+							>
+								<View style={styles.headerWithIcon}>
+									<FontAwesome5
+										name={
+											expandedLocations[location.id]
+												? "angle-down"
+												: "angle-right"
+										}
+										size={16}
+										color={styles.collapseIcon.color}
+									/>
+									<Typography variant="h5">{location.name}</Typography>
+								</View>
+								<View style={styles.actionButtons}>
+									<Button
+										variant="outlined"
+										onPress={() => {
+											setSelectedLocation(location);
+											modal.openModal("editLocation");
+										}}
+									>
+										<FontAwesome5 name="edit" size={14} />
+									</Button>
+									<Button
+										variant="outlined"
+										style={styles.deleteButton}
+										onPress={() => {
+											setSelectedLocation(location);
+											modal.openModal("deleteLocation");
+										}}
+									>
+										<FontAwesome5 name="trash" size={14} />
+									</Button>
+								</View>
+							</TouchableOpacity>
+
+							<Collapse expanded={expandedLocations[location.id]}>
+								<Typography>{location.address}</Typography>
+
+								<View style={styles.divider} />
+								<Typography variant="subtitle1">{t("admin.rooms")}</Typography>
+
+								{rooms &&
+								rooms.filter(room => room.location_id === location.id).length ===
+									0 ? (
+									<Typography style={styles.emptyState}>
+										{t("admin.noRooms")}
+									</Typography>
+								) : (
+									rooms &&
+									rooms
+										.filter(room => room.location_id === location.id)
+										.map(room => (
+											<View key={room.id} style={styles.roomSection}>
+												<TouchableOpacity
+													style={styles.roomHeader}
+													onPress={() => toggleRoom(location.id, room.id)}
+												>
+													<View style={styles.headerWithIcon}>
+														<FontAwesome5
+															name={
+																expandedRooms[
+																	`${location.id}-${room.id}`
+																]
+																	? "angle-down"
+																	: "angle-right"
+															}
+															size={14}
+															color={styles.collapseIcon.color}
+														/>
+														<Typography>{room.name}</Typography>
+													</View>
+													<View style={styles.actionButtons}>
+														<Button
+															variant="text"
+															onPress={() => {
+																setSelectedRoom(room);
+																modal.openModal("editRoom");
+															}}
+														>
+															<FontAwesome5 name="edit" size={14} />
+														</Button>
+														<Button
+															variant="text"
+															style={styles.deleteButton}
+															onPress={() => {
+																setSelectedRoom(room);
+																modal.openModal("deleteRoom");
+															}}
+														>
+															<FontAwesome5 name="trash" size={14} />
+														</Button>
+													</View>
+												</TouchableOpacity>
+
+												<Collapse
+													expanded={
+														expandedRooms[`${location.id}-${room.id}`]
+													}
+												>
+													<View style={styles.roomTasks}>
+														<Typography variant="subtitle2">
+															{t("admin.tasks")}
+														</Typography>
+														{getRoomTasks(room.id).length > 0 ? (
+															getRoomTasks(room.id).map(task => (
+																<View
+																	key={task.id}
+																	style={styles.roomTaskItem}
+																>
+																	<Typography>
+																		{task.title}
+																	</Typography>
+																	<View
+																		style={styles.actionButtons}
+																	>
+																		<Button
+																			variant="text"
+																			style={
+																				styles.deleteButton
+																			}
+																		>
+																			<FontAwesome5
+																				name="unlink"
+																				size={12}
+																			/>
+																		</Button>
+																	</View>
+																</View>
+															))
+														) : (
+															<Typography style={styles.emptyState}>
+																{t("admin.noAssignments")}
+															</Typography>
+														)}
+														<Button
+															variant="text"
+															style={styles.addButton}
+														>
+															<FontAwesome5 name="plus" size={14} />
+															{t("admin.addTask")}
+														</Button>
+													</View>
+												</Collapse>
+											</View>
+										))
+								)}
+
+								<Button
+									variant="outlined"
+									style={styles.addButton}
+									onPress={() => {
+										setSelectedLocation(location);
+										modal.openModal("createRoom");
+									}}
+								>
+									<FontAwesome5 name="plus" size={14} />
+									{t("admin.addRoom")}
 								</Button>
-								<Button variant="outlined" style={styles.deleteButton}>
-									<FontAwesome5 name="trash" size={14} />
-								</Button>
-							</View>
-						</TouchableOpacity>
+							</Collapse>
+						</Card>
+					))}
+			</ScrollView>
 
-						<Collapse expanded={expandedLocations[location.id]}>
-							<Typography>{location.address}</Typography>
+			{modal.modals.createLocation && (
+				<ModalContainer
+					visible={modal.modals.createLocation}
+					onClose={() => modal.closeModal("createLocation")}
+				>
+					<CreateLocationForm
+						onSubmit={locationMutation.handleCreateLocation}
+						onClose={() => modal.closeModal("createLocation")}
+						isLoading={locationMutation.createLocationMutation.isPending}
+					/>
+				</ModalContainer>
+			)}
 
-							<View style={styles.divider} />
-							<Typography variant="subtitle1">{t("admin.rooms")}</Typography>
+			{modal.modals.editLocation && selectedLocation && (
+				<ModalContainer
+					visible={modal.modals.editLocation}
+					onClose={() => modal.closeModal("editLocation")}
+				>
+					<EditLocationForm
+						location={selectedLocation}
+						onSubmit={locationMutation.handleUpdateLocation}
+						onClose={() => modal.closeModal("editLocation")}
+						isLoading={locationMutation.updateLocationMutation.isPending}
+					/>
+				</ModalContainer>
+			)}
 
-							{rooms &&
-							rooms.filter(room => room.location_id === location.id).length === 0 ? (
-								<Typography style={styles.emptyState}>
-									{t("admin.noRooms")}
+			{modal.modals.deleteLocation && selectedLocation && (
+				<ModalContainer
+					visible={modal.modals.deleteLocation}
+					onClose={() => modal.closeModal("deleteLocation")}
+				>
+					<DeleteLocationConfirm
+						location={selectedLocation}
+						onConfirm={locationMutation.handleDeleteLocation}
+						onClose={() => modal.closeModal("deleteLocation")}
+						isLoading={locationMutation.deleteLocationMutation.isPending}
+					/>
+				</ModalContainer>
+			)}
+
+			{modal.modals.createRoom && selectedLocation && (
+				<ModalContainer
+					visible={modal.modals.createRoom}
+					onClose={() => modal.closeModal("createRoom")}
+				>
+					<CreateRoomForm
+						onSubmit={roomMutation.handleCreateRoom}
+						onClose={() => modal.closeModal("createRoom")}
+						location_id={selectedLocation.id}
+						isLoading={roomMutation.createRoomMutation.isPending}
+					/>
+				</ModalContainer>
+			)}
+
+			{modal.modals.editRoom && selectedRoom && (
+				<ModalContainer
+					visible={modal.modals.editRoom}
+					onClose={() => modal.closeModal("editRoom")}
+				>
+					<EditRoomForm
+						onSubmit={roomMutation.handleUpdateRoom}
+						onClose={() => modal.closeModal("editRoom")}
+						room={selectedRoom}
+						isLoading={roomMutation.updateRoomMutation.isPending}
+					/>
+				</ModalContainer>
+			)}
+
+			{modal.modals.deleteRoom && selectedRoom && (
+				<ModalContainer
+					visible={modal.modals.deleteRoom}
+					onClose={() => modal.closeModal("deleteRoom")}
+				>
+					<DeleteRoomConfirm
+						room={selectedRoom}
+						onConfirm={roomMutation.handleDeleteRoom}
+						onClose={() => modal.closeModal("deleteRoom")}
+						isLoading={roomMutation.deleteRoomMutation.isPending}
+					/>
+				</ModalContainer>
+			)}
+		</View>
+	);
+
+	const renderTasks = () => (
+		<View style={{ flex: 1 }}>
+			<ScrollView style={styles.scrollContainer}>
+				<View style={styles.headerContainer}>
+					<Button variant="contained">
+						<FontAwesome5
+							name="plus"
+							size={16}
+							color={styles.iconColor.color}
+							onPress={() => {
+								modal.openModal("createTask");
+							}}
+						/>
+					</Button>
+				</View>
+
+				{tasks &&
+					tasks.map(task => (
+						<Card key={task.id} style={styles.card}>
+							<TouchableOpacity
+								style={styles.cardHeader}
+								onPress={() => toggleTask(task.id)}
+							>
+								<View style={styles.headerWithIcon}>
+									<FontAwesome5
+										name={expandedTasks[task.id] ? "angle-down" : "angle-right"}
+										size={16}
+										color={styles.collapseIcon.color}
+									/>
+									<Typography variant="h5">{task.title}</Typography>
+								</View>
+								<View style={styles.actionButtons}>
+									<Button
+										variant="outlined"
+										onPress={() => {
+											setSelectedTask(task);
+											modal.openModal("editTask");
+										}}
+									>
+										<FontAwesome5 name="edit" size={14} />
+									</Button>
+									<Button
+										variant="outlined"
+										style={styles.deleteButton}
+										onPress={() => {
+											setSelectedTask(task);
+											modal.openModal("deleteTask");
+										}}
+									>
+										<FontAwesome5 name="trash" size={14} />
+									</Button>
+								</View>
+							</TouchableOpacity>
+
+							<Collapse expanded={expandedTasks[task.id]}>
+								<Typography>
+									{task.description || t("common.noDescription")}
 								</Typography>
-							) : (
-								rooms &&
-								rooms
-									.filter(room => room.location_id === location.id)
-									.map(room => (
-										<View key={room.id} style={styles.roomSection}>
-											<TouchableOpacity
-												style={styles.roomHeader}
-												onPress={() => toggleRoom(location.id, room.id)}
-											>
-												<View style={styles.headerWithIcon}>
-													<FontAwesome5
-														name={
-															expandedRooms[
-																`${location.id}-${room.id}`
-															]
-																? "angle-down"
-																: "angle-right"
-														}
-														size={14}
-														color={styles.collapseIcon.color}
-													/>
-													<Typography>{room.name}</Typography>
-												</View>
-												<View style={styles.actionButtons}>
-													<Button variant="text">
-														<FontAwesome5 name="edit" size={14} />
-													</Button>
+								<Typography variant="h5">
+									{t("admin.frequency")}:{" "}
+									{task.frequency === 1
+										? t("admin.daily")
+										: t("admin.everyXDays", { count: task.frequency })}
+								</Typography>
+
+								<View style={styles.divider} />
+								<Typography variant="subtitle2">
+									{t("admin.assignedRooms")}
+								</Typography>
+
+								{rooms &&
+									locations &&
+									roomTasks &&
+									roomTasks
+										.filter(rt => rt.task_id === task.id)
+										.map(roomTask => {
+											const room = rooms.find(r => r.id === roomTask.room_id);
+											const location = room
+												? locations.find(l => l.id === room.location_id)
+												: null;
+
+											return room && location ? (
+												<View
+													key={roomTask.id}
+													style={styles.assignmentItem}
+												>
+													<Typography>
+														{location.name} - {room.name}
+													</Typography>
 													<Button
 														variant="text"
 														style={styles.deleteButton}
 													>
-														<FontAwesome5 name="trash" size={14} />
+														<FontAwesome5 name="unlink" size={12} />
 													</Button>
 												</View>
-											</TouchableOpacity>
+											) : null;
+										})}
+							</Collapse>
+						</Card>
+					))}
+			</ScrollView>
 
-											<Collapse
-												expanded={
-													expandedRooms[`${location.id}-${room.id}`]
-												}
-											>
-												<View style={styles.roomTasks}>
-													<Typography variant="subtitle2">
-														{t("admin.tasks")}
-													</Typography>
-													{getRoomTasks(room.id).length > 0 ? (
-														getRoomTasks(room.id).map(task => (
-															<View
-																key={task.id}
-																style={styles.roomTaskItem}
-															>
-																<Typography>
-																	{task.title}
-																</Typography>
-																<View style={styles.actionButtons}>
-																	<Button
-																		variant="text"
-																		style={styles.deleteButton}
-																	>
-																		<FontAwesome5
-																			name="unlink"
-																			size={12}
-																		/>
-																	</Button>
-																</View>
-															</View>
-														))
-													) : (
-														<Typography style={styles.emptyState}>
-															{t("admin.noAssignments")}
-														</Typography>
-													)}
-													<Button variant="text" style={styles.addButton}>
-														<FontAwesome5 name="plus" size={14} />
-														{t("admin.addTask")}
-													</Button>
-												</View>
-											</Collapse>
-										</View>
-									))
-							)}
+			<ModalContainer
+				visible={modal.modals.createTask}
+				onClose={() => modal.closeModal("createTask")}
+			>
+				<CreateTaskForm
+					onSubmit={taskMutation.handleCreateTask}
+					onClose={() => modal.closeModal("createTask")}
+					isLoading={taskMutation.createTaskMutation.isPending}
+				/>
+			</ModalContainer>
 
-							<Button variant="outlined" style={styles.addButton}>
-								<FontAwesome5 name="plus" size={14} />
-								{t("admin.addRoom")}
-							</Button>
-						</Collapse>
-					</Card>
-				))}
-		</ScrollView>
-	);
+			<ModalContainer
+				visible={modal.modals.editTask && !!selectedTask}
+				onClose={() => modal.closeModal("editTask")}
+			>
+				{selectedTask && (
+					<EditTaskForm
+						task={selectedTask}
+						onSubmit={taskMutation.handleUpdateTask}
+						onClose={() => modal.closeModal("editTask")}
+						isLoading={taskMutation.updateTaskMutation.isPending}
+					/>
+				)}
+			</ModalContainer>
 
-	const renderTasks = () => (
-		<ScrollView style={styles.scrollContainer}>
-			<View style={styles.headerContainer}>
-				<Button variant="contained">
-					<FontAwesome5 name="plus" size={16} color={styles.iconColor.color} />
-				</Button>
-			</View>
-
-			{tasks &&
-				tasks.map(task => (
-					<Card key={task.id} style={styles.card}>
-						<TouchableOpacity
-							style={styles.cardHeader}
-							onPress={() => toggleTask(task.id)}
-						>
-							<View style={styles.headerWithIcon}>
-								<FontAwesome5
-									name={expandedTasks[task.id] ? "angle-down" : "angle-right"}
-									size={16}
-									color={styles.collapseIcon.color}
-								/>
-								<Typography variant="h5">{task.title}</Typography>
-							</View>
-							<View style={styles.actionButtons}>
-								<Button variant="outlined">
-									<FontAwesome5 name="edit" size={14} />
-								</Button>
-								<Button variant="outlined" style={styles.deleteButton}>
-									<FontAwesome5 name="trash" size={14} />
-								</Button>
-							</View>
-						</TouchableOpacity>
-
-						<Collapse expanded={expandedTasks[task.id]}>
-							<Typography>{task.description || t("common.noDescription")}</Typography>
-							<Typography variant="h5">
-								{t("admin.frequency")}:{" "}
-								{task.frequency === 1
-									? t("admin.daily")
-									: t("admin.everyXDays", { count: task.frequency })}
-							</Typography>
-
-							<View style={styles.divider} />
-							<Typography variant="subtitle2">{t("admin.assignedRooms")}</Typography>
-
-							{rooms &&
-								locations &&
-								roomTasks &&
-								roomTasks
-									.filter(rt => rt.task_id === task.id)
-									.map(roomTask => {
-										const room = rooms.find(r => r.id === roomTask.room_id);
-										const location = room
-											? locations.find(l => l.id === room.location_id)
-											: null;
-
-										return room && location ? (
-											<View key={roomTask.id} style={styles.assignmentItem}>
-												<Typography>
-													{location.name} - {room.name}
-												</Typography>
-												<Button variant="text" style={styles.deleteButton}>
-													<FontAwesome5 name="unlink" size={12} />
-												</Button>
-											</View>
-										) : null;
-									})}
-						</Collapse>
-					</Card>
-				))}
-		</ScrollView>
+			<ModalContainer
+				visible={modal.modals.deleteTask && !!selectedTask}
+				onClose={() => modal.closeModal("deleteTask")}
+			>
+				{selectedTask && (
+					<DeleteTaskConfirm
+						task={selectedTask}
+						onConfirm={taskMutation.handleDeleteTask}
+						onClose={() => modal.closeModal("deleteTask")}
+						isLoading={taskMutation.deleteTaskMutation.isPending}
+					/>
+				)}
+			</ModalContainer>
+		</View>
 	);
 
 	const renderAssignments = () => (
