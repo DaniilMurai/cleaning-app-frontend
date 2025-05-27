@@ -28,7 +28,8 @@ import {
 	EditLocationForm,
 } from "@/ui/forms/LocationForms";
 import { CreateRoomForm, DeleteRoomConfirm, EditRoomForm } from "@/ui/forms/RoomForms";
-import { CreateTaskForm, DeleteTaskConfirm, EditTaskForm } from "@/ui/forms/TaskForms"; // Импортируем компонент Collapse
+import { CreateTaskForm, DeleteTaskConfirm, EditTaskForm } from "@/ui/forms/TaskForms";
+import TasksList from "@/ui/components/admin/TasksList"; // Импортируем компонент Collapse
 
 export default function AdminPage() {
 	const { t } = useTranslation();
@@ -86,14 +87,17 @@ export default function AdminPage() {
 			createLocation: false,
 			createRoom: false,
 			createTask: false,
+			createRoomTask: false,
 			createAssignment: false,
 			editLocation: false,
 			editRoom: false,
 			editTask: false,
+			editRoomTask: false,
 			editAssignment: false,
 			deleteLocation: false,
 			deleteRoom: false,
 			deleteTask: false,
+			deleteRoomTask: false,
 			deleteAssignment: false,
 		});
 
@@ -339,6 +343,10 @@ export default function AdminPage() {
 														<Button
 															variant="text"
 															style={styles.addButton}
+															onPress={() => {
+																setSelectedRoom(room);
+																modal.openModal("createRoomTask");
+															}}
 														>
 															<FontAwesome5 name="plus" size={14} />
 															{t("admin.addTask")}
@@ -364,6 +372,24 @@ export default function AdminPage() {
 						</Card>
 					))}
 			</ScrollView>
+
+			{modal.modals.createRoomTask && selectedRoom && (
+				<ModalContainer
+					visible={modal.modals.createRoomTask}
+					onClose={() => modal.closeModal("createRoomTask")}
+				>
+					<TasksList
+						onClose={() => modal.closeModal("createRoomTask")}
+						tasks={tasks}
+						rooms={rooms}
+						room={selectedRoom}
+						locations={locations}
+						roomTasks={roomTasks}
+						tasksRefetch={tasksRefetch}
+						roomTasksRefetch={roomTasksRefetch}
+					/>
+				</ModalContainer>
+			)}
 
 			{modal.modals.createLocation && (
 				<ModalContainer

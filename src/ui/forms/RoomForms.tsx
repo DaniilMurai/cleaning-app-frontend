@@ -65,15 +65,6 @@ export function CreateRoomForm({ onSubmit, onClose, isLoading, location_id }: Cr
 
 			{/* Location dropdown/selector could be implemented here */}
 			{/* This is a simplified version - you might want to add a proper dropdown */}
-			<Input
-				placeholder={t("components.roomsList.locationId")}
-				value={formData.location_id.toString()}
-				onChangeText={text =>
-					setFormData({ ...formData, location_id: parseInt(text) || 0 })
-				}
-				style={styles.input}
-				keyboardType="numeric"
-			/>
 
 			<View style={styles.buttonsContainer}>
 				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
@@ -119,15 +110,6 @@ export function EditRoomForm({ room, onSubmit, onClose, isLoading }: EditRoomFor
 			/>
 
 			{/* Location dropdown/selector could be implemented here */}
-			<Input
-				placeholder={t("components.roomsList.locationId")}
-				value={formData.location_id?.toString()}
-				onChangeText={text =>
-					setFormData({ ...formData, location_id: parseInt(text) || 0 })
-				}
-				style={styles.input}
-				keyboardType="numeric"
-			/>
 
 			<View style={styles.buttonsContainer}>
 				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
@@ -191,8 +173,9 @@ const styles = StyleSheet.create(theme => ({
 	},
 	buttonsContainer: {
 		flexDirection: "row",
-		justifyContent: "space-between",
+		justifyContent: "flex-end",
 		marginTop: theme.spacing(4),
+		gap: theme.spacing(2),
 	},
 	buttonError: {
 		backgroundColor: theme.colors.error.main,
