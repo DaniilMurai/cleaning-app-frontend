@@ -748,14 +748,11 @@ export default function AdminPage() {
 const styles = StyleSheet.create(theme => ({
 	container: {
 		flex: 1,
-		backgroundColor:
-			typeof theme.colors.background === "object"
-				? theme.colors.background.default
-				: theme.colors.background,
+		backgroundColor: theme.colors.background.main,
 	},
 	tabContainer: {
 		flexDirection: "row",
-		backgroundColor: theme.colors.background.main,
+		backgroundColor: theme.colors.background.default,
 		elevation: 4,
 		shadowColor: theme.colors.shadow,
 		shadowOffset: { width: 0, height: 2 },

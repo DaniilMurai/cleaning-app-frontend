@@ -14,7 +14,7 @@ export default function AuthorizedLayout() {
 		console.log("No token: " + token);
 		return <Redirect href={"/Login"} />;
 	} else {
-		console.log("Token: " + token);
+		console.log("Token in authorized layout: " + token);
 	}
 
 	return (

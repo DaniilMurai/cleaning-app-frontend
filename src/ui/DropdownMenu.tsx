@@ -54,7 +54,7 @@ export default function DropdownMenu({
 
 			// Для слева от кнопки - центрируем вертикально и смещаем влево
 			top = y - 8; // Небольшой отступ вверх
-			left = Math.max(4, x - menuWidth); // Размещаем слева с отступом
+			left = Math.max(4, x - menuWidth - 20); // Размещаем слева с отступом
 
 			// Если не помещается слева, пробуем справа
 			if (left <= 0) {
@@ -100,7 +100,7 @@ export default function DropdownMenu({
 
 	useEffect(() => {
 		if (visible) {
-			opacity.value = withTiming(1, { duration: 200, easing: Easing.ease });
+			opacity.value = withTiming(1, { duration: 50, easing: Easing.ease });
 		} else {
 			opacity.value = 0;
 		}
@@ -178,7 +178,6 @@ const styles = StyleSheet.create(theme => ({
 	menuButton: {
 		padding: theme.spacing(1),
 		borderRadius: theme.borderRadius(1),
-		// backgroundColor: `${theme.colors.primary.light}50`, // Увеличиваем непрозрачность с 25 до 50
 		color: theme.colors.text.primary, // Добавляем цвет для иконки в соответствии с темой
 	},
 	overlay: {
@@ -200,6 +199,7 @@ const styles = StyleSheet.create(theme => ({
 		flexDirection: "row",
 		alignItems: "center",
 		padding: theme.spacing(2),
+		backgroundColor: theme.colors.background.paper,
 	},
 	iconContainer: {
 		width: 24,
@@ -208,12 +208,11 @@ const styles = StyleSheet.create(theme => ({
 	},
 	icon: {
 		color: theme.colors.text.primary, // Цвет иконки в соответствии с темой
-		backgroundColor: theme.colors.text.primary,
 	},
 	disabledItem: {
 		opacity: 0.5,
 	},
 	disabledText: {
-		color: theme.colors.text.disabled,
+		color: theme.colors.text.secondary,
 	},
 }));

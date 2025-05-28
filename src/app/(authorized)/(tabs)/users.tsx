@@ -195,9 +195,9 @@ export default function UsersPage() {
 const styles = StyleSheet.create(theme => ({
 	container: {
 		flex: 1,
-		padding: theme.spacing(3),
 	},
 	scrollContent: {
+		padding: theme.spacing(2),
 		paddingBottom: theme.spacing(5),
 	},
 	buttonsContainer: {

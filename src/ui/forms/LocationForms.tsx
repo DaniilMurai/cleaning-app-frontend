@@ -45,14 +45,14 @@ export function CreateLocationForm({ onSubmit, onClose, isLoading }: CreateLocat
 			</Typography>
 
 			<Input
-				placeholder={t("components.locationsList.name")}
+				label={t("components.locationsList.name") + "*"}
 				value={formData.name}
 				onChangeText={text => setFormData({ ...formData, name: text })}
 				style={styles.input}
 			/>
 
 			<Input
-				placeholder={t("components.locationsList.address")}
+				label={t("components.locationsList.address")}
 				value={formData.address}
 				onChangeText={text => setFormData({ ...formData, address: text })}
 				style={styles.input}
@@ -101,14 +101,14 @@ export function EditLocationForm({
 			</Typography>
 
 			<Input
-				placeholder={t("components.locationsList.name")}
+				label={t("components.locationsList.name") + "*"}
 				value={formData.name}
 				onChangeText={text => setFormData({ ...formData, name: text })}
 				style={styles.input}
 			/>
 
 			<Input
-				placeholder={t("components.locationsList.address")}
+				label={t("components.locationsList.address")}
 				value={formData.address}
 				onChangeText={text => setFormData({ ...formData, address: text })}
 				style={styles.input}
@@ -177,16 +177,16 @@ const styles = StyleSheet.create(theme => ({
 		alignSelf: "center",
 	},
 	title: {
-		marginBottom: theme.spacing(3),
+		marginBottom: theme.spacing(2),
 	},
 	input: {
-		marginBottom: theme.spacing(2),
+		marginBottom: theme.spacing(0.5),
 	},
 	buttonsContainer: {
 		flexDirection: "row",
 		justifyContent: "flex-end",
-		gap: theme.spacing(2),
 		marginTop: theme.spacing(3),
+		gap: theme.spacing(2),
 	},
 	buttonError: {
 		backgroundColor: theme.colors.error.main,

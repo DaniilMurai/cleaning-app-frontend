@@ -47,6 +47,7 @@ export default function UsersList({
 					(user.role === "admin" || user.role === "superadmin") ? null : (
 						<View style={styles.actionsContainer}>
 							<DropdownMenu
+								placement={"left"}
 								items={[
 									{
 										label: t("components.usersList.resetPassword"),

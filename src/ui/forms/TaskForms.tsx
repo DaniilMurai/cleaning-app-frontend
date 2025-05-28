@@ -34,14 +34,14 @@ export function CreateTaskForm({ onSubmit, onClose, isLoading }: CreateTaskFormP
 			</Typography>
 
 			<Input
-				placeholder={t("components.tasksList.title")}
+				label={t("components.tasksList.title") + "*"}
 				value={formData.title}
 				onChangeText={text => setFormData({ ...formData, title: text })}
 				style={styles.input}
 			/>
 
 			<Input
-				placeholder={t("components.tasksList.description")}
+				label={t("components.tasksList.description")}
 				value={formData.description || ""}
 				onChangeText={text => setFormData({ ...formData, description: text })}
 				style={styles.input}
@@ -49,7 +49,7 @@ export function CreateTaskForm({ onSubmit, onClose, isLoading }: CreateTaskFormP
 			/>
 
 			<Input
-				placeholder={t("components.tasksList.frequency")}
+				label={t("components.tasksList.frequency") + "*"}
 				value={formData.frequency.toString()}
 				onChangeText={text => setFormData({ ...formData, frequency: parseInt(text) || 0 })}
 				style={styles.input}
@@ -94,14 +94,14 @@ export function EditTaskForm({ task, onSubmit, onClose, isLoading }: EditTaskFor
 			</Typography>
 
 			<Input
-				placeholder={t("components.tasksList.title")}
+				label={t("components.tasksList.title") + "*"}
 				value={formData.title || ""}
 				onChangeText={text => setFormData({ ...formData, title: text })}
 				style={styles.input}
 			/>
 
 			<Input
-				placeholder={t("components.tasksList.description")}
+				label={t("components.tasksList.description")}
 				value={formData.description || ""}
 				onChangeText={text => setFormData({ ...formData, description: text })}
 				style={styles.input}
@@ -109,7 +109,7 @@ export function EditTaskForm({ task, onSubmit, onClose, isLoading }: EditTaskFor
 			/>
 
 			<Input
-				placeholder={t("components.tasksList.frequency")}
+				label={t("components.tasksList.frequency") + "*"}
 				value={formData.frequency?.toString() || ""}
 				onChangeText={text => setFormData({ ...formData, frequency: parseInt(text) || 0 })}
 				style={styles.input}
@@ -176,19 +176,20 @@ export interface DeleteTaskParams {
 
 const styles = StyleSheet.create(theme => ({
 	container: {
-		padding: theme.spacing(4),
+		padding: theme.spacing(3),
 		width: "100%",
 	},
 	title: {
-		marginBottom: theme.spacing(4),
+		marginBottom: theme.spacing(2),
 	},
 	input: {
-		marginBottom: theme.spacing(4),
+		marginBottom: theme.spacing(0.5),
 	},
 	buttonsContainer: {
 		flexDirection: "row",
-		justifyContent: "space-between",
-		marginTop: theme.spacing(4),
+		justifyContent: "flex-end",
+		marginTop: theme.spacing(3),
+		gap: theme.spacing(2),
 	},
 	buttonError: {
 		backgroundColor: theme.colors.error.main,

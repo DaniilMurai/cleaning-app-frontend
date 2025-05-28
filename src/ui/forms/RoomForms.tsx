@@ -57,7 +57,7 @@ export function CreateRoomForm({ onSubmit, onClose, isLoading, location_id }: Cr
 			</Typography>
 
 			<Input
-				placeholder={t("components.roomsList.name")}
+				label={t("components.roomsList.name") + "*"}
 				value={formData.name}
 				onChangeText={text => setFormData({ ...formData, name: text })}
 				style={styles.input}
@@ -103,7 +103,7 @@ export function EditRoomForm({ room, onSubmit, onClose, isLoading }: EditRoomFor
 			</Typography>
 
 			<Input
-				placeholder={t("components.roomsList.name")}
+				label={t("components.roomsList.name") + "*"}
 				value={formData.name}
 				onChangeText={text => setFormData({ ...formData, name: text })}
 				style={styles.input}
@@ -162,19 +162,20 @@ export function DeleteRoomConfirm({ room, onConfirm, onClose, isLoading }: Delet
 
 const styles = StyleSheet.create(theme => ({
 	container: {
-		padding: theme.spacing(4),
+		padding: theme.spacing(3),
 		width: "100%",
+		maxWidth: 600,
 	},
 	title: {
-		marginBottom: theme.spacing(4),
+		marginBottom: theme.spacing(2),
 	},
 	input: {
-		marginBottom: theme.spacing(4),
+		marginBottom: theme.spacing(0.5),
 	},
 	buttonsContainer: {
 		flexDirection: "row",
 		justifyContent: "flex-end",
-		marginTop: theme.spacing(4),
+		marginTop: theme.spacing(3),
 		gap: theme.spacing(2),
 	},
 	buttonError: {

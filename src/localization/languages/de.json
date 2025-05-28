@@ -72,8 +72,8 @@
     "generateLink": "Link generieren",
     "copyLink": "Link kopieren",
     "linkCopied": "Link wurde in die Zwischenablage kopiert!",
-    "locations": "Standorte",
-    "addLocation": "Standort hinzufügen",
+    "locations": "Gebäude",
+    "addLocation": "Gebäude hinzufügen",
     "rooms": "Räume",
     "noRooms": "Keine Zimmer verfügbar",
     "addRoom": "Raum hinzufügen",
@@ -95,7 +95,19 @@
     "assignmentDetails": "Zuweisungsdetails",
     "date": "Datum",
     "userNote": "Benutzerhinweis",
-    "dailyAssignment": "Tägliche Aufgabe"
+    "dailyAssignment": "Tägliche Aufgabe",
+    "createLocation": "Gebäude erstellen",
+    "editLocation": "Gebäude bearbeiten",
+    "deleteLocation": "Gebäude löschen",
+    "deleteLocationConfirmation": "Sind Sie sicher, dass Sie das Gebäude '{{name}}' löschen möchten?",
+    "createRoom": "Raum erstellen",
+    "editRoom": "Raum bearbeiten",
+    "deleteRoom": "Raum löschen",
+    "deleteRoomConfirmation": "Sind Sie sicher, dass Sie den Raum '{{name}}' löschen möchten?",
+    "createTask": "Aufgabe erstellen",
+    "editTask": "Aufgabe bearbeiten",
+    "deleteTask": "Aufgabe löschen",
+    "deleteTaskConfirmation": "Sind Sie sicher, dass Sie die Aufgabe '{{title}}' löschen möchten?"
   },
   "errors": {
     "updateFailed": "Aktualisierung der Benutzerdaten fehlgeschlagen: {{error}}",
@@ -129,6 +141,18 @@
   "components": {
     "infoItem": {
       "notAvailable": "N/V"
+    },
+    "locationsList": {
+      "name": "Gebäudename",
+      "address": "Gebäudeadresse"
+    },
+    "roomsList": {
+      "name": "Name"
+    },
+    "tasksList": {
+      "title": "Titel",
+      "description": "Beschreibung",
+      "frequency": "Häufigkeit (Tage)"
     },
     "usersList": {
       "name": "Name",

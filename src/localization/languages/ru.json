@@ -72,8 +72,8 @@
     "generateLink": "Сгенерировать ссылку",
     "copyLink": "Копировать ссылку",
     "linkCopied": "Ссылка скопирована в буфер обмена!",
-    "locations": "Локации",
-    "addLocation": "Добавить локацию",
+    "locations": "Здания",
+    "addLocation": "Добавить здание",
     "rooms": "Комнаты",
     "noRooms": "Нет доступных комнат",
     "addRoom": "Добавить комнату",
@@ -95,7 +95,19 @@
     "assignmentDetails": "Детали назначения",
     "date": "Дата",
     "userNote": "Заметка пользователя",
-    "dailyAssignment": "Ежедневное задание"
+    "dailyAssignment": "Ежедневное задание",
+    "createLocation": "Создать здание",
+    "editLocation": "Редактировать здание",
+    "deleteLocation": "Удалить здание",
+    "deleteLocationConfirmation": "Вы уверены, что хотите удалить здание '{{name}}'?",
+    "createRoom": "Создать помещение",
+    "editRoom": "Редактировать помещение",
+    "deleteRoom": "Удалить помещение",
+    "deleteRoomConfirmation": "Вы уверены, что хотите удалить помещение '{{name}}'?",
+    "createTask": "Создать задачу",
+    "editTask": "Редактировать задачу",
+    "deleteTask": "Удалить задачу",
+    "deleteTaskConfirmation": "Вы уверены, что хотите удалить задачу '{{title}}'?"
   },
   "errors": {
     "updateFailed": "Не удалось обновить данные пользователя: {{error}}",
@@ -129,6 +141,18 @@
   "components": {
     "infoItem": {
       "notAvailable": "Н/Д"
+    },
+    "locationsList": {
+      "name": "Название здания",
+      "address": "Адрес здания"
+    },
+    "roomsList": {
+      "name": "Название"
+    },
+    "tasksList": {
+      "title": "Название",
+      "description": "Описание",
+      "frequency": "Частота (дни)"
     },
     "usersList": {
       "name": "Имя",

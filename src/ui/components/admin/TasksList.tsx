@@ -245,10 +245,9 @@ const styles = StyleSheet.create(theme => ({
 		maxHeight: "100%",
 		padding: theme.spacing(2),
 	},
-
 	scrollContent: {
 		flexGrow: 1, // Разрешаем контенту растягиваться
-		paddingBottom: theme.spacing(4), // Отступ снизу
+		paddingBottom: theme.spacing(5), // Отступ снизу
 	},
 	headerContainer: {
 		flexDirection: "row-reverse",

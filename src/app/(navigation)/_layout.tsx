@@ -8,6 +8,7 @@ export default function RootNavigator() {
 	const { token, loading } = useAuth();
 
 	if (loading) return <Loading />;
+	console.log("Token in root navigator: " + token);
 
 	return (
 		<Stack>
