@@ -3,7 +3,7 @@ import { Modal, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import React from "react";
 
-interface ModalContainerProps {
+interface ModalContainerProps extends React.ComponentProps<typeof Modal> {
 	visible: boolean;
 	onClose: () => void;
 	children: React.ReactNode;

@@ -10,6 +10,7 @@ import Collapse from "@/ui/Collapse";
 import {
 	LocationResponse,
 	RoomResponse,
+	RoomTaskResponse,
 	TaskResponse,
 	useGetDailyAssignments,
 	useGetLocations,
@@ -29,7 +30,9 @@ import {
 } from "@/ui/forms/LocationForms";
 import { CreateRoomForm, DeleteRoomConfirm, EditRoomForm } from "@/ui/forms/RoomForms";
 import { CreateTaskForm, DeleteTaskConfirm, EditTaskForm } from "@/ui/forms/TaskForms";
-import TasksList from "@/ui/components/admin/TasksList"; // Импортируем компонент Collapse
+import TasksList from "@/ui/components/admin/TasksList";
+import useModals from "@/hooks/useModals";
+import { createMutationHandlersFactory } from "@/utils/mutationHandlers";
 
 export default function AdminPage() {
 	const { t } = useTranslation();
@@ -40,25 +43,6 @@ export default function AdminPage() {
 	const [expandedRooms, setExpandedRooms] = useState<Record<string, boolean>>({});
 	const [expandedTasks, setExpandedTasks] = useState<Record<number, boolean>>({});
 	const [expandedAssignments, setExpandedAssignments] = useState<Record<number, boolean>>({});
-
-	// // Заменим четыре отдельных состояния на одно структурированное
-	// const [expandedItems, setExpandedItems] = useState({
-	// 	locations: {} as Record<number, boolean>,
-	// 	rooms: {} as Record<string, boolean>,
-	// 	tasks: {} as Record<number, boolean>,
-	// 	assignments: {} as Record<number, boolean>
-	// });
-	//
-	// // Функция для переключения состояния развернутого элемента
-	// const toggleExpanded = (section: 'locations' | 'rooms' | 'tasks' | 'assignments', id: string | number) => {
-	// 	setExpandedItems(prev => ({
-	// 		...prev,
-	// 		[section]: {
-	// 			...prev[section],
-	// 			[id]: !prev[section][id as keyof typeof prev[typeof section]]
-	// 		}
-	// 	}));
-	// };
 
 	const {
 		data: locations,
@@ -82,51 +66,32 @@ export default function AdminPage() {
 		refetch: dailyAssignmentsRefetch,
 	} = useGetDailyAssignments({});
 
-	function useModals() {
-		const [modals, setModals] = useState({
-			createLocation: false,
-			createRoom: false,
-			createTask: false,
-			createRoomTask: false,
-			createAssignment: false,
-			editLocation: false,
-			editRoom: false,
-			editTask: false,
-			editRoomTask: false,
-			editAssignment: false,
-			deleteLocation: false,
-			deleteRoom: false,
-			deleteTask: false,
-			deleteRoomTask: false,
-			deleteAssignment: false,
-		});
-
-		const openModal = (modalName: any) => {
-			setModals(prev => ({ ...prev, [modalName]: true }));
-		};
-
-		const closeModal = (modalName: any) => {
-			setModals(prev => ({ ...prev, [modalName]: false }));
-		};
-
-		return { modals, openModal, closeModal };
-	}
-
-	const modal = useModals();
-
-	// Создадим функцию для стандартизации обработчиков мутаций
-	const createMutationHandlers = (entityName: string, { closeModalOnSuccess = true } = {}) => ({
-		onSuccessCreate: () => {
-			if (closeModalOnSuccess) modal.closeModal(`create${entityName}`);
-		},
-		onSuccessUpdate: () => {
-			if (closeModalOnSuccess) modal.closeModal(`edit${entityName}`);
-		},
-		onSuccessDelete: () => {
-			if (closeModalOnSuccess) modal.closeModal(`delete${entityName}`);
-		},
+	const modal = useModals({
+		createLocation: false,
+		createRoom: false,
+		createTask: false,
+		createRoomTask: false,
+		createAssignment: false,
+		editLocation: false,
+		editRoom: false,
+		editTask: false,
+		editRoomTask: false,
+		editAssignment: false,
+		deleteLocation: false,
+		deleteRoom: false,
+		deleteTask: false,
+		deleteRoomTask: false,
+		deleteAssignment: false,
 	});
 
+	// Создадим функцию для стандартизации обработчиков мутаций
+	const createMutationHandlers = createMutationHandlersFactory(
+		modal as {
+			modals: Record<string, boolean>;
+			openModal: (modalName: string | number) => void;
+			closeModal: (modalName: string | number) => void;
+		}
+	);
 	// Теперь используем эту функцию для всех мутаций
 	const locationMutationHandlers = {
 		...createMutationHandlers("Location"),
@@ -187,9 +152,19 @@ export default function AdminPage() {
 		}
 		return [];
 	};
+
+	const getRoomTaskId = (roomId: number, taskId: number) => {
+		return roomTasks && roomTasks.filter(rt => rt.room_id === roomId && rt.task_id === taskId);
+	};
+
 	const [selectedLocation, setSelectedLocation] = useState<LocationResponse | null>(null);
 	const [selectedRoom, setSelectedRoom] = useState<RoomResponse | null>(null);
 	const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
+
+	const deleteRoomTask = async (roomTask: RoomTaskResponse) => {
+		await roomTaskMutation.handleDeleteRoomTask({ room_task_id: roomTask.id });
+	};
+
 	const renderLocations = () => (
 		<View style={{ flex: 1 }}>
 			<ScrollView style={styles.scrollContainer}>
@@ -330,6 +305,27 @@ export default function AdminPage() {
 																			<FontAwesome5
 																				name="unlink"
 																				size={12}
+																				onPress={() => {
+																					console.log(
+																						"unlink"
+																					);
+																					const roomTaskIds =
+																						getRoomTaskId(
+																							room.id,
+																							task.id
+																						);
+																					if (
+																						roomTaskIds &&
+																						roomTaskIds.length >
+																							0
+																					) {
+																						const roomTaskObj =
+																							roomTaskIds[0];
+																						deleteRoomTask(
+																							roomTaskObj
+																						);
+																					}
+																				}}
 																			/>
 																		</Button>
 																	</View>
@@ -568,6 +564,20 @@ export default function AdminPage() {
 													<Button
 														variant="text"
 														style={styles.deleteButton}
+														onPress={() => {
+															console.log("unlink");
+															const roomTaskIds = getRoomTaskId(
+																room.id,
+																task.id
+															);
+															if (
+																roomTaskIds &&
+																roomTaskIds.length > 0
+															) {
+																const roomTaskObj = roomTaskIds[0];
+																deleteRoomTask(roomTaskObj);
+															}
+														}}
 													>
 														<FontAwesome5 name="unlink" size={12} />
 													</Button>

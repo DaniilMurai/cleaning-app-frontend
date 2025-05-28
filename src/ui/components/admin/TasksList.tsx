@@ -10,6 +10,8 @@ import { CreateTaskForm, DeleteTaskConfirm, EditTaskForm } from "@/ui/forms/Task
 import { useTranslation } from "react-i18next";
 import useTaskMutation from "@/hooks/useTaskMutation";
 import useRoomTaskMutation from "@/hooks/useRoomTaskMutation";
+import useModals from "@/hooks/useModals";
+import { createMutationHandlersFactory } from "@/utils/mutationHandlers";
 
 interface TasksListProps {
 	onClose: () => void;
@@ -37,46 +39,28 @@ export default function TasksList({
 	const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
 	const [expandedTasks, setExpandedTasks] = useState<Record<number, boolean>>({});
 
-	function useModals() {
-		const [modals, setModals] = useState({
-			createTask: false,
-			editTask: false,
-			deleteTask: false,
-		});
-
-		const openModal = (modalName: any) => {
-			setModals(prev => ({ ...prev, [modalName]: true }));
-		};
-
-		const closeModal = (modalName: any) => {
-			setModals(prev => ({ ...prev, [modalName]: false }));
-		};
-
-		return { modals, openModal, closeModal };
-	}
+	// In your component
+	const modal = useModals({
+		createTask: false,
+		editTask: false,
+		deleteTask: false,
+	});
 
 	useEffect(() => {
 		console.log("TasksList rendering");
 	});
 
-	const modal = useModals();
-
 	const toggleTask = (id: number) => {
 		setExpandedTasks(prev => ({ ...prev, [id]: !prev[id] }));
 	};
 
-	const createMutationHandlers = (entityName: string, { closeModalOnSuccess = true } = {}) => ({
-		onSuccessCreate: () => {
-			if (closeModalOnSuccess) modal.closeModal(`create${entityName}`);
-		},
-		onSuccessUpdate: () => {
-			if (closeModalOnSuccess) modal.closeModal(`edit${entityName}`);
-		},
-		onSuccessDelete: () => {
-			if (closeModalOnSuccess) modal.closeModal(`delete${entityName}`);
-		},
-	});
-
+	const createMutationHandlers = createMutationHandlersFactory(
+		modal as {
+			modals: Record<string, boolean>;
+			openModal: (modalName: string | number) => void;
+			closeModal: (modalName: string | number) => void;
+		}
+	);
 	const taskMutationHandlers = {
 		...createMutationHandlers("Task"),
 		refetch: tasksRefetch || (() => {}),
@@ -99,7 +83,7 @@ export default function TasksList({
 
 	return (
 		<Card size={"large"} style={{ flex: 1 }}>
-			<ScrollView style={styles.scrollContainer}>
+			<ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
 				<View style={styles.headerContainer}>
 					<Button variant="contained">
 						<FontAwesome5
@@ -213,7 +197,6 @@ export default function TasksList({
 					{t("common.close")}
 				</Button>
 			</ScrollView>
-
 			<ModalContainer
 				visible={modal.modals.createTask}
 				onClose={() => modal.closeModal("createTask")}
@@ -259,7 +242,13 @@ export default function TasksList({
 const styles = StyleSheet.create(theme => ({
 	scrollContainer: {
 		flex: 1,
+		maxHeight: "100%",
 		padding: theme.spacing(2),
+	},
+
+	scrollContent: {
+		flexGrow: 1, // Разрешаем контенту растягиваться
+		paddingBottom: theme.spacing(4), // Отступ снизу
 	},
 	headerContainer: {
 		flexDirection: "row-reverse",

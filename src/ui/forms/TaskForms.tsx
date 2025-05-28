@@ -51,7 +51,7 @@ export function CreateTaskForm({ onSubmit, onClose, isLoading }: CreateTaskFormP
 			<Input
 				placeholder={t("components.tasksList.frequency")}
 				value={formData.frequency.toString()}
-				onChangeText={text => setFormData({ ...formData, frequency: parseInt(text) || 1 })}
+				onChangeText={text => setFormData({ ...formData, frequency: parseInt(text) || 0 })}
 				style={styles.input}
 				keyboardType="numeric"
 			/>
@@ -111,7 +111,7 @@ export function EditTaskForm({ task, onSubmit, onClose, isLoading }: EditTaskFor
 			<Input
 				placeholder={t("components.tasksList.frequency")}
 				value={formData.frequency?.toString() || ""}
-				onChangeText={text => setFormData({ ...formData, frequency: parseInt(text) || 1 })}
+				onChangeText={text => setFormData({ ...formData, frequency: parseInt(text) || 0 })}
 				style={styles.input}
 				keyboardType="numeric"
 			/>
