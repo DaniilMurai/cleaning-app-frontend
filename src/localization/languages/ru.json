@@ -107,7 +107,11 @@
     "createTask": "Создать задачу",
     "editTask": "Редактировать задачу",
     "deleteTask": "Удалить задачу",
-    "deleteTaskConfirmation": "Вы уверены, что хотите удалить задачу '{{title}}'?"
+    "deleteTaskConfirmation": "Вы уверены, что хотите удалить задачу '{{title}}'?",
+    "createDailyAssignment": "Создать ежедневное задание",
+    "editDailyAssignment": "Редактировать ежедневное задание",
+    "deleteDailyAssignment": "Удалить ежедневное задание",
+    "deleteDailyAssignmentConfirmation": "Вы уверены, что хотите удалить задание #{{id}} от {{date}}?"
   },
   "errors": {
     "updateFailed": "Не удалось обновить данные пользователя: {{error}}",
@@ -141,6 +145,12 @@
   "components": {
     "infoItem": {
       "notAvailable": "Н/Д"
+    },
+    "dailyAssignmentsList": {
+      "user": "Пользователь",
+      "location": "Местоположение",
+      "date": "Дата",
+      "adminNote": "Заметка администратора"
     },
     "locationsList": {
       "name": "Название здания",

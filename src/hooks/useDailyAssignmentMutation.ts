@@ -26,7 +26,7 @@ export default function useDailyAssignmentMutation(options: {
 		})
 	);
 
-	const updateDailyAssignment = useEditDailyAssignment(
+	const updateDailyAssignmentMutation = useEditDailyAssignment(
 		createGenericMutation({
 			mutation: {},
 			entityName: "Daily Assignment updated",
@@ -34,7 +34,7 @@ export default function useDailyAssignmentMutation(options: {
 			refetch,
 		})
 	);
-	const deleteDailyAssignment = useDeleteDailyAssignment(
+	const deleteDailyAssignmentMutation = useDeleteDailyAssignment(
 		createGenericMutation({
 			mutation: {},
 			entityName: "Daily Assignment deleted",
@@ -51,13 +51,13 @@ export default function useDailyAssignmentMutation(options: {
 		daily_assignment_id: EditDailyAssignmentParams,
 		data: DailyAssignmentUpdate
 	) => {
-		await updateDailyAssignment.mutateAsync({ data, params: daily_assignment_id });
+		await updateDailyAssignmentMutation.mutateAsync({ data, params: daily_assignment_id });
 	};
 
 	const handleDeleteDailyAssignment = async (
 		daily_assignment_id: DeleteDailyAssignmentParams
 	) => {
-		await deleteDailyAssignment.mutateAsync({ params: daily_assignment_id });
+		await deleteDailyAssignmentMutation.mutateAsync({ params: daily_assignment_id });
 	};
 
 	return {
@@ -65,7 +65,7 @@ export default function useDailyAssignmentMutation(options: {
 		handleUpdateDailyAssignment,
 		handleDeleteDailyAssignment,
 		createDailyAssignmentMutation,
-		updateDailyAssignment,
-		deleteDailyAssignment,
+		updateDailyAssignmentMutation,
+		deleteDailyAssignmentMutation,
 	};
 }

@@ -3,15 +3,21 @@ import React, { useState } from "react";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import Typography from "@/ui/Typography";
-import { Button, Card } from "@/ui";
+import { Button, Card, ModalContainer } from "@/ui";
 import { useTranslation } from "react-i18next";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Collapse from "@/ui/Collapse";
-import { DailyAssignmentResponse, LocationResponse } from "@/api/admin";
+import { AdminReadUser, DailyAssignmentResponse, LocationResponse } from "@/api/admin";
+import {
+	CreateDailyAssignmentForm,
+	DeleteDailyAssignmentConfirm,
+	EditDailyAssignmentForm,
+} from "@/ui/forms/DailyAssignmentForms";
 
 interface AssignmentsTabProps {
 	locations: LocationResponse[];
 	dailyAssignments: DailyAssignmentResponse[];
+	users?: AdminReadUser[];
 	dailyAssignmentsIsLoading: boolean;
 	dailyAssignmentMutation: any;
 	modal: any;
@@ -20,6 +26,7 @@ interface AssignmentsTabProps {
 export default function AssignmentsTab({
 	locations,
 	dailyAssignments,
+	users,
 	dailyAssignmentsIsLoading,
 	dailyAssignmentMutation,
 	modal,
@@ -28,17 +35,72 @@ export default function AssignmentsTab({
 
 	// Состояния для управления развернутыми/свернутыми элементами
 	const [expandedAssignments, setExpandedAssignments] = useState<Record<number, boolean>>({});
+	const [selectedAssignment, setSelectedAssignment] = useState<DailyAssignmentResponse | null>();
 
 	// Функции для обработки состояния развернутых элементов
 	const toggleAssignment = (id: number) => {
 		setExpandedAssignments(prev => ({ ...prev, [id]: !prev[id] }));
 	};
 
+	const getUserById = (id: number) => {
+		if (!users) return null;
+		return users.find(u => u.id === id);
+	};
+
+	const renderModals = () => (
+		<>
+			{modal.modals.createAssignment && (
+				<ModalContainer
+					visible={modal.modals.createAssignment}
+					onClose={() => modal.closeModal("createAssignment")}
+				>
+					<CreateDailyAssignmentForm
+						onSubmit={dailyAssignmentMutation.handleCreateDailyAssignment}
+						onClose={() => modal.closeModal("createAssignment")}
+						users={users || []}
+						locations={locations}
+						isLoading={dailyAssignmentMutation.createDailyAssignmentMutation.isPending}
+					/>
+				</ModalContainer>
+			)}
+
+			{modal.modals.editAssignment && !!selectedAssignment && (
+				<ModalContainer
+					visible={modal.modals.editAssignment}
+					onClose={() => modal.closeModal("editAssignment")}
+				>
+					<EditDailyAssignmentForm
+						assignment={selectedAssignment}
+						onSubmit={dailyAssignmentMutation.handleUpdateDailyAssignment}
+						onClose={() => modal.closeModal("editAssignment")}
+						users={users || []}
+						locations={locations}
+						isLoading={dailyAssignmentMutation.updateDailyAssignmentMutation.isPending}
+					/>
+				</ModalContainer>
+			)}
+
+			{modal.modals.deleteAssignment && !!selectedAssignment && (
+				<ModalContainer
+					visible={modal.modals.deleteAssignment}
+					onClose={() => modal.closeModal("deleteAssignment")}
+				>
+					<DeleteDailyAssignmentConfirm
+						assignment={selectedAssignment}
+						onConfirm={dailyAssignmentMutation.handleDeleteDailyAssignment}
+						onClose={() => modal.closeModal("deleteAssignment")}
+						isLoading={dailyAssignmentMutation.deleteDailyAssignmentMutation.isPending}
+					/>
+				</ModalContainer>
+			)}
+		</>
+	);
+
 	return (
 		<View style={{ flex: 1 }}>
 			<ScrollView style={styles.scrollContainer}>
 				<View style={styles.headerContainer}>
-					<Button variant="contained">
+					<Button variant="contained" onPress={() => modal.openModal("createAssignment")}>
 						<FontAwesome5 name="plus" size={16} color={styles.iconColor.color} />
 					</Button>
 				</View>
@@ -72,10 +134,23 @@ export default function AssignmentsTab({
 										</Typography>
 									</View>
 									<View style={styles.actionButtons}>
-										<Button variant="outlined">
+										<Button
+											variant="outlined"
+											onPress={() => {
+												setSelectedAssignment(assignment);
+												modal.openModal("editAssignment");
+											}}
+										>
 											<FontAwesome5 name="edit" size={14} />
 										</Button>
-										<Button variant="outlined" style={styles.deleteButton}>
+										<Button
+											variant="outlined"
+											style={styles.deleteButton}
+											onPress={() => {
+												setSelectedAssignment(assignment);
+												modal.openModal("deleteAssignment");
+											}}
+										>
 											<FontAwesome5 name="trash" size={14} />
 										</Button>
 									</View>
@@ -87,6 +162,11 @@ export default function AssignmentsTab({
 									</Typography>
 									<Typography>
 										{t("admin.date")}: {assignment.date}
+									</Typography>
+									<Typography>
+										{t("profile.username")}:{" "}
+										{getUserById(assignment.user_id)?.full_name ||
+											getUserById(assignment.user_id)?.full_name}
 									</Typography>
 									{assignment.admin_note && (
 										<Typography>
@@ -103,6 +183,8 @@ export default function AssignmentsTab({
 						);
 					})}
 			</ScrollView>
+
+			{renderModals()}
 		</View>
 	);
 }
@@ -111,38 +193,7 @@ const styles = StyleSheet.create(theme => ({
 		flex: 1,
 		backgroundColor: theme.colors.background.main,
 	},
-	tabContainer: {
-		flexDirection: "row",
-		backgroundColor: theme.colors.background.default,
-		elevation: 4,
-		shadowColor: theme.colors.shadow,
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.1,
-		shadowRadius: 2,
-	},
-	tab: {
-		flex: 1,
-		paddingVertical: theme.spacing(2),
-		alignItems: "center",
-	},
-	activeTab: {
-		borderBottomWidth: 2,
-		borderBottomColor:
-			typeof theme.colors.primary === "object"
-				? theme.colors.primary.main
-				: theme.colors.primary,
-	},
-	tabText: {
-		color:
-			typeof theme.colors.text === "object" ? theme.colors.text.primary : theme.colors.text,
-	},
-	activeTabText: {
-		color:
-			typeof theme.colors.primary === "object"
-				? theme.colors.primary.main
-				: theme.colors.primary,
-		fontWeight: "600",
-	},
+
 	scrollContainer: {
 		flex: 1,
 		padding: theme.spacing(2),
@@ -151,9 +202,7 @@ const styles = StyleSheet.create(theme => ({
 		marginBottom: theme.spacing(2),
 		alignItems: "flex-end",
 	},
-	mainButton: {
-		paddingHorizontal: theme.spacing(2),
-	},
+
 	card: {
 		marginBottom: theme.spacing(2),
 		padding: theme.spacing(2),
@@ -187,55 +236,7 @@ const styles = StyleSheet.create(theme => ({
 		backgroundColor: theme.colors.divider,
 		marginVertical: theme.spacing(2),
 	},
-	roomSection: {
-		marginTop: theme.spacing(1),
-	},
-	roomHeader: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-		paddingVertical: theme.spacing(1),
-	},
-	roomItem: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-		paddingVertical: theme.spacing(1),
-		borderBottomWidth: 1,
-		borderBottomColor: theme.colors.divider,
-	},
-	roomTasks: {
-		paddingLeft: theme.spacing(4),
-		marginTop: theme.spacing(1),
-		marginBottom: theme.spacing(2),
-	},
-	roomTaskItem: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-		paddingVertical: theme.spacing(1),
-	},
-	addButton: {
-		marginTop: theme.spacing(1),
-		alignSelf: "flex-start",
-	},
-	assignmentItem: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-		paddingVertical: theme.spacing(1),
-		borderBottomWidth: 1,
-		borderBottomColor: theme.colors.divider,
-	},
-	assignmentActions: {
-		marginTop: theme.spacing(2),
-		alignItems: "flex-end",
-	},
-	emptyState: {
-		fontStyle: "italic",
-		color: theme.colors.text.secondary,
-		marginVertical: theme.spacing(1),
-	},
+
 	iconColor: {
 		color: theme.colors.primary.text,
 	},

@@ -3,13 +3,13 @@ import { useState } from "react";
 import Card from "@/ui/Card";
 import Typography from "@/ui/Typography";
 import Input from "@/ui/Input";
-import Select from "@/ui/Select";
 import { roleOptions } from "@/ui/forms/Role-StatusOptions";
 import { View } from "react-native";
 import { Button } from "@/ui";
 import { StyleSheet } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
 import { useIsSuperAdmin } from "@/context/AuthContext";
+import CustomPicker from "@/ui/Picker";
 
 interface CreateUserFormProps {
 	onSubmit: (userData: RegisterUserData) => void;
@@ -44,17 +44,19 @@ export default function CreateUserForm({ onSubmit, onClose, isLoading }: CreateU
 				style={styles.input}
 			/>
 
-			<Select
-				label={t("components.usersList.role")}
-				value={formData.role ?? "employee"}
-				options={
-					isSuperAdmin
-						? roleOptions
-						: roleOptions.filter(option => option.value !== "admin")
-				}
-				onChange={value => setFormData({ ...formData, role: value as UserRole })}
-				style={styles.input}
-			/>
+			<View style={{ zIndex: 10 }}>
+				<CustomPicker
+					label={t("components.usersList.role")}
+					value={formData.role ?? "employee"}
+					options={
+						isSuperAdmin
+							? roleOptions
+							: roleOptions.filter(option => option.value !== "admin")
+					}
+					onChange={value => setFormData({ ...formData, role: value as UserRole })}
+					style={styles.input}
+				/>
+			</View>
 
 			<Input
 				label={t("components.usersList.adminNote")}

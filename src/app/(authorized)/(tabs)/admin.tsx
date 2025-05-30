@@ -9,11 +9,15 @@ import AssignmentsTab from "@/ui/components/admin/AssignmentsTab";
 import { useAdminData } from "@/hooks/useAdminData";
 import useModals from "@/hooks/useModals";
 import { useAdminMutations } from "@/hooks/useAdminMutations";
+import { useGetUsers } from "@/api/admin";
 
 export default function AdminPage() {
 	const [activeTab, setActiveTab] = useState("locations");
 
 	const adminData = useAdminData();
+
+	const { data: users } = useGetUsers({});
+
 	const modal = useModals({
 		createLocation: false,
 		createRoom: false,
@@ -81,6 +85,7 @@ export default function AdminPage() {
 				<AssignmentsTab
 					locations={adminData.locations || []}
 					dailyAssignments={adminData.dailyAssignments || []}
+					users={users}
 					dailyAssignmentsIsLoading={adminData.dailyAssignmentsIsLoading}
 					dailyAssignmentMutation={mutations.dailyAssignmentMutation}
 					modal={modal}

@@ -3,7 +3,7 @@ import useAuth from "@/context/AuthContext";
 import Loading from "@/ui/Loading";
 
 export default function AuthorizedLayout() {
-	const { token, loading } = useAuth();
+	const { token, loading, user } = useAuth();
 
 	if (loading) {
 		console.log("Loading...");
@@ -15,6 +15,13 @@ export default function AuthorizedLayout() {
 		return <Redirect href={"/Login"} />;
 	} else {
 		console.log("Token in authorized layout: " + token);
+	}
+
+	if (!user) {
+		console.log("No user: " + user);
+		// logout();
+	} else {
+		console.log("User in authorized layout: " + user.nickname);
 	}
 
 	return (

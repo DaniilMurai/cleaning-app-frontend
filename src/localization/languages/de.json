@@ -107,7 +107,11 @@
     "createTask": "Aufgabe erstellen",
     "editTask": "Aufgabe bearbeiten",
     "deleteTask": "Aufgabe löschen",
-    "deleteTaskConfirmation": "Sind Sie sicher, dass Sie die Aufgabe '{{title}}' löschen möchten?"
+    "deleteTaskConfirmation": "Sind Sie sicher, dass Sie die Aufgabe '{{title}}' löschen möchten?",
+    "createDailyAssignment": "Tägliche Aufgabe erstellen",
+    "editDailyAssignment": "Tägliche Aufgabe bearbeiten",
+    "deleteDailyAssignment": "Tägliche Aufgabe löschen",
+    "deleteDailyAssignmentConfirmation": "Sind Sie sicher, dass Sie die Aufgabe #{{id}} vom {{date}} löschen möchten?"
   },
   "errors": {
     "updateFailed": "Aktualisierung der Benutzerdaten fehlgeschlagen: {{error}}",
@@ -148,6 +152,12 @@
     },
     "roomsList": {
       "name": "Name"
+    },
+    "dailyAssignmentsList": {
+      "user": "Benutzer",
+      "location": "Standort",
+      "date": "Datum",
+      "adminNote": "Administratorhinweis"
     },
     "tasksList": {
       "title": "Titel",

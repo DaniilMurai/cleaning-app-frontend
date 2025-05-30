@@ -3,8 +3,6 @@ import { View } from "react-native";
 import { Button } from "@/ui";
 import Input from "@/ui/Input";
 import { useState } from "react";
-
-import Select from "@/ui/Select";
 import Card from "@/ui/Card";
 import Typography from "@/ui/Typography";
 
@@ -12,6 +10,8 @@ import { roleOptions, statusOptions } from "@/ui/forms/Role-StatusOptions";
 import { StyleSheet } from "react-native-unistyles";
 import { UserRole, UserSchema, UserStatus } from "@/api/admin";
 import { useIsSuperAdmin } from "@/context/AuthContext";
+import CustomPicker from "@/ui/Picker";
+import { useTranslation } from "react-i18next";
 
 interface EditUserFormProps {
 	user: UserSchema;
@@ -22,6 +22,7 @@ interface EditUserFormProps {
 
 export default function EditUserForm({ user, onClose, onSubmit, isLoading }: EditUserFormProps) {
 	const isSuperAdmin = useIsSuperAdmin();
+	const { t } = useTranslation();
 
 	const [formData, setFormData] = useState<Partial<UserSchema>>({
 		nickname: user.nickname,
@@ -47,27 +48,29 @@ export default function EditUserForm({ user, onClose, onSubmit, isLoading }: Edi
 				onChangeText={text => setFormData({ ...formData, nickname: text })}
 				style={styles.input}
 			/>
+			<View style={{ zIndex: 10 }}>
+				<CustomPicker
+					label={t("components.usersList.role")}
+					value={formData.role}
+					options={
+						isSuperAdmin
+							? roleOptions
+							: roleOptions.filter(option => option.value !== "admin")
+					}
+					onChange={value => setFormData({ ...formData, role: value as UserRole })}
+					style={styles.input}
+				/>
+			</View>
 
-			<Select
-				label="Role"
-				value={formData.role}
-				options={
-					isSuperAdmin
-						? roleOptions
-						: roleOptions.filter(option => option.value !== "admin")
-				}
-				onChange={value => setFormData({ ...formData, role: value as UserRole })}
-				style={styles.input}
-			/>
-
-			<Select
-				label="Status"
-				value={formData.status}
-				options={statusOptions}
-				onChange={value => setFormData({ ...formData, status: value as UserStatus })}
-				style={styles.input}
-			/>
-
+			<View style={{ zIndex: 1 }}>
+				<CustomPicker
+					label={t("components.usersList.status")}
+					value={formData.status}
+					options={statusOptions}
+					onChange={value => setFormData({ ...formData, status: value as UserStatus })}
+					style={styles.input}
+				/>
+			</View>
 			<Input
 				label="Full Name"
 				value={formData.full_name ?? undefined}
