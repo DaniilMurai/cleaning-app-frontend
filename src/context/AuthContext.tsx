@@ -53,11 +53,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		const initAuth = async () => {
 			try {
 				const tokens = await getTokens();
-				const newToken = tokens?.accessToken || null;
-				setToken(tokens.accessToken);
-				console.log("Token:", token);
-				if (newToken) {
-					await refreshUserData(newToken);
+				if (tokens?.accessToken) {
+					setToken(tokens.accessToken);
+					console.log("Token in init auth:", tokens.accessToken);
+					console.log("Token in init auth context:", token);
+					// Используем переменную newToken вместо token из состояния,
+					// так как состояние еще не обновилось
+					await refreshUserData(tokens.accessToken);
+				} else {
+					// Явно устанавливаем null, если токен не найден
+					setToken(null);
+					setUser(null);
 				}
 			} catch (e) {
 				console.error("Ошибка при инициализации auth:", e);
@@ -94,16 +100,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
 	const refreshUserData = async (access_token?: string) => {
 		const tokenToUse = access_token || token;
-		if (tokenToUse) {
-			await refetchUser();
-			console.log("User data refetched:", userData);
-			if (userData) {
-				setUser(userData);
-				console.log("User data updated:", userData);
-			}
-		} else {
+		if (!tokenToUse) {
 			console.error("Token is missing in refreshUserData");
-			// await handleLogout();
+			return;
+		}
+
+		try {
+			const result = await refetchUser();
+			// Используем результат напрямую вместо полагания на userData
+			if (result.data) {
+				setUser(result.data);
+				console.log("User data updated:", result.data);
+			}
+		} catch (error) {
+			console.error("Error refreshing user data:", error);
 		}
 	};
 
