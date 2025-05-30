@@ -193,7 +193,7 @@ export default function TasksList({
 							</Collapse>
 						</Card>
 					))}
-				<Button variant={"contained"} style={styles.buttonExit} onPress={onClose}>
+				<Button variant={"outlined"} style={styles.buttonExit} onPress={onClose}>
 					{t("common.close")}
 				</Button>
 			</ScrollView>

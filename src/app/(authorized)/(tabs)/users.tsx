@@ -8,7 +8,7 @@ import { RegisterUserData, useGetUsers, UserSchema } from "@/api/admin";
 import EditUserForm from "@/ui/forms/EditUserForm";
 import CreateUserForm from "@/ui/forms/CreateUserForm";
 import UsersList from "@/ui/components/admin/UsersList";
-import { useAdminMutations } from "@/hooks/useAdminMutations";
+import { useAdminUsersMutations } from "@/hooks/useAdminUsersMutations";
 import { FontAwesome5 } from "@expo/vector-icons";
 import GetLinkForm from "@/ui/forms/GetInviteLinkForm";
 import { useTranslation } from "react-i18next";
@@ -37,7 +37,7 @@ export default function UsersPage() {
 		handleGetInviteLink,
 		updateMutation,
 		createMutation,
-	} = useAdminMutations({
+	} = useAdminUsersMutations({
 		onSuccessCreate: invite_link => {
 			setInviteLink(invite_link);
 			setModalState(prev => ({ ...prev, inviteLinkModal: true }));
