@@ -107,6 +107,7 @@
     "createTask": "Создать задачу",
     "editTask": "Редактировать задачу",
     "deleteTask": "Удалить задачу",
+    "noTasks": "Нет задач",
     "deleteTaskConfirmation": "Вы уверены, что хотите удалить задачу '{{title}}'?",
     "createDailyAssignment": "Создать ежедневное задание",
     "editDailyAssignment": "Редактировать ежедневное задание",
@@ -146,11 +147,20 @@
     "infoItem": {
       "notAvailable": "Н/Д"
     },
+    "taskTimer": {
+      "time": "Время",
+      "start": "Начать",
+      "pause": "Пауза",
+      "resume": "Продолжить",
+      "complete": "Завершить",
+      "completed": "Задача завершена"
+    },
     "dailyAssignmentsList": {
       "user": "Пользователь",
       "location": "Местоположение",
       "date": "Дата",
-      "adminNote": "Заметка администратора"
+      "adminNote": "Заметка администратора",
+      "address": "Адрес"
     },
     "locationsList": {
       "name": "Название здания",

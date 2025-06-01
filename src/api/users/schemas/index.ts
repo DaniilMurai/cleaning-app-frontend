@@ -5,8 +5,16 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./dailyAssignmentForUserResponse";
+export * from "./dailyAssignmentForUserResponseAdminNote";
+export * from "./dailyAssignmentForUserResponseUserNote";
 export * from "./hTTPValidationError";
+export * from "./locationResponse";
+export * from "./roomResponse";
+export * from "./roomTaskResponse";
 export * from "./successResponse";
+export * from "./taskResponse";
+export * from "./taskResponseDescription";
 export * from "./updateUserData";
 export * from "./updateUserDataFullName";
 export * from "./updateUserDataNickname";
