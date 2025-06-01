@@ -6,6 +6,16 @@
     "darkTheme": "Темная",
     "language": "Язык"
   },
+  "reports": {
+    "createReport": "Создать отчет",
+    "enterReportText": "Введите текст отчета...",
+    "addMedia": "Добавить медиа",
+    "submit": "Отправить",
+    "selectMediaType": "Выберите тип медиа",
+    "chooseFromGallery": "Выбрать из галереи",
+    "takePhoto": "Сделать фото",
+    "recordVideo": "Записать видео"
+  },
   "tabs": {
     "home": "Главная",
     "profile": "Профиль",

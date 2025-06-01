@@ -6,7 +6,8 @@ import { Card, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Collapse from "@/ui/Collapse";
 import { useTranslation } from "react-i18next";
-import TaskTimer from "@/ui/components/user/TaskTimer";
+import TaskTimer, { TaskStatus } from "@/ui/components/user/TaskTimer";
+import ReportForm from "@/ui/forms/ReportForm";
 
 /**
  * Component for displaying daily assignments
@@ -22,6 +23,8 @@ export default function DailyAssignmentsList() {
 	// State for managing expanded/collapsed elements
 	const [expandedAssignments, setExpandedAssignments] = useState<Record<number, boolean>>({});
 	const [expandedRooms, setExpandedRooms] = useState<Record<string, boolean>>({});
+
+	const [showReport, setShowReport] = useState(false);
 
 	// Functions for handling expanded state
 	const toggleAssignment = (id: number) => {
@@ -184,8 +187,33 @@ export default function DailyAssignmentsList() {
 										console.log(
 											`Assignment ${assignment.id} status changed to ${status}. Total time: ${totalTime}ms`
 										);
+										if (status === TaskStatus.COMPLETED) {
+											setShowReport(true);
+										}
 									}}
 								/>
+								{/* Компонент отправки отчета */}
+								{showReport && (
+									<ReportForm
+										taskId={assignment.id}
+										onSubmit={async data => {
+											// Здесь будет логика отправки отчета на сервер
+											console.log("Отправка отчета:", data);
+
+											setShowReport(false);
+
+											// Например:
+											// await api.reports.submit({
+											//   assignmentId: assignment.id,
+											//   text: data.text,
+											//   media: data.media
+											// });
+											// После успешной отправки можно обновить данные
+											// dailyAssignmentRefetch();
+										}}
+									/>
+								)}
+
 								<View style={styles.divider} />
 								<Typography variant="subtitle1" style={styles.wrappableText}>
 									{t("admin.rooms")}

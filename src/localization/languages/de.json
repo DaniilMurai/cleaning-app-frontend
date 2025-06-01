@@ -6,6 +6,16 @@
     "darkTheme": "Dunkel",
     "language": "Sprache"
   },
+  "reports": {
+    "createReport": "Bericht erstellen",
+    "enterReportText": "Berichttext eingeben...",
+    "addMedia": "Medien hinzufügen",
+    "submit": "Absenden",
+    "selectMediaType": "Medientyp auswählen",
+    "chooseFromGallery": "Aus Galerie auswählen",
+    "takePhoto": "Foto aufnehmen",
+    "recordVideo": "Video aufnehmen"
+  },
   "tabs": {
     "home": "Startseite",
     "profile": "Profil",
