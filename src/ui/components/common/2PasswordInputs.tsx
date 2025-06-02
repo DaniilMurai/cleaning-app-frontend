@@ -4,6 +4,8 @@ import { forwardRef, useImperativeHandle, useState } from "react";
 import { StyleSheet } from "react-native-unistyles";
 import { Typography } from "@/ui";
 import { PasswordValidationResult } from "@/hooks/usePasswordValidation";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { TouchableOpacity, View } from "react-native";
 
 export interface PasswordInputsProps {
 	onValidate?: (result: PasswordValidationResult) => void;
@@ -32,6 +34,9 @@ const PasswordInputs = forwardRef<PasswordInputsRef, PasswordInputsProps>(
 		const [newPassword, setNewPassword] = useState<string>("");
 		const [repeatedPassword, setRepeatPassword] = useState<string>("");
 		const [error, setError] = useState<string>("");
+
+		const [showPassword1, setShowPassword1] = useState<boolean>(false);
+		const [showPassword2, setShowPassword2] = useState<boolean>(false);
 
 		// Вынесем логику валидации
 		const validatePasswords = (): PasswordValidationResult => {
@@ -74,21 +79,49 @@ const PasswordInputs = forwardRef<PasswordInputsRef, PasswordInputsProps>(
 
 		return (
 			<>
-				<Input
-					placeholder={placeholder1 ? placeholder1 : "new password"}
-					value={newPassword}
-					onChangeText={text => setNewPassword(text)}
-					style={style || styles.input}
-					secureTextEntry={true}
-				/>
+				<View>
+					<Input
+						placeholder={placeholder1 ? placeholder1 : "new password"}
+						value={newPassword}
+						onChangeText={text => setNewPassword(text)}
+						style={styles.input}
+						secureTextEntry={!showPassword1}
+					/>
+					<View style={styles.passwordContainer}>
+						<TouchableOpacity
+							style={styles.eyeIcon}
+							onPress={() => setShowPassword1(!showPassword1)}
+						>
+							<FontAwesome5
+								name={showPassword1 ? "eye-slash" : "eye"}
+								size={20}
+								color="gray"
+							/>
+						</TouchableOpacity>
+					</View>
+				</View>
 
-				<Input
-					placeholder={placeholder2 ? placeholder2 : "confirm password"}
-					value={repeatedPassword}
-					onChangeText={text => setRepeatPassword(text)}
-					style={style || styles.input}
-					secureTextEntry={true}
-				/>
+				<View>
+					<Input
+						placeholder={placeholder2 ? placeholder2 : "confirm password"}
+						value={repeatedPassword}
+						onChangeText={text => setRepeatPassword(text)}
+						style={styles.input}
+						secureTextEntry={!showPassword2}
+					/>
+					<View style={styles.passwordContainer}>
+						<TouchableOpacity
+							style={styles.eyeIcon}
+							onPress={() => setShowPassword2(!showPassword2)}
+						>
+							<FontAwesome5
+								name={showPassword2 ? "eye-slash" : "eye"}
+								size={20}
+								color="gray"
+							/>
+						</TouchableOpacity>
+					</View>
+				</View>
 
 				{error ? (
 					<Typography style={[styles.text, styles.errorText]}>{error}</Typography>
@@ -128,5 +161,14 @@ const styles = StyleSheet.create(theme => ({
 	},
 	successText: {
 		color: theme.colors.success.main,
+	},
+	passwordContainer: {
+		flexDirection: "row-reverse",
+	},
+	eyeIcon: {
+		position: "absolute",
+		right: theme.spacing(1),
+		top: -theme.spacing(5.5),
+		padding: theme.spacing(1),
 	},
 }));
