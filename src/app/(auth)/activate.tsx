@@ -8,7 +8,7 @@ import { useActivate } from "@/api/auth";
 import { router, useLocalSearchParams } from "expo-router";
 import { clearTokens, saveTokens } from "@/hooks/tokens";
 import useAuth from "@/context/AuthContext";
-import PasswordInputs, { PasswordInputsRef } from "@/ui/components/common/2PasswordInputs";
+import PasswordInputs, { PasswordInputsRef } from "@/ui/components/passwords/2PasswordInputs";
 import { StyleSheet } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
 

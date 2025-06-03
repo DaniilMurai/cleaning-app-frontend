@@ -1,14 +1,14 @@
 // UpdateCurrentUserPasswordForm.tsx
 import { View } from "react-native";
 import { Button } from "@/ui";
-import Input from "@/ui/Input";
 import { useRef, useState } from "react";
 import Card from "@/ui/Card";
 import Typography from "@/ui/Typography";
 import { StyleSheet } from "react-native-unistyles";
 import { UserUpdatePassword } from "@/api/users";
-import PasswordInputs, { PasswordInputsRef } from "@/ui/components/common/2PasswordInputs";
+import PasswordInputs, { PasswordInputsRef } from "@/ui/components/passwords/2PasswordInputs";
 import { useTranslation } from "react-i18next";
+import PasswordInput from "@/ui/components/passwords/PasswordInput";
 
 interface EditUserFormProps {
 	onClose: () => void;
@@ -23,10 +23,6 @@ export default function UpdateCurrentUserPasswordForm({
 	isLoading,
 	error,
 }: EditUserFormProps) {
-	const [formData, setFormData] = useState<UserUpdatePassword>({
-		old_password: "",
-		new_password: "",
-	});
 	const [formErrors, setFormErrors] = useState({
 		old_password: "",
 		new_password: "",
@@ -35,6 +31,7 @@ export default function UpdateCurrentUserPasswordForm({
 	const { t } = useTranslation();
 
 	const passwordInputsRef = useRef<PasswordInputsRef>(null);
+	const passwordInputRef = useRef<PasswordInputsRef>(null);
 
 	const handleSubmit = () => {
 		// Сбросить ошибки
@@ -43,27 +40,18 @@ export default function UpdateCurrentUserPasswordForm({
 			new_password: "",
 		});
 
-		// Проверка старого пароля
-		if (!formData.old_password || formData.old_password.trim() === "") {
-			setFormErrors(prev => ({
-				...prev,
-				old_password: t("validation.required"),
-			}));
-			return;
-		}
-
 		// Валидация нового пароля через PasswordInputs компонент
-		if (passwordInputsRef.current) {
-			const result = passwordInputsRef.current.validate();
-			if (result.isValid) {
+		if (passwordInputsRef.current && passwordInputRef.current) {
+			const result1 = passwordInputRef.current.validate();
+			const result2 = passwordInputsRef.current.validate();
+			if (result1.isValid && result2.isValid) {
 				// Обновляем состояние formData новым паролем и отправляем данные
 				const updatedData = {
-					old_password: formData.old_password,
-					new_password: result.password,
+					old_password: result1.password,
+					new_password: result2.password,
 				};
 
 				// Обновить состояние и отправить форму
-				setFormData(updatedData);
 				onSubmit(updatedData);
 			}
 		}
@@ -75,13 +63,10 @@ export default function UpdateCurrentUserPasswordForm({
 				{t("profile.changePassword")}
 			</Typography>
 
-			<Input
+			<PasswordInput
 				placeholder={t("auth.oldPassword")}
-				value={formData.old_password}
-				onChangeText={text => setFormData({ ...formData, old_password: text })}
-				style={styles.input}
-				secureTextEntry={true}
-				helperText={formErrors.old_password}
+				ref={passwordInputRef}
+				minLength={1}
 			/>
 
 			<PasswordInputs

@@ -2,7 +2,7 @@ import Typography from "@/ui/Typography";
 import { View } from "react-native";
 import Input from "@/ui/Input";
 import { Button } from "@/ui";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useLogin } from "@/api/auth";
 import { clearTokens, saveTokens } from "@/hooks/tokens";
 import { Redirect, useRouter } from "expo-router";
@@ -11,16 +11,18 @@ import Card from "@/ui/Card";
 import Loading from "@/ui/Loading";
 import { StyleSheet } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
+import PasswordInput, { PasswordInputsRef } from "@/ui/components/passwords/PasswordInput";
 
 export default function Login() {
 	const { t } = useTranslation();
 
 	const [login, setLogin] = useState("");
-	const [password, setPassword] = useState("");
 
 	const router = useRouter();
 	const loginMutation = useLogin();
 	const { checkToken, token, loading } = useAuth();
+
+	const passwordInputRef = useRef<PasswordInputsRef>(null);
 
 	if (loading) {
 		return <Loading />;
@@ -35,22 +37,28 @@ export default function Login() {
 	const handleLogin = async () => {
 		console.log("handleLogin");
 		try {
-			const result = await loginMutation.mutateAsync({
-				data: {
-					nickname: login,
-					password: password,
-				},
-			});
+			if (passwordInputRef.current) {
+				const validationResult = passwordInputRef.current.validate();
+				if (validationResult.isValid) {
+					const result = await loginMutation.mutateAsync({
+						data: {
+							nickname: login,
+							password: validationResult.password,
+						},
+					});
 
-			if (result.access_token) {
-				console.log("access_token: " + result.access_token);
-				await clearTokens();
-				await saveTokens(result.access_token, result.refresh_token);
-				const isValid = await checkToken();
-				if (isValid) {
-					router.replace("/");
+					if (result.access_token) {
+						console.log("access_token: " + result.access_token);
+						await clearTokens();
+						await saveTokens(result.access_token, result.refresh_token);
+						const isValid = await checkToken();
+						if (isValid) {
+							router.replace("/");
+						}
+					}
 				}
 			}
+			console.error("Login unknown error");
 		} catch (error) {
 			console.error("Login error:", error);
 		}
@@ -73,16 +81,23 @@ export default function Login() {
 					onChangeText={setLogin}
 				/>
 
-				<Input
-					placeholder={t("auth.password")}
-					variant="outlined"
-					color="primary"
-					size="medium"
-					value={password}
-					onChangeText={setPassword}
+				<PasswordInput
 					style={styles.input}
-					secureTextEntry={true} // Скрываем пароль
+					placeholder={t("auth.password")}
+					minLength={1}
+					ref={passwordInputRef}
 				/>
+
+				{/*<Input*/}
+				{/*	placeholder={t("auth.password")}*/}
+				{/*	variant="outlined"*/}
+				{/*	color="primary"*/}
+				{/*	size="medium"*/}
+				{/*	value={password}*/}
+				{/*	onChangeText={setPassword}*/}
+				{/*	style={styles.input}*/}
+				{/*	secureTextEntry={true} // Скрываем пароль*/}
+				{/*/>*/}
 
 				{loginMutation.isError ? (
 					loginMutation.error.status === 401 ? (
@@ -102,7 +117,7 @@ export default function Login() {
 					style={styles.button}
 					size="small"
 					loading={loginMutation.isPending}
-					disabled={!login || !password} // Кнопка неактивна если поля пустые
+					disabled={!login} // Кнопка неактивна если поля пустые
 				>
 					{t("auth.signIn")}
 				</Button>

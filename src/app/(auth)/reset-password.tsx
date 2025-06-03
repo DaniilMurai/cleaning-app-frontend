@@ -4,7 +4,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useForgetPassword } from "@/api/auth";
 import { useRef, useState } from "react";
 import { StyleSheet } from "react-native-unistyles";
-import PasswordInputs, { PasswordInputsRef } from "@/ui/components/common/2PasswordInputs";
+import PasswordInputs, { PasswordInputsRef } from "@/ui/components/passwords/2PasswordInputs";
 import { View } from "react-native";
 import { clearTokens, saveTokens } from "@/hooks/tokens";
 import useAuth from "@/context/AuthContext";
