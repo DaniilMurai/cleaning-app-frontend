@@ -7,7 +7,7 @@ import Collapse from "@/ui/Collapse";
 import { useTranslation } from "react-i18next";
 import TaskTimer, { TaskStatus } from "@/ui/components/user/TaskTimer";
 import ReportForm from "@/ui/forms/ReportForm";
-import { DailyAssignmentForUserResponse, useCreateReport, useGetDailyAssignment } from "@/api/client";
+import { DailyAssignmentForUserResponse, useCreateReport, useGetDailyAssignment, useUpdateReport } from "@/api/client";
 import { formatToDateTime } from "@/utils/dateUtils";
 import useAuth from "@/context/AuthContext";
 
@@ -23,6 +23,7 @@ export default function DailyAssignmentsList() {
 	} = useGetDailyAssignment();
 
 	const TimeReportMutation = useCreateReport();
+	const reportUpdateMutation = useUpdateReport();
 	const { user } = useAuth();
 
 	// State for managing expanded/collapsed elements
@@ -237,6 +238,18 @@ export default function DailyAssignmentsList() {
 											onSubmit={async data => {
 												// Здесь будет логика отправки отчета на сервер
 												console.log("Отправка отчета:", data);
+
+												// if (user && assignment.id) {
+												// 	const response =
+												// 		reportUpdateMutation.mutateAsync({
+												// 			data: {
+												// 				daily_assignment_id: assignment.id,
+												// 				user_id: user.id,
+												// 				message: data.text,
+												// 				// media_links: data.media,
+												// 			},
+												// 		});
+												// }
 
 												setShowReport(false);
 
