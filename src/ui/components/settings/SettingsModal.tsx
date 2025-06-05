@@ -11,6 +11,7 @@ import { useLanguage } from "@/context/LanguageContext";
 interface SettingsModalProps {
 	isVisible: boolean;
 	onClose: () => void;
+	// onChangePassword: () => void; // Новый пропс
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isVisible, onClose }) => {
@@ -121,6 +122,25 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isVisible, onClose }) => 
 							style={styles.picker}
 						/>
 					</View>
+					{/* Секция смены пароля */}
+					{/*<View style={styles.section}>*/}
+					{/*	<View style={styles.sectionHeader}>*/}
+					{/*		<Typography variant="h6" style={styles.sectionTitle}>*/}
+					{/*			{t("profile.security") || "Security"}*/}
+					{/*		</Typography>*/}
+					{/*	</View>*/}
+
+					{/*	<View style={styles.buttonsContainer}>*/}
+					{/*		<Button*/}
+					{/*			variant="outlined"*/}
+					{/*			size="small"*/}
+					{/*			onPress={onChangePassword} // Вызываем колбэк*/}
+					{/*			style={styles.changePasswordButton}*/}
+					{/*		>*/}
+					{/*			{t("profile.changePassword")}*/}
+					{/*		</Button>*/}
+					{/*	</View>*/}
+					{/*</View>*/}
 				</View>
 
 				<Button variant="contained" onPress={onClose} style={styles.doneButton}>
@@ -233,6 +253,14 @@ const styles = StyleSheet.create(theme => ({
 		marginBottom: theme.spacing(3),
 		borderRadius: theme.borderRadius(3),
 		backgroundColor: theme.colors.primary.main,
+	},
+	changePasswordButton: {
+		maxWidth: 180,
+	},
+	buttonsContainer: {
+		flexWrap: "wrap",
+		flexDirection: "row",
+		gap: theme.spacing(2),
 	},
 }));
 

@@ -95,6 +95,9 @@ export default function ProfilePage() {
 						{user?.full_name || user?.nickname || "User"}
 					</Typography>
 					<View style={{ flex: 1 }} />
+					<Button variant={"contained"} onPress={() => setIsEditing(true)}>
+						<FontAwesome5 name="user-edit" size={20} />
+					</Button>
 					<Button variant="outlined" onPress={() => setIsSettingsModalOpen(true)}>
 						<FontAwesome5 name="cog" size={20} />
 					</Button>
@@ -114,14 +117,6 @@ export default function ProfilePage() {
 				<View style={styles.divider} />
 
 				<View style={styles.buttonsContainer}>
-					<Button
-						variant="outlined"
-						size="small"
-						onPress={() => setIsEditing(true)}
-						// startIcon={<AntDesign name="edit" size={16} />}
-					>
-						{t("profile.editProfile")}
-					</Button>
 					<Button
 						variant="outlined"
 						size="small"

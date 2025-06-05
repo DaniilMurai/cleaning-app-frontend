@@ -1,8 +1,9 @@
-// DailyAssignmentForms.tsx
+// src/ui/components/DailyAssignmentForms.tsx
+
 import { View } from "react-native";
 import { Button } from "@/ui";
 import Input from "@/ui/Input";
-import { useState } from "react";
+import React, { useState } from "react";
 import Card from "@/ui/Card";
 import Typography from "@/ui/Typography";
 import { StyleSheet } from "react-native-unistyles";
@@ -16,6 +17,8 @@ import {
 	EditDailyAssignmentParams,
 } from "@/api/admin";
 import CustomPicker from "@/ui/Picker";
+import dayjs from "dayjs";
+import DateInput from "@/ui/components/common/DateInput";
 
 interface Location {
 	id: number;
@@ -38,10 +41,12 @@ export function CreateDailyAssignmentForm({
 	locations,
 }: CreateDailyAssignmentFormProps) {
 	const { t } = useTranslation();
+
+	// Локально храним дату как ISO-строку (YYYY-MM-DD)
 	const [formData, setFormData] = useState<DailyAssignmentCreate>({
 		location_id: locations.length > 0 ? locations[0].id : 0,
 		user_id: users.length > 0 ? users[0].id : 0,
-		date: new Date().toISOString().split("T")[0],
+		date: dayjs().format("YYYY-MM-DD HH:mm"),
 		admin_note: "",
 	});
 
@@ -53,16 +58,14 @@ export function CreateDailyAssignmentForm({
 		return user.full_name || user.nickname || `User ${user.id}`;
 	};
 
-	// Convert users to CustomPicker options format
 	const userOptions = users.map(user => ({
 		label: getUserDisplayName(user),
 		value: user.id.toString(),
 	}));
 
-	// Convert locations to CustomPicker options format
-	const locationOptions = locations.map(location => ({
-		label: location.name,
-		value: location.id.toString(),
+	const locationOptions = locations.map(loc => ({
+		label: loc.name,
+		value: loc.id.toString(),
 	}));
 
 	return (
@@ -70,12 +73,18 @@ export function CreateDailyAssignmentForm({
 			<Typography variant="h5" style={styles.title}>
 				{t("admin.createDailyAssignment")}
 			</Typography>
+
 			<View style={styles.zIndex10}>
 				<CustomPicker
 					label={t("components.dailyAssignmentsList.user") + "*"}
 					value={formData.user_id?.toString() || ""}
 					options={userOptions}
-					onChange={value => setFormData({ ...formData, user_id: parseInt(value) })}
+					onChange={value =>
+						setFormData(prev => ({
+							...prev,
+							user_id: parseInt(value, 10),
+						}))
+					}
 					style={styles.input}
 				/>
 			</View>
@@ -85,27 +94,27 @@ export function CreateDailyAssignmentForm({
 					label={t("components.dailyAssignmentsList.location") + "*"}
 					value={formData.location_id?.toString() || ""}
 					options={locationOptions}
-					onChange={value => setFormData({ ...formData, location_id: parseInt(value) })}
+					onChange={value =>
+						setFormData(prev => ({
+							...prev,
+							location_id: parseInt(value, 10),
+						}))
+					}
 					style={styles.input}
 				/>
 			</View>
 
-			<View style={styles.dateContainer}>
-				<Typography variant="body2" style={styles.label}>
-					{t("components.dailyAssignmentsList.date") + "*"}
-				</Typography>
-				<Input
-					value={formData.date || ""}
-					onChangeText={text => setFormData({ ...formData, date: text })}
-					style={styles.input}
-					placeholder="YYYY-MM-DD"
-				/>
-			</View>
+			<DateInput
+				label={t("components.dailyAssignmentsList.date") + "*"}
+				value={formData.date}
+				onChange={newDate => setFormData(prev => ({ ...prev, date: newDate }))}
+				style={styles.dateContainer}
+			/>
 
 			<Input
 				label={t("components.dailyAssignmentsList.adminNote")}
 				value={formData.admin_note || ""}
-				onChangeText={text => setFormData({ ...formData, admin_note: text })}
+				onChangeText={text => setFormData(prev => ({ ...prev, admin_note: text }))}
 				style={styles.input}
 				multiline
 			/>
@@ -121,6 +130,8 @@ export function CreateDailyAssignmentForm({
 		</Card>
 	);
 }
+
+/* ─── Аналогично можно сделать для EditDailyAssignmentForm ───────── */
 
 interface EditDailyAssignmentFormProps {
 	assignment: DailyAssignmentResponse;
@@ -143,14 +154,15 @@ export function EditDailyAssignmentForm({
 	locations,
 }: EditDailyAssignmentFormProps) {
 	const { t } = useTranslation();
+
 	const [formData, setFormData] = useState<DailyAssignmentUpdate>({
 		location_id: assignment.location_id,
 		user_id: assignment.user_id,
 		date: assignment.date,
-		admin_note: assignment.admin_note || undefined,
+		admin_note: assignment.admin_note || "",
 	});
 
-	const handleSubmit = () => {
+	const handleSubmitEdit = () => {
 		onSubmit({ daily_assignment_id: assignment.id }, formData);
 	};
 
@@ -158,16 +170,13 @@ export function EditDailyAssignmentForm({
 		return user.full_name || user.nickname || `User ${user.id}`;
 	};
 
-	// Convert users to CustomPicker options format
 	const userOptions = users.map(user => ({
 		label: getUserDisplayName(user),
 		value: user.id.toString(),
 	}));
-
-	// Convert locations to CustomPicker options format
-	const locationOptions = locations.map(location => ({
-		label: location.name,
-		value: location.id.toString(),
+	const locationOptions = locations.map(loc => ({
+		label: loc.name,
+		value: loc.id.toString(),
 	}));
 
 	return (
@@ -181,7 +190,12 @@ export function EditDailyAssignmentForm({
 					label={t("components.dailyAssignmentsList.user") + "*"}
 					value={formData.user_id?.toString() || ""}
 					options={userOptions}
-					onChange={value => setFormData({ ...formData, user_id: parseInt(value) })}
+					onChange={value =>
+						setFormData(prev => ({
+							...prev,
+							user_id: parseInt(value, 10),
+						}))
+					}
 					style={styles.input}
 				/>
 			</View>
@@ -191,33 +205,33 @@ export function EditDailyAssignmentForm({
 					label={t("components.dailyAssignmentsList.location") + "*"}
 					value={formData.location_id?.toString() || ""}
 					options={locationOptions}
-					onChange={value => setFormData({ ...formData, location_id: parseInt(value) })}
+					onChange={value =>
+						setFormData(prev => ({
+							...prev,
+							location_id: parseInt(value, 10),
+						}))
+					}
 					style={styles.input}
 				/>
 			</View>
 
-			<View style={styles.dateContainer}>
-				<Typography variant="body2" style={styles.label}>
-					{t("components.dailyAssignmentsList.date") + "*"}
-				</Typography>
-				<Input
-					value={formData.date || ""}
-					onChangeText={text => setFormData({ ...formData, date: text })}
-					style={styles.input}
-					placeholder="YYYY-MM-DD"
-				/>
-			</View>
+			<DateInput
+				label={t("components.dailyAssignmentsList.date") + "*"}
+				value={formData.date || ""}
+				onChange={newDate => setFormData(prev => ({ ...prev, date: newDate }))}
+				style={styles.dateContainer}
+			/>
 
 			<Input
 				label={t("components.dailyAssignmentsList.adminNote")}
 				value={formData.admin_note || ""}
-				onChangeText={text => setFormData({ ...formData, admin_note: text })}
+				onChangeText={text => setFormData(prev => ({ ...prev, admin_note: text }))}
 				style={styles.input}
 				multiline
 			/>
 
 			<View style={styles.buttonsContainer}>
-				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
+				<Button variant="contained" onPress={handleSubmitEdit} loading={isLoading}>
 					{t("common.save")}
 				</Button>
 				<Button variant="outlined" onPress={onClose}>
@@ -273,7 +287,15 @@ export function DeleteDailyAssignmentConfirm({
 	);
 }
 
+/* ─── УНИФИЦИРОВАННЫЕ СТИЛИ ───────────────────────────────────────── */
 const styles = StyleSheet.create(theme => ({
+	pickerContainer: {
+		backgroundColor: "#F5FCFF",
+		borderRadius: 12,
+		padding: 20,
+		width: "90%",
+		maxWidth: 400,
+	},
 	container: {
 		padding: theme.spacing(3),
 		width: "100%",
@@ -283,21 +305,25 @@ const styles = StyleSheet.create(theme => ({
 		marginBottom: theme.spacing(2),
 	},
 	input: {
-		marginBottom: theme.spacing(0.5),
+		marginBottom: theme.spacing(1),
 	},
-	pickerContainer: {
-		marginBottom: theme.spacing(1.5),
+	zIndex10: {
+		zIndex: 10,
+	},
+	zIndex1: {
+		zIndex: 1,
 	},
 	dateContainer: {
 		marginBottom: theme.spacing(1.5),
 	},
-	picker: {
-		backgroundColor: theme.colors.background.main,
-		marginTop: theme.spacing(0.5),
-	},
 	label: {
 		color: theme.colors.text.secondary,
 		marginBottom: theme.spacing(0.5),
+	},
+	pickerWrapper: {
+		borderRadius: 8,
+		backgroundColor: "#F5FCFF",
+		overflow: "hidden",
 	},
 	buttonsContainer: {
 		flexDirection: "row",
@@ -307,11 +333,5 @@ const styles = StyleSheet.create(theme => ({
 	},
 	buttonError: {
 		backgroundColor: theme.colors.error.main,
-	},
-	zIndex10: {
-		zIndex: 10,
-	},
-	zIndex1: {
-		zIndex: 1,
 	},
 }));

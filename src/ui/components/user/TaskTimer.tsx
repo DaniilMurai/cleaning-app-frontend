@@ -7,7 +7,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { StyleSheet } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
-import CrossPlatformDateTimePicker from "@/ui/components/common/CrossPlatformDateTimePicker";
+import DateInputModal from "@/ui/components/common/DateInputModal";
 
 export enum TaskStatus {
 	NOT_STARTED = "NOT_STARTED",
@@ -272,9 +272,8 @@ export default function TaskTimer({
 				)}
 
 				{/* Модальное окно выбора времени */}
-				<CrossPlatformDateTimePicker
+				<DateInputModal
 					isVisible={isTimePickerVisible}
-					type={"time"}
 					mode="time"
 					onConfirm={selectedTime => {
 						handleTimeConfirm(selectedTime);
@@ -299,6 +298,8 @@ const styles = StyleSheet.create(theme => ({
 		borderRadius: theme.borderRadius(2),
 		gap: theme.spacing(2),
 		borderWidth: 1,
+		width: 350,
+
 		flexWrap: "wrap",
 		borderColor: theme.colors.divider,
 	},
