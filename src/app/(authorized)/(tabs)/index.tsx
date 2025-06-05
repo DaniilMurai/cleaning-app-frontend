@@ -25,7 +25,8 @@ export default function DailyAssignmentsList() {
 	const TimeReportMutation = useCreateReport();
 	const reportUpdateMutation = useUpdateReport();
 	const { user } = useAuth();
-
+	const [startTime, setStartTime] = useState<number | null>(null);
+	const [endTime, setEndTime] = useState<number | null>(null);
 	// State for managing expanded/collapsed elements
 	const [expandedAssignments, setExpandedAssignments] = useState<Record<number, boolean>>({});
 	const [expandedRooms, setExpandedRooms] = useState<Record<string, boolean>>({});
@@ -203,30 +204,14 @@ export default function DailyAssignmentsList() {
 											console.log("user: ", user);
 											console.log("start time: ", startTime);
 											console.log("endTime: ", endTime);
-											if (user && startTime && endTime) {
-												const response =
-													await TimeReportMutation.mutateAsync({
-														data: {
-															daily_assignment_id: assignment.id,
-															user_id: user.id,
-															start_time: startTime.toString(),
-															end_time: endTime.toString(),
-														},
-													});
-												if (!response) {
-													console.log("error");
-												} else {
-													console.log(
-														"Report successfuly created: ",
-														response
-													);
-												}
-											}
+											setStartTime(startTime);
+											setEndTime(endTime);
 											setShowReport(true);
 										}
 									}}
 								/>
-								{/* Компонент отправки отчета */}
+								{/*/!* Компонент отправки отчета *!/ //TODO добавить окно с выбором*/}
+								{/*//TODO отправлять отчет или пропустить*/}
 								{showReport && (
 									<ModalContainer
 										visible={showReport}
@@ -239,33 +224,34 @@ export default function DailyAssignmentsList() {
 												// Здесь будет логика отправки отчета на сервер
 												console.log("Отправка отчета:", data);
 
-												// if (user && assignment.id) {
-												// 	const response =
-												// 		reportUpdateMutation.mutateAsync({
-												// 			data: {
-												// 				daily_assignment_id: assignment.id,
-												// 				user_id: user.id,
-												// 				message: data.text,
-												// 				// media_links: data.media,
-												// 			},
-												// 		});
-												// }
+												if (user && startTime && endTime) {
+													const response =
+														await TimeReportMutation.mutateAsync({
+															data: {
+																daily_assignment_id: assignment.id,
+																user_id: user.id,
+																message: data.text,
+																// media_links: data.media, //TODO решить проблему с медиа
+																start_time: startTime.toString(),
+																end_time: endTime.toString(),
+															},
+														});
+													if (!response) {
+														console.log("error");
+													} else {
+														console.log(
+															"Report successfuly created: ",
+															response
+														);
+													}
+												}
 
+												await dailyAssignmentRefetch();
 												setShowReport(false);
-
-												// Например:
-												// await api.reports.submit({
-												//   assignmentId: assignment.id,
-												//   text: data.text,
-												//   media: data.media
-												// });
-												// После успешной отправки можно обновить данные
-												// dailyAssignmentRefetch();
 											}}
 										/>
 									</ModalContainer>
 								)}
-
 								<View style={styles.divider} />
 								<Typography variant="subtitle1" style={styles.wrappableText}>
 									{t("admin.rooms")}
