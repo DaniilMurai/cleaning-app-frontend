@@ -5,9 +5,4 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface RoomTaskResponse {
-	room_id: number;
-	task_id: number;
-	id: number;
-	times_since_done: number;
-}
+export type UpdateReportStartTime = string | null;

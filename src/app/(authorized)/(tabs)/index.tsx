@@ -1,13 +1,13 @@
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import React, { useState } from "react";
-import { DailyAssignmentForUserResponse, useGetDailyAssignment } from "@/api/users";
 import { Card, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Collapse from "@/ui/Collapse";
 import { useTranslation } from "react-i18next";
 import TaskTimer, { TaskStatus } from "@/ui/components/user/TaskTimer";
 import ReportForm from "@/ui/forms/ReportForm";
+import { DailyAssignmentForUserResponse, useGetDailyAssignment } from "@/api/client";
 
 /**
  * Component for displaying daily assignments

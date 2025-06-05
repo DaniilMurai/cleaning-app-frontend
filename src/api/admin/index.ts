@@ -5,4 +5,5 @@ export * from "./tasks/tasks";
 export * from "./room-tasks/room-tasks";
 export * from "./daily-assignments/daily-assignments";
 export * from "./daily-extra-tasks/daily-extra-tasks";
+export * from "./reports/reports";
 export * from "./schemas";

@@ -4,12 +4,12 @@
  * Neuer Standard Admin API
  * OpenAPI spec version: 0.1.0
  */
-import type { RoomTaskUpdateTimesSinceDone } from "./roomTaskUpdateTimesSinceDone";
 import type { RoomTaskUpdateRoomId } from "./roomTaskUpdateRoomId";
 import type { RoomTaskUpdateTaskId } from "./roomTaskUpdateTaskId";
+import type { RoomTaskUpdateTimesSinceDone } from "./roomTaskUpdateTimesSinceDone";
 
 export interface RoomTaskUpdate {
+	room_id: RoomTaskUpdateRoomId;
+	task_id: RoomTaskUpdateTaskId;
 	times_since_done?: RoomTaskUpdateTimesSinceDone;
-	room_id?: RoomTaskUpdateRoomId;
-	task_id?: RoomTaskUpdateTaskId;
 }

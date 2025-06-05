@@ -108,4 +108,28 @@ export default defineConfig({
 			},
 		},
 	},
+	client: {
+		input: `${ApiUrl}/client/openapi.json`,
+		output: {
+			mode: "tags-split",
+			workspace: "./src/api/client/",
+			target: "./requests.ts",
+			schemas: "./schemas",
+			baseUrl: "/client",
+			client: "react-query",
+			prettier: true,
+			allParamsOptional: true,
+			clean: true,
+			headers: true,
+			override: {
+				query: {
+					useSuspenseQuery: true,
+				},
+				mutator: {
+					path: ".././instance.ts",
+					name: "getAxios",
+				},
+			},
+		},
+	},
 });
