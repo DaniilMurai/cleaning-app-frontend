@@ -6,6 +6,8 @@ import { Button, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { StyleSheet } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
+import { format } from "date-fns";
+import CrossPlatformDateTimePicker from "@/ui/components/common/CrossPlatformDateTimePicker";
 
 export enum TaskStatus {
 	NOT_STARTED = "NOT_STARTED",
@@ -31,10 +33,62 @@ export default function TaskTimer({
 
 	const [status, setStatus] = useState<TaskStatus>(initialStatus);
 	const [startTime, setStartTime] = useState<number | null>(null);
+	const [customStartTime, setCustomStartTime] = useState<number | null>(null);
 	const [pausedTime, setPausedTime] = useState<number | null>(null);
 	const [totalElapsedTime, setTotalElapsedTime] = useState<number>(initialElapsedTime);
 	const [displayTime, setDisplayTime] = useState<string>("00:00:00");
 	const [timerInterval, setTimerInterval] = useState<ReturnType<typeof setInterval> | null>(null);
+	const [isTimePickerVisible, setTimePickerVisible] = useState(false);
+
+	const showTimePicker = () => setTimePickerVisible(true);
+	const hideTimePicker = () => setTimePickerVisible(false);
+
+	// Обработка выбора времени
+	const handleTimeConfirm = (selectedDate: Date) => {
+		hideTimePicker();
+		const now = new Date();
+		const differenceMs = now.getTime() - selectedDate.getTime();
+
+		if (differenceMs < 0) {
+			// Обработка выбора будущего времени
+			alert("Нельзя выбрать будущее время");
+			return;
+		}
+
+		// Устанавливаем прошедшее время
+		setTotalElapsedTime(differenceMs);
+
+		// Запускаем таймер с учетом выбранного времени
+		startTaskWithOffset(differenceMs);
+	};
+
+	// Запуск задачи с учетом смещения времени
+	const startTaskWithOffset = (initialTime: number) => {
+		// ... аналогично startTask, но с initialTime
+		const now = Date.now();
+
+		if (timerInterval) {
+			clearInterval(timerInterval);
+		}
+
+		setStatus(TaskStatus.IN_PROGRESS);
+		setStartTime(now);
+		setPausedTime(null);
+		setTotalElapsedTime(initialTime);
+
+		const intervalId = setInterval(() => {
+			setTotalElapsedTime(prev => prev + 1000);
+		}, 1000);
+
+		setTimerInterval(intervalId as unknown as ReturnType<typeof setInterval>);
+
+		if (onStatusChange) {
+			onStatusChange(TaskStatus.IN_PROGRESS, initialTime);
+		}
+	};
+
+	// Форматирование даты для отображения в пикере
+	const formatPickerDate = (date: Date) => format(date, "dd.MM.yyyy HH:mm");
 
 	// Функция для форматирования времени
 	const formatTime = (timeInMs: number): string => {
@@ -89,6 +143,23 @@ export default function TaskTimer({
 		}
 	};
 
+	const startInOtherTime = () => {
+		if (status !== TaskStatus.NOT_STARTED) return;
+	};
+
+	const cancelTask = () => {
+		if (status !== TaskStatus.IN_PROGRESS) return;
+
+		if (timerInterval) {
+			clearInterval(timerInterval);
+			setTimerInterval(null);
+		}
+		setStatus(TaskStatus.NOT_STARTED);
+		setStartTime(null);
+		setTotalElapsedTime(0);
+		setDisplayTime("00:00:00");
+	};
+
 	// Приостановить задачу
 	const pauseTask = () => {
 		if (status !== TaskStatus.IN_PROGRESS) return;
@@ -132,53 +203,86 @@ export default function TaskTimer({
 
 			<View style={styles.timerButtons}>
 				{status === TaskStatus.NOT_STARTED && (
-					<Button variant="contained" onPress={startTask} style={styles.startButton}>
-						<FontAwesome5 name="play" size={14} color="#fff" />{" "}
-						{t("components.taskTimer.start")}
-					</Button>
+					<>
+						<Button
+							variant="contained"
+							onPress={startTask}
+							style={[styles.commonButton, styles.startButton]}
+						>
+							<FontAwesome5 name="play" size={14} color={styles.iconColor} />
+						</Button>
+
+						<Button
+							variant="outlined"
+							onPress={showTimePicker}
+							style={[styles.commonButton, styles.otherTimeButton]}
+						>
+							<FontAwesome5 name="clock" size={14} color={styles.iconColor} />
+						</Button>
+					</>
 				)}
 
 				{status === TaskStatus.IN_PROGRESS && (
 					<>
-						<Button variant="outlined" onPress={pauseTask} style={styles.pauseButton}>
-							<FontAwesome5 name="pause" size={14} />{" "}
-							{t("components.taskTimer.pause")}
+						{/*<Button variant="outlined" onPress={pauseTask} style={styles.pauseButton}>*/}
+						{/*	<FontAwesome5 name="pause" size={14} />{" "}*/}
+						{/*	{t("components.taskTimer.pause")}*/}
+						{/*</Button>*/}
+
+						<Button
+							variant="outlined"
+							onPress={cancelTask}
+							style={[styles.commonButton, styles.cancelButton]}
+						>
+							<FontAwesome5 name="ban" size={14} color={styles.iconColor} />
 						</Button>
 
 						<Button
 							variant="contained"
 							onPress={completeTask}
-							style={styles.completeButton}
+							style={[styles.commonButton, styles.completeButton]}
 						>
-							<FontAwesome5 name="check" size={14} color="#fff" />{" "}
-							{t("components.taskTimer.complete")}
+							<FontAwesome5 name="check" size={14} color={styles.iconColor} />
 						</Button>
 					</>
 				)}
 
-				{status === TaskStatus.PAUSED && (
-					<>
-						<Button variant="contained" onPress={startTask} style={styles.resumeButton}>
-							<FontAwesome5 name="play" size={14} color="#fff" />{" "}
-							{t("components.taskTimer.resume")}
-						</Button>
+				{/*{status === TaskStatus.PAUSED && (*/}
+				{/*	<>*/}
+				{/*		<Button variant="contained" onPress={startTask} style={styles.resumeButton}>*/}
+				{/*			<FontAwesome5 name="play" size={14} color="#fff" />{" "}*/}
+				{/*			{t("components.taskTimer.resume")}*/}
+				{/*		</Button>*/}
 
-						<Button
-							variant="contained"
-							onPress={completeTask}
-							style={styles.completeButton}
-						>
-							<FontAwesome5 name="check" size={14} color="#fff" />{" "}
-							{t("components.taskTimer.complete")}
-						</Button>
-					</>
-				)}
+				{/*		<Button*/}
+				{/*			variant="contained"*/}
+				{/*			onPress={completeTask}*/}
+				{/*			style={styles.completeButton}*/}
+				{/*		>*/}
+				{/*			<FontAwesome5 name="check" size={14} color="#fff" />{" "}*/}
+				{/*			{t("components.taskTimer.complete")}*/}
+				{/*		</Button>*/}
+				{/*	</>*/}
+				{/*)}*/}
 
 				{status === TaskStatus.COMPLETED && (
 					<Typography variant="subtitle1" style={styles.completedText}>
 						{t("components.taskTimer.completed")}
 					</Typography>
 				)}
+
+				{/* Модальное окно выбора времени */}
+				<CrossPlatformDateTimePicker
+					isVisible={isTimePickerVisible}
+					type={"time"}
+					mode="time"
+					onConfirm={selectedTime => {
+						handleTimeConfirm(selectedTime);
+						console.log(selectedTime);
+					}}
+					onCancel={hideTimePicker}
+					maximumDate={new Date()}
+				/>
 			</View>
 		</View>
 	);
@@ -186,9 +290,9 @@ export default function TaskTimer({
 
 const styles = StyleSheet.create(theme => ({
 	timerContainer: {
-		flexDirection: "column",
-		alignItems: "flex-start",
-		justifyContent: "center",
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
 		marginTop: theme.spacing(2),
 		padding: theme.spacing(2),
 		backgroundColor: theme.colors.background.paper,
@@ -213,32 +317,30 @@ const styles = StyleSheet.create(theme => ({
 	},
 	startButton: {
 		backgroundColor: theme.colors.primary.main,
-		flexDirection: "row",
+
 		color: theme.colors.text.primary,
-		alignItems: "center",
-		paddingHorizontal: theme.spacing(2),
 	},
-	pauseButton: {
-		borderColor: theme.colors.warning.dark,
+	otherTimeButton: {},
+	cancelButton: {
+		borderColor: theme.colors.error.main,
 		color: theme.colors.text.primary,
-		flexDirection: "row",
-		alignItems: "center",
-		paddingHorizontal: theme.spacing(2),
 	},
 	resumeButton: {
 		backgroundColor: theme.colors.primary.main,
-		flexDirection: "row",
-		alignItems: "center",
-		paddingHorizontal: theme.spacing(2),
 	},
 	completeButton: {
 		backgroundColor: theme.colors.success.main,
-		flexDirection: "row",
-		alignItems: "center",
-		paddingHorizontal: theme.spacing(2),
 	},
 	completedText: {
 		color: theme.colors.success.main,
 		fontWeight: "bold",
+	},
+	commonButton: {
+		flexDirection: "row",
+		alignItems: "center",
+		paddingHorizontal: theme.spacing(2),
+	},
+	iconColor: {
+		color: theme.colors.primary.main,
 	},
 }));

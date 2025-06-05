@@ -5,7 +5,7 @@ import { Card, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Collapse from "@/ui/Collapse";
 import { useTranslation } from "react-i18next";
-import TaskTimer, { TaskStatus } from "@/ui/components/user/TaskTimer";
+import TaskTimer from "@/ui/components/user/TaskTimer";
 import ReportForm from "@/ui/forms/ReportForm";
 import { DailyAssignmentForUserResponse, useGetDailyAssignment } from "@/api/client";
 
@@ -187,9 +187,9 @@ export default function DailyAssignmentsList() {
 										console.log(
 											`Assignment ${assignment.id} status changed to ${status}. Total time: ${totalTime}ms`
 										);
-										if (status === TaskStatus.COMPLETED) {
-											setShowReport(true);
-										}
+										// if (status === TaskStatus.COMPLETED) {
+										// 	setShowReport(true);
+										// }
 									}}
 								/>
 								{/* Компонент отправки отчета */}
