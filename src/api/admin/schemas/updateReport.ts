@@ -4,12 +4,14 @@
  * Neuer Standard Admin API
  * OpenAPI spec version: 0.1.0
  */
-import type { UpdateReportDailyAssignmentId } from "./updateReportDailyAssignmentId";
-import type { UpdateReportUserId } from "./updateReportUserId";
-import type { UpdateReportMessage } from "./updateReportMessage";
-import type { UpdateReportMediaLinks } from "./updateReportMediaLinks";
-import type { UpdateReportStartTime } from "./updateReportStartTime";
-import type { UpdateReportEndTime } from "./updateReportEndTime";
+import type {
+	UpdateReportDailyAssignmentId,
+	UpdateReportEndTime,
+	UpdateReportMediaLinks,
+	UpdateReportMessage,
+	UpdateReportStartTime,
+	UpdateReportUserId,
+} from "@/api/admin";
 
 /**
  * Схема для обновления отчета
