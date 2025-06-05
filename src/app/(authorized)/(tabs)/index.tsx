@@ -1,13 +1,15 @@
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import React, { useState } from "react";
-import { Card, Typography } from "@/ui";
+import { Card, ModalContainer, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Collapse from "@/ui/Collapse";
 import { useTranslation } from "react-i18next";
-import TaskTimer from "@/ui/components/user/TaskTimer";
+import TaskTimer, { TaskStatus } from "@/ui/components/user/TaskTimer";
 import ReportForm from "@/ui/forms/ReportForm";
-import { DailyAssignmentForUserResponse, useGetDailyAssignment } from "@/api/client";
+import { DailyAssignmentForUserResponse, useCreateReport, useGetDailyAssignment } from "@/api/client";
+import { formatToDateTime } from "@/utils/dateUtils";
+import useAuth from "@/context/AuthContext";
 
 /**
  * Component for displaying daily assignments
@@ -19,6 +21,9 @@ export default function DailyAssignmentsList() {
 		isLoading: dailyAssignmentIsLoading,
 		refetch: dailyAssignmentRefetch,
 	} = useGetDailyAssignment();
+
+	const TimeReportMutation = useCreateReport();
+	const { user } = useAuth();
 
 	// State for managing expanded/collapsed elements
 	const [expandedAssignments, setExpandedAssignments] = useState<Record<number, boolean>>({});
@@ -151,7 +156,8 @@ export default function DailyAssignmentsList() {
 											style={styles.wrappableText}
 											numberOfLines={0}
 										>
-											{assignment.location.name} - {assignment.date}
+											{assignment.location.name} -{" "}
+											{formatToDateTime(assignment.date)}
 										</Typography>
 									</View>
 									<Typography
@@ -166,7 +172,7 @@ export default function DailyAssignmentsList() {
 										{t("admin.assignmentDetails")}
 									</Typography>
 									<Typography style={styles.wrappableText} numberOfLines={0}>
-										{t("admin.date")}: {assignment.date}
+										{t("admin.date")}: {formatToDateTime(assignment.date)}
 									</Typography>
 									{assignment.admin_note && (
 										<Typography style={styles.wrappableText} numberOfLines={0}>
@@ -182,36 +188,69 @@ export default function DailyAssignmentsList() {
 							</TouchableOpacity>
 							<Collapse expanded={expandedAssignments[assignment.id]}>
 								<TaskTimer
-									assignmentId={assignment.id}
-									onStatusChange={(status, totalTime) => {
+									onStatusChange={async (
+										status,
+										totalTime,
+										startTime,
+										endTime
+									) => {
 										console.log(
 											`Assignment ${assignment.id} status changed to ${status}. Total time: ${totalTime}ms`
 										);
-										// if (status === TaskStatus.COMPLETED) {
-										// 	setShowReport(true);
-										// }
+
+										if (status === TaskStatus.COMPLETED) {
+											console.log("user: ", user);
+											console.log("start time: ", startTime);
+											console.log("endTime: ", endTime);
+											if (user && startTime && endTime) {
+												const response =
+													await TimeReportMutation.mutateAsync({
+														data: {
+															daily_assignment_id: assignment.id,
+															user_id: user.id,
+															start_time: startTime.toString(),
+															end_time: endTime.toString(),
+														},
+													});
+												if (!response) {
+													console.log("error");
+												} else {
+													console.log(
+														"Report successfuly created: ",
+														response
+													);
+												}
+											}
+											setShowReport(true);
+										}
 									}}
 								/>
 								{/* Компонент отправки отчета */}
 								{showReport && (
-									<ReportForm
-										taskId={assignment.id}
-										onSubmit={async data => {
-											// Здесь будет логика отправки отчета на сервер
-											console.log("Отправка отчета:", data);
+									<ModalContainer
+										visible={showReport}
+										onClose={() => setShowReport(false)}
+									>
+										<ReportForm
+											onCancel={() => setShowReport(false)}
+											taskId={assignment.id}
+											onSubmit={async data => {
+												// Здесь будет логика отправки отчета на сервер
+												console.log("Отправка отчета:", data);
 
-											setShowReport(false);
+												setShowReport(false);
 
-											// Например:
-											// await api.reports.submit({
-											//   assignmentId: assignment.id,
-											//   text: data.text,
-											//   media: data.media
-											// });
-											// После успешной отправки можно обновить данные
-											// dailyAssignmentRefetch();
-										}}
-									/>
+												// Например:
+												// await api.reports.submit({
+												//   assignmentId: assignment.id,
+												//   text: data.text,
+												//   media: data.media
+												// });
+												// После успешной отправки можно обновить данные
+												// dailyAssignmentRefetch();
+											}}
+										/>
+									</ModalContainer>
 								)}
 
 								<View style={styles.divider} />

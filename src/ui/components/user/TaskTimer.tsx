@@ -12,19 +12,21 @@ import DateInputModal from "@/ui/components/common/DateInputModal";
 export enum TaskStatus {
 	NOT_STARTED = "NOT_STARTED",
 	IN_PROGRESS = "IN_PROGRESS",
-	PAUSED = "PAUSED",
 	COMPLETED = "COMPLETED",
 }
 
 interface TaskTimerProps {
-	assignmentId: number;
-	onStatusChange?: (status: TaskStatus, totalTime: number) => void;
+	onStatusChange?: (
+		status: TaskStatus,
+		totalTime: number,
+		startTime: number | null,
+		endTime: number | null
+	) => void;
 	initialStatus?: TaskStatus;
 	initialElapsedTime?: number;
 }
 
 export default function TaskTimer({
-	assignmentId,
 	onStatusChange,
 	initialStatus = TaskStatus.NOT_STARTED,
 	initialElapsedTime = 0,
@@ -33,6 +35,8 @@ export default function TaskTimer({
 
 	const [status, setStatus] = useState<TaskStatus>(initialStatus);
 	const [startTime, setStartTime] = useState<number | null>(null);
+	const [endTime, setEndTime] = useState<number | null>(null);
+
 	const [customStartTime, setCustomStartTime] = useState<number | null>(null);
 	const [pausedTime, setPausedTime] = useState<number | null>(null);
 	const [totalElapsedTime, setTotalElapsedTime] = useState<number>(initialElapsedTime);
@@ -47,6 +51,7 @@ export default function TaskTimer({
 	const handleTimeConfirm = (selectedDate: Date) => {
 		hideTimePicker();
 		const now = new Date();
+		console.log("selected date: " + selectedDate);
 		const differenceMs = now.getTime() - selectedDate.getTime();
 
 		if (differenceMs < 0) {
@@ -55,26 +60,20 @@ export default function TaskTimer({
 			return;
 		}
 
-		// Устанавливаем прошедшее время
+		setStartTime(selectedDate.getTime()); // <-- вот это правильное значение
 		setTotalElapsedTime(differenceMs);
-
-		// Запускаем таймер с учетом выбранного времени
-		startTaskWithOffset(differenceMs);
+		startTaskWithOffset(selectedDate.getTime(), differenceMs);
 	};
 
 	// Запуск задачи с учетом смещения времени
-	const startTaskWithOffset = (initialTime: number) => {
-		// ... аналогично startTask, но с initialTime
-		const now = Date.now();
-
+	const startTaskWithOffset = (startTimestamp: number, initialElapsed: number) => {
+		setStartTime(startTimestamp);
+		setTotalElapsedTime(initialElapsed);
 		if (timerInterval) {
 			clearInterval(timerInterval);
 		}
 
 		setStatus(TaskStatus.IN_PROGRESS);
-		setStartTime(now);
-		setPausedTime(null);
-		setTotalElapsedTime(initialTime);
 
 		const intervalId = setInterval(() => {
 			setTotalElapsedTime(prev => prev + 1000);
@@ -83,7 +82,7 @@ export default function TaskTimer({
 		setTimerInterval(intervalId as unknown as ReturnType<typeof setInterval>);
 
 		if (onStatusChange) {
-			onStatusChange(TaskStatus.IN_PROGRESS, initialTime);
+			onStatusChange(TaskStatus.IN_PROGRESS, initialElapsed, startTimestamp, endTime);
 		}
 	};
 
@@ -125,13 +124,12 @@ export default function TaskTimer({
 
 		setStatus(TaskStatus.IN_PROGRESS);
 		setStartTime(now);
-		setPausedTime(null);
 
 		// Устанавливаем интервал для обновления таймера
 		const intervalId = setInterval(() => {
 			setTotalElapsedTime(prev => {
-				const newTotal = prev + 1000; // Увеличиваем на 1 секунду
-				return newTotal;
+				// Увеличиваем на 1 секунду
+				return prev + 1000;
 			});
 		}, 1000);
 
@@ -139,7 +137,7 @@ export default function TaskTimer({
 
 		// Вызываем колбэк, если он предоставлен
 		if (onStatusChange) {
-			onStatusChange(TaskStatus.IN_PROGRESS, totalElapsedTime);
+			onStatusChange(TaskStatus.IN_PROGRESS, totalElapsedTime, now, endTime);
 		}
 	};
 
@@ -160,38 +158,20 @@ export default function TaskTimer({
 		setDisplayTime("00:00:00");
 	};
 
-	// Приостановить задачу
-	const pauseTask = () => {
-		if (status !== TaskStatus.IN_PROGRESS) return;
-
-		// Остановить интервал
-		if (timerInterval) {
-			clearInterval(timerInterval);
-			setTimerInterval(null);
-		}
-
-		setStatus(TaskStatus.PAUSED);
-		setPausedTime(Date.now());
-
-		// Вызываем колбэк, если он предоставлен
-		if (onStatusChange) {
-			onStatusChange(TaskStatus.PAUSED, totalElapsedTime);
-		}
-	};
-
 	// Завершить задачу
 	const completeTask = () => {
 		// Остановить интервал
+		const now = Date.now();
 		if (timerInterval) {
 			clearInterval(timerInterval);
 			setTimerInterval(null);
 		}
-
+		setEndTime(now);
 		setStatus(TaskStatus.COMPLETED);
 
 		// Вызываем колбэк, если он предоставлен
 		if (onStatusChange) {
-			onStatusChange(TaskStatus.COMPLETED, totalElapsedTime);
+			onStatusChange(TaskStatus.COMPLETED, totalElapsedTime, startTime, now);
 		}
 	};
 
@@ -224,11 +204,6 @@ export default function TaskTimer({
 
 				{status === TaskStatus.IN_PROGRESS && (
 					<>
-						{/*<Button variant="outlined" onPress={pauseTask} style={styles.pauseButton}>*/}
-						{/*	<FontAwesome5 name="pause" size={14} />{" "}*/}
-						{/*	{t("components.taskTimer.pause")}*/}
-						{/*</Button>*/}
-
 						<Button
 							variant="outlined"
 							onPress={cancelTask}
@@ -246,24 +221,6 @@ export default function TaskTimer({
 						</Button>
 					</>
 				)}
-
-				{/*{status === TaskStatus.PAUSED && (*/}
-				{/*	<>*/}
-				{/*		<Button variant="contained" onPress={startTask} style={styles.resumeButton}>*/}
-				{/*			<FontAwesome5 name="play" size={14} color="#fff" />{" "}*/}
-				{/*			{t("components.taskTimer.resume")}*/}
-				{/*		</Button>*/}
-
-				{/*		<Button*/}
-				{/*			variant="contained"*/}
-				{/*			onPress={completeTask}*/}
-				{/*			style={styles.completeButton}*/}
-				{/*		>*/}
-				{/*			<FontAwesome5 name="check" size={14} color="#fff" />{" "}*/}
-				{/*			{t("components.taskTimer.complete")}*/}
-				{/*		</Button>*/}
-				{/*	</>*/}
-				{/*)}*/}
 
 				{status === TaskStatus.COMPLETED && (
 					<Typography variant="subtitle1" style={styles.completedText}>
@@ -298,8 +255,7 @@ const styles = StyleSheet.create(theme => ({
 		borderRadius: theme.borderRadius(2),
 		gap: theme.spacing(2),
 		borderWidth: 1,
-		width: 350,
-
+		maxWidth: 320,
 		flexWrap: "wrap",
 		borderColor: theme.colors.divider,
 	},

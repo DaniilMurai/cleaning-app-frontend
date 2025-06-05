@@ -13,6 +13,7 @@ import {
 	DeleteDailyAssignmentConfirm,
 	EditDailyAssignmentForm,
 } from "@/ui/forms/DailyAssignmentForms";
+import { formatToDateTime } from "@/utils/dateUtils";
 
 interface AssignmentsTabProps {
 	locations: LocationResponse[];
@@ -130,7 +131,7 @@ export default function AssignmentsTab({
 											color={styles.collapseIcon.color}
 										/>
 										<Typography variant="h5">
-											{t("admin.dailyAssignment")} - {location.name}
+											{location.name} - {formatToDateTime(assignment.date)}
 										</Typography>
 									</View>
 									<View style={styles.actionButtons}>
@@ -161,7 +162,7 @@ export default function AssignmentsTab({
 										{t("admin.assignmentDetails")}
 									</Typography>
 									<Typography>
-										{t("admin.date")}: {assignment.date}
+										{t("admin.date")}: {formatToDateTime(assignment.date)}
 									</Typography>
 									<Typography>
 										{t("profile.username")}:{" "}

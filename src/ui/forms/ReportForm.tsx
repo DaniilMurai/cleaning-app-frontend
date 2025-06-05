@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Image, Platform, ScrollView, TouchableOpacity, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { Button, Card, ModalContainer, Typography } from "@/ui";
+import { Button, Card, Input, ModalContainer, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useTranslation } from "react-i18next";
@@ -16,9 +16,10 @@ interface ReportFormProps extends React.ComponentProps<typeof View> {
 	taskId?: number;
 	roomId?: number;
 	onSubmit: (data: { text: string; media: Media[] }) => Promise<void>;
+	onCancel: () => void;
 }
 
-export default function ReportForm({ taskId, roomId, onSubmit }: ReportFormProps) {
+export default function ReportForm({ taskId, roomId, onCancel, onSubmit }: ReportFormProps) {
 	const { t } = useTranslation();
 	const [text, setText] = useState("");
 	const [media, setMedia] = useState<Media[]>([]);
@@ -116,12 +117,12 @@ export default function ReportForm({ taskId, roomId, onSubmit }: ReportFormProps
 
 			<View style={styles.inputContainer}>
 				<ScrollView style={styles.textInputContainer} keyboardShouldPersistTaps="handled">
-					<textarea
-						style={styles.textInput}
+					<Input
+						style={styles.textInputMultiLine}
 						value={text}
-						onChange={e => setText(e.target.value)}
+						onChangeText={text => setText(text)}
 						placeholder={t("reports.enterReportText")}
-						rows={5}
+						multiline={true}
 					/>
 				</ScrollView>
 
@@ -148,23 +149,33 @@ export default function ReportForm({ taskId, roomId, onSubmit }: ReportFormProps
 
 				<View style={styles.actionButtons}>
 					<Button
-						variant="outlined"
+						variant="contained"
 						color="primary"
 						size="medium"
 						onPress={() => setMediaPickerVisible(true)}
 					>
-						{t("reports.addMedia")}
+						<FontAwesome5 name="image" size={16} color={styles.iconColor} />
 					</Button>
+					<View style={styles.buttonsContainer}>
+						<Button
+							variant="outlined"
+							color="secondary"
+							size="medium"
+							onPress={onCancel}
+						>
+							{t("common.cancel")}
+						</Button>
 
-					<Button
-						variant="contained"
-						color="primary"
-						size="medium"
-						loading={isSubmitting}
-						onPress={handleSubmit}
-					>
-						{t("reports.submit")}
-					</Button>
+						<Button
+							variant="contained"
+							color="primary"
+							size="medium"
+							loading={isSubmitting}
+							onPress={handleSubmit}
+						>
+							{t("reports.submit")}
+						</Button>
+					</View>
 				</View>
 			</View>
 
@@ -221,10 +232,11 @@ const styles = StyleSheet.create(theme => ({
 	textInputContainer: {
 		maxHeight: 200,
 	},
-	textInput: {
+	textInputMultiLine: {
 		width: "100%",
-		minHeight: 80,
+		minHeight: 100,
 		borderWidth: 1,
+		textAlignVertical: "top",
 		borderColor: theme.colors.border,
 		borderRadius: theme.borderRadius(1),
 		padding: theme.spacing(1),
@@ -280,5 +292,12 @@ const styles = StyleSheet.create(theme => ({
 	},
 	cancelButton: {
 		marginTop: theme.spacing(1),
+	},
+	iconColor: {
+		color: theme.colors.primary.main,
+	},
+	buttonsContainer: {
+		flexDirection: "row",
+		gap: theme.spacing(2),
 	},
 }));

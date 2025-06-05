@@ -31,6 +31,7 @@
     "axios": "^1.9.0",
     "babel-plugin-react-native-unistyles": "^0.0.2",
     "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
     "dayjs": "^1.11.13",
     "expo": "^53.0.0",
     "expo-blur": "~14.1.4",
