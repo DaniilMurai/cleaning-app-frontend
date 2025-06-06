@@ -1,7 +1,7 @@
 import { Link, Stack } from "expo-router";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import Typography from "@/ui/Typography";
+import Typography from "@/ui/common/Typography";
 
 export default function NotFoundScreen() {
 	return (

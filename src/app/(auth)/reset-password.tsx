@@ -6,8 +6,8 @@ import { useRef, useState } from "react";
 import { StyleSheet } from "react-native-unistyles";
 import PasswordInputs, { PasswordInputsRef } from "@/ui/components/passwords/2PasswordInputs";
 import { View } from "react-native";
-import { clearTokens, saveTokens } from "@/hooks/tokens";
-import useAuth from "@/context/AuthContext";
+import { clearTokens, saveTokens } from "@/core/hooks/shared/tokens";
+import useAuth from "@/core/context/AuthContext";
 import { useTranslation } from "react-i18next";
 
 export default function ResetPassword() {

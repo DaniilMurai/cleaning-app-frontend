@@ -3,10 +3,10 @@ import { StyleSheet } from "react-native-unistyles";
 import React, { useState } from "react";
 import { Card, ModalContainer, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
-import Collapse from "@/ui/Collapse";
+import Collapse from "@/ui/common/Collapse";
 import { useTranslation } from "react-i18next";
-import TaskTimer from "@/ui/components/user/TaskTimer";
-import ReportForm from "@/ui/forms/ReportForm";
+import TaskTimer from "@/ui/components/date/TaskTimer";
+import ReportForm from "@/ui/forms/common/ReportForm";
 import {
 	AssignmentStatus,
 	CreateReport,
@@ -16,8 +16,8 @@ import {
 	useGetDailyAssignment,
 	useUpdateReport,
 } from "@/api/client";
-import { formatToDateTime } from "@/utils/dateUtils";
-import useAuth from "@/context/AuthContext";
+import { formatToDateTime } from "@/core/utils/dateUtils";
+import useAuth from "@/core/context/AuthContext";
 
 /**
  * Component for displaying daily assignments
@@ -358,7 +358,6 @@ const styles = StyleSheet.create(theme => ({
 		flex: 1,
 		backgroundColor: theme.colors.background.main,
 	},
-
 	scrollContainer: {
 		flex: 1,
 		padding: theme.spacing(2),

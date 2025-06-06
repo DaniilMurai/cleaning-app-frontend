@@ -2,12 +2,12 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native
 import { useUnistyles } from "react-native-unistyles";
 
 import { Stack } from "expo-router";
-import { AuthProvider } from "@/context/AuthContext";
+import { AuthProvider } from "@/core/context/AuthContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { LanguageProvider } from "@/context/LanguageContext";
+import { LanguageProvider } from "@/core/context/LanguageContext";
 import { EventProvider } from "react-native-outside-press";
 import { PortalProvider } from "@/features/Portal";
-import PopperContextProvider from "@/ui/Popper/PopperContext";
+import PopperContextProvider from "@/ui/components/Popper/PopperContext";
 
 export default function RootLayout() {
 	const { theme, rt } = useUnistyles();

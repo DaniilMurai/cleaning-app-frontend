@@ -1,14 +1,14 @@
-import Typography from "@/ui/Typography";
+import Typography from "@/ui/common/Typography";
 import { View } from "react-native";
-import Input from "@/ui/Input";
+import Input from "@/ui/common/Input";
 import { Button } from "@/ui";
 import React, { useRef, useState } from "react";
 import { useLogin } from "@/api/auth";
-import { clearTokens, saveTokens } from "@/hooks/tokens";
+import { clearTokens, saveTokens } from "@/core/hooks/shared/tokens";
 import { Redirect, useRouter } from "expo-router";
-import useAuth from "@/context/AuthContext";
-import Card from "@/ui/Card";
-import Loading from "@/ui/Loading";
+import useAuth from "@/core/context/AuthContext";
+import Card from "@/ui/common/Card";
+import Loading from "@/ui/common/Loading";
 import { StyleSheet } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
 import PasswordInput, { PasswordInputsRef } from "@/ui/components/passwords/PasswordInput";
@@ -58,7 +58,7 @@ export default function Login() {
 					}
 				}
 			}
-			console.error("Login unknown error");
+			console.log("No login");
 		} catch (error) {
 			console.error("Login error:", error);
 		}

@@ -1,8 +1,8 @@
 // src/(navigation)/RootNavigator.tsx
 import React from "react";
-import useAuth from "@/context/AuthContext";
+import useAuth from "@/core/context/AuthContext";
 import { Stack } from "expo-router";
-import Loading from "@/ui/Loading";
+import Loading from "@/ui/common/Loading";
 
 export default function RootNavigator() {
 	const { token, loading } = useAuth();

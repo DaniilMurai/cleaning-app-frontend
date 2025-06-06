@@ -2,13 +2,13 @@
 import React, { useState } from "react";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { AdminTabs } from "@/ui/components/admin/AdminTabs";
+import AdminTabs from "@/ui/components/admin/AdminTabs";
 import LocationsTab from "@/ui/components/admin/LocationsTab";
 import TasksTab from "@/ui/components/admin/TasksTab";
 import AssignmentsTab from "@/ui/components/admin/AssignmentsTab";
-import { useAdminData } from "@/hooks/useAdminData";
-import useModals from "@/hooks/useModals";
-import { useAdminMutations } from "@/hooks/useAdminMutations";
+import { useAdminData } from "@/core/hooks/admin/useAdminData";
+import useModals from "@/core/hooks/shared/useModals";
+import { useAdminMutations } from "@/core/hooks/mutations/useAdminMutations";
 import { useGetUsers } from "@/api/admin";
 
 export default function AdminPage() {

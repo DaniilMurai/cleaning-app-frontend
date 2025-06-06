@@ -1,9 +1,9 @@
 // src/ui/components/common/2PasswordInputs.tsx
-import Input from "../../Input";
+import Input from "../../common/Input";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { StyleSheet } from "react-native-unistyles";
 import { Typography } from "@/ui";
-import { PasswordValidationResult } from "@/hooks/usePasswordValidation";
+import { PasswordValidationResult } from "@/core/hooks/auth/usePasswordValidation";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { TouchableOpacity, View } from "react-native";
 

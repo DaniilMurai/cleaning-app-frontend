@@ -5,12 +5,12 @@ import { Button, Loading, ModalContainer } from "@/ui";
 import { useEffect, useState } from "react";
 
 import { RegisterUserData, useGetUsers, UserSchema } from "@/api/admin";
-import EditUserForm from "@/ui/forms/EditUserForm";
-import CreateUserForm from "@/ui/forms/CreateUserForm";
-import UsersList from "@/ui/components/admin/UsersList";
-import { useAdminUsersMutations } from "@/hooks/useAdminUsersMutations";
+import EditUserForm from "@/ui/forms/user/EditUserForm";
+import CreateUserForm from "@/ui/forms/user/CreateUserForm";
+import UsersList from "@/ui/components/lists/UsersList";
+import { useAdminUsersMutations } from "@/core/hooks/mutations/useAdminUsersMutations";
 import { FontAwesome5 } from "@expo/vector-icons";
-import GetLinkForm from "@/ui/forms/GetInviteLinkForm";
+import GetLinkForm from "@/ui/forms/common/GetInviteLinkForm";
 import { useTranslation } from "react-i18next";
 
 export default function UsersPage() {

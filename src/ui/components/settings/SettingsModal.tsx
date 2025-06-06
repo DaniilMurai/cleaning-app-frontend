@@ -3,10 +3,10 @@ import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
 import { Button, ModalContainer, Select } from "@/ui";
-import Typography from "@/ui/Typography";
+import Typography from "@/ui/common/Typography";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage } from "@/core/context/LanguageContext";
 
 interface SettingsModalProps {
 	isVisible: boolean;
