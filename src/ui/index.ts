@@ -14,10 +14,10 @@ export { default as Select } from "./common/Select";
 export { default as Typography } from "./common/Typography";
 
 // Admin Tabs Components
-export { default as AdminTabs } from "@/ui/components/admin/AdminTabs";
-export { default as AssignmentsTab } from "@/ui/components/admin/AssignmentsTab";
-export { default as LocationsTab } from "@/ui/components/admin/LocationsTab";
-export { default as TasksTab } from "@/ui/components/admin/TasksTab";
+export { default as AdminTabs } from "@/ui/components/adminTabs/AdminTabs";
+export { default as AssignmentsTab } from "@/ui/components/adminTabs/AssignmentsTab";
+export { default as LocationsTab } from "@/ui/components/adminTabs/LocationsTab";
+export { default as TasksTab } from "@/ui/components/adminTabs/TasksTab";
 
 // Date Components
 export { default as DateInput } from "./components/date/DateInput";

@@ -2,10 +2,10 @@
 import React, { useState } from "react";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import AdminTabs from "@/ui/components/admin/AdminTabs";
-import LocationsTab from "@/ui/components/admin/LocationsTab";
-import TasksTab from "@/ui/components/admin/TasksTab";
-import AssignmentsTab from "@/ui/components/admin/AssignmentsTab";
+import AdminTabs from "@/ui/components/adminTabs/AdminTabs";
+import LocationsTab from "@/ui/components/adminTabs/LocationsTab";
+import TasksTab from "@/ui/components/adminTabs/TasksTab";
+import AssignmentsTab from "@/ui/components/adminTabs/AssignmentsTab";
 import { useAdminData } from "@/core/hooks/admin/useAdminData";
 import useModals from "@/core/hooks/shared/useModals";
 import { useAdminMutations } from "@/core/hooks/mutations/useAdminMutations";
