@@ -2,7 +2,7 @@
 import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { Button, Loading, ModalContainer } from "@/ui";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { RegisterUserData, useGetUsers, UserSchema } from "@/api/admin";
 import EditUserForm from "@/ui/forms/user/EditUserForm";
@@ -26,8 +26,8 @@ export default function UsersPage() {
 		inviteLinkModal: false,
 		resetLinkModal: false,
 	});
-	// Получаем список пользователей
-	const { data: users, isLoading, refetch } = useGetUsers({});
+
+	const { data: users, isLoading, isFetching, refetch } = useGetUsers({});
 
 	const {
 		handleUpdateUser,
@@ -40,8 +40,7 @@ export default function UsersPage() {
 	} = useAdminUsersMutations({
 		onSuccessCreate: invite_link => {
 			setInviteLink(invite_link);
-			setModalState(prev => ({ ...prev, inviteLinkModal: true }));
-			setModalState(prev => ({ ...prev, createMode: false }));
+			setModalState(prev => ({ ...prev, inviteLinkModal: true, createMode: false }));
 		},
 		onSuccessUpdate: () => {
 			setModalState(prev => ({ ...prev, editMode: false }));
@@ -49,11 +48,11 @@ export default function UsersPage() {
 		},
 		onSuccessResetPassword: reset_link => {
 			setResetLink(reset_link);
-			setModalState(prevState => ({ ...prevState, resetLinkModal: true }));
+			setModalState(prev => ({ ...prev, resetLinkModal: true }));
 		},
 		onSuccessGetInviteLink: inviteLink => {
 			setInviteLink(inviteLink);
-			setModalState(prevState => ({ ...prevState, inviteLinkModal: true }));
+			setModalState(prev => ({ ...prev, inviteLinkModal: true }));
 		},
 		refetch,
 	});
@@ -68,11 +67,7 @@ export default function UsersPage() {
 	};
 
 	const handleForgetPasswordClick = async (user_id: number) => {
-		try {
-			await handleForgetPassword(user_id);
-		} catch (error) {
-			console.log(error);
-		}
+		await handleForgetPassword(user_id);
 	};
 
 	const handleGetInviteLinkClick = async (user_id: number) => {
@@ -85,16 +80,11 @@ export default function UsersPage() {
 		}
 	};
 
-	useEffect(() => {
-		console.log("render admin users page");
-	}, []);
-
 	const handleCreateUserSubmit = async (userData: RegisterUserData) => {
 		await handleCreateUser(userData);
 	};
 
 	const handleRefetchUsers = async () => {
-		console.log("Refetching users...");
 		await refetch();
 	};
 
@@ -116,15 +106,8 @@ export default function UsersPage() {
 					<Button
 						variant="outlined"
 						style={{ marginHorizontal: 10 }}
-						onPress={() => setModalState(prev => ({ ...prev, inviteLinkModal: true }))}
-					>
-						<FontAwesome5 name="link" size={20} style={styles.icon} />
-					</Button>
-					<Button
-						variant={"outlined"}
 						onPress={handleRefetchUsers}
-						loading={isLoading}
-						style={{ marginHorizontal: 10 }}
+						loading={isFetching}
 					>
 						<FontAwesome5 name="sync" size={20} style={styles.icon} />
 					</Button>
@@ -202,25 +185,14 @@ const styles = StyleSheet.create(theme => ({
 	},
 	buttonsContainer: {
 		flexDirection: "row",
-		flexWrap: "wrap", // Важно: разрешаем перенос элементов
+		flexWrap: "wrap",
 		justifyContent: "flex-end",
 		marginBottom: theme.spacing(2),
-	},
-	header: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-		marginBottom: theme.spacing(4),
 	},
 	icon: {
 		color: theme.colors.primary.main,
 	},
 	addUserIcon: {
 		color: theme.colors.background.main,
-	},
-	heading: {
-		marginBottom: theme.spacing(2),
-		flexDirection: "row",
-		justifyContent: "center",
 	},
 }));
