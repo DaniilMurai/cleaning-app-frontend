@@ -1,9 +1,9 @@
 import { Tabs } from "expo-router";
-import { getTabBarIcon } from "@/ui/TabBarIcon";
+import { getTabBarIcon } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { useIsAdmin } from "@/context/AuthContext";
+import { useIsAdmin } from "@/core/context/AuthContext";
 import { View } from "react-native";
-import LanguageSwitcher from "@/ui/components/common/LanguageSwitcher";
+import LanguageSwitcher from "@/ui/components/settings/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 
 export default function TabsLayout() {

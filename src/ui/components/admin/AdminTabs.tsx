@@ -9,7 +9,7 @@ interface AdminTabsProps {
 	setActiveTab: (tab: string) => void;
 }
 
-export function AdminTabs({ activeTab, setActiveTab }: AdminTabsProps) {
+export default function AdminTabs({ activeTab, setActiveTab }: AdminTabsProps) {
 	const { t } = useTranslation();
 
 	return (

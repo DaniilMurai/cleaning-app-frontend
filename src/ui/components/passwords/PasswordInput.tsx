@@ -1,7 +1,7 @@
-import { PasswordValidationResult } from "@/hooks/usePasswordValidation";
+import { PasswordValidationResult } from "@/core/hooks/auth/usePasswordValidation";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
-import Input from "../../Input";
+import Input from "../../common/Input";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Typography } from "@/ui";
 import { StyleSheet } from "react-native-unistyles";

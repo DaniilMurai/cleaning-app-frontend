@@ -1,6 +1,6 @@
 import { Redirect, Stack } from "expo-router";
-import useAuth from "@/context/AuthContext";
-import Loading from "@/ui/Loading";
+import useAuth from "@/core/context/AuthContext";
+import Loading from "@/ui/common/Loading";
 
 export default function AuthorizedLayout() {
 	const { token, loading, user } = useAuth();

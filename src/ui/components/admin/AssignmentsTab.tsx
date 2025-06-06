@@ -2,18 +2,18 @@
 import React, { useState } from "react";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import Typography from "@/ui/Typography";
+import Typography from "@/ui/common/Typography";
 import { Button, Card, ModalContainer } from "@/ui";
 import { useTranslation } from "react-i18next";
 import { FontAwesome5 } from "@expo/vector-icons";
-import Collapse from "@/ui/Collapse";
+import Collapse from "@/ui/common/Collapse";
 import { AdminReadUser, DailyAssignmentResponse, LocationResponse } from "@/api/admin";
 import {
 	CreateDailyAssignmentForm,
 	DeleteDailyAssignmentConfirm,
 	EditDailyAssignmentForm,
-} from "@/ui/forms/DailyAssignmentForms";
-import { formatToDateTime } from "@/utils/dateUtils";
+} from "@/ui/forms/common/DailyAssignmentForms";
+import { formatToDateTime } from "@/core/utils/dateUtils";
 
 interface AssignmentsTabProps {
 	locations: LocationResponse[];

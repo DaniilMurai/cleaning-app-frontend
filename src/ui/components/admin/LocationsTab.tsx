@@ -2,23 +2,23 @@
 import React, { useState } from "react";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import Typography from "@/ui/Typography";
+import Typography from "@/ui/common/Typography";
 import { Button, Card, ModalContainer } from "@/ui";
 import { useTranslation } from "react-i18next";
 import { FontAwesome5 } from "@expo/vector-icons";
-import Collapse from "@/ui/Collapse";
+import Collapse from "@/ui/common/Collapse";
 import { LocationResponse, RoomResponse, RoomTaskResponse, TaskResponse } from "@/api/admin";
 import {
 	CreateLocationForm,
 	DeleteLocationConfirm,
 	EditLocationForm,
-} from "@/ui/forms/LocationForms";
+} from "@/ui/forms/common/LocationForms";
 import {
 	CreateRoomForm,
 	DeleteRoomConfirm as DeleteRoomConfirm,
 	EditRoomForm,
-} from "@/ui/forms/RoomForms";
-import TasksList from "@/ui/components/admin/TasksList";
+} from "@/ui/forms/common/RoomForms";
+import TasksList from "@/ui/components/lists/TasksList";
 
 interface LocationProps {
 	locations: LocationResponse[];

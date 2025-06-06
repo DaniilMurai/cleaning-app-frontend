@@ -1,13 +1,13 @@
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import Typography from "@/ui/Typography";
+import Typography from "@/ui/common/Typography";
 import { useState } from "react";
 import { Button, Card, ModalContainer } from "@/ui";
-import useAuth from "@/context/AuthContext";
+import useAuth from "@/core/context/AuthContext";
 import { UpdateUserData, UserUpdatePassword } from "@/api/users";
-import UpdateCurrentUserForm from "@/ui/forms/UpdateCurrentUserForm";
-import { useCurrentUserMutations } from "@/hooks/useCurrentUserMutations";
-import UpdateCurrentUserPasswordForm from "@/ui/forms/UpdateCurrentUserPasswordForm";
+import UpdateCurrentUserForm from "@/ui/forms/user/UpdateCurrentUserForm";
+import { useCurrentUserMutations } from "@/core/hooks/mutations/useCurrentUserMutations";
+import UpdateCurrentUserPasswordForm from "@/ui/forms/user/UpdateCurrentUserPasswordForm";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import SettingsModal from "@/ui/components/settings/SettingsModal";
