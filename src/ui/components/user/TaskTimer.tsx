@@ -8,32 +8,27 @@ import { StyleSheet } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import DateInputModal from "@/ui/components/common/DateInputModal";
-
-export enum TaskStatus {
-	NOT_STARTED = "NOT_STARTED",
-	IN_PROGRESS = "IN_PROGRESS",
-	COMPLETED = "COMPLETED",
-}
+import { AssignmentStatus } from "@/api/client";
 
 interface TaskTimerProps {
 	onStatusChange?: (
-		status: TaskStatus,
+		status: AssignmentStatus,
 		totalTime: number,
 		startTime: number | null,
 		endTime: number | null
 	) => void;
-	initialStatus?: TaskStatus;
+	initialStatus?: AssignmentStatus;
 	initialElapsedTime?: number;
 }
 
 export default function TaskTimer({
 	onStatusChange,
-	initialStatus = TaskStatus.NOT_STARTED,
+	initialStatus = AssignmentStatus.not_started,
 	initialElapsedTime = 0,
 }: TaskTimerProps) {
 	const { t } = useTranslation();
 
-	const [status, setStatus] = useState<TaskStatus>(initialStatus);
+	const [status, setStatus] = useState<AssignmentStatus>(initialStatus);
 	const [startTime, setStartTime] = useState<number | null>(null);
 	const [endTime, setEndTime] = useState<number | null>(null);
 
@@ -73,7 +68,7 @@ export default function TaskTimer({
 			clearInterval(timerInterval);
 		}
 
-		setStatus(TaskStatus.IN_PROGRESS);
+		setStatus(AssignmentStatus.in_progress);
 
 		const intervalId = setInterval(() => {
 			setTotalElapsedTime(prev => prev + 1000);
@@ -82,7 +77,7 @@ export default function TaskTimer({
 		setTimerInterval(intervalId as unknown as ReturnType<typeof setInterval>);
 
 		if (onStatusChange) {
-			onStatusChange(TaskStatus.IN_PROGRESS, initialElapsed, startTimestamp, endTime);
+			onStatusChange(AssignmentStatus.in_progress, initialElapsed, startTimestamp, endTime);
 		}
 	};
 
@@ -122,7 +117,7 @@ export default function TaskTimer({
 			clearInterval(timerInterval);
 		}
 
-		setStatus(TaskStatus.IN_PROGRESS);
+		setStatus(AssignmentStatus.in_progress);
 		setStartTime(now);
 
 		// Устанавливаем интервал для обновления таймера
@@ -137,22 +132,22 @@ export default function TaskTimer({
 
 		// Вызываем колбэк, если он предоставлен
 		if (onStatusChange) {
-			onStatusChange(TaskStatus.IN_PROGRESS, totalElapsedTime, now, endTime);
+			onStatusChange(AssignmentStatus.in_progress, totalElapsedTime, now, endTime);
 		}
 	};
 
 	const startInOtherTime = () => {
-		if (status !== TaskStatus.NOT_STARTED) return;
+		if (status !== AssignmentStatus.not_started) return;
 	};
 
 	const cancelTask = () => {
-		if (status !== TaskStatus.IN_PROGRESS) return;
+		if (status !== AssignmentStatus.in_progress) return;
 
 		if (timerInterval) {
 			clearInterval(timerInterval);
 			setTimerInterval(null);
 		}
-		setStatus(TaskStatus.NOT_STARTED);
+		setStatus(AssignmentStatus.not_started);
 		setStartTime(null);
 		setTotalElapsedTime(0);
 		setDisplayTime("00:00:00");
@@ -167,11 +162,11 @@ export default function TaskTimer({
 			setTimerInterval(null);
 		}
 		setEndTime(now);
-		setStatus(TaskStatus.COMPLETED);
+		setStatus(AssignmentStatus.completed);
 
 		// Вызываем колбэк, если он предоставлен
 		if (onStatusChange) {
-			onStatusChange(TaskStatus.COMPLETED, totalElapsedTime, startTime, now);
+			onStatusChange(AssignmentStatus.completed, totalElapsedTime, startTime, now);
 		}
 	};
 
@@ -182,7 +177,7 @@ export default function TaskTimer({
 			</Typography>
 
 			<View style={styles.timerButtons}>
-				{status === TaskStatus.NOT_STARTED && (
+				{status === AssignmentStatus.not_started && (
 					<>
 						<Button
 							variant="contained"
@@ -202,7 +197,7 @@ export default function TaskTimer({
 					</>
 				)}
 
-				{status === TaskStatus.IN_PROGRESS && (
+				{status === AssignmentStatus.in_progress && (
 					<>
 						<Button
 							variant="outlined"
@@ -222,7 +217,7 @@ export default function TaskTimer({
 					</>
 				)}
 
-				{status === TaskStatus.COMPLETED && (
+				{status === AssignmentStatus.completed && (
 					<Typography variant="subtitle1" style={styles.completedText}>
 						{t("components.taskTimer.completed")}
 					</Typography>

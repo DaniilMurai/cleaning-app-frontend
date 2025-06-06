@@ -6,6 +6,9 @@
  */
 import type { ReportResponseMessage } from "./reportResponseMessage";
 import type { ReportResponseMediaLinks } from "./reportResponseMediaLinks";
+import type { ReportResponseStartTime } from "./reportResponseStartTime";
+import type { ReportResponseEndTime } from "./reportResponseEndTime";
+import type { AssignmentStatus } from "./assignmentStatus";
 
 /**
  * Схема для ответа API
@@ -15,8 +18,9 @@ export interface ReportResponse {
 	user_id: number;
 	message?: ReportResponseMessage;
 	media_links?: ReportResponseMediaLinks;
-	start_time: string;
-	end_time: string;
+	start_time?: ReportResponseStartTime;
+	end_time?: ReportResponseEndTime;
+	status: AssignmentStatus;
 	id: number;
 	/** Вычисляет длительность в секундах */
 	readonly duration_seconds: number;

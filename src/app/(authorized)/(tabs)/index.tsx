@@ -5,9 +5,17 @@ import { Card, ModalContainer, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Collapse from "@/ui/Collapse";
 import { useTranslation } from "react-i18next";
-import TaskTimer, { TaskStatus } from "@/ui/components/user/TaskTimer";
+import TaskTimer from "@/ui/components/user/TaskTimer";
 import ReportForm from "@/ui/forms/ReportForm";
-import { DailyAssignmentForUserResponse, useCreateReport, useGetDailyAssignment, useUpdateReport } from "@/api/client";
+import {
+	AssignmentStatus,
+	CreateReport,
+	DailyAssignmentForUserResponse,
+	UpdateReport,
+	useCreateReport,
+	useGetDailyAssignment,
+	useUpdateReport,
+} from "@/api/client";
 import { formatToDateTime } from "@/utils/dateUtils";
 import useAuth from "@/context/AuthContext";
 
@@ -22,8 +30,11 @@ export default function DailyAssignmentsList() {
 		refetch: dailyAssignmentRefetch,
 	} = useGetDailyAssignment();
 
-	const TimeReportMutation = useCreateReport();
-	const reportUpdateMutation = useUpdateReport();
+	const createReportMutation = useCreateReport();
+	const updateReportMutation = useUpdateReport();
+	const [reportId, setReportId] = useState<number | null>(null);
+	const [status, setStatus] = useState<AssignmentStatus>("not_started");
+
 	const { user } = useAuth();
 	const [startTime, setStartTime] = useState<number | null>(null);
 	const [endTime, setEndTime] = useState<number | null>(null);
@@ -200,12 +211,69 @@ export default function DailyAssignmentsList() {
 											`Assignment ${assignment.id} status changed to ${status}. Total time: ${totalTime}ms`
 										);
 
-										if (status === TaskStatus.COMPLETED) {
+										if (status) {
 											console.log("user: ", user);
 											console.log("start time: ", startTime);
 											console.log("endTime: ", endTime);
+											if (user?.id) {
+												if (!reportId) {
+													const payload: CreateReport = {
+														daily_assignment_id: assignment.id,
+														user_id: user.id,
+														status: status,
+													};
+
+													if (startTime != null) {
+														payload.start_time = startTime.toString();
+													}
+													if (endTime != null) {
+														payload.end_time = endTime.toString();
+													}
+
+													const report =
+														await createReportMutation.mutateAsync({
+															data: payload,
+														});
+													setReportId(report.id);
+												} else {
+													const payload: UpdateReport = {
+														daily_assignment_id: assignment.id,
+														user_id: user.id,
+														status: status, //TODO может быть partially_complited
+													};
+
+													if (startTime != null) {
+														payload.start_time = startTime.toString();
+													}
+													if (endTime != null) {
+														payload.end_time = endTime.toString();
+													}
+
+													const report =
+														await updateReportMutation.mutateAsync({
+															data: payload,
+															params: { report_id: reportId },
+														});
+
+													if (!report) {
+														console.log("error");
+													} else {
+														console.log(
+															"Report successfuly created: ",
+															report
+														);
+													}
+												}
+											}
 											setStartTime(startTime);
 											setEndTime(endTime);
+										}
+										setStatus(status);
+
+										if (
+											status === AssignmentStatus.completed ||
+											status === AssignmentStatus.partially_completed
+										) {
 											setShowReport(true);
 										}
 									}}
@@ -224,16 +292,18 @@ export default function DailyAssignmentsList() {
 												// Здесь будет логика отправки отчета на сервер
 												console.log("Отправка отчета:", data);
 
-												if (user && startTime && endTime) {
+												if (user && startTime && endTime && reportId) {
 													const response =
-														await TimeReportMutation.mutateAsync({
+														await updateReportMutation.mutateAsync({
+															params: { report_id: reportId },
 															data: {
 																daily_assignment_id: assignment.id,
 																user_id: user.id,
-																message: data.text,
-																// media_links: data.media, //TODO решить проблему с медиа
+																message: data?.text,
+																media_links: data?.media,
 																start_time: startTime.toString(),
 																end_time: endTime.toString(),
+																status: status, //TODO может быть partially_complited
 															},
 														});
 													if (!response) {
@@ -244,6 +314,17 @@ export default function DailyAssignmentsList() {
 															response
 														);
 													}
+												} else {
+													console.log(
+														"Error occured with report updating. user: " +
+															user +
+															" startTime: " +
+															startTime +
+															" endTime: " +
+															endTime +
+															" reportId: " +
+															reportId
+													);
 												}
 
 												await dailyAssignmentRefetch();

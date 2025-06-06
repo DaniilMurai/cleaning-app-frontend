@@ -15,7 +15,7 @@ interface Media {
 interface ReportFormProps extends React.ComponentProps<typeof View> {
 	taskId?: number;
 	roomId?: number;
-	onSubmit: (data: { text: string; media: Media[] }) => Promise<void>;
+	onSubmit: (data: { text: string; media: string[] }) => Promise<void>;
 	onCancel: () => void;
 }
 
@@ -25,6 +25,11 @@ export default function ReportForm({ taskId, roomId, onCancel, onSubmit }: Repor
 	const [media, setMedia] = useState<Media[]>([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [mediaPickerVisible, setMediaPickerVisible] = useState(false);
+
+	const handleCancel = () => {
+		// Вызываем переданный обработчик отмены
+		onCancel();
+	};
 
 	// Обработчик для выбора изображения из галереи
 	const pickImage = async () => {
@@ -99,7 +104,8 @@ export default function ReportForm({ taskId, roomId, onCancel, onSubmit }: Repor
 
 		setIsSubmitting(true);
 		try {
-			await onSubmit({ text, media });
+			const onlyUris = media.map(item => item.uri);
+			await onSubmit({ text, media: onlyUris });
 			setText("");
 			setMedia([]);
 		} catch (error) {
@@ -161,7 +167,7 @@ export default function ReportForm({ taskId, roomId, onCancel, onSubmit }: Repor
 							variant="outlined"
 							color="secondary"
 							size="medium"
-							onPress={onCancel}
+							onPress={handleCancel}
 						>
 							{t("common.cancel")}
 						</Button>

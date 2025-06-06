@@ -5,17 +5,22 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./assignmentStatus";
 export * from "./createReport";
+export * from "./createReportEndTime";
 export * from "./createReportMediaLinks";
 export * from "./createReportMessage";
+export * from "./createReportStartTime";
 export * from "./dailyAssignmentForUserResponse";
 export * from "./dailyAssignmentForUserResponseAdminNote";
 export * from "./dailyAssignmentForUserResponseUserNote";
 export * from "./hTTPValidationError";
 export * from "./locationResponse";
 export * from "./reportResponse";
+export * from "./reportResponseEndTime";
 export * from "./reportResponseMediaLinks";
 export * from "./reportResponseMessage";
+export * from "./reportResponseStartTime";
 export * from "./roomResponse";
 export * from "./roomTaskResponse";
 export * from "./taskResponse";
@@ -27,6 +32,7 @@ export * from "./updateReportMediaLinks";
 export * from "./updateReportMessage";
 export * from "./updateReportParams";
 export * from "./updateReportStartTime";
+export * from "./updateReportStatus";
 export * from "./updateReportUserId";
 export * from "./validationError";
 export * from "./validationErrorLocItem";
