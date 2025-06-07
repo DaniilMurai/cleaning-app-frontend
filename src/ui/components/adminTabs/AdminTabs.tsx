@@ -24,14 +24,15 @@ export default function AdminTabs({ activeTab, setActiveTab }: AdminTabsProps) {
 					{t("admin.locations")}
 				</Typography>
 			</TouchableOpacity>
-			<TouchableOpacity
-				style={[styles.tab, activeTab === "tasks" && styles.activeTab]}
-				onPress={() => setActiveTab("tasks")}
-			>
-				<Typography style={[styles.tabText, activeTab === "tasks" && styles.activeTabText]}>
-					{t("admin.tasks")}
-				</Typography>
-			</TouchableOpacity>
+
+			{/*<TouchableOpacity*/}
+			{/*	style={[styles.tab, activeTab === "tasks" && styles.activeTab]}*/}
+			{/*	onPress={() => setActiveTab("tasks")}*/}
+			{/*>*/}
+			{/*	<Typography style={[styles.tabText, activeTab === "tasks" && styles.activeTabText]}>*/}
+			{/*		{t("admin.tasks")}*/}
+			{/*	</Typography>*/}
+			{/*</TouchableOpacity>*/}
 			<TouchableOpacity
 				style={[styles.tab, activeTab === "assignments" && styles.activeTab]}
 				onPress={() => setActiveTab("assignments")}
@@ -40,6 +41,16 @@ export default function AdminTabs({ activeTab, setActiveTab }: AdminTabsProps) {
 					style={[styles.tabText, activeTab === "assignments" && styles.activeTabText]}
 				>
 					{t("admin.assignments")}
+				</Typography>
+			</TouchableOpacity>
+			<TouchableOpacity
+				style={[styles.tab, activeTab === "reports" && styles.activeTab]}
+				onPress={() => setActiveTab("reports")}
+			>
+				<Typography
+					style={[styles.tabText, activeTab === "reports" && styles.activeTabText]}
+				>
+					{t("reports.reports")}
 				</Typography>
 			</TouchableOpacity>
 		</View>

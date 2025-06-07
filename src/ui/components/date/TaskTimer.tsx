@@ -8,6 +8,7 @@ import { StyleSheet } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
 import DateInputModal from "@/ui/components/date/DateInputModal";
 import { AssignmentStatus } from "@/api/client";
+import { formatTime } from "@/core/utils/dateUtils";
 
 interface TaskTimerProps {
 	onStatusChange?: (
@@ -76,16 +77,6 @@ export default function TaskTimer({
 		if (onStatusChange) {
 			onStatusChange(AssignmentStatus.in_progress, initialElapsed, startTimestamp, endTime);
 		}
-	};
-
-	// Функция для форматирования времени
-	const formatTime = (timeInMs: number): string => {
-		const totalSeconds = Math.floor(timeInMs / 1000);
-		const hours = Math.floor(totalSeconds / 3600);
-		const minutes = Math.floor((totalSeconds % 3600) / 60);
-		const seconds = totalSeconds % 60;
-
-		return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 	};
 
 	// Обновление отображаемого времени

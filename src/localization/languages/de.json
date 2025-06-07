@@ -7,6 +7,7 @@
     "language": "Sprache"
   },
   "reports": {
+    "reports": "Berichte",
     "createReport": "Bericht erstellen",
     "enterReportText": "Berichttext eingeben...",
     "addMedia": "Medien hinzufügen",

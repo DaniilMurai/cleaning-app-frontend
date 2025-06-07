@@ -26,6 +26,8 @@ import type {
 	DeleteReportParams,
 	GetReportsParams,
 	HTTPValidationError,
+	ReportResponse,
+	SuccessResponse,
 	UpdateReport,
 	UpdateReportParams,
 } from ".././schemas";
@@ -37,7 +39,7 @@ import type { ErrorType } from "../../instance";
  * @summary Get Reports
  */
 export const getReports = (params?: GetReportsParams, signal?: AbortSignal) => {
-	return getAxios<unknown>({ url: `/admin/reports/`, method: "GET", params, signal });
+	return getAxios<ReportResponse[]>({ url: `/admin/reports/`, method: "GET", params, signal });
 };
 
 export const getGetReportsQueryKey = (params?: GetReportsParams) => {
@@ -237,7 +239,7 @@ export function useGetReportsSuspense<
  * @summary Update Report
  */
 export const updateReport = (updateReport: UpdateReport, params: UpdateReportParams) => {
-	return getAxios<unknown>({
+	return getAxios<ReportResponse>({
 		url: `/admin/reports/`,
 		method: "PATCH",
 		headers: { "Content-Type": "application/json" },
@@ -312,7 +314,7 @@ export const useUpdateReport = <TError = ErrorType<HTTPValidationError>, TContex
  * @summary Delete Report
  */
 export const deleteReport = (params: DeleteReportParams) => {
-	return getAxios<unknown>({ url: `/admin/reports/`, method: "DELETE", params });
+	return getAxios<SuccessResponse>({ url: `/admin/reports/`, method: "DELETE", params });
 };
 
 export const getDeleteReportMutationOptions = <

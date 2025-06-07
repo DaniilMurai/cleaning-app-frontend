@@ -4,12 +4,12 @@ import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import AdminTabs from "@/ui/components/adminTabs/AdminTabs";
 import LocationsTab from "@/ui/components/adminTabs/LocationsTab";
-import TasksTab from "@/ui/components/adminTabs/TasksTab";
 import AssignmentsTab from "@/ui/components/adminTabs/AssignmentsTab";
 import { useAdminData } from "@/core/hooks/admin/useAdminData";
 import useModals from "@/core/hooks/shared/useModals";
 import { useAdminMutations } from "@/core/hooks/mutations/useAdminMutations";
 import { useGetUsers } from "@/api/admin";
+import ReportsTab from "@/ui/components/adminTabs/ReportsTab";
 
 export default function AdminPage() {
 	const [activeTab, setActiveTab] = useState("locations");
@@ -69,15 +69,23 @@ export default function AdminPage() {
 					tasksRefetch={adminData.tasksRefetch}
 				/>
 			)}
-			{activeTab === "tasks" && (
-				<TasksTab
-					tasks={adminData.tasks || []}
-					rooms={adminData.rooms || []}
+
+			{/*{activeTab === "tasks" && (*/}
+			{/*	<TasksTab*/}
+			{/*		tasks={adminData.tasks || []}*/}
+			{/*		rooms={adminData.rooms || []}*/}
+			{/*		locations={adminData.locations || []}*/}
+			{/*		roomTasks={adminData.roomTasks || []}*/}
+			{/*		taskMutation={mutations.taskMutation}*/}
+			{/*		roomTaskMutation={mutations.roomTaskMutation}*/}
+			{/*		modal={modal}*/}
+			{/*	/>*/}
+			{/*)}*/}
+			{activeTab === "reports" && (
+				<ReportsTab
+					assignments={adminData.dailyAssignments || []}
+					users={users || []}
 					locations={adminData.locations || []}
-					roomTasks={adminData.roomTasks || []}
-					taskMutation={mutations.taskMutation}
-					roomTaskMutation={mutations.roomTaskMutation}
-					modal={modal}
 				/>
 			)}
 

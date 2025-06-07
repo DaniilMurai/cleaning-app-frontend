@@ -7,6 +7,7 @@
     "language": "Язык"
   },
   "reports": {
+    "reports": "Отчеты",
     "createReport": "Создать отчет",
     "enterReportText": "Введите текст отчета...",
     "addMedia": "Добавить медиа",

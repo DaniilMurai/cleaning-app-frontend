@@ -29,6 +29,7 @@ export function useAdminData() {
 		isLoading: dailyAssignmentsIsLoading,
 		refetch: dailyAssignmentsRefetch,
 	} = useGetDailyAssignments({});
+
 	// ... другие API хуки
 
 	return {
@@ -47,6 +48,7 @@ export function useAdminData() {
 		dailyAssignments,
 		dailyAssignmentsIsLoading,
 		dailyAssignmentsRefetch,
+
 		// ... остальные возвращаемые данные
 	};
 }
