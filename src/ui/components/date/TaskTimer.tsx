@@ -6,7 +6,6 @@ import { Button, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { StyleSheet } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
-import { format } from "date-fns";
 import DateInputModal from "@/ui/components/date/DateInputModal";
 import { AssignmentStatus } from "@/api/client";
 
@@ -32,8 +31,6 @@ export default function TaskTimer({
 	const [startTime, setStartTime] = useState<number | null>(null);
 	const [endTime, setEndTime] = useState<number | null>(null);
 
-	const [customStartTime, setCustomStartTime] = useState<number | null>(null);
-	const [pausedTime, setPausedTime] = useState<number | null>(null);
 	const [totalElapsedTime, setTotalElapsedTime] = useState<number>(initialElapsedTime);
 	const [displayTime, setDisplayTime] = useState<string>("00:00:00");
 	const [timerInterval, setTimerInterval] = useState<ReturnType<typeof setInterval> | null>(null);
@@ -55,7 +52,7 @@ export default function TaskTimer({
 			return;
 		}
 
-		setStartTime(selectedDate.getTime()); // <-- вот это правильное значение
+		setStartTime(selectedDate.getTime());
 		setTotalElapsedTime(differenceMs);
 		startTaskWithOffset(selectedDate.getTime(), differenceMs);
 	};
@@ -80,9 +77,6 @@ export default function TaskTimer({
 			onStatusChange(AssignmentStatus.in_progress, initialElapsed, startTimestamp, endTime);
 		}
 	};
-
-	// Форматирование даты для отображения в пикере
-	const formatPickerDate = (date: Date) => format(date, "dd.MM.yyyy HH:mm");
 
 	// Функция для форматирования времени
 	const formatTime = (timeInMs: number): string => {
@@ -134,10 +128,6 @@ export default function TaskTimer({
 		if (onStatusChange) {
 			onStatusChange(AssignmentStatus.in_progress, totalElapsedTime, now, endTime);
 		}
-	};
-
-	const startInOtherTime = () => {
-		if (status !== AssignmentStatus.not_started) return;
 	};
 
 	const cancelTask = () => {
