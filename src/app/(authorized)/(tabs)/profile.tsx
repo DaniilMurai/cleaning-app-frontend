@@ -20,24 +20,15 @@ export default function ProfilePage() {
 	const { logout, user, refreshUserData } = useAuth();
 	const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
-	const [errorState, setErrorState] = useState({
-		logoutError: "",
-		updateError: "",
-		changePasswordError: "",
-	});
+	const [logoutError, setLogoutError] = useState("");
+	const [updateError, setUpdateError] = useState("");
+	const [changePasswordError, setChangePasswordError] = useState("");
 
 	const handleLogout = async () => {
 		try {
-			setErrorState(prevState => ({
-				...prevState,
-				logoutError: "",
-			}));
 			await logout();
 		} catch (error) {
-			setErrorState(prevState => ({
-				...prevState,
-				logoutError: "Couldn't log out: " + error,
-			}));
+			setLogoutError("Couldn't log out: " + error);
 		}
 	};
 
@@ -49,41 +40,30 @@ export default function ProfilePage() {
 	} = useCurrentUserMutations({
 		onSuccessUpdate: () => {
 			setIsEditing(false);
+			setUpdateError(""); // Clear error on success
 		},
 		onSuccessChangePassword: () => {
 			setIsChangingPassword(false);
+			setChangePasswordError(""); // Clear error on success
 		},
 		refetch: refreshUserData,
 	});
 
 	const handleEditSubmit = async (userData: Partial<UpdateUserData>) => {
+		setUpdateError(""); // Clear previous error
 		try {
 			await handleUpdateCurrentUser(userData as UpdateUserData);
-			console.log("Update user data:", userData);
-			// setIsEditing(false);
 		} catch (error) {
-			setErrorState(prevState => ({
-				...prevState,
-				updateError: "Failed to update user data: " + error,
-			}));
+			setUpdateError("Failed to update user data: " + error);
 		}
 	};
 
 	const handleChangingPasswordSubmit = async (userData: UserUpdatePassword) => {
+		setChangePasswordError(""); // Clear previous error
 		try {
-			// Сбрасываем ошибку при начале запроса
-			setErrorState(prevState => ({
-				...prevState,
-				changePasswordError: "",
-			}));
-
-			await handleChangePassword(userData as UserUpdatePassword);
-			console.log("Update user password:", userData);
+			await handleChangePassword(userData);
 		} catch (error) {
-			setErrorState(prevState => ({
-				...prevState,
-				changePasswordError: "Failed to update user password: " + error,
-			}));
+			setChangePasswordError("Failed to update user password: " + error);
 		}
 	};
 
@@ -95,13 +75,12 @@ export default function ProfilePage() {
 						{user?.full_name || user?.nickname || "User"}
 					</Typography>
 					<View style={{ flex: 1 }} />
-					<Button variant={"contained"} onPress={() => setIsEditing(true)}>
+					<Button variant="contained" onPress={() => setIsEditing(true)}>
 						<FontAwesome5 name="user-edit" size={20} />
 					</Button>
 					<Button variant="outlined" onPress={() => setIsSettingsModalOpen(true)}>
 						<FontAwesome5 name="cog" size={20} />
 					</Button>
-
 					<Button variant="contained" onPress={handleLogout}>
 						<FontAwesome5 name="sign-out-alt" size={20} />
 					</Button>
@@ -126,11 +105,11 @@ export default function ProfilePage() {
 					</Button>
 				</View>
 
-				{errorState.logoutError ? (
+				{logoutError && (
 					<Typography color="error" style={styles.errorText}>
-						{t("common.error")}: {errorState.logoutError}
+						{t("common.error")}: {logoutError}
 					</Typography>
-				) : null}
+				)}
 			</Card>
 
 			<SettingsModal
@@ -138,53 +117,31 @@ export default function ProfilePage() {
 				onClose={() => setIsSettingsModalOpen(false)}
 			/>
 
-			<ModalContainer
-				onClose={() => {
-					setErrorState(prevState => ({ ...prevState, updateError: "" }));
-					setIsEditing(false);
-				}}
-				visible={isEditing}
-			>
+			<ModalContainer onClose={() => setIsEditing(false)} visible={isEditing}>
 				<UpdateCurrentUserForm
 					user={user as UpdateUserData}
-					onClose={() => {
-						setErrorState(prevState => ({ ...prevState, updateError: "" }));
-						setIsEditing(false);
-					}}
+					onClose={() => setIsEditing(false)}
 					onSubmit={handleEditSubmit}
 					isLoading={updateMutation.isPending}
-					error={errorState.updateError}
+					error={updateError}
 				/>
 			</ModalContainer>
 
 			<ModalContainer
-				onClose={() => {
-					setIsChangingPassword(false);
-					setErrorState(prevState => ({
-						...prevState,
-						changePasswordError: "",
-					}));
-				}}
+				onClose={() => setIsChangingPassword(false)}
 				visible={isChangingPassword}
 			>
 				<UpdateCurrentUserPasswordForm
-					onClose={() => {
-						setIsChangingPassword(false);
-						setErrorState(prevState => ({
-							...prevState,
-							changePasswordError: "",
-						}));
-					}}
+					onClose={() => setIsChangingPassword(false)}
 					onSubmit={handleChangingPasswordSubmit}
 					isLoading={changePasswordMutation.isPending}
-					error={errorState.changePasswordError}
+					error={changePasswordError}
 				/>
 			</ModalContainer>
 		</View>
 	);
 }
 
-// Вспомогательный компонент для отображения информации пользователя
 function InfoItem({ label, value }: { label: string; value: string }) {
 	return (
 		<View style={styles.infoItem}>
@@ -226,23 +183,6 @@ const styles = StyleSheet.create(theme => ({
 		justifyContent: "center",
 		marginBottom: theme.spacing(3),
 		gap: theme.spacing(2),
-	},
-	avatarContainer: {
-		marginRight: theme.spacing(3),
-	},
-	avatar: {
-		width: 80,
-		height: 80,
-		borderRadius: 40,
-		backgroundColor: theme.colors.primary.light,
-	},
-	avatarPlaceholder: {
-		width: 80,
-		height: 80,
-		borderRadius: 40,
-		backgroundColor: theme.colors.background.paper,
-		justifyContent: "center",
-		alignItems: "center",
 	},
 	userName: {
 		marginBottom: theme.spacing(1),
