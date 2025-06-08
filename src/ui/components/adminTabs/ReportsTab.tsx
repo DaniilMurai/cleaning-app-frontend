@@ -4,12 +4,14 @@ import { Button, Typography } from "@/ui";
 import {
 	AdminReadUser,
 	DailyAssignmentResponse,
+	GetReportsParams,
 	LocationResponse,
 	useGetReports,
 } from "@/api/admin";
 import ReportsTable from "@/ui/components/reports/ReportTable";
 import { useState } from "react";
 import { FontAwesome5 } from "@expo/vector-icons";
+import SearchFilterPanel from "@/ui/components/reports/SearchFilterPanel";
 
 interface Props {
 	users: AdminReadUser[];
@@ -18,13 +20,34 @@ interface Props {
 }
 
 export default function ReportsTab({ users, assignments, locations }: Props) {
-	const { data: reports, isLoading, refetch } = useGetReports();
-	const [density, setDensity] = useState<boolean>(false);
+	// Состояние для параметров запроса
+	const [queryParams, setQueryParams] = useState<GetReportsParams>({
+		order_by: "id",
+		offset: 0,
+		limit: 100,
+		direction: "desc",
+	});
+
+	// ✅ Правильное использование хука с параметрами
+	const { data: reports, isLoading, refetch } = useGetReports(queryParams);
+	const [density, setDensity] = useState<boolean>(false); //TODO
+
+	// Обновляем параметры запроса
+	const handleSearch = (newParams: Partial<GetReportsParams>) => {
+		setQueryParams(prev => ({
+			...prev,
+			...newParams,
+			offset: 0, // Сброс пагинации при новых фильтрах
+		}));
+	};
 
 	return (
 		<View style={styles.container}>
 			<ScrollView style={styles.scrollContainer}>
 				<View style={styles.headerContainer}>
+					<SearchFilterPanel params={queryParams} onAction={handleSearch} />
+				</View>
+				<View style={styles.buttonContainer}>
 					<Button variant={"outlined"} onPress={() => setDensity(!density)}>
 						{density ? (
 							<FontAwesome5 name="expand" size={20} />
@@ -59,6 +82,12 @@ const styles = StyleSheet.create(theme => ({
 	},
 	headerContainer: {
 		flexDirection: "row",
+		alignItems: "center",
 		marginBottom: theme.spacing(2),
+		zIndex: 10,
+	},
+	buttonContainer: {
+		flexDirection: "row-reverse",
+		marginBottom: theme.spacing(1),
 	},
 }));

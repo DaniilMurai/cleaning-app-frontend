@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native-unistyles";
 import Typography from "./Typography";
 import { FontAwesome5 } from "@expo/vector-icons";
 
-interface PickerOption {
+export interface PickerOption {
 	label: string;
 	value: string;
 }
@@ -37,7 +37,7 @@ export default function CustomPicker({
 			const maxHeight = 4 * optionHeight;
 
 			const calculatedHeight = options.length < 4 ? options.length * optionHeight : maxHeight;
-			
+
 			Animated.parallel([
 				Animated.timing(animationHeight, {
 					toValue: calculatedHeight,

@@ -9,4 +9,6 @@ export type GetRoomsParams = {
 	offset?: number | null;
 	limit?: number | null;
 	search?: string | null;
+	order_by?: string | null;
+	direction?: string | null;
 };
