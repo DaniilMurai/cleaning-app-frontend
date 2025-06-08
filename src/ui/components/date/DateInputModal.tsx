@@ -6,7 +6,7 @@ import DateTimePicker from "react-native-ui-datepicker";
 import dayjs, { Dayjs } from "dayjs";
 import { Button } from "@/ui";
 import { useTranslation } from "react-i18next";
-import { StyleSheet } from "react-native-unistyles";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 
 interface Props {
 	isVisible: boolean;
@@ -38,6 +38,7 @@ export default function DateInputModal({
 	maximumDate,
 }: Props) {
 	const { t } = useTranslation();
+	const { theme } = useUnistyles();
 
 	// локальный стейт для выбранной даты/времени (dayjs-инстанс).
 	const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
@@ -73,7 +74,26 @@ export default function DateInputModal({
 				<View style={styles.pickerContainer}>
 					<DateTimePicker
 						mode="single"
-						styles={{ header: styles.buttonPrevNext }}
+						styles={{
+							header: {
+								backgroundColor: theme.colors.primary.light,
+							},
+							day: {
+								color: theme.colors.text.primary,
+							},
+							time_label: { color: theme.colors.text.primary },
+							day_label: { color: theme.colors.text.primary },
+							button_prev_image: { tintColor: theme.colors.primary.text },
+							button_next_image: { tintColor: theme.colors.primary.text },
+							weekday_label: { color: theme.colors.text.primary },
+							selected: {
+								backgroundColor: theme.colors.primary.main,
+								color: theme.colors.primary.text,
+							},
+							selected_label: {
+								color: theme.colors.primary.text,
+							},
+						}}
 						date={selectedDate}
 						// Когда дата/время меняются, переводим в dayjs и сохраняем
 						onChange={({ date }) => {
@@ -85,6 +105,7 @@ export default function DateInputModal({
 						maxDate={maximumDate}
 						// Устанавливаем начальный вид: либо «time», либо «date»
 						initialView={mode === "time" ? "time" : undefined}
+						hideHeader={mode === "time"}
 						// Пропсы minimumDate/maxDate в single-режиме отсутствуют.
 						// При необходимости ограничить выбор вручную, можно проверять selectedDate в handleConfirm.
 					/>
@@ -112,16 +133,16 @@ const styles = StyleSheet.create(theme => ({
 		alignItems: "center",
 	},
 	pickerContainer: {
-		backgroundColor: "#F5FCFF",
-		borderRadius: 12,
-		padding: 20,
+		borderRadius: theme.spacing(1.5),
 		width: "90%",
 		maxWidth: 400,
+		backgroundColor: theme.colors.background.default,
+		overflow: "hidden",
 	},
 	buttonRow: {
 		flexDirection: "row",
 		justifyContent: "space-between",
-		marginTop: 16,
+		padding: theme.spacing(2),
 	},
 	pickerNumbers: {
 		color: theme.colors.text.primary,

@@ -6,27 +6,19 @@ import {
 } from "@/api/admin";
 import React from "react";
 import { StyleSheet } from "react-native-unistyles";
-import { FlatList, View } from "react-native";
+import { View } from "react-native";
 import { Typography } from "@/ui";
 import { formatTime, formatToDate, formatToDateTime, formatToTime } from "@/core/utils/dateUtils";
+import { LegendList } from "@legendapp/list";
 
 interface Props {
 	reports: ReportResponse[];
-	density?: "normal" | "dense";
 	users?: AdminReadUser[];
 	assignments?: DailyAssignmentResponse[];
 	locations?: LocationResponse[];
 }
 
-export default function ReportsTable({
-	reports,
-	density = "normal",
-	assignments,
-	users = [],
-	locations = [],
-}: Props) {
-	const rowHeight = density === "dense" ? 32 : 48;
-
+export default function ReportsTable({ reports, assignments, users = [], locations = [] }: Props) {
 	const getUserFullName = (report: ReportResponse) => {
 		const user = users.find(u => report.user_id === u.id);
 		return user?.full_name ?? "Unknown User";
@@ -43,7 +35,7 @@ export default function ReportsTable({
 	};
 
 	const renderHeader = () => (
-		<View style={[styles.row, styles.header, { height: rowHeight }]}>
+		<View style={[styles.row, styles.header, { height: 48 }]}>
 			<Typography style={[styles.cell, { flex: 2 }]}>Username</Typography>
 			<Typography style={[styles.cell, { flex: 2 }]}>Location</Typography>
 			<Typography style={[styles.cell, { flex: 2 }]}>Date</Typography>
@@ -80,7 +72,7 @@ export default function ReportsTable({
 		}
 
 		return (
-			<View style={[styles.row, { height: rowHeight }]}>
+			<View style={[styles.row]}>
 				<Typography style={[styles.cell, { flex: 2 }]}>{getUserFullName(item)}</Typography>
 				<Typography style={[styles.cell, { flex: 2 }]}>{locationName}</Typography>
 				<Typography style={[styles.cell, { flex: 2 }]}>{date}</Typography>
@@ -93,12 +85,13 @@ export default function ReportsTable({
 	};
 
 	return (
-		<FlatList
+		<LegendList
 			data={reports}
 			keyExtractor={item => item.id.toString()}
 			ListHeaderComponent={renderHeader}
-			stickyHeaderIndices={[0]}
+			ListHeaderComponentStyle={{ position: "sticky" }}
 			renderItem={renderItem}
+			recycleItems
 		/>
 	);
 }
@@ -115,7 +108,8 @@ const styles = StyleSheet.create(theme => ({
 		backgroundColor: theme.colors.background.default,
 	},
 	cell: {
-		paddingHorizontal: 8,
+		paddingHorizontal: theme.spacing(1),
+		paddingVertical: theme.spacing(0.5),
 		fontSize: 14,
 	},
 }));

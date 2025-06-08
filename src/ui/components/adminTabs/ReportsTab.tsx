@@ -1,6 +1,6 @@
 import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { Button, Typography } from "@/ui";
+import { Typography } from "@/ui";
 import {
 	AdminReadUser,
 	DailyAssignmentResponse,
@@ -10,7 +10,6 @@ import {
 } from "@/api/admin";
 import ReportsTable from "@/ui/components/reports/ReportTable";
 import { useState } from "react";
-import { FontAwesome5 } from "@expo/vector-icons";
 import SearchFilterPanel from "@/ui/components/reports/SearchFilterPanel";
 
 interface Props {
@@ -30,7 +29,6 @@ export default function ReportsTab({ users, assignments, locations }: Props) {
 
 	// ✅ Правильное использование хука с параметрами
 	const { data: reports, isLoading, refetch } = useGetReports(queryParams);
-	const [density, setDensity] = useState<boolean>(false); //TODO
 
 	// Обновляем параметры запроса
 	const handleSearch = (newParams: Partial<GetReportsParams>) => {
@@ -47,19 +45,9 @@ export default function ReportsTab({ users, assignments, locations }: Props) {
 				<View style={styles.headerContainer}>
 					<SearchFilterPanel params={queryParams} onAction={handleSearch} />
 				</View>
-				<View style={styles.buttonContainer}>
-					<Button variant={"outlined"} onPress={() => setDensity(!density)}>
-						{density ? (
-							<FontAwesome5 name="expand" size={20} />
-						) : (
-							<FontAwesome5 name="compress" size={20} />
-						)}
-					</Button>
-				</View>
 				{reports ? (
 					<ReportsTable
 						reports={reports}
-						density={density ? "dense" : "normal"}
 						users={users}
 						assignments={assignments}
 						locations={locations}

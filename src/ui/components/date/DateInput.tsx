@@ -40,7 +40,13 @@ export default function DateInput({ label, value, onChange, style }: DateInputPr
 			>
 				{label}
 			</Typography>
-			<View style={{ borderRadius: 8, backgroundColor: "#F5FCFF", overflow: "hidden" }}>
+			<View
+				style={{
+					borderRadius: 8,
+					backgroundColor: theme.colors.background.default,
+					overflow: "hidden",
+				}}
+			>
 				<DateTimePicker
 					mode="single"
 					date={pickerDate}
@@ -50,23 +56,22 @@ export default function DateInput({ label, value, onChange, style }: DateInputPr
 						header: {
 							backgroundColor: theme.colors.primary.light,
 						},
-
 						day: {
 							color: theme.colors.text.primary,
 						},
+						time_label: { color: theme.colors.text.primary },
+						day_label: { color: theme.colors.text.primary },
+						button_prev_image: { tintColor: theme.colors.primary.text },
+						button_next_image: { tintColor: theme.colors.primary.text },
+						weekday_label: { color: theme.colors.text.primary },
 						selected: {
 							backgroundColor: theme.colors.primary.main,
+							color: theme.colors.primary.text,
 						},
 						selected_label: {
-							color: theme.colors.background.paper,
+							color: theme.colors.primary.text,
 						},
-						today: {
-							borderColor: theme.colors.primary.main,
-							borderWidth: 1,
-						},
-						today_label: {
-							color: theme.colors.primary.main,
-						},
+						year_label: { color: theme.colors.text.primary },
 					}}
 				/>
 			</View>
