@@ -52,3 +52,13 @@ export const formatTime = (timeInMs: number): string => {
 
 	return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 };
+
+export function getDateFromMs(date: Date) {
+	// Получаем компоненты даты
+	const month = date.getMonth() + 1; // Месяцы от 0 до 11
+	const day = date.getDate();
+	const year = date.getFullYear();
+
+	// Форматируем с ведущими нулями
+	return `${day.toString().padStart(2, "0")}.${month.toString().padStart(2, "0")}.${year}`;
+}

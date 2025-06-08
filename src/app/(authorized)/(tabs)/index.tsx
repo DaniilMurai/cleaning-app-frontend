@@ -1,18 +1,20 @@
 import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import React, { useState } from "react";
-import { Loading, ModalContainer } from "@/ui";
+import { Loading, ModalContainer, Typography } from "@/ui";
 import {
 	AssignmentStatus,
 	CreateReport,
 	UpdateReport,
 	useCreateReport,
-	useGetDailyAssignment,
+	useGetDailyAssignments,
+	useUpdateDailyAssignmentStatus,
 	useUpdateReport,
 } from "@/api/client";
 import useAuth from "@/core/context/AuthContext";
 import ReportForm from "@/ui/forms/common/ReportForm";
 import AssignmentCard from "@/ui/components/index/AssignmentCard";
+import { formatToDate, getDateFromMs } from "@/core/utils/dateUtils";
 
 export default function DailyAssignmentsList() {
 	const { user } = useAuth();
@@ -21,11 +23,12 @@ export default function DailyAssignmentsList() {
 		data: dailyAssignments,
 		isLoading: dailyAssignmentIsLoading,
 		refetch: dailyAssignmentRefetch,
-	} = useGetDailyAssignment();
+	} = useGetDailyAssignments();
 
 	const createReportMutation = useCreateReport();
 	const updateReportMutation = useUpdateReport();
-
+	const updateAssignmentMutation = useUpdateDailyAssignmentStatus();
+	//TODO сделать если задание выполнено оно весит день выполненым, его нельзя опять начать выполнять
 	const [reportId, setReportId] = useState<number | null>(null);
 	const [status, setStatus] = useState<AssignmentStatus>("not_started");
 	const [startTime, setStartTime] = useState<number | null>(null);
@@ -55,7 +58,16 @@ export default function DailyAssignmentsList() {
 					end_time: newEndTime?.toString(),
 				};
 				const report = await createReportMutation.mutateAsync({ data: payload });
+				await updateAssignmentMutation.mutateAsync({
+					params: {
+						assignment_id: assignmentId,
+						status: status,
+					},
+				});
+
 				setReportId(report.id);
+
+				// await dailyAssignmentRefetch(); //TODO хз надо или не посмотрю
 			} else {
 				const payload: UpdateReport = {
 					daily_assignment_id: assignmentId,
@@ -68,6 +80,13 @@ export default function DailyAssignmentsList() {
 					data: payload,
 					params: { report_id: reportId },
 				});
+				await updateAssignmentMutation.mutateAsync({
+					params: {
+						assignment_id: assignmentId,
+						status: newStatus,
+					},
+				});
+				// await dailyAssignmentRefetch(); //TODO хз надо или не посмотрю
 			}
 
 			if (
@@ -108,25 +127,44 @@ export default function DailyAssignmentsList() {
 		return <Loading />;
 	}
 
+	const DailyAssignmentsListRender = () => {
+		if (!dailyAssignments) return <Typography>No assignments for you</Typography>;
+		const timestamp = new Date();
+		const date = getDateFromMs(timestamp);
+		console.log(date);
+
+		const assignments = dailyAssignments
+			.filter(
+				assignment =>
+					formatToDate(assignment.date) === date &&
+					assignment.status !== AssignmentStatus.completed &&
+					assignment.status !== AssignmentStatus.partially_completed
+			)
+
+			.map(assignment => (
+				<AssignmentCard
+					key={assignment.id}
+					assignment={assignment}
+					onStatusChange={(newStatus, totalTime, newStartTime, newEndTime) =>
+						handleStatusChange(
+							assignment.id,
+							newStatus,
+							totalTime,
+							newStartTime,
+							newEndTime
+						)
+					}
+				/>
+			));
+
+		if (assignments.length < 1) return <Typography>No assignments for today</Typography>;
+
+		return assignments;
+	};
+
 	return (
 		<View style={styles.container}>
-			<ScrollView style={styles.scrollContainer}>
-				{dailyAssignments?.map(assignment => (
-					<AssignmentCard
-						key={assignment.id}
-						assignment={assignment}
-						onStatusChange={(newStatus, totalTime, newStartTime, newEndTime) =>
-							handleStatusChange(
-								assignment.id,
-								newStatus,
-								totalTime,
-								newStartTime,
-								newEndTime
-							)
-						}
-					/>
-				))}
-			</ScrollView>
+			<ScrollView style={styles.scrollContainer}>{DailyAssignmentsListRender()}</ScrollView>
 
 			{showReport && (
 				<ModalContainer visible={showReport} onClose={() => setShowReport(false)}>

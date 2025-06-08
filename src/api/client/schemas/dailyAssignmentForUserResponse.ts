@@ -8,6 +8,7 @@ import type { LocationResponse } from "./locationResponse";
 import type { RoomResponse } from "./roomResponse";
 import type { TaskResponse } from "./taskResponse";
 import type { RoomTaskResponse } from "./roomTaskResponse";
+import type { AssignmentStatus } from "./assignmentStatus";
 import type { DailyAssignmentForUserResponseAdminNote } from "./dailyAssignmentForUserResponseAdminNote";
 import type { DailyAssignmentForUserResponseUserNote } from "./dailyAssignmentForUserResponseUserNote";
 
@@ -19,6 +20,7 @@ export interface DailyAssignmentForUserResponse {
 	room_tasks?: RoomTaskResponse[];
 	user_id: number;
 	date: string;
+	status: AssignmentStatus;
 	admin_note?: DailyAssignmentForUserResponseAdminNote;
 	user_note?: DailyAssignmentForUserResponseUserNote;
 }
