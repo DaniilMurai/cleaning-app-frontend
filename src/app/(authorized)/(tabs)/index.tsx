@@ -7,7 +7,7 @@ import {
 	CreateReport,
 	UpdateReport,
 	useCreateReport,
-	useGetDailyAssignments,
+	useGetDailyAssignmentsAndReports,
 	useUpdateDailyAssignmentStatus,
 	useUpdateReport,
 } from "@/api/client";
@@ -20,27 +20,31 @@ export default function DailyAssignmentsList() {
 	const { user } = useAuth();
 
 	const {
-		data: dailyAssignments,
-		isLoading: dailyAssignmentIsLoading,
-		refetch: dailyAssignmentRefetch,
-	} = useGetDailyAssignments();
+		data: dailyAssignmentsAndReports,
+		isLoading: dailyAssignmentsAndReportsIsLoading,
+		refetch: dailyAssignmentsAndReportsRefetch,
+	} = useGetDailyAssignmentsAndReports();
 
 	const createReportMutation = useCreateReport();
 	const updateReportMutation = useUpdateReport();
 	const updateAssignmentMutation = useUpdateDailyAssignmentStatus();
-	//TODO сделать если задание выполнено оно весит день выполненым, его нельзя опять начать выполнять
 	const [reportId, setReportId] = useState<number | null>(null);
 	const [status, setStatus] = useState<AssignmentStatus>("not_started");
 	const [startTime, setStartTime] = useState<number | null>(null);
 	const [endTime, setEndTime] = useState<number | null>(null);
 	const [showReport, setShowReport] = useState(false);
 
+	if (dailyAssignmentsAndReportsIsLoading) {
+		return <Loading />;
+	}
+
 	const handleStatusChange = async (
 		assignmentId: number,
 		newStatus: AssignmentStatus,
 		totalTime: number,
 		newStartTime: number | null,
-		newEndTime: number | null
+		newEndTime: number | null,
+		reportid: number | null
 	) => {
 		if (!user?.id) return;
 
@@ -49,13 +53,14 @@ export default function DailyAssignmentsList() {
 		setEndTime(newEndTime);
 
 		try {
-			if (!reportId) {
+			if (reportid === null) {
+				console.log("newstartTime: ", newStartTime);
 				const payload: CreateReport = {
 					daily_assignment_id: assignmentId,
 					user_id: user.id,
 					status: newStatus,
-					start_time: newStartTime?.toString(),
-					end_time: newEndTime?.toString(),
+					start_time: newStartTime?.toString() || null,
+					end_time: newEndTime?.toString() || null,
 				};
 				const report = await createReportMutation.mutateAsync({ data: payload });
 				await updateAssignmentMutation.mutateAsync({
@@ -64,11 +69,12 @@ export default function DailyAssignmentsList() {
 						status: status,
 					},
 				});
-
+				await dailyAssignmentsAndReportsRefetch();
 				setReportId(report.id);
 
-				// await dailyAssignmentRefetch(); //TODO хз надо или не посмотрю
+				// await dailyAssignmentRefetch(); // хз надо или не посмотрю
 			} else {
+				console.log("else newstartTime: ", newStartTime);
 				const payload: UpdateReport = {
 					daily_assignment_id: assignmentId,
 					user_id: user.id,
@@ -76,18 +82,23 @@ export default function DailyAssignmentsList() {
 					start_time: newStartTime?.toString(),
 					end_time: newEndTime?.toString(),
 				};
-				await updateReportMutation.mutateAsync({
+				console.log("payload start time " + payload.start_time);
+				const updateReportResponse = await updateReportMutation.mutateAsync({
 					data: payload,
-					params: { report_id: reportId },
+					params: { report_id: reportid },
 				});
+				if (updateReportResponse)
+					console.log(
+						"updateReportResponse start_time" + updateReportResponse.start_time
+					);
 				await updateAssignmentMutation.mutateAsync({
 					params: {
 						assignment_id: assignmentId,
 						status: newStatus,
 					},
 				});
-				// await dailyAssignmentRefetch(); //TODO хз надо или не посмотрю
 			}
+			await dailyAssignmentsAndReportsRefetch(); //хз надо или не посмотрю
 
 			if (
 				newStatus === AssignmentStatus.completed ||
@@ -101,13 +112,13 @@ export default function DailyAssignmentsList() {
 	};
 
 	const handleReportSubmit = async (data: { text?: string; media?: string[] }) => {
-		if (!user || !startTime || !endTime || !reportId) return;
+		if (!user || !startTime || !endTime || !reportId || !dailyAssignmentsAndReports) return;
 
 		try {
 			await updateReportMutation.mutateAsync({
 				params: { report_id: reportId },
 				data: {
-					daily_assignment_id: dailyAssignments?.[0]?.id, // Assuming single assignment for simplicity
+					daily_assignment_id: dailyAssignmentsAndReports[0].assignment.id, // Assuming single assignment for simplicity
 					user_id: user.id,
 					message: data?.text,
 					media_links: data?.media,
@@ -116,43 +127,49 @@ export default function DailyAssignmentsList() {
 					status,
 				},
 			});
-			await dailyAssignmentRefetch();
+			await dailyAssignmentsAndReportsRefetch();
 			setShowReport(false);
 		} catch (error) {
 			console.error("Error submitting report:", error);
 		}
 	};
 
-	if (dailyAssignmentIsLoading) {
-		return <Loading />;
-	}
-
 	const DailyAssignmentsListRender = () => {
-		if (!dailyAssignments) return <Typography>No assignments for you</Typography>;
+		if (!dailyAssignmentsAndReports) return <Typography>No assignments for you</Typography>;
 		const timestamp = new Date();
 		const date = getDateFromMs(timestamp);
 		console.log(date);
 
-		const assignments = dailyAssignments
+		const assignments = dailyAssignmentsAndReports
 			.filter(
-				assignment =>
-					formatToDate(assignment.date) === date &&
-					assignment.status !== AssignmentStatus.completed &&
-					assignment.status !== AssignmentStatus.partially_completed
+				assignmentAndReport => formatToDate(assignmentAndReport.assignment.date) === date
 			)
-
-			.map(assignment => (
+			.map(assignmentAndReport => (
 				<AssignmentCard
-					key={assignment.id}
-					assignment={assignment}
+					key={assignmentAndReport.assignment.id}
+					assignment={assignmentAndReport.assignment}
 					onStatusChange={(newStatus, totalTime, newStartTime, newEndTime) =>
 						handleStatusChange(
-							assignment.id,
+							assignmentAndReport.assignment.id,
 							newStatus,
 							totalTime,
 							newStartTime,
-							newEndTime
+							newEndTime,
+							assignmentAndReport.report ? assignmentAndReport.report.id : null
 						)
+					}
+					initialStatus={assignmentAndReport.assignment.status}
+					alreadyDoneTime={
+						(assignmentAndReport.report &&
+							assignmentAndReport.report.duration_seconds) ??
+						0
+					}
+					startTimeBackend={
+						assignmentAndReport.report &&
+						assignmentAndReport.report.status === AssignmentStatus.in_progress &&
+						assignmentAndReport.assignment.status === AssignmentStatus.in_progress
+							? assignmentAndReport.report.start_time
+							: null
 					}
 				/>
 			));
@@ -170,7 +187,6 @@ export default function DailyAssignmentsList() {
 				<ModalContainer visible={showReport} onClose={() => setShowReport(false)}>
 					<ReportForm
 						onCancel={() => setShowReport(false)}
-						taskId={dailyAssignments?.[0]?.id} // Assuming single assignment for simplicity
 						onSubmit={handleReportSubmit}
 					/>
 				</ModalContainer>

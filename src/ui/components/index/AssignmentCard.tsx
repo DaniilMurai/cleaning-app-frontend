@@ -18,9 +18,18 @@ interface Props {
 		startTime: number | null,
 		endTime: number | null
 	) => void;
+	initialStatus?: AssignmentStatus;
+	alreadyDoneTime?: number;
+	startTimeBackend?: string | null;
 }
 
-export default function AssignmentCard({ assignment, onStatusChange }: Props) {
+export default function AssignmentCard({
+	assignment,
+	onStatusChange,
+	alreadyDoneTime,
+	initialStatus,
+	startTimeBackend,
+}: Props) {
 	const { t } = useTranslation();
 	const [isExpanded, setIsExpanded] = useState(false);
 
@@ -63,7 +72,12 @@ export default function AssignmentCard({ assignment, onStatusChange }: Props) {
 				</View>
 			</TouchableOpacity>
 			<Collapse expanded={isExpanded}>
-				<TaskTimer onStatusChange={onStatusChange} />
+				<TaskTimer
+					onStatusChange={onStatusChange}
+					alreadyDoneTime={alreadyDoneTime}
+					initialStatus={initialStatus}
+					startTimeBackend={startTimeBackend}
+				/>
 				<View style={styles.divider} />
 				<Typography variant="subtitle1" style={styles.wrappableText}>
 					{t("admin.rooms")}

@@ -16,23 +16,29 @@ interface TaskTimerProps {
 		totalTime: number,
 		startTime: number | null,
 		endTime: number | null
+		// initialElapsedTime?: number | null,
 	) => void;
 	initialStatus?: AssignmentStatus;
 	initialElapsedTime?: number;
+	alreadyDoneTime?: number;
+	startTimeBackend?: string | null;
 }
 
 export default function TaskTimer({
 	onStatusChange,
 	initialStatus = AssignmentStatus.not_started,
 	initialElapsedTime = 0,
+	alreadyDoneTime,
+	startTimeBackend,
 }: TaskTimerProps) {
 	const { t } = useTranslation();
 
+	console.log("initialElapsedTime: " + initialElapsedTime);
 	const [status, setStatus] = useState<AssignmentStatus>(initialStatus);
 	const [startTime, setStartTime] = useState<number | null>(null);
 	const [endTime, setEndTime] = useState<number | null>(null);
-
 	const [totalElapsedTime, setTotalElapsedTime] = useState<number>(initialElapsedTime);
+	console.log("totalElapsedTime: " + totalElapsedTime);
 	const [displayTime, setDisplayTime] = useState<string>("00:00:00");
 	const [timerInterval, setTimerInterval] = useState<ReturnType<typeof setInterval> | null>(null);
 	const [isTimePickerVisible, setTimePickerVisible] = useState(false);
@@ -55,6 +61,7 @@ export default function TaskTimer({
 
 		setStartTime(selectedDate.getTime());
 		setTotalElapsedTime(differenceMs);
+		console.log("totalElapsedTime in handleTimeConfirm " + totalElapsedTime);
 		startTaskWithOffset(selectedDate.getTime(), differenceMs);
 	};
 
@@ -71,6 +78,7 @@ export default function TaskTimer({
 		const intervalId = setInterval(() => {
 			setTotalElapsedTime(prev => prev + 1000);
 		}, 1000);
+		console.log("totalElapsedTime in startTaskWithOffset " + totalElapsedTime);
 
 		setTimerInterval(intervalId as unknown as ReturnType<typeof setInterval>);
 
@@ -79,9 +87,29 @@ export default function TaskTimer({
 		}
 	};
 
+	useEffect(() => {
+		if (startTimeBackend && status === AssignmentStatus.in_progress) {
+			const date = new Date(startTimeBackend);
+			const now = new Date();
+			console.log("useEffect status in progress");
+			setTotalElapsedTime(now.getTime() - date.getTime());
+			console.log("totalElapsedTime in useEffect 1 " + totalElapsedTime);
+
+			const intervalId = setInterval(() => {
+				setTotalElapsedTime(prev => prev + 1000);
+			}, 1000);
+			console.log("totalElapsedTime In useEffect 2 " + totalElapsedTime);
+
+			setTimerInterval(intervalId as unknown as ReturnType<typeof setInterval>);
+
+			console.log("totalElapsedTime In useEffect 3 " + totalElapsedTime);
+		}
+	}, [status]);
+
 	// Обновление отображаемого времени
 	useEffect(() => {
 		setDisplayTime(formatTime(totalElapsedTime));
+		console.log("totalElapsedTime in display time useEffect " + totalElapsedTime);
 	}, [totalElapsedTime]);
 
 	// Очистка интервала при размонтировании компонента
@@ -112,6 +140,7 @@ export default function TaskTimer({
 				return prev + 1000;
 			});
 		}, 1000);
+		console.log("totalElapsedTime in startTask" + totalElapsedTime);
 
 		setTimerInterval(intervalId as unknown as ReturnType<typeof setInterval>);
 
@@ -131,7 +160,11 @@ export default function TaskTimer({
 		setStatus(AssignmentStatus.not_started);
 		setStartTime(null);
 		setTotalElapsedTime(0);
+		console.log("totalElapsedTime in canselTask" + totalElapsedTime);
 		setDisplayTime("00:00:00");
+		if (onStatusChange) {
+			onStatusChange(AssignmentStatus.not_started, 0, null, null);
+		}
 	};
 
 	// Завершить задачу
@@ -154,7 +187,8 @@ export default function TaskTimer({
 	return (
 		<View style={styles.timerContainer}>
 			<Typography variant="h6" style={styles.timerText}>
-				{t("components.taskTimer.time")}: {displayTime}
+				{t("components.taskTimer.time")}:{" "}
+				{alreadyDoneTime ? formatTime(alreadyDoneTime * 1000) : displayTime}
 			</Typography>
 
 			<View style={styles.timerButtons}>

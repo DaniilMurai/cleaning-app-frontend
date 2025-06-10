@@ -5,6 +5,8 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./assignmentReportResponse";
+export * from "./assignmentReportResponseReport";
 export * from "./assignmentStatus";
 export * from "./createReport";
 export * from "./createReportEndTime";
@@ -15,7 +17,7 @@ export * from "./dailyAssignmentForUserResponse";
 export * from "./dailyAssignmentForUserResponseAdminNote";
 export * from "./dailyAssignmentForUserResponseUserNote";
 export * from "./getDailyAssignmentByIdParams";
-export * from "./getReportParams";
+export * from "./getReportsByAssignmentIdsParams";
 export * from "./hTTPValidationError";
 export * from "./locationResponse";
 export * from "./reportResponse";

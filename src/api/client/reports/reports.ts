@@ -24,7 +24,7 @@ import type {
 
 import type {
 	CreateReport,
-	GetReportParams,
+	GetReportsByAssignmentIdsParams,
 	HTTPValidationError,
 	ReportResponse,
 	UpdateReport,
@@ -35,103 +35,119 @@ import { getAxios } from "../../instance";
 import type { ErrorType } from "../../instance";
 
 /**
- * @summary Get Report
+ * @summary Get Reports By Assignment Ids
  */
-export const getReport = (params: GetReportParams, signal?: AbortSignal) => {
-	return getAxios<unknown>({ url: `/client/reports/`, method: "GET", params, signal });
+export const getReportsByAssignmentIds = (
+	params: GetReportsByAssignmentIdsParams,
+	signal?: AbortSignal
+) => {
+	return getAxios<ReportResponse[]>({ url: `/client/reports/`, method: "GET", params, signal });
 };
 
-export const getGetReportQueryKey = (params: GetReportParams) => {
+export const getGetReportsByAssignmentIdsQueryKey = (params: GetReportsByAssignmentIdsParams) => {
 	return [`/client/reports/`, ...(params ? [params] : [])] as const;
 };
 
-export const getGetReportQueryOptions = <
-	TData = Awaited<ReturnType<typeof getReport>>,
+export const getGetReportsByAssignmentIdsQueryOptions = <
+	TData = Awaited<ReturnType<typeof getReportsByAssignmentIds>>,
 	TError = ErrorType<HTTPValidationError>,
 >(
-	params: GetReportParams,
+	params: GetReportsByAssignmentIdsParams,
 	options?: {
-		query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getReport>>, TError, TData>>;
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getReportsByAssignmentIds>>, TError, TData>
+		>;
 	}
 ) => {
 	const { query: queryOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getGetReportQueryKey(params);
+	const queryKey = queryOptions?.queryKey ?? getGetReportsByAssignmentIdsQueryKey(params);
 
-	const queryFn: QueryFunction<Awaited<ReturnType<typeof getReport>>> = ({ signal }) =>
-		getReport(params, signal);
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof getReportsByAssignmentIds>>> = ({
+		signal,
+	}) => getReportsByAssignmentIds(params, signal);
 
 	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-		Awaited<ReturnType<typeof getReport>>,
+		Awaited<ReturnType<typeof getReportsByAssignmentIds>>,
 		TError,
 		TData
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetReportQueryResult = NonNullable<Awaited<ReturnType<typeof getReport>>>;
-export type GetReportQueryError = ErrorType<HTTPValidationError>;
+export type GetReportsByAssignmentIdsQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getReportsByAssignmentIds>>
+>;
+export type GetReportsByAssignmentIdsQueryError = ErrorType<HTTPValidationError>;
 
-export function useGetReport<
-	TData = Awaited<ReturnType<typeof getReport>>,
+export function useGetReportsByAssignmentIds<
+	TData = Awaited<ReturnType<typeof getReportsByAssignmentIds>>,
 	TError = ErrorType<HTTPValidationError>,
 >(
-	params: GetReportParams,
+	params: GetReportsByAssignmentIdsParams,
 	options: {
-		query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getReport>>, TError, TData>> &
+		query: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getReportsByAssignmentIds>>, TError, TData>
+		> &
 			Pick<
 				DefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getReport>>,
+					Awaited<ReturnType<typeof getReportsByAssignmentIds>>,
 					TError,
-					Awaited<ReturnType<typeof getReport>>
+					Awaited<ReturnType<typeof getReportsByAssignmentIds>>
 				>,
 				"initialData"
 			>;
 	},
 	queryClient?: QueryClient
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetReport<
-	TData = Awaited<ReturnType<typeof getReport>>,
+export function useGetReportsByAssignmentIds<
+	TData = Awaited<ReturnType<typeof getReportsByAssignmentIds>>,
 	TError = ErrorType<HTTPValidationError>,
 >(
-	params: GetReportParams,
+	params: GetReportsByAssignmentIdsParams,
 	options?: {
-		query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getReport>>, TError, TData>> &
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getReportsByAssignmentIds>>, TError, TData>
+		> &
 			Pick<
 				UndefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getReport>>,
+					Awaited<ReturnType<typeof getReportsByAssignmentIds>>,
 					TError,
-					Awaited<ReturnType<typeof getReport>>
+					Awaited<ReturnType<typeof getReportsByAssignmentIds>>
 				>,
 				"initialData"
 			>;
 	},
 	queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetReport<
-	TData = Awaited<ReturnType<typeof getReport>>,
+export function useGetReportsByAssignmentIds<
+	TData = Awaited<ReturnType<typeof getReportsByAssignmentIds>>,
 	TError = ErrorType<HTTPValidationError>,
 >(
-	params: GetReportParams,
+	params: GetReportsByAssignmentIdsParams,
 	options?: {
-		query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getReport>>, TError, TData>>;
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getReportsByAssignmentIds>>, TError, TData>
+		>;
 	},
 	queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
- * @summary Get Report
+ * @summary Get Reports By Assignment Ids
  */
 
-export function useGetReport<
-	TData = Awaited<ReturnType<typeof getReport>>,
+export function useGetReportsByAssignmentIds<
+	TData = Awaited<ReturnType<typeof getReportsByAssignmentIds>>,
 	TError = ErrorType<HTTPValidationError>,
 >(
-	params: GetReportParams,
+	params: GetReportsByAssignmentIdsParams,
 	options?: {
-		query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getReport>>, TError, TData>>;
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getReportsByAssignmentIds>>, TError, TData>
+		>;
 	},
 	queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-	const queryOptions = getGetReportQueryOptions(params, options);
+	const queryOptions = getGetReportsByAssignmentIdsQueryOptions(params, options);
 
 	const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
 		queryKey: DataTag<QueryKey, TData, TError>;
@@ -142,87 +158,110 @@ export function useGetReport<
 	return query;
 }
 
-export const getGetReportSuspenseQueryOptions = <
-	TData = Awaited<ReturnType<typeof getReport>>,
+export const getGetReportsByAssignmentIdsSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof getReportsByAssignmentIds>>,
 	TError = ErrorType<HTTPValidationError>,
 >(
-	params: GetReportParams,
+	params: GetReportsByAssignmentIdsParams,
 	options?: {
 		query?: Partial<
-			UseSuspenseQueryOptions<Awaited<ReturnType<typeof getReport>>, TError, TData>
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getReportsByAssignmentIds>>,
+				TError,
+				TData
+			>
 		>;
 	}
 ) => {
 	const { query: queryOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getGetReportQueryKey(params);
+	const queryKey = queryOptions?.queryKey ?? getGetReportsByAssignmentIdsQueryKey(params);
 
-	const queryFn: QueryFunction<Awaited<ReturnType<typeof getReport>>> = ({ signal }) =>
-		getReport(params, signal);
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof getReportsByAssignmentIds>>> = ({
+		signal,
+	}) => getReportsByAssignmentIds(params, signal);
 
 	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-		Awaited<ReturnType<typeof getReport>>,
+		Awaited<ReturnType<typeof getReportsByAssignmentIds>>,
 		TError,
 		TData
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetReportSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getReport>>>;
-export type GetReportSuspenseQueryError = ErrorType<HTTPValidationError>;
+export type GetReportsByAssignmentIdsSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getReportsByAssignmentIds>>
+>;
+export type GetReportsByAssignmentIdsSuspenseQueryError = ErrorType<HTTPValidationError>;
 
-export function useGetReportSuspense<
-	TData = Awaited<ReturnType<typeof getReport>>,
+export function useGetReportsByAssignmentIdsSuspense<
+	TData = Awaited<ReturnType<typeof getReportsByAssignmentIds>>,
 	TError = ErrorType<HTTPValidationError>,
 >(
-	params: GetReportParams,
+	params: GetReportsByAssignmentIdsParams,
 	options: {
 		query: Partial<
-			UseSuspenseQueryOptions<Awaited<ReturnType<typeof getReport>>, TError, TData>
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getReportsByAssignmentIds>>,
+				TError,
+				TData
+			>
 		>;
 	},
 	queryClient?: QueryClient
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetReportSuspense<
-	TData = Awaited<ReturnType<typeof getReport>>,
+export function useGetReportsByAssignmentIdsSuspense<
+	TData = Awaited<ReturnType<typeof getReportsByAssignmentIds>>,
 	TError = ErrorType<HTTPValidationError>,
 >(
-	params: GetReportParams,
+	params: GetReportsByAssignmentIdsParams,
 	options?: {
 		query?: Partial<
-			UseSuspenseQueryOptions<Awaited<ReturnType<typeof getReport>>, TError, TData>
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getReportsByAssignmentIds>>,
+				TError,
+				TData
+			>
 		>;
 	},
 	queryClient?: QueryClient
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useGetReportSuspense<
-	TData = Awaited<ReturnType<typeof getReport>>,
+export function useGetReportsByAssignmentIdsSuspense<
+	TData = Awaited<ReturnType<typeof getReportsByAssignmentIds>>,
 	TError = ErrorType<HTTPValidationError>,
 >(
-	params: GetReportParams,
+	params: GetReportsByAssignmentIdsParams,
 	options?: {
 		query?: Partial<
-			UseSuspenseQueryOptions<Awaited<ReturnType<typeof getReport>>, TError, TData>
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getReportsByAssignmentIds>>,
+				TError,
+				TData
+			>
 		>;
 	},
 	queryClient?: QueryClient
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
- * @summary Get Report
+ * @summary Get Reports By Assignment Ids
  */
 
-export function useGetReportSuspense<
-	TData = Awaited<ReturnType<typeof getReport>>,
+export function useGetReportsByAssignmentIdsSuspense<
+	TData = Awaited<ReturnType<typeof getReportsByAssignmentIds>>,
 	TError = ErrorType<HTTPValidationError>,
 >(
-	params: GetReportParams,
+	params: GetReportsByAssignmentIdsParams,
 	options?: {
 		query?: Partial<
-			UseSuspenseQueryOptions<Awaited<ReturnType<typeof getReport>>, TError, TData>
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getReportsByAssignmentIds>>,
+				TError,
+				TData
+			>
 		>;
 	},
 	queryClient?: QueryClient
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-	const queryOptions = getGetReportSuspenseQueryOptions(params, options);
+	const queryOptions = getGetReportsByAssignmentIdsSuspenseQueryOptions(params, options);
 
 	const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
 		TData,
