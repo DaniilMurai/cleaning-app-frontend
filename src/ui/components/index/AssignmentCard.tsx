@@ -32,7 +32,6 @@ export default function AssignmentCard({
 }: Props) {
 	const { t } = useTranslation();
 	const [isExpanded, setIsExpanded] = useState(false);
-
 	const toggleExpand = () => setIsExpanded(prev => !prev);
 
 	return (
@@ -69,15 +68,28 @@ export default function AssignmentCard({
 							{t("admin.userNote")}: {assignment.user_note}
 						</Typography>
 					)}
+
+					{(assignment.status === AssignmentStatus.completed ||
+						assignment.status === AssignmentStatus.partially_completed ||
+						assignment.status === AssignmentStatus.in_progress) && (
+						<TaskTimer
+							onStatusChange={onStatusChange}
+							alreadyDoneTime={alreadyDoneTime}
+							initialStatus={initialStatus}
+							startTimeBackend={startTimeBackend}
+						/>
+					)}
 				</View>
 			</TouchableOpacity>
 			<Collapse expanded={isExpanded}>
-				<TaskTimer
-					onStatusChange={onStatusChange}
-					alreadyDoneTime={alreadyDoneTime}
-					initialStatus={initialStatus}
-					startTimeBackend={startTimeBackend}
-				/>
+				{assignment.status === AssignmentStatus.not_started && (
+					<TaskTimer
+						onStatusChange={onStatusChange}
+						alreadyDoneTime={alreadyDoneTime}
+						initialStatus={initialStatus}
+						startTimeBackend={startTimeBackend}
+					/>
+				)}
 				<View style={styles.divider} />
 				<Typography variant="subtitle1" style={styles.wrappableText}>
 					{t("admin.rooms")}

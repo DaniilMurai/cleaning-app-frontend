@@ -134,7 +134,6 @@ export default function CustomPicker({
 
 const styles = StyleSheet.create(theme => ({
 	container: {
-		width: "100%",
 		position: "relative",
 		zIndex: 1,
 	},

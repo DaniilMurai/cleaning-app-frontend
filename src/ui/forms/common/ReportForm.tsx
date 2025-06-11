@@ -100,7 +100,7 @@ export default function ReportForm({ taskId, roomId, onCancel, onSubmit }: Repor
 
 	// Отправка отчета
 	const handleSubmit = async () => {
-		if (!text.trim() && media.length === 0) return;
+		// if (!text.trim() && media.length === 0) return;
 
 		setIsSubmitting(true);
 		try {

@@ -1,4 +1,4 @@
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { Typography } from "@/ui";
 import {
@@ -22,8 +22,6 @@ export default function ReportsTab({ users, assignments, locations }: Props) {
 	// Состояние для параметров запроса
 	const [queryParams, setQueryParams] = useState<GetReportsParams>({
 		order_by: "id",
-		offset: 0,
-		limit: 100,
 		direction: "desc",
 	});
 
@@ -35,16 +33,15 @@ export default function ReportsTab({ users, assignments, locations }: Props) {
 		setQueryParams(prev => ({
 			...prev,
 			...newParams,
-			offset: 0, // Сброс пагинации при новых фильтрах
 		}));
 	};
 
 	return (
 		<View style={styles.container}>
-			<ScrollView style={styles.scrollContainer}>
-				<View style={styles.headerContainer}>
-					<SearchFilterPanel params={queryParams} onAction={handleSearch} />
-				</View>
+			<View style={styles.headerContainer}>
+				<SearchFilterPanel params={queryParams} onAction={handleSearch} />
+			</View>
+			<View style={styles.scrollContainer}>
 				{reports ? (
 					<ReportsTable
 						reports={reports}
@@ -55,7 +52,7 @@ export default function ReportsTab({ users, assignments, locations }: Props) {
 				) : (
 					<Typography>No Reports Found</Typography>
 				)}
-			</ScrollView>
+			</View>
 		</View>
 	);
 }
@@ -63,6 +60,7 @@ export default function ReportsTab({ users, assignments, locations }: Props) {
 const styles = StyleSheet.create(theme => ({
 	container: {
 		flex: 1,
+		flexDirection: "column",
 	},
 	scrollContainer: {
 		flex: 1,

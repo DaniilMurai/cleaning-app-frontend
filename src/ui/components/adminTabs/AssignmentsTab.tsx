@@ -1,6 +1,6 @@
 // src/ui/components/admin/AssignmentsTab.tsx
 import React, { useState } from "react";
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import { ScrollView, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import Typography from "@/ui/common/Typography";
 import { Button, Card, ModalContainer } from "@/ui";
@@ -33,6 +33,11 @@ export default function AssignmentsTab({
 	modal,
 }: AssignmentsTabProps) {
 	const { t } = useTranslation();
+
+	const { width } = useWindowDimensions();
+	const columns = width > 1200 ? 3 : width > 850 ? 2 : 1;
+	const cardWidth = `${100 / columns - 3}%`; // небольшой отступ
+	const [manyColumns, setManyColumns] = useState<boolean>(false);
 
 	// Состояния для управления развернутыми/свернутыми элементами
 	const [expandedAssignments, setExpandedAssignments] = useState<Record<number, boolean>>({});
@@ -99,13 +104,29 @@ export default function AssignmentsTab({
 
 	return (
 		<View style={{ flex: 1 }}>
-			<ScrollView style={styles.scrollContainer}>
-				<View style={styles.headerContainer}>
-					<Button variant="contained" onPress={() => modal.openModal("createAssignment")}>
-						<FontAwesome5 name="plus" size={16} color={styles.iconColor.color} />
-					</Button>
-				</View>
-
+			<View style={styles.headerContainer}>
+				<Button variant="contained" onPress={() => modal.openModal("createAssignment")}>
+					<FontAwesome5 name="plus" size={16} color={styles.iconColor.color} />
+				</Button>
+				<Button
+					variant={"outlined"}
+					style={{ marginHorizontal: 10 }}
+					onPress={() => setManyColumns(!manyColumns)}
+				>
+					<FontAwesome5 name={manyColumns ? "list" : "th"} size={16} />
+				</Button>
+			</View>
+			<ScrollView
+				style={styles.scrollContainer}
+				contentContainerStyle={[
+					manyColumns && {
+						flexDirection: "row",
+						flexWrap: "wrap",
+						justifyContent: "center",
+						gap: 16,
+					},
+				]}
+			>
 				{dailyAssignments &&
 					locations &&
 					!dailyAssignmentsIsLoading &&
@@ -115,7 +136,17 @@ export default function AssignmentsTab({
 						if (!location) return null;
 
 						return (
-							<Card key={assignment.id} style={styles.card}>
+							<Card
+								key={assignment.id}
+								style={[
+									styles.card,
+									manyColumns && {
+										width: cardWidth,
+										margin: 8,
+										alignSelf: "flex-start",
+									},
+								]}
+							>
 								<TouchableOpacity
 									style={styles.cardHeader}
 									onPress={() => toggleAssignment(assignment.id)}
@@ -200,8 +231,8 @@ const styles = StyleSheet.create(theme => ({
 		padding: theme.spacing(2),
 	},
 	headerContainer: {
-		marginBottom: theme.spacing(2),
-		alignItems: "flex-end",
+		flexDirection: "row-reverse",
+		margin: theme.spacing(2),
 	},
 
 	card: {

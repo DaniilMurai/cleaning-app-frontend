@@ -1,5 +1,5 @@
 // src/components/admin/UsersList.tsx
-import { View } from "react-native";
+import { useWindowDimensions, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import Card from "@/ui/common/Card";
 import Typography from "@/ui/common/Typography";
@@ -14,6 +14,7 @@ interface UsersListProps {
 	onActivateUser: (userId: number) => void;
 	onEditUser: (user: UserSchema) => void;
 	onDeleteUser: (userId: number) => void;
+	manyColumns?: boolean;
 }
 
 export default function UsersList({
@@ -22,14 +23,39 @@ export default function UsersList({
 	onActivateUser,
 	onEditUser,
 	onDeleteUser,
+	manyColumns,
 }: UsersListProps) {
 	const { t } = useTranslation();
 	const isSuperAdmin = useIsSuperAdmin();
 
+	const { width } = useWindowDimensions();
+	const columns = width > 920 ? 3 : width > 835 ? 2 : 1;
+	const cardWidth = `${100 / columns - 3}%`; // небольшой отступ
+
 	return (
-		<>
+		<View
+			style={[
+				styles.container,
+				manyColumns && {
+					flexDirection: "row",
+					flexWrap: "wrap",
+					justifyContent: "center",
+					gap: 16,
+				},
+			]}
+		>
 			{users?.map(user => (
-				<Card key={user.id} style={styles.userCard}>
+				<Card
+					key={user.id}
+					style={[
+						styles.userCard,
+						manyColumns && {
+							width: cardWidth,
+							margin: 8,
+							alignSelf: "flex-start",
+						},
+					]}
+				>
 					<View style={styles.userInfo}>
 						<Typography variant="h6">{user.full_name}</Typography>
 						<Typography variant="body1">
@@ -81,11 +107,14 @@ export default function UsersList({
 					)}
 				</Card>
 			))}
-		</>
+		</View>
 	);
 }
 
 const styles = StyleSheet.create(theme => ({
+	container: {
+		flex: 1,
+	},
 	userCard: {
 		marginBottom: theme.spacing(2),
 		padding: theme.spacing(2),

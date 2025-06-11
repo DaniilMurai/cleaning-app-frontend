@@ -11,16 +11,17 @@ interface props {
 }
 
 const orderByOptions: PickerOption[] = [
-	{ label: "Username", value: "user_id" },
-	{
-		label: "Location",
-		value: "daily_assignment_id.location_id",
-	},
-	{ label: "Date", value: "daily_assignment.date" },
+	{ label: "id", value: "id" },
+	{ label: "Full Name", value: "user_id" },
+	// {
+	// 	label: "Location",
+	// 	value: "daily_assignment_id.location_id",
+	// },
+	// { label: "Date", value: "daily_assignment.date" },
 	{ label: "Status", value: "status" },
 	{ label: "Start", value: "start_time" },
 	{ label: "End", value: "end_time" },
-	{ label: "Duration", value: "duration_seconds" },
+	// { label: "Duration", value: "duration_seconds" },
 ];
 
 const directionOptions: PickerOption[] = [
@@ -47,6 +48,8 @@ export default function SearchFilterPanel({ params, onAction }: props) {
 		<View style={styles.container}>
 			<View style={styles.pickerContainer}>
 				<Picker
+					placeholder={"id"}
+					style={{ width: 150 }}
 					label={"Order by"}
 					options={orderByOptions}
 					value={order ?? "id"}
@@ -55,6 +58,7 @@ export default function SearchFilterPanel({ params, onAction }: props) {
 			</View>
 			<View style={styles.pickerContainer}>
 				<Picker
+					style={{ width: 150 }}
 					label={"Direction"}
 					options={directionOptions}
 					value={direction ?? "desc"}
@@ -72,16 +76,18 @@ const styles = StyleSheet.create(theme => ({
 	container: {
 		flex: 1,
 		flexDirection: "row",
+		flexWrap: "wrap",
 		alignItems: "center",
+		justifyContent: "flex-start",
 		backgroundColor: theme.colors.background.default,
 		padding: theme.spacing(2),
 		margin: theme.spacing(2),
 		gap: theme.spacing(4),
 	},
 	pickerContainer: {
-		flex: 1,
+		flexWrap: "wrap",
 	},
 	button: {
-		marginRight: theme.spacing(4),
+		alignSelf: "flex-end",
 	},
 }));

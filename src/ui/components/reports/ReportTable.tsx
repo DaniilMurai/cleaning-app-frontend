@@ -4,7 +4,7 @@ import {
 	LocationResponse,
 	ReportResponse,
 } from "@/api/admin";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native-unistyles";
 import { View } from "react-native";
 import { Typography } from "@/ui";
@@ -19,6 +19,26 @@ interface Props {
 }
 
 export default function ReportsTable({ reports, assignments, users = [], locations = [] }: Props) {
+	const [page, setPage] = useState<number>(1);
+
+	const data = reports.slice(0, page * 10);
+
+	useEffect(() => {
+		setPage(1);
+	}, [reports]);
+
+	const getMoreReports = () => {
+		if (page * 10 >= reports.length) return;
+
+		console.log("getMoreReports called");
+
+		setPage(prev => {
+			const newPage = prev + 1;
+			console.log(`Updating page to ${newPage}, showing ${newPage * 10} items`);
+			return newPage;
+		});
+	};
+
 	const getUserFullName = (report: ReportResponse) => {
 		const user = users.find(u => report.user_id === u.id);
 		return user?.full_name ?? "Unknown User";
@@ -47,6 +67,7 @@ export default function ReportsTable({ reports, assignments, users = [], locatio
 	);
 
 	const renderItem = ({ item }: { item: ReportResponse }) => {
+		console.log("Rendering item:", item.id); // DEBUG
 		const assignment = getAssignment(item);
 		const date = assignment ? formatToDateTime(assignment.date) : "—";
 		const locationName = getLocationName(assignment);
@@ -86,17 +107,22 @@ export default function ReportsTable({ reports, assignments, users = [], locatio
 
 	return (
 		<LegendList
-			data={reports}
+			// style={{ height: 450 }}
+			data={data}
 			keyExtractor={item => item.id.toString()}
+			estimatedItemSize={48}
 			ListHeaderComponent={renderHeader}
-			ListHeaderComponentStyle={{ position: "sticky" }}
 			renderItem={renderItem}
 			recycleItems
+			ListFooterComponent={<View style={{ height: 10 }} />}
+			onEndReached={getMoreReports}
+			onEndReachedThreshold={0.01}
 		/>
 	);
 }
 
 const styles = StyleSheet.create(theme => ({
+	// <Button onPress={() => setPage(prev => prev + 1)}>next</Button>
 	row: {
 		flexDirection: "row",
 		alignItems: "center",

@@ -185,19 +185,20 @@ const styles = StyleSheet.create(theme => ({
 	},
 	menuContainer: {
 		position: "absolute",
-		width: 180, // Фиксированная ширина меню
+		width: 250, // Фиксированная ширина меню
+		// height: 250,
 		backgroundColor: theme.colors.background.paper,
 		borderRadius: theme.borderRadius(1),
-		// shadowColor: "#000",
-		shadowOffset: { width: 0, height: 2 },
+		// shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.25,
-		shadowRadius: 3.84,
+		// shadowRadius: 3.84,
 		elevation: 5,
 		padding: theme.spacing(1),
 	},
 	menuItem: {
 		flexDirection: "row",
 		alignItems: "center",
+		width: 250,
 		padding: theme.spacing(2),
 		backgroundColor: theme.colors.background.paper,
 	},

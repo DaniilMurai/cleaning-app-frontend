@@ -25,6 +25,13 @@ export default function DailyAssignmentsList() {
 		refetch: dailyAssignmentsAndReportsRefetch,
 	} = useGetDailyAssignmentsAndReports();
 
+	const statusOrder = {
+		in_progress: 0,
+		not_started: 1,
+		partially_completed: 2,
+		completed: 3,
+	};
+
 	const createReportMutation = useCreateReport();
 	const updateReportMutation = useUpdateReport();
 	const updateAssignmentMutation = useUpdateDailyAssignmentStatus();
@@ -37,7 +44,6 @@ export default function DailyAssignmentsList() {
 	if (dailyAssignmentsAndReportsIsLoading) {
 		return <Loading />;
 	}
-
 	const handleStatusChange = async (
 		assignmentId: number,
 		newStatus: AssignmentStatus,
@@ -127,8 +133,8 @@ export default function DailyAssignmentsList() {
 					status,
 				},
 			});
-			await dailyAssignmentsAndReportsRefetch();
 			setShowReport(false);
+			await dailyAssignmentsAndReportsRefetch();
 		} catch (error) {
 			console.error("Error submitting report:", error);
 		}
@@ -144,6 +150,11 @@ export default function DailyAssignmentsList() {
 			.filter(
 				assignmentAndReport => formatToDate(assignmentAndReport.assignment.date) === date
 			)
+			.sort((a, b) => {
+				const aStatus = a.assignment.status;
+				const bStatus = b.assignment.status;
+				return statusOrder[aStatus] - statusOrder[bStatus];
+			})
 			.map(assignmentAndReport => (
 				<AssignmentCard
 					key={assignmentAndReport.assignment.id}

@@ -20,6 +20,8 @@ export default function UsersPage() {
 	const [inviteLink, setInviteLink] = useState("");
 	const [resetLink, setResetLink] = useState("");
 
+	const [manyColumns, setManyColumns] = useState<boolean>(false);
+
 	const [modalState, setModalState] = useState({
 		editMode: false,
 		createMode: false,
@@ -97,19 +99,26 @@ export default function UsersPage() {
 			<ScrollView contentContainerStyle={styles.scrollContent}>
 				<View style={styles.buttonsContainer}>
 					<Button
-						variant="contained"
-						style={{ marginHorizontal: 10 }}
-						onPress={handleCreateUserClick}
-					>
-						<FontAwesome5 name="user-plus" size={20} style={styles.addUserIcon} />
-					</Button>
-					<Button
 						variant="outlined"
 						style={{ marginHorizontal: 10 }}
 						onPress={handleRefetchUsers}
 						loading={isFetching}
 					>
 						<FontAwesome5 name="sync" size={20} style={styles.icon} />
+					</Button>
+					<Button
+						variant={"outlined"}
+						style={{ marginHorizontal: 10 }}
+						onPress={() => setManyColumns(!manyColumns)}
+					>
+						<FontAwesome5 name={manyColumns ? "list" : "th"} size={24} />
+					</Button>
+					<Button
+						variant="contained"
+						style={{ marginHorizontal: 10 }}
+						onPress={handleCreateUserClick}
+					>
+						<FontAwesome5 name="user-plus" size={20} style={styles.addUserIcon} />
 					</Button>
 				</View>
 				<UsersList
@@ -118,6 +127,7 @@ export default function UsersPage() {
 					onDeleteUser={handleDeleteUser}
 					onForgetPassword={handleForgetPasswordClick}
 					onActivateUser={handleGetInviteLinkClick}
+					manyColumns={manyColumns}
 				/>
 			</ScrollView>
 
