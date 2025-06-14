@@ -6,7 +6,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import Collapse from "@/ui/common/Collapse";
 import { useTranslation } from "react-i18next";
 import TaskTimer from "@/ui/components/date/TaskTimer";
-import { formatToTime } from "@/core/utils/dateUtils";
+import { formatToDate, formatToTime, getFormatedDate } from "@/core/utils/dateUtils";
 import RoomSection from "./RoomSection";
 import { AssignmentStatus, DailyAssignmentForUserResponse } from "@/api/client";
 import getStatusBadge from "@/ui/components/reports/StatusBadge";
@@ -86,23 +86,24 @@ export default function AssignmentCard({
 								{formatToTime(assignment.date)}
 							</Typography>
 						</View>
-						<Typography>{getStatusBadge(assignment.status)}</Typography>
+						<Typography>{getStatusBadge(assignment.status, theme)}</Typography>
 					</View>
 
-					{(assignment.status === AssignmentStatus.completed ||
-						assignment.status === AssignmentStatus.partially_completed ||
-						assignment.status === AssignmentStatus.in_progress) && (
-						<TaskTimer
-							onStatusChange={onStatusChange}
-							alreadyDoneTime={alreadyDoneTime}
-							initialStatus={initialStatus}
-							startTimeBackend={startTimeBackend}
-						/>
-					)}
+					{/*{(assignment.status === AssignmentStatus.completed ||*/}
+					{/*	assignment.status === AssignmentStatus.partially_completed ||*/}
+					{/*	assignment.status === AssignmentStatus.in_progress) && (*/}
+					{/*	<TaskTimer*/}
+					{/*		onStatusChange={onStatusChange}*/}
+					{/*		alreadyDoneTime={alreadyDoneTime}*/}
+					{/*		initialStatus={initialStatus}*/}
+					{/*		startTimeBackend={startTimeBackend}*/}
+					{/*	/>*/}
+					{/*)}*/}
 				</View>
 			</TouchableOpacity>
 			<Collapse expanded={isExpanded}>
-				{assignment.status === AssignmentStatus.not_started && (
+				{/*{assignment.status === AssignmentStatus.not_started && (*/}
+				{formatToDate(assignment.date) === getFormatedDate(new Date()) && (
 					<TaskTimer
 						onStatusChange={onStatusChange}
 						alreadyDoneTime={alreadyDoneTime}
@@ -110,6 +111,7 @@ export default function AssignmentCard({
 						startTimeBackend={startTimeBackend}
 					/>
 				)}
+				{/*)}*/}
 				<View style={styles.divider} />
 				<Typography variant="subtitle1" style={styles.wrappableText}>
 					{t("admin.rooms")}

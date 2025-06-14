@@ -5,7 +5,7 @@ import {
 	ReportResponse,
 } from "@/api/admin";
 import React, { useEffect, useState } from "react";
-import { StyleSheet } from "react-native-unistyles";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { View } from "react-native";
 import { Typography } from "@/ui";
 import { formatTime, formatToDate, formatToDateTime, formatToTime } from "@/core/utils/dateUtils";
@@ -23,6 +23,8 @@ export default function ReportsTable({ reports, assignments, users = [], locatio
 	const [page, setPage] = useState<number>(1);
 
 	const data = reports.slice(0, page * 10);
+
+	const { theme } = useUnistyles();
 
 	useEffect(() => {
 		setPage(1);
@@ -99,7 +101,7 @@ export default function ReportsTable({ reports, assignments, users = [], locatio
 				<Typography style={[styles.cell, { flex: 2 }]}>{locationName}</Typography>
 				<Typography style={[styles.cell, { flex: 2 }]}>{date}</Typography>
 				<Typography style={[styles.cell, { flex: 2 }]}>
-					{getStatusBadge(item.status)}
+					{getStatusBadge(item.status, theme)}
 				</Typography>
 				<Typography style={[styles.cell, { flex: 2 }]}>{start_time}</Typography>
 				<Typography style={[styles.cell, { flex: 2 }]}>{end_time}</Typography>

@@ -17,6 +17,7 @@ import AssignmentCard from "@/ui/components/index/AssignmentCard";
 import { formatToDate, getFormatedDate } from "@/core/utils/dateUtils";
 import { useTranslation } from "react-i18next";
 import Calendar from "@/ui/components/user/calendar/Calendar";
+import { useLanguage } from "@/core/context/LanguageContext";
 
 export default function DailyAssignmentsList() {
 	const { user } = useAuth();
@@ -26,6 +27,8 @@ export default function DailyAssignmentsList() {
 		isLoading: dailyAssignmentsAndReportsIsLoading,
 		refetch: dailyAssignmentsAndReportsRefetch,
 	} = useGetDailyAssignmentsAndReports();
+
+	const { currentLanguage } = useLanguage();
 
 	const statusOrder = {
 		in_progress: 0,
@@ -241,11 +244,25 @@ export default function DailyAssignmentsList() {
 				<View style={styles.sidebar}>
 					<Calendar onConfirm={handleDateConfirm} assignedDates={assignmentDates} />
 				</View>
-				{assignments && assignments?.length === 0 ? (
-					renderNoAssignments()
-				) : (
-					<ScrollView style={styles.scrollContainer}>{assignments}</ScrollView>
-				)}
+				<View style={styles.tasksContainer}>
+					<View>
+						<Typography variant={"h5"}>{t("admin.tasks")}</Typography>
+						<Typography variant={"body1"} color={styles.dateText.color}>
+							{selectedDate
+								.toLocaleDateString(currentLanguage, {
+									weekday: "long",
+									day: "numeric",
+									month: "long",
+								})
+								.replace(/^./, str => str.toUpperCase())}
+						</Typography>
+					</View>
+					{assignments && assignments?.length === 0 ? (
+						renderNoAssignments()
+					) : (
+						<ScrollView style={styles.scrollContainer}>{assignments}</ScrollView>
+					)}
+				</View>
 			</View>
 
 			{showReport && (
@@ -265,9 +282,13 @@ const styles = StyleSheet.create(theme => ({
 		flex: 1,
 		backgroundColor: theme.colors.background.main,
 	},
+	tasksContainer: {
+		flex: 1,
+		padding: theme.spacing(2),
+		gap: theme.spacing(2),
+	},
 	scrollContainer: {
 		flex: 1.2,
-		padding: theme.spacing(2),
 	},
 	emptyStateContainer: {
 		flex: 1,
@@ -283,4 +304,7 @@ const styles = StyleSheet.create(theme => ({
 		alignSelf: "flex-start",
 	},
 	mainContent: { flex: 1, padding: theme.spacing(2) },
+	dateText: {
+		color: theme.colors.text.disabled,
+	},
 }));

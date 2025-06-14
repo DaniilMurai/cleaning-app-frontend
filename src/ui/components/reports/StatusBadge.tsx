@@ -1,9 +1,18 @@
 import { Typography } from "@/ui";
 import React from "react";
-import { useUnistyles } from "react-native-unistyles";
 
-const getStatusBadge = (status: string) => {
-	const { theme } = useUnistyles();
+export default function getStatusBadge(
+	status: string,
+	theme: {
+		colors: {
+			success: { background: any; textOnBackground: any };
+			warning: { main: any; dark: any };
+			progress: { background: any; main: any };
+			not_started: { background: any; main: any };
+		};
+		spacing: (arg0: number) => any;
+	}
+) {
 	const statusConfig = {
 		completed: {
 			label: "Completed",
@@ -51,6 +60,4 @@ const getStatusBadge = (status: string) => {
 			{config.label}
 		</Typography>
 	);
-};
-
-export default getStatusBadge;
+}
