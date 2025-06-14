@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { Typography } from "@/ui";
+import { Button, Typography } from "@/ui";
 import {
 	AdminReadUser,
 	DailyAssignmentResponse,
@@ -25,6 +25,8 @@ export default function ReportsTab({ users, assignments, locations }: Props) {
 		direction: "desc",
 	});
 
+	const [isVisibleFilterPanel, setIsVisibleFilterPanel] = useState(true);
+
 	const { data: reports, isLoading, refetch } = useGetReports(queryParams);
 
 	// Обновляем параметры запроса
@@ -38,7 +40,21 @@ export default function ReportsTab({ users, assignments, locations }: Props) {
 	return (
 		<View style={styles.container}>
 			<View style={styles.headerContainer}>
-				<SearchFilterPanel params={queryParams} onAction={handleSearch} />
+				{!isVisibleFilterPanel && (
+					<Button
+						variant={"outlined"}
+						onPress={() => setIsVisibleFilterPanel(!isVisibleFilterPanel)}
+						style={{ marginStart: "auto" }}
+					>
+						Show Filter Panel
+					</Button>
+				)}
+				<SearchFilterPanel
+					isVisible={isVisibleFilterPanel}
+					params={queryParams}
+					onAction={handleSearch}
+					onChangeVisible={isVisible => setIsVisibleFilterPanel(isVisible)}
+				/>
 			</View>
 			<View style={styles.scrollContainer}>
 				{reports ? (

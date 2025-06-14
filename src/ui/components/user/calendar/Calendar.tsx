@@ -86,12 +86,16 @@ const styles = StyleSheet.create(theme => ({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-		marginTop: theme.spacing(2),
+		marginTop: {
+			xs: theme.spacing(9),
+			sm: theme.spacing(9),
+			md: theme.spacing(2),
+		},
 	},
 	pickerContainer: {
 		borderRadius: theme.spacing(1.5),
 		width: "90%",
-		maxWidth: 340,
+		minWidth: 300,
 		backgroundColor: theme.colors.background.default,
 		overflow: "hidden",
 	},

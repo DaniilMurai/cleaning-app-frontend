@@ -9,6 +9,8 @@ import { FontAwesome5 } from "@expo/vector-icons";
 interface props {
 	params: GetReportsParams;
 	onAction: (params: GetReportsParams) => any;
+	isVisible?: boolean;
+	onChangeVisible: (isVisible: boolean) => void;
 }
 
 const statusOptions: PickerOption[] = [
@@ -38,11 +40,13 @@ const directionOptions: PickerOption[] = [
 	{ label: "ascending", value: "asc" },
 ];
 //TODO status и search не работают из за бэкэнда
-export default function SearchFilterPanel({ params, onAction }: props) {
-	const [order, setOrder] = useState<string | null>(params.order_by || null);
-	const [direction, setDirection] = useState<string | null>(params.direction || null);
+export default function SearchFilterPanel({ params, onAction, isVisible, onChangeVisible }: props) {
 	const [status, setStatus] = useState<string | null>(null);
 	const [search, setSearch] = useState<string>(params.search ?? "");
+
+	if (!isVisible) {
+		return null;
+	}
 
 	const newParams: Partial<GetReportsParams> = {};
 
@@ -61,9 +65,18 @@ export default function SearchFilterPanel({ params, onAction }: props) {
 					<FontAwesome5 name="filter" size={20} color={styles.iconColor.color} /> Search &
 					Filters
 				</Typography>
-				<Button variant={"text"} style={styles.button} onPress={handleClear}>
-					Clear All
-				</Button>
+				<View style={{ flexDirection: "row", gap: 8 }}>
+					<Button variant={"text"} style={styles.button} onPress={handleClear}>
+						Clear All
+					</Button>
+					<Button
+						onPress={() => onChangeVisible(false)}
+						variant={"outlined"}
+						color={"secondary"}
+					>
+						Close
+					</Button>
+				</View>
 			</View>
 			<View style={styles.contentContainer}>
 				<View style={styles.searchContainer}>

@@ -2,7 +2,7 @@ import { View, ViewProps } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { forwardRef } from "react";
 
-export type CardVariant = "outlined" | "contained";
+export type CardVariant = "outlined" | "contained" | "default";
 export type CardColor = "primary" | "secondary";
 export type CardSize = "small" | "medium" | "large";
 
@@ -73,6 +73,7 @@ const styles = StyleSheet.create(theme => ({
 			variant: {
 				outlined: {},
 				contained: {},
+				default: {},
 			},
 			color: {
 				primary: {},
@@ -80,6 +81,14 @@ const styles = StyleSheet.create(theme => ({
 			},
 		},
 		compoundVariants: [
+			{
+				color: "primary",
+				variant: "default",
+				styles: {
+					backgroundColor: theme.colors.background.paper,
+					borderRadius: theme.borderRadius(3),
+				},
+			},
 			{
 				color: "primary",
 				variant: "outlined",

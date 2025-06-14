@@ -8,6 +8,7 @@ const themedColors = {
 			dark: "#338883",
 			text: "#000",
 			contrastText: "#ffffff", // Добавлено
+			mainOpacity: "#3bd0c71a",
 		},
 		secondary: {
 			main: "#FF6B6B",
@@ -70,6 +71,7 @@ const themedColors = {
 			dark: "#338883",
 			text: "#000",
 			contrastText: "#ffffff", // Добавлено
+			mainOpacity: "#38a29d1a",
 		},
 		secondary: {
 			main: "#834a4a",

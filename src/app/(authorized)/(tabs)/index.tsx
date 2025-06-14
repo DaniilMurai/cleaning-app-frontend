@@ -1,7 +1,7 @@
 import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import React, { useState } from "react";
-import { Loading, ModalContainer, Typography } from "@/ui";
+import { Card, Loading, ModalContainer, Typography } from "@/ui";
 import {
 	AssignmentStatus,
 	CreateReport,
@@ -18,6 +18,7 @@ import { formatToDate, getFormatedDate } from "@/core/utils/dateUtils";
 import { useTranslation } from "react-i18next";
 import Calendar from "@/ui/components/user/calendar/Calendar";
 import { useLanguage } from "@/core/context/LanguageContext";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function DailyAssignmentsList() {
 	const { user } = useAuth();
@@ -130,7 +131,7 @@ export default function DailyAssignmentsList() {
 		if (!user || !startTime || !endTime || !reportId || !dailyAssignmentsAndReports) return;
 
 		if (startTime > endTime) return;
-
+		2;
 		try {
 			await updateReportMutation.mutateAsync({
 				params: { report_id: reportId },
@@ -213,22 +214,61 @@ export default function DailyAssignmentsList() {
 			if (getFormatedDate(selectedDate) === getFormatedDate(new Date())) {
 				return (
 					<View style={styles.emptyStateContainer}>
-						<Typography color="primary" variant="h4" style={{ marginBottom: 8 }}>
-							{t("admin.noAssignmentsForToday")}
-						</Typography>
-						<Typography variant="body1" style={{ textAlign: "center" }}>
-							{t("admin.enjoyTime")}
-						</Typography>
+						<Card variant={"default"} style={styles.noAssignmentCard}>
+							<View
+								style={{
+									justifyContent: "center",
+									alignItems: "center",
+								}}
+							>
+								<View style={styles.iconContainer}>
+									<FontAwesome5
+										name={"clock"}
+										color={styles.iconColor.color}
+										size={26}
+									/>
+								</View>
+							</View>
+							<Typography
+								color="primary"
+								variant="h4"
+								style={{ textAlign: "center", marginBottom: 8 }}
+							>
+								{t("admin.noAssignmentsForToday")}
+							</Typography>
+							<Typography variant="body1" style={{ textAlign: "center" }}>
+								{t("admin.enjoyTime")}
+							</Typography>
+						</Card>
 					</View>
 				);
 			} else {
 				return (
 					<View style={styles.emptyStateContainer}>
-						<Typography color="primary" variant="h4" style={{ marginBottom: 8 }}>
-							{t("admin.noAssignmentsPlanned", {
-								date: getFormatedDate(selectedDate),
-							})}
-						</Typography>
+						<Card variant={"default"} style={styles.noAssignmentCard}>
+							<View
+								style={{
+									justifyContent: "center",
+									alignItems: "center",
+								}}
+							>
+								<View style={styles.iconContainer}>
+									<FontAwesome5
+										name={"clock"}
+										color={styles.iconColor.color}
+										size={26}
+									/>
+								</View>
+							</View>
+							<Typography
+								variant="h5"
+								style={{ alignSelf: "center", marginBottom: 8 }}
+							>
+								{t("admin.noAssignmentsPlanned", {
+									date: getFormatedDate(selectedDate),
+								})}
+							</Typography>
+						</Card>
 					</View>
 				);
 			}
@@ -239,13 +279,13 @@ export default function DailyAssignmentsList() {
 	const assignmentDates = getDailyAssignmentDates();
 	console.log("assignments " + assignments.length);
 	return (
-		<View style={styles.container}>
+		<ScrollView style={styles.container}>
 			<View style={styles.page}>
 				<View style={styles.sidebar}>
 					<Calendar onConfirm={handleDateConfirm} assignedDates={assignmentDates} />
 				</View>
 				<View style={styles.tasksContainer}>
-					<View>
+					<View style={styles.dateTaskContainer}>
 						<Typography variant={"h5"}>{t("admin.tasks")}</Typography>
 						<Typography variant={"body1"} color={styles.dateText.color}>
 							{selectedDate
@@ -257,10 +297,10 @@ export default function DailyAssignmentsList() {
 								.replace(/^./, str => str.toUpperCase())}
 						</Typography>
 					</View>
-					{assignments && assignments?.length === 0 ? (
+					{assignments.length === 0 ? (
 						renderNoAssignments()
 					) : (
-						<ScrollView style={styles.scrollContainer}>{assignments}</ScrollView>
+						<View style={styles.scrollContainer}>{assignments}</View>
 					)}
 				</View>
 			</View>
@@ -273,7 +313,7 @@ export default function DailyAssignmentsList() {
 					/>
 				</ModalContainer>
 			)}
-		</View>
+		</ScrollView>
 	);
 }
 
@@ -281,6 +321,8 @@ const styles = StyleSheet.create(theme => ({
 	container: {
 		flex: 1,
 		backgroundColor: theme.colors.background.main,
+		paddingVertical: theme.spacing(4),
+		paddingHorizontal: theme.spacing(3),
 	},
 	tasksContainer: {
 		flex: 1,
@@ -288,23 +330,56 @@ const styles = StyleSheet.create(theme => ({
 		gap: theme.spacing(2),
 	},
 	scrollContainer: {
-		flex: 1.2,
+		flex: 1,
 	},
 	emptyStateContainer: {
 		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-		padding: theme.spacing(4),
+		textAlign: "center",
 	},
-	page: { flex: 1, flexDirection: "row" },
+	page: {
+		flex: 1,
+		flexDirection: {
+			sm: "column",
+			md: "row",
+		},
+		gap: theme.spacing(5),
+	},
 	sidebar: {
 		flex: 0.5,
-		minWidth: 340,
-		padding: theme.spacing(2),
+
 		alignSelf: "flex-start",
+		alignContent: "center",
+		justifyContent: "center",
+		alignItems: "center",
 	},
 	mainContent: { flex: 1, padding: theme.spacing(2) },
 	dateText: {
 		color: theme.colors.text.disabled,
+	},
+	dateTaskContainer: {
+		marginTop: {
+			xs: theme.spacing(8),
+			sm: theme.spacing(6),
+			md: theme.spacing(1),
+		},
+	},
+	iconColor: {
+		color: theme.colors.primary.main,
+	},
+	backgroundIcon: {
+		color: theme.colors.primary.mainOpacity,
+	},
+	iconContainer: {
+		backgroundColor: theme.colors.primary.mainOpacity,
+		borderRadius: theme.borderRadius(999),
+		padding: theme.spacing(2),
+	},
+	noAssignmentCard: {
+		paddingVertical: {
+			xs: theme.spacing(3),
+			sm: theme.spacing(8),
+		},
+		paddingHorizontal: theme.spacing(3),
+		width: "100%",
 	},
 }));
