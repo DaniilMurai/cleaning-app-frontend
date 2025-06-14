@@ -41,7 +41,7 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
 			{label && (
 				<Typography
 					variant="subtitle2"
-					color={error ? "error" : `${color}.main`}
+					color={error ? "error" : color ? `text.${color}` : undefined}
 					style={styles.label}
 				>
 					{label}
@@ -52,7 +52,7 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
 				<TextInput
 					ref={ref}
 					{...props}
-					style={[styles.input, props.style, props.icon && styles.paddingLeft]}
+					style={[styles.input, props.style, props.icon ? styles.paddingLeft : undefined]}
 					// placeholderTextColor={theme => theme.colors.text.secondary}
 				/>
 			</View>

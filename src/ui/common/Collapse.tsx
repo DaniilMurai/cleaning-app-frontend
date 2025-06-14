@@ -1,10 +1,5 @@
 import { View } from "react-native";
-import Animated, {
-	runOnJS,
-	useAnimatedStyle,
-	useSharedValue,
-	withTiming,
-} from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { forwardRef, PropsWithChildren, useEffect, useRef, useState } from "react";
 import { StyleSheet } from "react-native-unistyles";
 
@@ -21,7 +16,6 @@ const Collapse = forwardRef<View, PropsWithChildren<CollapseProps>>(function Col
 	ref
 ) {
 	const isSetExpandedByDefaultRef = useRef(expanded);
-	const [isClosed, setIsClosed] = useState(!expanded);
 
 	const [contentHeight, setContentHeight] = useState<number | undefined>(undefined);
 	const animatedHeight = useSharedValue(0);
@@ -39,26 +33,11 @@ const Collapse = forwardRef<View, PropsWithChildren<CollapseProps>>(function Col
 				isSetExpandedByDefaultRef.current = false;
 				return;
 			}
-			const onFinished = () => {
-				if (expanded) {
-					setIsClosed(false);
-				} else {
-					setIsClosed(true);
-				}
-			};
 
 			// Анимируем высоту
-			animatedHeight.value = withTiming(
-				expanded ? contentHeight : 0,
-				{
-					duration: animationDuration,
-				},
-				finished => {
-					if (finished) {
-						runOnJS(onFinished)();
-					}
-				}
-			);
+			animatedHeight.value = withTiming(expanded ? contentHeight : 0, {
+				duration: animationDuration,
+			});
 
 			// Анимируем прозрачность
 			animatedOpacity.value = withTiming(expanded ? 1 : 0, {
