@@ -1,14 +1,23 @@
 import { GetReportsParams } from "@/api/admin";
 import { StyleSheet } from "react-native-unistyles";
-import { Button, Picker } from "@/ui";
+import { Button, Input, Picker, Typography } from "@/ui";
 import { PickerOption } from "@/ui/common/Picker";
 import { useState } from "react";
 import { View } from "react-native";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 interface props {
 	params: GetReportsParams;
 	onAction: (params: GetReportsParams) => any;
 }
+
+const statusOptions: PickerOption[] = [
+	{ label: "All Statuses", value: "" },
+	{ label: "Completed", value: "completed" },
+	{ label: "Not Started", value: "not_started" },
+	{ label: "In Progress", value: "in_progress" },
+	{ label: "Partially Completed", value: "partially_completed" },
+];
 
 const orderByOptions: PickerOption[] = [
 	{ label: "id", value: "id" },
@@ -25,49 +34,100 @@ const orderByOptions: PickerOption[] = [
 ];
 
 const directionOptions: PickerOption[] = [
-	{ label: "desc", value: "desc" },
-	{ label: "asc", value: "asc" },
+	{ label: "descending", value: "desc" },
+	{ label: "ascending", value: "asc" },
 ];
-
+//TODO status и search не работают из за бэкэнда
 export default function SearchFilterPanel({ params, onAction }: props) {
 	const [order, setOrder] = useState<string | null>(params.order_by || null);
 	const [direction, setDirection] = useState<string | null>(params.direction || null);
+	const [status, setStatus] = useState<string | null>(null);
+	const [search, setSearch] = useState<string>(params.search ?? "");
 
-	const handleChange = () => {
-		// ✅ Создаем новый объект параметров
-		const newParams: Partial<GetReportsParams> = {};
+	const newParams: Partial<GetReportsParams> = {};
 
-		if (order) newParams.order_by = order;
-		if (direction) newParams.direction = direction;
-
-		// ✅ Вызываем колбэк с новыми параметрами
+	const handleClear = () => {
+		setSearch("");
+		newParams.search = "";
+		newParams.order_by = "id";
+		newParams.direction = "desc";
 		onAction(newParams);
 	};
 
 	return (
 		<View style={styles.container}>
-			<View style={styles.pickerContainer}>
-				<Picker
-					placeholder={"id"}
-					style={{ width: 150 }}
-					label={"Order by"}
-					options={orderByOptions}
-					value={order ?? "id"}
-					onChange={setOrder}
-				/>
+			<View style={styles.headerContainer}>
+				<Typography>
+					<FontAwesome5 name="filter" size={20} color={styles.iconColor.color} /> Search &
+					Filters
+				</Typography>
+				<Button variant={"text"} style={styles.button} onPress={handleClear}>
+					Clear All
+				</Button>
 			</View>
-			<View style={styles.pickerContainer}>
-				<Picker
-					style={{ width: 150 }}
-					label={"Direction"}
-					options={directionOptions}
-					value={direction ?? "desc"}
-					onChange={setDirection}
-				/>
+			<View style={styles.contentContainer}>
+				<View style={styles.searchContainer}>
+					<Input
+						label={"Search"}
+						size={"large"}
+						placeholder={" Search users or locations..."}
+						style={styles.input}
+						value={search}
+						icon={
+							<FontAwesome5
+								name={"search"}
+								size={16}
+								color={styles.iconColor.color}
+							/>
+						}
+						onChangeText={text => {
+							setSearch(text);
+							newParams.search = text;
+							onAction(newParams);
+						}}
+					/>
+				</View>
+				<View style={styles.pickersContainer}>
+					<View style={styles.pickerContainer}>
+						<Picker
+							placeholder={"All Statuses"}
+							style={styles.picker}
+							label={"Status"}
+							options={statusOptions}
+							value={status ?? "id"}
+							onChange={setStatus}
+						/>
+					</View>
+
+					<View style={styles.pickerContainer}>
+						<Picker
+							placeholder={"id"}
+							style={styles.picker}
+							label={"Order by"}
+							options={orderByOptions}
+							value={params.order_by ?? "id"}
+							// onChange={setOrder}
+							onChange={value => {
+								value ? (newParams.order_by = value) : "id";
+								onAction(newParams);
+							}}
+						/>
+					</View>
+					<View style={styles.pickerContainer}>
+						<Picker
+							label={"Direction"}
+							style={styles.picker}
+							options={directionOptions}
+							value={params.direction ?? "desc"}
+							// onChange={setDirection}
+							onChange={value => {
+								value ? (newParams.direction = value) : "desc";
+								onAction(newParams);
+							}}
+						/>
+					</View>
+				</View>
 			</View>
-			<Button variant={"contained"} style={styles.button} onPress={handleChange}>
-				Submit
-			</Button>
 		</View>
 	);
 }
@@ -75,19 +135,62 @@ export default function SearchFilterPanel({ params, onAction }: props) {
 const styles = StyleSheet.create(theme => ({
 	container: {
 		flex: 1,
-		flexDirection: "row",
+		backgroundColor: theme.colors.background.paper,
+		padding: theme.spacing(3),
+		borderRadius: theme.spacing(1),
+		gap: theme.spacing(4),
+	},
+	contentContainer: {
+		flexDirection: {
+			xs: "column",
+			md: "row",
+		},
+		flex: 1,
 		flexWrap: "wrap",
-		alignItems: "center",
-		justifyContent: "flex-start",
-		backgroundColor: theme.colors.background.default,
-		padding: theme.spacing(2),
-		margin: theme.spacing(2),
 		gap: theme.spacing(4),
 	},
 	pickerContainer: {
-		flexWrap: "wrap",
+		flex: 1,
 	},
 	button: {
 		alignSelf: "flex-end",
 	},
+	input: {
+		backgroundColor: theme.colors.background.main,
+	},
+	picker: {
+		flex: 0.8,
+		minWidth: 200,
+		width: "100%",
+	},
+	iconColor: {
+		color: theme.colors.text.primary,
+	},
+	headerContainer: {
+		flexDirection: "row",
+		flex: 1,
+		justifyContent: "space-between",
+	},
+	searchContainer: {
+		minWidth: 250,
+		maxWidth: 400,
+		flex: {
+			xs: 2,
+			md: 1.5,
+		},
+	},
+	pickersContainer: {
+		flexDirection: {
+			xs: "column",
+			md: "row",
+		},
+		gap: theme.spacing(2),
+	},
+	// contentContainer2Floor: {
+	// 	flexDirection: {
+	// 		xs: "column",
+	//
+	// 	},
+	// 	gap: theme.spacing(2),
+	// },
 }));

@@ -122,7 +122,8 @@ export default function TasksList({
 											);
 										}}
 									>
-										<FontAwesome5 name="link" size={14} />
+										Добавить
+										{/*<FontAwesome5 name="link" size={14} />*/}
 									</Button>
 									<Button
 										variant="outlined"

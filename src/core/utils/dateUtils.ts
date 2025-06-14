@@ -53,7 +53,7 @@ export const formatTime = (timeInMs: number): string => {
 	return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 };
 
-export function getDateFromMs(date: Date) {
+export function getFormatedDate(date: Date) {
 	// Получаем компоненты даты
 	const month = date.getMonth() + 1; // Месяцы от 0 до 11
 	const day = date.getDate();

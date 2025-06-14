@@ -25,7 +25,6 @@ export default function ReportsTab({ users, assignments, locations }: Props) {
 		direction: "desc",
 	});
 
-	// ✅ Правильное использование хука с параметрами
 	const { data: reports, isLoading, refetch } = useGetReports(queryParams);
 
 	// Обновляем параметры запроса
@@ -61,10 +60,16 @@ const styles = StyleSheet.create(theme => ({
 	container: {
 		flex: 1,
 		flexDirection: "column",
+		paddingHorizontal: {
+			xs: theme.spacing(2),
+			lg: theme.spacing(4),
+			xl: theme.spacing(5),
+			superLarge: theme.spacing(12),
+		},
+		paddingVertical: theme.spacing(4),
 	},
 	scrollContainer: {
 		flex: 1,
-		padding: theme.spacing(2),
 	},
 	headerContainer: {
 		flexDirection: "row",

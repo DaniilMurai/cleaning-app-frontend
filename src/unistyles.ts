@@ -38,6 +38,16 @@ const themedColors = {
 			main: "#17C13E",
 			dark: "#0f9128",
 			text: "#fff",
+			textOnBackground: "#166534",
+			background: "#BBF7D0",
+		},
+		progress: {
+			main: "#1E40AF",
+			background: "#DBEAFE",
+		},
+		not_started: {
+			main: "#1F2937",
+			background: "#f3f6f3",
 		},
 		background: {
 			main: "#F5FCFF",
@@ -74,27 +84,38 @@ const themedColors = {
 			text: "#000000",
 		},
 		warning: {
-			light: "#fff8e1",
-			main: "#ffe57f",
-			dark: "#ffc107",
-			text: "#000000",
+			light: "#facc15",
+			main: "#fbbf24", // amber-400
+			dark: "#b45309", // amber-700
+			text: "#1f2937",
+			background: "#FBBF241F",
 		},
 		error: {
-			light: "#ef9a9a",
-			main: "#f44336",
-			dark: "#c62828",
+			light: "#fca5a5",
+			main: "#f87171", // red-400
+			dark: "#b91c1c",
 			text: "#ffffff",
 		},
 		success: {
-			light: "#ECF5EF",
-			main: "#6bd581",
-			dark: "#12912d",
-			text: "#000",
+			light: "#4ade80", // green-400
+			main: "#22c55e", // green-500
+			dark: "#15803d", // green-700
+			text: "#ffffff",
+			textOnBackground: "#21C55D",
+			background: "#21C55D1A", // зеленый с прозрачностью
+		},
+		progress: {
+			main: "#3C81F6", // blue-500
+			background: "#3C81F61A", // полупрозрачный navy
+		},
+		not_started: {
+			main: "#6b7280", // gray-500
+			background: "#6B72801A", // gray-700
 		},
 		background: {
-			main: "#151718",
-			paper: "#292c2c",
-			default: "#1e2021", // Добавлено
+			main: "#141617",
+			paper: "#272a2c",
+			default: "#212426", // Добавлено
 		},
 		text: {
 			primary: "#ECEDEE",
@@ -145,6 +166,18 @@ const buildTheme = (colors: ColorsType) => {
 	};
 };
 
+const breakpoints = {
+	xs: 0,
+	sm: 576,
+	md: 740,
+	lg: 992,
+	xl: 1200,
+	superLarge: 1400,
+	tvLike: 2000,
+} as const;
+
+type AppBreakpoints = typeof breakpoints;
+
 // Определение тем
 export const themes = {
 	light: buildTheme(themedColors.light),
@@ -159,6 +192,8 @@ export type UIColor = "primary" | "secondary" | "success" | "error" | "warning" 
 // Типизация для TypeScript
 declare module "react-native-unistyles" {
 	export interface UnistylesThemes extends ThemesType {}
+
+	export interface UnistylesBreakpoints extends AppBreakpoints {}
 }
 
 // Конфигурация Unistyles
@@ -167,6 +202,7 @@ StyleSheet.configure({
 	settings: {
 		adaptiveThemes: true, // Автоматическое переключение тем
 	},
+	breakpoints,
 });
 
 export const SHADOWS = StyleSheet.create(theme =>

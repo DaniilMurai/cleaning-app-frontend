@@ -1,6 +1,6 @@
 import { TextInput, TextInputProps, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { forwardRef } from "react";
+import React, { forwardRef } from "react";
 import Typography from "@/ui/common/Typography";
 
 export type InputVariant = "outlined" | "filled";
@@ -14,6 +14,7 @@ export interface InputProps extends Omit<TextInputProps, "placeholderTextColor">
 	label?: string;
 	error?: string;
 	helperText?: string;
+	icon?: React.ReactNode;
 }
 
 const Input = forwardRef<TextInput, InputProps>(function Input(
@@ -46,12 +47,15 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
 					{label}
 				</Typography>
 			)}
-			<TextInput
-				ref={ref}
-				{...props}
-				style={[styles.input, props.style]}
-				// placeholderTextColor={theme => theme.colors.text.secondary}
-			/>
+			<View style={styles.inputWrapper}>
+				{props.icon && <View style={styles.icon}>{props.icon}</View>}
+				<TextInput
+					ref={ref}
+					{...props}
+					style={[styles.input, props.style, props.icon && styles.paddingLeft]}
+					// placeholderTextColor={theme => theme.colors.text.secondary}
+				/>
+			</View>
 			{(error || helperText) && (
 				<Typography
 					variant="body2"
@@ -66,12 +70,22 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
 });
 
 const styles = StyleSheet.create(theme => ({
-	container: {
-		gap: theme.spacing(0.5),
-	},
+	container: {},
 	label: {
-		marginBottom: theme.spacing(0.5),
 		color: theme.colors.text.secondary,
+		marginBottom: theme.spacing(0.25),
+	},
+	inputWrapper: {
+		position: "relative",
+		justifyContent: "center",
+	},
+	paddingLeft: {
+		paddingLeft: theme.spacing(4),
+	},
+	icon: {
+		position: "absolute",
+		left: 10,
+		zIndex: 1,
 	},
 	helperText: {
 		marginTop: theme.spacing(0.5),

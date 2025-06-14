@@ -66,7 +66,7 @@ export default function DropdownMenu({
 				left = screenWidth - menuWidth - 8;
 				top = y + height + 4;
 			}
-
+			
 			// Применяем настройки placement только если они явно указаны
 			if (placement !== "left") {
 				switch (placement) {

@@ -80,10 +80,9 @@ export default function Select({ label, value, options, onChange, style }: Selec
 const styles = StyleSheet.create(theme => ({
 	container: {
 		width: "100%",
+		gap: theme.spacing(0.5),
 	},
-	label: {
-		marginBottom: theme.spacing(0.5),
-	},
+	label: {},
 	select: {
 		flexDirection: "row",
 		alignItems: "center",

@@ -145,9 +145,9 @@ const styles = StyleSheet.create(theme => ({
 		alignItems: "center",
 		borderWidth: 1,
 		borderColor: theme.colors.divider,
-		borderRadius: theme.borderRadius(1),
+		borderRadius: theme.borderRadius(2),
 		padding: theme.spacing(1.5),
-		backgroundColor: theme.colors.background.paper,
+		backgroundColor: theme.colors.background.main,
 		zIndex: 2,
 	},
 	selectPressed: {

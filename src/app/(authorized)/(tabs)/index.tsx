@@ -14,11 +14,13 @@ import {
 import useAuth from "@/core/context/AuthContext";
 import ReportForm from "@/ui/forms/common/ReportForm";
 import AssignmentCard from "@/ui/components/index/AssignmentCard";
-import { formatToDate, getDateFromMs } from "@/core/utils/dateUtils";
+import { formatToDate, getFormatedDate } from "@/core/utils/dateUtils";
+import { useTranslation } from "react-i18next";
+import Calendar from "@/ui/components/user/calendar/Calendar";
 
 export default function DailyAssignmentsList() {
 	const { user } = useAuth();
-
+	const { t } = useTranslation();
 	const {
 		data: dailyAssignmentsAndReports,
 		isLoading: dailyAssignmentsAndReportsIsLoading,
@@ -40,6 +42,10 @@ export default function DailyAssignmentsList() {
 	const [startTime, setStartTime] = useState<number | null>(null);
 	const [endTime, setEndTime] = useState<number | null>(null);
 	const [showReport, setShowReport] = useState(false);
+
+	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+
+	const [isVisibleCalendar, setIsVisibleCalendar] = useState<boolean>(false);
 
 	if (dailyAssignmentsAndReportsIsLoading) {
 		return <Loading />;
@@ -120,6 +126,8 @@ export default function DailyAssignmentsList() {
 	const handleReportSubmit = async (data: { text?: string; media?: string[] }) => {
 		if (!user || !startTime || !endTime || !reportId || !dailyAssignmentsAndReports) return;
 
+		if (startTime > endTime) return;
+
 		try {
 			await updateReportMutation.mutateAsync({
 				params: { report_id: reportId },
@@ -140,13 +148,14 @@ export default function DailyAssignmentsList() {
 		}
 	};
 
-	const DailyAssignmentsListRender = () => {
-		if (!dailyAssignmentsAndReports) return <Typography>No assignments for you</Typography>;
+	const DailyAssignmentsListRender = (): React.JSX.Element[] => {
+		if (!dailyAssignmentsAndReports) return [];
 		const timestamp = new Date();
-		const date = getDateFromMs(timestamp);
-		console.log(date);
 
-		const assignments = dailyAssignmentsAndReports
+		const date = selectedDate ? getFormatedDate(selectedDate) : getFormatedDate(timestamp);
+		console.log("3 " + date);
+
+		return dailyAssignmentsAndReports
 			.filter(
 				assignmentAndReport => formatToDate(assignmentAndReport.assignment.date) === date
 			)
@@ -184,15 +193,60 @@ export default function DailyAssignmentsList() {
 					}
 				/>
 			));
-
-		if (assignments.length < 1) return <Typography>No assignments for today</Typography>;
-
-		return assignments;
 	};
 
+	const handleDateConfirm = (date: Date) => {
+		setSelectedDate(date);
+	};
+
+	const getDailyAssignmentDates = (): string[] => {
+		if (!dailyAssignmentsAndReports) return [];
+
+		return dailyAssignmentsAndReports.map(ar => ar.assignment.date);
+	};
+
+	const renderNoAssignments = () => {
+		if (assignments && assignments.length === 0) {
+			if (getFormatedDate(selectedDate) === getFormatedDate(new Date())) {
+				return (
+					<View style={styles.emptyStateContainer}>
+						<Typography color="primary" variant="h4" style={{ marginBottom: 8 }}>
+							{t("admin.noAssignmentsForToday")}
+						</Typography>
+						<Typography variant="body1" style={{ textAlign: "center" }}>
+							{t("admin.enjoyTime")}
+						</Typography>
+					</View>
+				);
+			} else {
+				return (
+					<View style={styles.emptyStateContainer}>
+						<Typography color="primary" variant="h4" style={{ marginBottom: 8 }}>
+							{t("admin.noAssignmentsPlanned", {
+								date: getFormatedDate(selectedDate),
+							})}
+						</Typography>
+					</View>
+				);
+			}
+		}
+	};
+
+	const assignments = DailyAssignmentsListRender();
+	const assignmentDates = getDailyAssignmentDates();
+	console.log("assignments " + assignments.length);
 	return (
 		<View style={styles.container}>
-			<ScrollView style={styles.scrollContainer}>{DailyAssignmentsListRender()}</ScrollView>
+			<View style={styles.page}>
+				<View style={styles.sidebar}>
+					<Calendar onConfirm={handleDateConfirm} assignedDates={assignmentDates} />
+				</View>
+				{assignments && assignments?.length === 0 ? (
+					renderNoAssignments()
+				) : (
+					<ScrollView style={styles.scrollContainer}>{assignments}</ScrollView>
+				)}
+			</View>
 
 			{showReport && (
 				<ModalContainer visible={showReport} onClose={() => setShowReport(false)}>
@@ -212,7 +266,21 @@ const styles = StyleSheet.create(theme => ({
 		backgroundColor: theme.colors.background.main,
 	},
 	scrollContainer: {
-		flex: 1,
+		flex: 1.2,
 		padding: theme.spacing(2),
 	},
+	emptyStateContainer: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		padding: theme.spacing(4),
+	},
+	page: { flex: 1, flexDirection: "row" },
+	sidebar: {
+		flex: 0.5,
+		minWidth: 340,
+		padding: theme.spacing(2),
+		alignSelf: "flex-start",
+	},
+	mainContent: { flex: 1, padding: theme.spacing(2) },
 }));

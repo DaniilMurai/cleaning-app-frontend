@@ -10,6 +10,7 @@ import { View } from "react-native";
 import { Typography } from "@/ui";
 import { formatTime, formatToDate, formatToDateTime, formatToTime } from "@/core/utils/dateUtils";
 import { LegendList } from "@legendapp/list";
+import getStatusBadge from "@/ui/components/reports/StatusBadge";
 
 interface Props {
 	reports: ReportResponse[];
@@ -97,7 +98,9 @@ export default function ReportsTable({ reports, assignments, users = [], locatio
 				<Typography style={[styles.cell, { flex: 2 }]}>{getUserFullName(item)}</Typography>
 				<Typography style={[styles.cell, { flex: 2 }]}>{locationName}</Typography>
 				<Typography style={[styles.cell, { flex: 2 }]}>{date}</Typography>
-				<Typography style={[styles.cell, { flex: 2 }]}>{item.status}</Typography>
+				<Typography style={[styles.cell, { flex: 2 }]}>
+					{getStatusBadge(item.status)}
+				</Typography>
 				<Typography style={[styles.cell, { flex: 2 }]}>{start_time}</Typography>
 				<Typography style={[styles.cell, { flex: 2 }]}>{end_time}</Typography>
 				<Typography style={[styles.cell, { flex: 2 }]}>{duration}</Typography>
@@ -107,7 +110,6 @@ export default function ReportsTable({ reports, assignments, users = [], locatio
 
 	return (
 		<LegendList
-			// style={{ height: 450 }}
 			data={data}
 			keyExtractor={item => item.id.toString()}
 			estimatedItemSize={48}
@@ -128,7 +130,7 @@ const styles = StyleSheet.create(theme => ({
 		alignItems: "center",
 		borderBottomWidth: 1,
 		borderBottomColor: theme.colors.border,
-		backgroundColor: theme.colors.background.main,
+		backgroundColor: theme.colors.background.paper,
 	},
 	header: {
 		backgroundColor: theme.colors.background.default,
@@ -137,5 +139,9 @@ const styles = StyleSheet.create(theme => ({
 		paddingHorizontal: theme.spacing(1),
 		paddingVertical: theme.spacing(0.5),
 		fontSize: 14,
+	},
+	legendList: {
+		borderRadius: theme.spacing(8),
+		borderColor: theme.colors.border,
 	},
 }));

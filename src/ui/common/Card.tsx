@@ -10,10 +10,18 @@ export interface CardProps extends ViewProps {
 	variant?: CardVariant;
 	color?: CardColor;
 	size?: CardSize;
+	borderLeftColor?: CardColor | string | any;
 }
 
 const Card = forwardRef<View, CardProps>(function Card(
-	{ variant = "contained", color = "primary", size = "medium", children, ...props },
+	{
+		variant = "contained",
+		color = "primary",
+		size = "medium",
+		borderLeftColor,
+		children,
+		...props
+	},
 	ref
 ) {
 	styles.useVariants({
@@ -23,7 +31,22 @@ const Card = forwardRef<View, CardProps>(function Card(
 	});
 
 	return (
-		<View {...props} ref={ref} style={[styles.card, props.style]}>
+		<View
+			{...props}
+			ref={ref}
+			style={[
+				styles.card,
+				props.style,
+				borderLeftColor && {
+					borderLeftColor: borderLeftColor,
+					borderLeftWidth: 5,
+					shadowColor: "transparent",
+					shadowOffset: { width: 0, height: 0 },
+					shadowOpacity: 0,
+					shadowRadius: 0,
+				},
+			]}
+		>
 			{children}
 		</View>
 	);

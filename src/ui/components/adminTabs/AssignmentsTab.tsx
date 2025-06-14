@@ -1,6 +1,12 @@
 // src/ui/components/admin/AssignmentsTab.tsx
 import React, { useState } from "react";
-import { ScrollView, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import {
+	DimensionValue,
+	ScrollView,
+	TouchableOpacity,
+	useWindowDimensions,
+	View,
+} from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import Typography from "@/ui/common/Typography";
 import { Button, Card, ModalContainer } from "@/ui";
@@ -36,7 +42,7 @@ export default function AssignmentsTab({
 
 	const { width } = useWindowDimensions();
 	const columns = width > 1200 ? 3 : width > 850 ? 2 : 1;
-	const cardWidth = `${100 / columns - 3}%`; // небольшой отступ
+	const cardWidth: DimensionValue = `${100 / columns - 3}%`; // небольшой отступ
 	const [manyColumns, setManyColumns] = useState<boolean>(false);
 
 	// Состояния для управления развернутыми/свернутыми элементами
@@ -141,9 +147,9 @@ export default function AssignmentsTab({
 								style={[
 									styles.card,
 									manyColumns && {
-										width: cardWidth,
 										margin: 8,
 										alignSelf: "flex-start",
+										width: cardWidth,
 									},
 								]}
 							>

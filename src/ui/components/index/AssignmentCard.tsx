@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { TouchableOpacity, View } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { Card, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Collapse from "@/ui/common/Collapse";
 import { useTranslation } from "react-i18next";
 import TaskTimer from "@/ui/components/date/TaskTimer";
-import { formatToDateTime } from "@/core/utils/dateUtils";
+import { formatToTime } from "@/core/utils/dateUtils";
 import RoomSection from "./RoomSection";
 import { AssignmentStatus, DailyAssignmentForUserResponse } from "@/api/client";
+import getStatusBadge from "@/ui/components/reports/StatusBadge";
 
 interface Props {
 	assignment: DailyAssignmentForUserResponse;
@@ -34,10 +35,26 @@ export default function AssignmentCard({
 	const [isExpanded, setIsExpanded] = useState(false);
 	const toggleExpand = () => setIsExpanded(prev => !prev);
 
+	const { theme } = useUnistyles();
+
 	return (
-		<Card style={styles.card}>
+		<Card
+			borderLeftColor={
+				assignment.status === "completed"
+					? theme.colors.success.main
+					: assignment.status === "in_progress"
+						? theme.colors.progress.main
+						: assignment.status === "partially_completed"
+							? theme.colors.warning.main
+							: assignment.status === "not_started"
+								? theme.colors.not_started.main
+								: null
+			}
+			variant={"contained"}
+			style={styles.card}
+		>
 			<TouchableOpacity style={styles.cardHeader} onPress={toggleExpand}>
-				<View style={styles.wrappableText}>
+				<View style={[styles.wrappableText, styles.dataContainer]}>
 					<View style={styles.headerWithIcon}>
 						<FontAwesome5
 							name={isExpanded ? "angle-down" : "angle-right"}
@@ -45,18 +62,12 @@ export default function AssignmentCard({
 							color={styles.collapseIcon.color}
 						/>
 						<Typography variant="h5" style={styles.wrappableText} numberOfLines={0}>
-							{assignment.location.name} - {formatToDateTime(assignment.date)}
+							{assignment.location.name}
 						</Typography>
 					</View>
 					<Typography variant="body1" style={styles.wrappableText} numberOfLines={0}>
 						{t("components.dailyAssignmentsList.address")}:{" "}
 						{assignment.location.address}
-					</Typography>
-					<Typography variant="subtitle2" style={styles.wrappableText}>
-						{t("admin.assignmentDetails")}
-					</Typography>
-					<Typography style={styles.wrappableText} numberOfLines={0}>
-						{t("admin.date")}: {formatToDateTime(assignment.date)}
 					</Typography>
 					{assignment.admin_note && (
 						<Typography style={styles.wrappableText} numberOfLines={0}>
@@ -68,6 +79,15 @@ export default function AssignmentCard({
 							{t("admin.userNote")}: {assignment.user_note}
 						</Typography>
 					)}
+					<View style={styles.container}>
+						<View style={styles.timeContainer}>
+							<FontAwesome5 name={"clock"} size={16} color={styles.clockIcon.color} />
+							<Typography color={styles.clockIcon.color}>
+								{formatToTime(assignment.date)}
+							</Typography>
+						</View>
+						<Typography>{getStatusBadge(assignment.status)}</Typography>
+					</View>
 
 					{(assignment.status === AssignmentStatus.completed ||
 						assignment.status === AssignmentStatus.partially_completed ||
@@ -111,6 +131,12 @@ const styles = StyleSheet.create(theme => ({
 		marginBottom: theme.spacing(2),
 		padding: theme.spacing(2),
 	},
+	borderLeftColor: {
+		borderLeftColor: theme.colors.success.main,
+	},
+	dataContainer: {
+		gap: theme.spacing(1),
+	},
 	cardHeader: {
 		flexDirection: "row",
 		justifyContent: "space-between",
@@ -141,5 +167,17 @@ const styles = StyleSheet.create(theme => ({
 		fontStyle: "italic",
 		color: theme.colors.text.secondary,
 		marginVertical: theme.spacing(1),
+	},
+	timeContainer: {
+		flexDirection: "row",
+		gap: theme.spacing(1),
+		alignItems: "center",
+	},
+	container: {
+		flexDirection: "row",
+		gap: theme.spacing(1),
+	},
+	clockIcon: {
+		color: theme.colors.text.disabled,
 	},
 }));
