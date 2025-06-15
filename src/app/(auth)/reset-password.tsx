@@ -1,16 +1,17 @@
 // src/screens/reset-password.tsx
 import { Button, Card, Typography } from "@/ui";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useForgetPassword } from "@/api/auth";
 import { useRef, useState } from "react";
 import { StyleSheet } from "react-native-unistyles";
 import PasswordInputs, { PasswordInputsRef } from "@/ui/components/passwords/2PasswordInputs";
 import { View } from "react-native";
-import { clearTokens, saveTokens } from "@/core/hooks/shared/tokens";
-import useAuth from "@/core/context/AuthContext";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/core/auth";
 
 export default function ResetPassword() {
+	const router = useRouter();
+
 	const { t } = useTranslation();
 	const params = useLocalSearchParams();
 	const token = typeof params.token === "string" ? params.token : params.token?.[0] || "";
@@ -19,13 +20,10 @@ export default function ResetPassword() {
 	const passwordInputsRef = useRef<PasswordInputsRef>(null);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-	const { checkToken } = useAuth();
+	const { onLogin } = useAuth();
 
-	const ForgetPasswordMutation = useForgetPassword({
+	const forgetPasswordMutation = useForgetPassword({
 		mutation: {
-			onSuccess: () => {
-				console.log("success");
-			},
 			onError: error => {
 				console.log("error", error);
 				setErrorMessage("Failed to reset password. Please try again.");
@@ -43,17 +41,12 @@ export default function ResetPassword() {
 
 			if (validationResult.isValid) {
 				// Если валидация успешна, отправляем запрос
-				const result = await ForgetPasswordMutation.mutateAsync({
+				const result = await forgetPasswordMutation.mutateAsync({
 					data: { password: validationResult.password, token },
 				});
-				console.log(result);
-				if (result.access_token) {
-					await clearTokens();
-					await saveTokens(result.access_token, result.refresh_token);
-					const isValid = await checkToken();
-					if (isValid) {
-						router.replace("/");
-					}
+				const isValid = await onLogin(result);
+				if (isValid) {
+					router.replace("/");
 				}
 			}
 		}
@@ -71,17 +64,35 @@ export default function ResetPassword() {
 					placeholder2={t("auth.confirmPassword")}
 					ref={passwordInputsRef}
 					minLength={8}
-					statusMessages={{
-						success: ForgetPasswordMutation.isSuccess ? t("common.success") : null,
-						processing: ForgetPasswordMutation.isPending ? t("common.loading") : null,
-						error: errorMessage,
-					}}
 				/>
+
+				{!!(
+					errorMessage ||
+					forgetPasswordMutation.isSuccess ||
+					forgetPasswordMutation.isPending
+				) && (
+					<Typography
+						style={styles.statusMessage}
+						color={
+							errorMessage
+								? "error"
+								: forgetPasswordMutation.isSuccess
+									? "success"
+									: "text.primary"
+						}
+					>
+						{errorMessage
+							? errorMessage
+							: forgetPasswordMutation.isSuccess
+								? t("common.success")
+								: t("common.loading")}
+					</Typography>
+				)}
 
 				<Button
 					variant={"contained"}
 					onPress={handleButtonClick}
-					disabled={ForgetPasswordMutation.isPending}
+					disabled={forgetPasswordMutation.isPending}
 					style={styles.button}
 				>
 					{t("components.usersList.resetPassword")}
@@ -110,5 +121,8 @@ const styles = StyleSheet.create(theme => ({
 	title: {
 		textAlign: "center",
 		marginBottom: theme.spacing(3),
+	},
+	statusMessage: {
+		marginVertical: theme.spacing(0.5),
 	},
 }));

@@ -11,3 +11,5 @@ console.log("API URL:", ApiUrl);
 if (!ApiUrl) {
 	console.error("API URL is not defined!");
 }
+
+export const NOT_REFRESH_TOKEN_URLS = ["/auth/refresh_token", "/auth/logout", "/auth/new_login"];

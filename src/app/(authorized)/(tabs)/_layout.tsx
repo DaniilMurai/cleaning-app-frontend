@@ -1,14 +1,13 @@
 import { Tabs } from "expo-router";
 import { getTabBarIcon } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { useIsAdmin } from "@/core/context/AuthContext";
 import { View } from "react-native";
 import LanguageSwitcher from "@/ui/components/settings/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
+import { useIsAdmin } from "@/core/auth";
 
 export default function TabsLayout() {
 	const isAdmin = useIsAdmin();
-	console.log("isAdmin:", isAdmin);
 
 	const { t } = useTranslation();
 	return (

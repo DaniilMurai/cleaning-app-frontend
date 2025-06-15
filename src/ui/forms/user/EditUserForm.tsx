@@ -9,9 +9,9 @@ import Typography from "@/ui/common/Typography";
 import { roleOptions, statusOptions } from "@/core/helpers/Role-StatusOptions";
 import { StyleSheet } from "react-native-unistyles";
 import { UserRole, UserSchema, UserStatus } from "@/api/admin";
-import { useIsSuperAdmin } from "@/core/context/AuthContext";
 import CustomPicker from "@/ui/common/Picker";
 import { useTranslation } from "react-i18next";
+import { useIsSuperAdmin } from "@/core/auth";
 
 interface EditUserFormProps {
 	user: UserSchema;

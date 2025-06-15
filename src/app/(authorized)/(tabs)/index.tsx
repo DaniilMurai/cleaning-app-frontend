@@ -11,7 +11,6 @@ import {
 	useUpdateDailyAssignmentStatus,
 	useUpdateReport,
 } from "@/api/client";
-import useAuth from "@/core/context/AuthContext";
 import ReportForm from "@/ui/forms/common/ReportForm";
 import AssignmentCard from "@/ui/components/index/AssignmentCard";
 import { formatToDate, getFormatedDate } from "@/core/utils/dateUtils";
@@ -19,9 +18,10 @@ import { useTranslation } from "react-i18next";
 import Calendar from "@/ui/components/user/calendar/Calendar";
 import { useLanguage } from "@/core/context/LanguageContext";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { useCurrentUser } from "@/core/auth";
 
 export default function DailyAssignmentsList() {
-	const { user } = useAuth();
+	const user = useCurrentUser();
 	const { t } = useTranslation();
 	const {
 		data: dailyAssignmentsAndReports,

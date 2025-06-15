@@ -5,12 +5,11 @@ import Input from "@/ui/common/Input";
 import React, { useRef, useState } from "react";
 import { Button } from "@/ui";
 import { useActivate } from "@/api/auth";
-import { router, useLocalSearchParams } from "expo-router";
-import { clearTokens, saveTokens } from "@/core/hooks/shared/tokens";
-import useAuth from "@/core/context/AuthContext";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import PasswordInputs, { PasswordInputsRef } from "@/ui/components/passwords/2PasswordInputs";
 import { StyleSheet } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/core/auth";
 
 export default function Activate() {
 	const { t } = useTranslation();
@@ -21,7 +20,9 @@ export default function Activate() {
 
 	const passwordInputsRef = useRef<PasswordInputsRef>(null);
 
-	const { checkToken } = useAuth();
+	const { onLogin } = useAuth();
+
+	const router = useRouter();
 
 	const handleActivate = async () => {
 		// Очищаем предыдущие ошибки
@@ -44,14 +45,9 @@ export default function Activate() {
 							token: String(token),
 						},
 					});
-					console.log(result);
-					if (result.access_token) {
-						await clearTokens();
-						await saveTokens(result.access_token, result.refresh_token);
-						const isValid = await checkToken();
-						if (isValid) {
-							router.replace("/");
-						}
+					const isValid = await onLogin(result);
+					if (isValid) {
+						router.replace("/");
 					}
 				}
 			}

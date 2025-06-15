@@ -9,6 +9,8 @@ import { UserUpdatePassword } from "@/api/users";
 import PasswordInputs, { PasswordInputsRef } from "@/ui/components/passwords/2PasswordInputs";
 import { useTranslation } from "react-i18next";
 import PasswordInput from "@/ui/components/passwords/PasswordInput";
+import FormHelper from "@/ui/forms/common/FormHelper";
+import { usePasswordValidator } from "@/core/validators";
 
 interface EditUserFormProps {
 	onClose: () => void;
@@ -30,8 +32,10 @@ export default function UpdateCurrentUserPasswordForm({
 
 	const { t } = useTranslation();
 
+	const [password, setPassword] = useState("");
 	const passwordInputsRef = useRef<PasswordInputsRef>(null);
-	const passwordInputRef = useRef<PasswordInputsRef>(null);
+
+	const validatePassword = usePasswordValidator(1);
 
 	const handleSubmit = () => {
 		// Сбросить ошибки
@@ -41,13 +45,13 @@ export default function UpdateCurrentUserPasswordForm({
 		});
 
 		// Валидация нового пароля через PasswordInputs компонент
-		if (passwordInputsRef.current && passwordInputRef.current) {
-			const result1 = passwordInputRef.current.validate();
+		if (passwordInputsRef.current) {
+			const result1 = !validatePassword(password);
 			const result2 = passwordInputsRef.current.validate();
-			if (result1.isValid && result2.isValid) {
+			if (result1 && result2.isValid) {
 				// Обновляем состояние formData новым паролем и отправляем данные
 				const updatedData = {
-					old_password: result1.password,
+					old_password: password,
 					new_password: result2.password,
 				};
 
@@ -65,8 +69,8 @@ export default function UpdateCurrentUserPasswordForm({
 
 			<PasswordInput
 				placeholder={t("auth.oldPassword")}
-				ref={passwordInputRef}
-				minLength={1}
+				value={password}
+				onChangeText={setPassword}
 			/>
 
 			<PasswordInputs
@@ -74,16 +78,17 @@ export default function UpdateCurrentUserPasswordForm({
 				placeholder2={t("auth.confirmPassword")}
 				ref={passwordInputsRef}
 				minLength={8}
-				statusMessages={{
-					error: formErrors.new_password || null,
-				}}
 			/>
 
-			{error ? (
-				<Typography variant={"body1"} color={"error"} style={styles.errorText}>
+			{!!formErrors.new_password && (
+				<FormHelper color={"error"}>{formErrors.new_password}</FormHelper>
+			)}
+
+			{!!error && (
+				<Typography color={"error"} style={styles.errorText}>
 					{error}
 				</Typography>
-			) : null}
+			)}
 
 			<View style={styles.buttonsContainer}>
 				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>

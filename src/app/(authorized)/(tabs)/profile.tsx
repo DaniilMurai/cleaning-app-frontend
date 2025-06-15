@@ -3,21 +3,23 @@ import { StyleSheet } from "react-native-unistyles";
 import Typography from "@/ui/common/Typography";
 import { useState } from "react";
 import { Button, Card, ModalContainer } from "@/ui";
-import useAuth from "@/core/context/AuthContext";
-import { UpdateUserData, UserUpdatePassword } from "@/api/users";
+import { UpdateUserData, useGetCurrentUser, UserUpdatePassword } from "@/api/users";
 import UpdateCurrentUserForm from "@/ui/forms/user/UpdateCurrentUserForm";
 import { useCurrentUserMutations } from "@/core/hooks/mutations/useCurrentUserMutations";
 import UpdateCurrentUserPasswordForm from "@/ui/forms/user/UpdateCurrentUserPasswordForm";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import SettingsModal from "@/ui/components/settings/SettingsModal";
+import { useAuth } from "@/core/auth";
 
 export default function ProfilePage() {
 	const { t } = useTranslation();
 
 	const [isEditing, setIsEditing] = useState(false);
 	const [isChangingPassword, setIsChangingPassword] = useState(false);
-	const { logout, user, refreshUserData } = useAuth();
+	const { onLogout } = useAuth();
+	const userQuery = useGetCurrentUser();
+
 	const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
 	const [logoutError, setLogoutError] = useState("");
@@ -26,7 +28,7 @@ export default function ProfilePage() {
 
 	const handleLogout = async () => {
 		try {
-			await logout();
+			await onLogout();
 		} catch (error) {
 			setLogoutError("Couldn't log out: " + error);
 		}
@@ -46,7 +48,7 @@ export default function ProfilePage() {
 			setIsChangingPassword(false);
 			setChangePasswordError(""); // Clear error on success
 		},
-		refetch: refreshUserData,
+		refetch: userQuery.refetch,
 	});
 
 	const handleEditSubmit = async (userData: Partial<UpdateUserData>) => {
@@ -66,6 +68,8 @@ export default function ProfilePage() {
 			setChangePasswordError("Failed to update user password: " + error);
 		}
 	};
+
+	const user = userQuery.data;
 
 	return (
 		<View style={styles.container}>

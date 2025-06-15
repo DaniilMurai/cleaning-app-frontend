@@ -1,8 +1,11 @@
 import qs from "qs";
 import Axios, { AxiosError, AxiosRequestConfig } from "axios";
-import { ApiUrl } from "@/constants";
-import { clearTokens, getTokens, refreshAccessToken } from "@/core/hooks/shared/tokens";
-import NavigationService from "@/core/services/navigationService";
+import { ApiUrl, NOT_REFRESH_TOKEN_URLS } from "@/constants";
+import { AccessTokenStorage, RefreshTokenStorage } from "@/core/auth/storage";
+import ConcurrentActionHandler from "@/features/ConcurrentActionHandler";
+import { TokenPair } from "@/api/auth";
+import { removeTokens, updateTokens } from "@/core/auth/helpers";
+import { OnAuthChangeCallbacks } from "@/core/auth";
 
 export const AXIOS_INSTANCE = Axios.create({
 	baseURL: ApiUrl,
@@ -17,42 +20,70 @@ AXIOS_INSTANCE.defaults.params = {};
 
 // Интерцептор для добавления access-токена в заголовки
 AXIOS_INSTANCE.interceptors.request.use(async config => {
-	const tokens = await getTokens();
-	if (tokens.accessToken) {
-		config.headers.Authorization = `Bearer ${tokens.accessToken}`;
+	const accessToken = await AccessTokenStorage.get();
+	if (accessToken && !("Authorization" in config.headers)) {
+		config["headers"]["Authorization"] = accessToken;
 	}
 	return config;
 });
 
+const refreshTokenHandler = new ConcurrentActionHandler();
+
 AXIOS_INSTANCE.interceptors.response.use(
 	response => response,
-	async error => {
-		const originalRequest = error.config;
+	async originalError => {
+		const originalRequest = { ...originalError.config };
 
 		// Проверяем, что это ошибка авторизации и запрос еще не повторялся
-		if (error.response?.status === 401 && !originalRequest._retry) {
-			originalRequest._retry = true;
+		if (
+			originalError.response?.status === 401 &&
+			!NOT_REFRESH_TOKEN_URLS.includes(originalRequest.url)
+		) {
+			if (!originalRequest._retry) {
+				originalRequest._retry = true;
+				const refreshToken = await RefreshTokenStorage.get();
+				if (refreshToken) {
+					try {
+						const data = await refreshTokenHandler
+							.execute(async () => {
+								console.log("refreshing token...");
+								const result = await AXIOS_INSTANCE<TokenPair>({
+									url: `/auth/refresh_tokens`,
+									method: "POST",
+									data: {
+										refresh_token: refreshToken,
+									},
+									cancelToken: originalRequest.cancelToken,
+								});
 
-			try {
-				const newAccessToken = await refreshAccessToken();
-				if (newAccessToken) {
-					originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-					return AXIOS_INSTANCE(originalRequest);
-				} else {
-					// Если не удалось получить новый токен
-					await clearTokens();
-					NavigationService.navigate("/Login");
+								console.log("token refreshed");
 
-					return Promise.reject(error);
+								return result;
+							})
+							.then(({ data }) => data);
+
+						await updateTokens(data);
+						await Promise.resolve(OnAuthChangeCallbacks.onTokenRefreshed(data));
+						delete originalRequest.headers["Authorization"];
+						return await AXIOS_INSTANCE(originalRequest);
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					} catch (refreshTokenError: any) {
+						if (refreshTokenError?.response?.status !== 401) {
+							console.error(
+								"An error occurred while refreshing token",
+								refreshTokenError
+							);
+							return Promise.reject(refreshTokenError);
+						} else {
+							console.log("Unauthorised while refreshing token. Logging out");
+						}
+					}
 				}
-			} catch (refreshError) {
-				await clearTokens();
-				NavigationService.navigate("/Login");
-				return Promise.reject(refreshError);
 			}
+			await removeTokens();
+			await Promise.resolve(OnAuthChangeCallbacks.onTokenRefreshFailed());
 		}
-
-		return Promise.reject(error);
+		return Promise.reject(originalError);
 	}
 );
 

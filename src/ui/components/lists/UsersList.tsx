@@ -1,12 +1,12 @@
 // src/components/admin/UsersList.tsx
-import { useWindowDimensions, View } from "react-native";
+import { DimensionValue, useWindowDimensions, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import Card from "@/ui/common/Card";
 import Typography from "@/ui/common/Typography";
 import DropdownMenu from "@/ui/common/DropdownMenu";
 import { UserSchema } from "@/api/admin";
 import { useTranslation } from "react-i18next";
-import { useIsSuperAdmin } from "@/core/context/AuthContext";
+import { useIsSuperAdmin } from "@/core/auth";
 
 interface UsersListProps {
 	users: UserSchema[];
@@ -30,7 +30,7 @@ export default function UsersList({
 
 	const { width } = useWindowDimensions();
 	const columns = width > 920 ? 3 : width > 835 ? 2 : 1;
-	const cardWidth = `${100 / columns - 3}%`; // небольшой отступ
+	const cardWidth: DimensionValue = `${100 / columns - 3}%`; // небольшой отступ
 
 	return (
 		<View

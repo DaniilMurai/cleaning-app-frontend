@@ -63,6 +63,10 @@ const themedColors = {
 		divider: "rgba(0, 0, 0, 0.12)",
 		shadow: "rgba(0, 0, 0, 0.1)", // Добавлено
 		border: "#e0e0e0", // Добавлено
+		disabled: {
+			background: "rgba(0, 0, 0, 0.12)",
+			text: "rgba(0, 0, 0, 0.26)",
+		},
 	},
 	dark: {
 		primary: {
@@ -127,6 +131,10 @@ const themedColors = {
 		divider: "rgba(255, 255, 255, 0.12)",
 		shadow: "rgba(0, 0, 0, 0.3)", // Добавлено
 		border: "#444444", // Добавлено
+		disabled: {
+			background: "rgba(255, 255, 255, 0.12)",
+			text: "rgba(255, 255, 255, 0.3)",
+		},
 	},
 };
 

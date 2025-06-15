@@ -30,6 +30,7 @@ const Button = forwardRef<View, ButtonProps>(function Button(
 		wrapText = true,
 		loading = false,
 		spinnerColor,
+		disabled,
 		...props
 	},
 	ref
@@ -38,11 +39,13 @@ const Button = forwardRef<View, ButtonProps>(function Button(
 		size,
 		variant,
 		color,
+		disabled: disabled ?? false,
 	});
 
 	return (
 		<Pressable
 			{...props}
+			disabled={disabled}
 			ref={ref}
 			style={state => [
 				styles.button,
@@ -104,6 +107,10 @@ const styles = StyleSheet.create((theme, rt) => ({
 				primary: {},
 				secondary: {},
 			},
+			disabled: {
+				true: {},
+				false: {},
+			},
 		},
 		compoundVariants: [
 			{
@@ -148,6 +155,20 @@ const styles = StyleSheet.create((theme, rt) => ({
 				variant: "contained",
 				styles: {
 					backgroundColor: theme.colors.secondary.main,
+				},
+			},
+			{
+				variant: "outlined",
+				disabled: true,
+				styles: {
+					borderColor: theme.colors.disabled.background,
+				},
+			},
+			{
+				variant: "contained",
+				disabled: true,
+				styles: {
+					backgroundColor: theme.colors.disabled.background,
 				},
 			},
 		],
@@ -228,6 +249,34 @@ const styles = StyleSheet.create((theme, rt) => ({
 				variant: "contained",
 				styles: {
 					color: theme.colors.secondary.text,
+				},
+			},
+			{
+				variant: "text",
+				disabled: true,
+				styles: {
+					color: theme.colors.disabled.text,
+				},
+			},
+			{
+				variant: "outlined",
+				disabled: true,
+				styles: {
+					color: theme.colors.disabled.text,
+				},
+			},
+			{
+				variant: "tint",
+				disabled: true,
+				styles: {
+					color: theme.colors.disabled.text,
+				},
+			},
+			{
+				variant: "contained",
+				disabled: true,
+				styles: {
+					color: theme.colors.disabled.text,
 				},
 			},
 		],

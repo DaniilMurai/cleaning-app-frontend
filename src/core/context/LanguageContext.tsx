@@ -63,7 +63,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 	};
 
 	if (isLoading) {
-		// Можно вернуть загрузчик или null
 		return <Loading />;
 	}
 

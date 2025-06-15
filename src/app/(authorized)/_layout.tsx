@@ -1,27 +1,17 @@
 import { Redirect, Stack } from "expo-router";
-import useAuth from "@/core/context/AuthContext";
 import Loading from "@/ui/common/Loading";
+import { useAuth } from "@/core/auth";
 
 export default function AuthorizedLayout() {
-	const { token, loading, user } = useAuth();
+	const { isLoaded, isAuthorised } = useAuth();
 
-	if (loading) {
-		console.log("Loading...");
+	if (!isLoaded) {
 		return <Loading />;
 	}
 
-	if (!token) {
-		console.log("No token: " + token);
+	if (!isAuthorised) {
+		console.log("Unauthorised, redirecting to login");
 		return <Redirect href={"/Login"} />;
-	} else {
-		console.log("Token in authorized layout: " + token);
-	}
-
-	if (!user) {
-		console.log("No user: " + user);
-		// logout();
-	} else {
-		console.log("User in authorized layout: " + user.nickname);
 	}
 
 	return (

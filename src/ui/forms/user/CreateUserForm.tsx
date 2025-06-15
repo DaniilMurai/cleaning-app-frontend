@@ -8,8 +8,8 @@ import { View } from "react-native";
 import { Button } from "@/ui";
 import { StyleSheet } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
-import { useIsSuperAdmin } from "@/core/context/AuthContext";
 import CustomPicker from "@/ui/common/Picker";
+import { useIsSuperAdmin } from "@/core/auth";
 
 interface CreateUserFormProps {
 	onSubmit: (userData: RegisterUserData) => void;

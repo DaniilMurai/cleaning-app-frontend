@@ -10,12 +10,6 @@ import { TouchableOpacity, View } from "react-native";
 export interface PasswordInputsProps {
 	onValidate?: (result: PasswordValidationResult) => void;
 	minLength?: number;
-	statusMessages?: {
-		success?: string | null;
-		processing?: string | null;
-		error?: string | null;
-	};
-	style?: any;
 	placeholder1?: string;
 	placeholder2?: string;
 }
@@ -27,10 +21,7 @@ export interface PasswordInputsRef {
 }
 
 const PasswordInputs = forwardRef<PasswordInputsRef, PasswordInputsProps>(
-	(
-		{ style, onValidate, minLength = 8, statusMessages = {}, placeholder1, placeholder2 },
-		ref
-	) => {
+	({ onValidate, minLength = 8, placeholder1, placeholder2 }, ref) => {
 		const [newPassword, setNewPassword] = useState<string>("");
 		const [repeatedPassword, setRepeatPassword] = useState<string>("");
 		const [error, setError] = useState<string>("");
@@ -125,22 +116,6 @@ const PasswordInputs = forwardRef<PasswordInputsRef, PasswordInputsProps>(
 
 				{error ? (
 					<Typography style={[styles.text, styles.errorText]}>{error}</Typography>
-				) : null}
-
-				{statusMessages.error && !error ? (
-					<Typography style={[styles.text, styles.errorText]}>
-						{statusMessages.error}
-					</Typography>
-				) : null}
-
-				{statusMessages.success ? (
-					<Typography style={[styles.text, styles.successText]}>
-						{statusMessages.success}
-					</Typography>
-				) : null}
-
-				{statusMessages.processing ? (
-					<Typography style={styles.text}>{statusMessages.processing}</Typography>
 				) : null}
 			</>
 		);

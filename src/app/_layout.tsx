@@ -1,13 +1,22 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useUnistyles } from "react-native-unistyles";
 
-import { Stack } from "expo-router";
-import { AuthProvider } from "@/core/context/AuthContext";
+import { Slot } from "expo-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { LanguageProvider } from "@/core/context/LanguageContext";
 import { EventProvider } from "react-native-outside-press";
 import { PortalProvider } from "@/features/Portal";
 import PopperContextProvider from "@/ui/components/Popper/PopperContext";
+import { AuthProvider, useAuth } from "@/core/auth";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
+
+SplashScreen.preventAutoHideAsync();
+
+SplashScreen.setOptions({
+	duration: 1000,
+	fade: true,
+});
 
 export default function RootLayout() {
 	const { theme, rt } = useUnistyles();
@@ -16,38 +25,43 @@ export default function RootLayout() {
 	return (
 		<QueryClientProvider client={queryClient}>
 			<AuthProvider>
-				<ThemeProvider
-					value={{
-						...(rt.themeName === "dark" ? DarkTheme : DefaultTheme),
-						colors: {
-							primary: theme.colors.primary.main,
-							background: theme.colors.background.main,
-							card: theme.colors.background.paper,
-							text: theme.colors.text.primary,
-							border: theme.colors.divider,
-							notification: theme.colors.error.main,
-						},
-					}}
-				>
-					<EventProvider>
-						<PortalProvider>
-							<PopperContextProvider>
-								<RootLayoutNav />
-							</PopperContextProvider>
-						</PortalProvider>
-					</EventProvider>
-				</ThemeProvider>
+				<LanguageProvider>
+					<HideSplash />
+					<ThemeProvider
+						value={{
+							...(rt.themeName === "dark" ? DarkTheme : DefaultTheme),
+							colors: {
+								primary: theme.colors.primary.main,
+								background: theme.colors.background.main,
+								card: theme.colors.background.paper,
+								text: theme.colors.text.primary,
+								border: theme.colors.divider,
+								notification: theme.colors.error.main,
+							},
+						}}
+					>
+						<EventProvider>
+							<PortalProvider>
+								<PopperContextProvider>
+									<Slot />
+								</PopperContextProvider>
+							</PortalProvider>
+						</EventProvider>
+					</ThemeProvider>
+				</LanguageProvider>
 			</AuthProvider>
 		</QueryClientProvider>
 	);
 }
 
-function RootLayoutNav() {
-	return (
-		<LanguageProvider>
-			<Stack initialRouteName="(navigation)" screenOptions={{ headerShown: false }}>
-				<Stack.Screen name="(navigation)" options={{ headerShown: false }} />
-			</Stack>
-		</LanguageProvider>
-	);
+function HideSplash() {
+	const { isLoaded } = useAuth();
+
+	useEffect(() => {
+		if (isLoaded) {
+			SplashScreen.hideAsync();
+		}
+	}, [isLoaded]);
+
+	return null;
 }

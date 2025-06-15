@@ -29,6 +29,7 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="myapp"/>
         <data android:scheme="exp+cleaning-app-frontend"/>
+        <data android:scheme="exp+neuer-standard"/>
       </intent-filter>
     </activity>
   </application>
