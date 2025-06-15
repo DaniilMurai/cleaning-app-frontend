@@ -66,15 +66,19 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 					Filters
 				</Typography>
 				<View style={{ flexDirection: "row", gap: 8 }}>
-					<Button variant={"text"} style={styles.button} onPress={handleClear}>
+					<Button variant={"text"} onPress={handleClear}>
 						Clear All
 					</Button>
 					<Button
 						onPress={() => onChangeVisible(false)}
-						variant={"outlined"}
+						variant={"text"}
 						color={"secondary"}
 					>
-						Close
+						<FontAwesome5
+							name={"times"}
+							size={20}
+							color={styles.iconColorSecondary.color}
+						/>
 					</Button>
 				</View>
 			</View>
@@ -178,6 +182,9 @@ const styles = StyleSheet.create(theme => ({
 	},
 	iconColor: {
 		color: theme.colors.text.primary,
+	},
+	iconColorSecondary: {
+		color: theme.colors.secondary.main,
 	},
 	headerContainer: {
 		flexDirection: "row",

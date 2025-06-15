@@ -82,21 +82,31 @@ export default function TasksList({
 	};
 
 	return (
-		<Card size={"large"} style={{ flex: 1 }}>
+		<Card
+			size={"large"}
+			variant={"default"}
+			style={[
+				// styles.cardContainer,
+				{
+					maxHeight: "80%",
+					marginVertical: "auto",
+				},
+			]}
+		>
+			<View style={styles.headerContainer}>
+				<Button variant="contained">
+					<FontAwesome5
+						name="plus"
+						size={16}
+						color={styles.iconColor.color}
+						onPress={() => {
+							modal.openModal("createTask");
+						}}
+					/>
+					{/*+*/}
+				</Button>
+			</View>
 			<ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
-				<View style={styles.headerContainer}>
-					<Button variant="contained">
-						<FontAwesome5
-							name="plus"
-							size={16}
-							color={styles.iconColor.color}
-							onPress={() => {
-								modal.openModal("createTask");
-							}}
-						/>
-					</Button>
-				</View>
-
 				{tasks &&
 					tasks.map(task => (
 						<Card key={task.id} variant="outlined" style={styles.card}>
@@ -122,8 +132,8 @@ export default function TasksList({
 											);
 										}}
 									>
-										Добавить
-										{/*<FontAwesome5 name="link" size={14} />*/}
+										{/*Добавить*/}
+										<FontAwesome5 name="link" size={14} />
 									</Button>
 									<Button
 										variant="outlined"
@@ -194,10 +204,10 @@ export default function TasksList({
 							</Collapse>
 						</Card>
 					))}
-				<Button variant={"outlined"} style={styles.buttonExit} onPress={onClose}>
-					{t("common.close")}
-				</Button>
 			</ScrollView>
+			<Button variant={"outlined"} style={styles.buttonExit} onPress={onClose}>
+				{t("common.close")}
+			</Button>
 			<ModalContainer
 				visible={modal.modals.createTask}
 				onClose={() => modal.closeModal("createTask")}
@@ -241,6 +251,9 @@ export default function TasksList({
 }
 
 const styles = StyleSheet.create(theme => ({
+	cardContainer: {
+		backgroundColor: theme.colors.background.main,
+	},
 	scrollContainer: {
 		flex: 1,
 		maxHeight: "100%",

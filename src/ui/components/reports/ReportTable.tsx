@@ -6,7 +6,7 @@ import {
 } from "@/api/admin";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { Typography } from "@/ui";
 import { formatTime, formatToDate, formatToDateTime, formatToTime } from "@/core/utils/dateUtils";
 import { LegendList } from "@legendapp/list";
@@ -111,17 +111,25 @@ export default function ReportsTable({ reports, assignments, users = [], locatio
 	};
 
 	return (
-		<LegendList
-			data={data}
-			keyExtractor={item => item.id.toString()}
-			estimatedItemSize={48}
-			ListHeaderComponent={renderHeader}
-			renderItem={renderItem}
-			recycleItems
-			ListFooterComponent={<View style={{ height: 10 }} />}
-			onEndReached={getMoreReports}
-			onEndReachedThreshold={0.01}
-		/>
+		<ScrollView
+			horizontal
+			nestedScrollEnabled // Android: позволяет вертикальному и горизонтальному скроллам работать вместе
+			showsHorizontalScrollIndicator={false}
+			contentContainerStyle={{ width: "100%", minWidth: 118 * 7 }}
+		>
+			<LegendList
+				data={data}
+				keyExtractor={item => item.id.toString()}
+				estimatedItemSize={48}
+				// Ширина списка равна контенту, а не экрану
+				style={{ minWidth: 118 * 7 }}
+				ListHeaderComponent={renderHeader}
+				renderItem={renderItem}
+				recycleItems
+				onEndReached={getMoreReports}
+				onEndReachedThreshold={0.01}
+			/>
+		</ScrollView>
 	);
 }
 

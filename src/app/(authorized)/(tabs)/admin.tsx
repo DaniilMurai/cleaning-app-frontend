@@ -70,17 +70,6 @@ export default function AdminPage() {
 				/>
 			)}
 
-			{/*{activeTab === "tasks" && (*/}
-			{/*	<TasksTab*/}
-			{/*		tasks={adminData.tasks || []}*/}
-			{/*		rooms={adminData.rooms || []}*/}
-			{/*		locations={adminData.locations || []}*/}
-			{/*		roomTasks={adminData.roomTasks || []}*/}
-			{/*		taskMutation={mutations.taskMutation}*/}
-			{/*		roomTaskMutation={mutations.roomTaskMutation}*/}
-			{/*		modal={modal}*/}
-			{/*	/>*/}
-			{/*)}*/}
 			{activeTab === "reports" && (
 				<ReportsTab
 					assignments={adminData.dailyAssignments || []}
