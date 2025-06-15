@@ -49,8 +49,6 @@ export default function DailyAssignmentsList() {
 
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-	const [isVisibleCalendar, setIsVisibleCalendar] = useState<boolean>(false);
-
 	if (dailyAssignmentsAndReportsIsLoading) {
 		return <Loading />;
 	}
@@ -154,9 +152,8 @@ export default function DailyAssignmentsList() {
 
 	const DailyAssignmentsListRender = (): React.JSX.Element[] => {
 		if (!dailyAssignmentsAndReports) return [];
-		const timestamp = new Date();
 
-		const date = selectedDate ? getFormatedDate(selectedDate) : getFormatedDate(timestamp);
+		const date = selectedDate ? getFormatedDate(selectedDate) : getFormatedDate(new Date());
 		console.log("3 " + date);
 
 		return dailyAssignmentsAndReports
@@ -277,9 +274,10 @@ export default function DailyAssignmentsList() {
 
 	const assignments = DailyAssignmentsListRender();
 	const assignmentDates = getDailyAssignmentDates();
+
 	console.log("assignments " + assignments.length);
 	return (
-		<ScrollView style={styles.container}>
+		<ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
 			<View style={styles.page}>
 				<View style={styles.sidebar}>
 					<Calendar onConfirm={handleDateConfirm} assignedDates={assignmentDates} />
@@ -321,13 +319,15 @@ const styles = StyleSheet.create(theme => ({
 	container: {
 		flex: 1,
 		backgroundColor: theme.colors.background.main,
-		paddingVertical: theme.spacing(4),
+	},
+	contentContainer: {
+		paddingVertical: theme.spacing(2),
 		paddingHorizontal: theme.spacing(3),
 	},
 	tasksContainer: {
 		flex: 1,
-		padding: theme.spacing(2),
 		gap: theme.spacing(2),
+		margin: { xs: 0, md: theme.spacing(3) },
 	},
 	scrollContainer: {
 		flex: 1,
@@ -339,13 +339,14 @@ const styles = StyleSheet.create(theme => ({
 	page: {
 		flex: 1,
 		flexDirection: {
+			xs: "column",
 			sm: "column",
 			md: "row",
 		},
-		gap: theme.spacing(5),
+		gap: { sm: theme.spacing(0), md: theme.spacing(6) },
 	},
 	sidebar: {
-		flex: 0.5,
+		flex: { sm: 1, md: 0.5 },
 
 		alignSelf: "flex-start",
 		alignContent: "center",
@@ -357,11 +358,7 @@ const styles = StyleSheet.create(theme => ({
 		color: theme.colors.text.disabled,
 	},
 	dateTaskContainer: {
-		marginTop: {
-			xs: theme.spacing(8),
-			sm: theme.spacing(6),
-			md: theme.spacing(1),
-		},
+		marginTop: theme.spacing(2),
 	},
 	iconColor: {
 		color: theme.colors.primary.main,

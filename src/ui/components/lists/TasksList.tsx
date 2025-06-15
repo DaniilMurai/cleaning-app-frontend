@@ -94,6 +94,7 @@ export default function TasksList({
 								modal.openModal("createTask");
 							}}
 						/>
+						{/*+*/}
 					</Button>
 				</View>
 
@@ -122,8 +123,8 @@ export default function TasksList({
 											);
 										}}
 									>
-										Добавить
-										{/*<FontAwesome5 name="link" size={14} />*/}
+										{/*Добавить*/}
+										<FontAwesome5 name="link" size={14} />
 									</Button>
 									<Button
 										variant="outlined"
