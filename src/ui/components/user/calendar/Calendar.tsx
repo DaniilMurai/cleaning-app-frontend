@@ -73,11 +73,7 @@ const styles = StyleSheet.create(theme => ({
 		justifyContent: "center",
 		alignItems: "center",
 		width: "100%",
-		marginTop: {
-			xs: theme.spacing(2),
-			sm: theme.spacing(2),
-			md: theme.spacing(2),
-		},
+		marginTop: theme.spacing(0),
 		marginStart: {
 			xs: 0,
 			md: theme.spacing(6),

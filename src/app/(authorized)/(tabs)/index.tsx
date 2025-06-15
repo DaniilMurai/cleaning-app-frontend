@@ -374,7 +374,7 @@ const styles = StyleSheet.create(theme => ({
 	noAssignmentCard: {
 		paddingVertical: {
 			xs: theme.spacing(3),
-			sm: theme.spacing(8),
+			md: theme.spacing(8),
 		},
 		paddingHorizontal: theme.spacing(3),
 		width: "100%",
