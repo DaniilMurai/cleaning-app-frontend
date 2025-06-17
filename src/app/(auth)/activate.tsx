@@ -6,7 +6,7 @@ import React, { useRef, useState } from "react";
 import { Button } from "@/ui";
 import { useActivate } from "@/api/auth";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import PasswordInputs, { PasswordInputsRef } from "@/ui/components/passwords/2PasswordInputs";
+import PasswordInputs, { PasswordInputsRef } from "@/components/passwords/2PasswordInputs";
 import { StyleSheet } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/core/auth";

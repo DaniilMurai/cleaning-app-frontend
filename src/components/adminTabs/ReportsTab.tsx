@@ -8,9 +8,9 @@ import {
 	LocationResponse,
 	useGetReports,
 } from "@/api/admin";
-import ReportsTable from "@/ui/components/reports/ReportTable";
+import ReportsTable from "@/components/reports/ReportTable";
 import { useState } from "react";
-import SearchFilterPanel from "@/ui/components/reports/SearchFilterPanel";
+import SearchFilterPanel from "@/components/reports/SearchFilterPanel";
 
 interface Props {
 	users: AdminReadUser[];

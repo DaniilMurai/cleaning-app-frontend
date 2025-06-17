@@ -2,7 +2,7 @@ import { Tabs } from "expo-router";
 import { getTabBarIcon } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { View } from "react-native";
-import LanguageSwitcher from "@/ui/components/settings/LanguageSwitcher";
+import LanguageSwitcher from "@/components/settings/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 import { useIsAdmin } from "@/core/auth";
 

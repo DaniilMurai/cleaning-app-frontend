@@ -10,7 +10,7 @@ import { ScrollView, View } from "react-native";
 import { Typography } from "@/ui";
 import { formatTime, formatToDate, formatToDateTime, formatToTime } from "@/core/utils/dateUtils";
 import { LegendList } from "@legendapp/list";
-import getStatusBadge from "@/ui/components/reports/StatusBadge";
+import getStatusBadge from "@/components/reports/StatusBadge";
 
 interface Props {
 	reports: ReportResponse[];

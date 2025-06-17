@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { LanguageProvider } from "@/core/context/LanguageContext";
 import { EventProvider } from "react-native-outside-press";
 import { PortalProvider } from "@/features/Portal";
-import PopperContextProvider from "@/ui/components/Popper/PopperContext";
+import PopperContextProvider from "@/components/Popper/PopperContext";
 import { AuthProvider, useAuth } from "@/core/auth";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";

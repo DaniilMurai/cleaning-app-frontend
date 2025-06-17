@@ -6,9 +6,9 @@ import Card from "@/ui/common/Card";
 import Typography from "@/ui/common/Typography";
 import { StyleSheet } from "react-native-unistyles";
 import { UserUpdatePassword } from "@/api/users";
-import PasswordInputs, { PasswordInputsRef } from "@/ui/components/passwords/2PasswordInputs";
+import PasswordInputs, { PasswordInputsRef } from "@/components/passwords/2PasswordInputs";
 import { useTranslation } from "react-i18next";
-import PasswordInput from "@/ui/components/passwords/PasswordInput";
+import PasswordInput from "@/components/passwords/PasswordInput";
 import FormHelper from "@/ui/forms/common/FormHelper";
 import { usePasswordValidator } from "@/core/validators";
 

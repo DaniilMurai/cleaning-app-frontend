@@ -1,7 +1,7 @@
 // (auth)/_layout.tsx
 import { Stack } from "expo-router";
 import { View } from "react-native";
-import LanguageSwitcher from "@/ui/components/settings/LanguageSwitcher";
+import LanguageSwitcher from "@/components/settings/LanguageSwitcher";
 
 // Обязательный default export
 export default function AuthLayout() {

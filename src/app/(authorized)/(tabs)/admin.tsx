@@ -2,14 +2,14 @@
 import React, { useState } from "react";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import AdminTabs from "@/ui/components/adminTabs/AdminTabs";
-import LocationsTab from "@/ui/components/adminTabs/LocationsTab";
-import AssignmentsTab from "@/ui/components/adminTabs/AssignmentsTab";
+import AdminTabs from "@/components/adminTabs/AdminTabs";
+import LocationsTab from "@/components/adminTabs/LocationsTab/LocationsTab";
+import AssignmentsTab from "@/components/adminTabs/AssignmentsTab";
 import { useAdminData } from "@/core/hooks/admin/useAdminData";
 import useModals from "@/core/hooks/shared/useModals";
 import { useAdminMutations } from "@/core/hooks/mutations/useAdminMutations";
 import { useGetUsers } from "@/api/admin";
-import ReportsTab from "@/ui/components/adminTabs/ReportsTab";
+import ReportsTab from "@/components/adminTabs/ReportsTab";
 
 export default function AdminPage() {
 	const [activeTab, setActiveTab] = useState("locations");
@@ -58,7 +58,6 @@ export default function AdminPage() {
 			{activeTab === "locations" && (
 				<LocationsTab
 					locations={adminData.locations || []}
-					modal={modal}
 					rooms={adminData.rooms || []}
 					tasks={adminData.tasks || []}
 					roomTasks={adminData.roomTasks || []}

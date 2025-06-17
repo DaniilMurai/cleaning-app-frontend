@@ -5,11 +5,11 @@ import { Card, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Collapse from "@/ui/common/Collapse";
 import { useTranslation } from "react-i18next";
-import TaskTimer from "@/ui/components/date/TaskTimer";
+import TaskTimer from "@/ui/date/TaskTimer";
 import { formatToDate, formatToTime, getFormatedDate } from "@/core/utils/dateUtils";
 import RoomSection from "./RoomSection";
 import { AssignmentStatus, DailyAssignmentForUserResponse } from "@/api/client";
-import getStatusBadge from "@/ui/components/reports/StatusBadge";
+import getStatusBadge from "@/components/reports/StatusBadge";
 
 interface Props {
 	assignment: DailyAssignmentForUserResponse;

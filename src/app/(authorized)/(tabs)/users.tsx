@@ -7,7 +7,7 @@ import { useState } from "react";
 import { RegisterUserData, useGetUsers, UserSchema } from "@/api/admin";
 import EditUserForm from "@/ui/forms/user/EditUserForm";
 import CreateUserForm from "@/ui/forms/user/CreateUserForm";
-import UsersList from "@/ui/components/lists/UsersList";
+import UsersList from "@/components/lists/UsersList";
 import { useAdminUsersMutations } from "@/core/hooks/mutations/useAdminUsersMutations";
 import { FontAwesome5 } from "@expo/vector-icons";
 import GetLinkForm from "@/ui/forms/common/GetInviteLinkForm";

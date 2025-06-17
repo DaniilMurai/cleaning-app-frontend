@@ -1,5 +1,5 @@
 // src/ui/components/common/2PasswordInputs.tsx
-import Input from "../../common/Input";
+import Input from "../../ui/common/Input";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { StyleSheet } from "react-native-unistyles";
 import { Typography } from "@/ui";

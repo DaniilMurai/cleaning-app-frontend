@@ -9,7 +9,7 @@ import { useCurrentUserMutations } from "@/core/hooks/mutations/useCurrentUserMu
 import UpdateCurrentUserPasswordForm from "@/ui/forms/user/UpdateCurrentUserPasswordForm";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
-import SettingsModal from "@/ui/components/settings/SettingsModal";
+import SettingsModal from "@/components/settings/SettingsModal";
 import { useAuth } from "@/core/auth";
 
 export default function ProfilePage() {

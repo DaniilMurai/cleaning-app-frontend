@@ -6,7 +6,7 @@ import { Button, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { StyleSheet } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
-import DateInputModal from "@/ui/components/date/DateInputModal";
+import DateInputModal from "@/ui/date/DateInputModal";
 import { AssignmentStatus } from "@/api/client";
 import { formatTime } from "@/core/utils/dateUtils";
 

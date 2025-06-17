@@ -10,7 +10,7 @@ import Card from "@/ui/common/Card";
 import Loading from "@/ui/common/Loading";
 import { StyleSheet } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
-import PasswordInput from "@/ui/components/passwords/PasswordInput";
+import PasswordInput from "@/components/passwords/PasswordInput";
 import { useForm } from "@tanstack/react-form";
 import { usePasswordValidator } from "@/core/validators";
 

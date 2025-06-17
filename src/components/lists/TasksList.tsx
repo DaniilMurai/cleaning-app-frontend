@@ -2,7 +2,7 @@ import { LocationResponse, RoomResponse, RoomTaskResponse, TaskResponse } from "
 import { Button, Card, ModalContainer } from "@/ui";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
-import Typography from "../../common/Typography";
+import Typography from "../../ui/common/Typography";
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native-unistyles";
 import Collapse from "@/ui/common/Collapse";

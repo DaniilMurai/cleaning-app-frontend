@@ -12,10 +12,10 @@ import {
 	useUpdateReport,
 } from "@/api/client";
 import ReportForm from "@/ui/forms/common/ReportForm";
-import AssignmentCard from "@/ui/components/index/AssignmentCard";
+import AssignmentCard from "@/components/home/AssignmentCard";
 import { formatToDate, getFormatedDate } from "@/core/utils/dateUtils";
 import { useTranslation } from "react-i18next";
-import Calendar from "@/ui/components/user/calendar/Calendar";
+import Calendar from "@/components/user/calendar/Calendar";
 import { useLanguage } from "@/core/context/LanguageContext";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useCurrentUser } from "@/core/auth";

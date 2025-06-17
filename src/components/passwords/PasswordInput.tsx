@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { TouchableOpacity, View } from "react-native";
-import Input, { InputProps } from "../../common/Input";
+import Input, { InputProps } from "../../ui/common/Input";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { StyleSheet } from "react-native-unistyles";
 

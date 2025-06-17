@@ -18,7 +18,7 @@ import {
 } from "@/api/admin";
 import CustomPicker from "@/ui/common/Picker";
 import dayjs from "dayjs";
-import DateInput from "@/ui/components/date/DateInput";
+import DateInput from "@/ui/date/DateInput";
 
 interface Location {
 	id: number;
