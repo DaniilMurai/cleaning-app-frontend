@@ -38,19 +38,32 @@ export default function Calendar({ assignedDates, onConfirm }: Props) {
 
 		if (isPressed) {
 			// Стиль для нажатого дня
+			if (isAssigned) {
+				dayStyle = {
+					backgroundColor: theme.colors.primary.main,
+					borderColor: theme.colors.text.primary,
+				};
+				textStyle = { color: theme.colors.primary.text, fontSize: 14 };
+			} else {
+				dayStyle = {
+					borderColor: theme.colors.primary.main,
+				};
+				textStyle = { color: theme.colors.text.primary, fontSize: 14 };
+			}
 			dayStyle = {
-				backgroundColor: theme.colors.secondary.main,
+				borderWidth: 2,
+
 				borderRadius: theme.borderRadius(10),
+				...dayStyle,
 			};
-			textStyle = { color: theme.colors.primary.text, fontSize: 14 };
 		} else if (isToday) {
 			dayStyle = {
 				color: theme.colors.success.main,
-				backgroundColor: theme.colors.success.dark,
+				backgroundColor: theme.colors.primary.mainOpacity,
 				borderRadius: theme.borderRadius(10),
 			};
 			textStyle = {
-				color: theme.colors.primary.text,
+				color: theme.colors.text.primary,
 				fontSize: 14,
 			};
 		} else if (isAssigned) {

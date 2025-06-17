@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { DimensionValue, ScrollView, useWindowDimensions, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { Button, ModalContainer } from "@/ui";
+import { Button, ModalContainer, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { AdminReadUser, DailyAssignmentResponse, LocationResponse } from "@/api/admin";
 import {
@@ -12,6 +12,8 @@ import {
 } from "@/ui/forms/common/DailyAssignmentForms";
 import Calendar from "@/components/user/calendar/Calendar";
 import RenderDailyAssignments from "@/components/Assignment/RenderDailyAssignments";
+import { useLanguage } from "@/core/context/LanguageContext";
+import { useTranslation } from "react-i18next";
 
 interface AssignmentsTabProps {
 	locations: LocationResponse[];
@@ -32,6 +34,10 @@ export default function AssignmentsTab({
 	const columns = width > 1200 ? 3 : width > 850 ? 2 : 1;
 	const cardWidth: DimensionValue = `${100 / columns - 3}%`; // небольшой отступ
 	const [manyColumns, setManyColumns] = useState<boolean>(false);
+
+	const { currentLanguage } = useLanguage();
+
+	const { t } = useTranslation();
 
 	// Состояния для управления развернутыми/свернутыми элементами
 	const [selectedAssignment, setSelectedAssignment] = useState<DailyAssignmentResponse | null>();
@@ -106,23 +112,40 @@ export default function AssignmentsTab({
 				style={styles.scrollContainer}
 				contentContainerStyle={styles.scrollContentContainer}
 			>
-				<View>
-					<Calendar
-						assignedDates={dailyAssignments.map(assignment => assignment.date)}
-						onConfirm={date => setSelectedDate(date)}
-					/>
-				</View>
-				<View style={styles.renderDailyAssignmentContainer}>
-					<RenderDailyAssignments
-						dailyAssignments={dailyAssignments}
-						setSelectedAssignment={setSelectedAssignment}
-						selectedDate={selectedDate}
-						modal={modal}
-						users={users}
-						cardWidth={cardWidth}
-						locations={locations}
-						manyColumns={manyColumns}
-					/>
+				<View style={styles.page}>
+					{/* Календарь слева */}
+					<View style={styles.sidebar}>
+						<Calendar
+							assignedDates={dailyAssignments.map(assignment => assignment.date)}
+							onConfirm={date => setSelectedDate(date)}
+						/>
+					</View>
+
+					{/* Задачи справа */}
+					<View style={styles.tasksContainer}>
+						<View style={styles.dateTaskContainer}>
+							<Typography variant={"h5"}>{t("admin.tasks")}</Typography>
+							<Typography variant={"body1"} color={styles.dateText.color}>
+								{selectedDate
+									.toLocaleDateString(currentLanguage, {
+										weekday: "long",
+										day: "numeric",
+										month: "long",
+									})
+									.replace(/^./, str => str.toUpperCase())}
+							</Typography>
+						</View>
+						<RenderDailyAssignments
+							dailyAssignments={dailyAssignments}
+							setSelectedAssignment={setSelectedAssignment}
+							selectedDate={selectedDate}
+							modal={modal}
+							users={users}
+							cardWidth={cardWidth}
+							locations={locations}
+							manyColumns={manyColumns}
+						/>
+					</View>
 				</View>
 			</ScrollView>
 
@@ -141,20 +164,34 @@ const styles = StyleSheet.create(theme => ({
 		flex: 1,
 		padding: theme.spacing(2),
 	},
-	scrollContentContainer: {
+	page: {
+		flex: 1,
 		flexDirection: {
 			xs: "column",
 			sm: "column",
 			md: "row",
 		},
-		gap: { sm: theme.spacing(0), md: theme.spacing(6) },
+		gap: { xs: theme.spacing(2), sm: theme.spacing(0), md: theme.spacing(6) },
 	},
-
+	sidebar: {
+		flex: { sm: 1, md: 0.5 },
+		alignSelf: "flex-start",
+		alignContent: "center",
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	tasksContainer: {
+		flex: 1,
+		margin: { xs: 0, md: theme.spacing(3) },
+	},
+	scrollContentContainer: {
+		paddingVertical: theme.spacing(2),
+	},
 	headerContainer: {
 		flexDirection: "row-reverse",
 		margin: theme.spacing(2),
+		marginBottom: 0,
 	},
-
 	card: {
 		marginBottom: theme.spacing(2),
 		padding: theme.spacing(2),
@@ -191,5 +228,11 @@ const styles = StyleSheet.create(theme => ({
 
 	iconColor: {
 		color: theme.colors.primary.text,
+	},
+	dateText: {
+		color: theme.colors.text.disabled,
+	},
+	dateTaskContainer: {
+		marginBottom: theme.spacing(2),
 	},
 }));

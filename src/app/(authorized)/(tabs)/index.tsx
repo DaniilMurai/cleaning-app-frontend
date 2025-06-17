@@ -112,6 +112,7 @@ export default function DailyAssignmentsList() {
 					},
 				});
 			}
+			setReportId(reportid);
 			await dailyAssignmentsAndReportsRefetch(); //хз надо или не посмотрю
 
 			if (
@@ -129,7 +130,7 @@ export default function DailyAssignmentsList() {
 		if (!user || !startTime || !endTime || !reportId || !dailyAssignmentsAndReports) return;
 
 		if (startTime > endTime) return;
-		2;
+
 		try {
 			await updateReportMutation.mutateAsync({
 				params: { report_id: reportId },

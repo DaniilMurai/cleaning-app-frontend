@@ -37,22 +37,38 @@ export default function AssignmentCard({
 
 	const { theme } = useUnistyles();
 
+	const [status, setStatus] = useState<AssignmentStatus>(initialStatus || assignment.status);
+
+	const handleStatusChange = (
+		status: AssignmentStatus,
+		totalTime: number,
+		startTime: number | null,
+		endTime: number | null
+	) => {
+		setStatus(status);
+
+		if (onStatusChange) {
+			onStatusChange(status, totalTime, startTime, endTime);
+		}
+	};
+
+	const getBorderColor = (status: AssignmentStatus) => {
+		switch (status) {
+			case "completed":
+				return theme.colors.success.main;
+			case "in_progress":
+				return theme.colors.progress.main;
+			case "partially_completed":
+				return theme.colors.warning.main;
+			case "not_started":
+				return theme.colors.not_started.main;
+			default:
+				return null;
+		}
+	};
+
 	return (
-		<Card
-			borderLeftColor={
-				assignment.status === "completed"
-					? theme.colors.success.main
-					: assignment.status === "in_progress"
-						? theme.colors.progress.main
-						: assignment.status === "partially_completed"
-							? theme.colors.warning.main
-							: assignment.status === "not_started"
-								? theme.colors.not_started.main
-								: null
-			}
-			variant={"contained"}
-			style={styles.card}
-		>
+		<Card borderLeftColor={getBorderColor(status)} variant={"contained"} style={styles.card}>
 			<TouchableOpacity style={styles.cardHeader} onPress={toggleExpand}>
 				<View style={[styles.wrappableText, styles.dataContainer]}>
 					<View
@@ -95,7 +111,7 @@ export default function AssignmentCard({
 			<Collapse expanded={isExpanded}>
 				{formatToDate(assignment.date) === getFormatedDate(new Date()) && (
 					<TaskTimer
-						onStatusChange={onStatusChange}
+						onStatusChange={handleStatusChange}
 						alreadyDoneTime={alreadyDoneTime}
 						initialStatus={initialStatus}
 						startTimeBackend={startTimeBackend}

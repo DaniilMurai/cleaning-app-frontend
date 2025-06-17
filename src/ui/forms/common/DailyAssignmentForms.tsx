@@ -43,7 +43,6 @@ export function CreateDailyAssignmentForm({
 }: CreateDailyAssignmentFormProps) {
 	const { t } = useTranslation();
 
-	// Локально храним дату как ISO-строку (YYYY-MM-DD)
 	const [formData, setFormData] = useState<DailyAssignmentCreate>({
 		location_id: locations.length > 0 ? locations[0].id : 0,
 		user_id: users.length > 0 ? users[0].id : 0,
@@ -62,8 +61,6 @@ export function CreateDailyAssignmentForm({
 				date: date.format("YYYY-MM-DD HH:mm"),
 			});
 		});
-
-		onSubmit(formData);
 	};
 
 	const getUserDisplayName = (user: AdminReadUser) => {
