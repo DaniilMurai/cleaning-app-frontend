@@ -2,11 +2,12 @@
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
-import { Button, ModalContainer, Select } from "@/ui";
+import { Button, ModalContainer } from "@/ui";
 import Typography from "@/ui/common/Typography";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/core/context/LanguageContext";
+import CustomPicker from "@/ui/common/Picker";
 
 interface SettingsModalProps {
 	isVisible: boolean;
@@ -103,7 +104,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isVisible, onClose }) => 
 							</TouchableOpacity>
 						</View>
 					</View>
-
 					{/* Language Section */}
 					<View style={styles.section}>
 						<View style={styles.sectionHeader}>
@@ -111,36 +111,15 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isVisible, onClose }) => 
 								{t("settings.language") || "Language"}
 							</Typography>
 						</View>
-
-						<Select
+						<CustomPicker
 							value={currentLanguage ?? t("settings.language")}
 							options={availableLanguages.map(lang => ({
 								label: lang.name,
 								value: lang.code,
 							}))}
 							onChange={value => changeLanguage(value)}
-							style={styles.picker}
 						/>
 					</View>
-					{/* Секция смены пароля */}
-					{/*<View style={styles.section}>*/}
-					{/*	<View style={styles.sectionHeader}>*/}
-					{/*		<Typography variant="h6" style={styles.sectionTitle}>*/}
-					{/*			{t("profile.security") || "Security"}*/}
-					{/*		</Typography>*/}
-					{/*	</View>*/}
-
-					{/*	<View style={styles.buttonsContainer}>*/}
-					{/*		<Button*/}
-					{/*			variant="outlined"*/}
-					{/*			size="small"*/}
-					{/*			onPress={onChangePassword} // Вызываем колбэк*/}
-					{/*			style={styles.changePasswordButton}*/}
-					{/*		>*/}
-					{/*			{t("profile.changePassword")}*/}
-					{/*		</Button>*/}
-					{/*	</View>*/}
-					{/*</View>*/}
 				</View>
 
 				<Button variant="contained" onPress={onClose} style={styles.doneButton}>
@@ -157,7 +136,7 @@ const styles = StyleSheet.create(theme => ({
 		maxWidth: 450,
 		backgroundColor: theme.colors.background.paper,
 		borderRadius: theme.borderRadius(3),
-		overflow: "hidden",
+		overflow: "hidden", // Важно: меняем hidden на visible!
 		shadowColor: theme.colors.shadow,
 		shadowOffset: { width: 0, height: 4 },
 		shadowOpacity: 0.2,
@@ -188,6 +167,8 @@ const styles = StyleSheet.create(theme => ({
 		padding: theme.spacing(3),
 	},
 	section: {
+		position: "relative", // Создаем новый контекст наложения
+		zIndex: 1, // Базовый уровень
 		marginBottom: theme.spacing(4),
 	},
 	sectionHeader: {
@@ -251,6 +232,7 @@ const styles = StyleSheet.create(theme => ({
 		alignSelf: "center",
 		paddingHorizontal: theme.spacing(4),
 		marginBottom: theme.spacing(3),
+		marginTop: theme.spacing(8),
 		borderRadius: theme.borderRadius(3),
 		backgroundColor: theme.colors.primary.main,
 	},

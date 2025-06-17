@@ -72,7 +72,7 @@ export default function CustomPicker({
 	};
 
 	return (
-		<View style={[styles.container, style]}>
+		<View style={[styles.container, style, { zIndex: isOpen ? 1000 : 1 }]}>
 			{label && (
 				<Typography variant="body2" color="text.secondary" style={styles.label}>
 					{label}
@@ -172,7 +172,7 @@ const styles = StyleSheet.create(theme => ({
 		borderColor: theme.colors.divider,
 		marginTop: theme.spacing(0.5),
 		overflow: "hidden",
-		zIndex: 10,
+		zIndex: 1000, // Увеличиваем для гарантии поверх других элементов
 		elevation: 3,
 		shadowColor: "#000",
 		shadowOffset: { width: 0, height: 2 },
