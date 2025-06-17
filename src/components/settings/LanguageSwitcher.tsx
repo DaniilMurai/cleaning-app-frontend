@@ -46,7 +46,7 @@ const styles = StyleSheet.create(theme => ({
 		backgroundColor: theme.colors.primary.main,
 	},
 	activeText: {
-		color: theme.colors.text.primary,
+		color: theme.colors.primary.text,
 	},
 	text: {
 		color: theme.colors.text.secondary,

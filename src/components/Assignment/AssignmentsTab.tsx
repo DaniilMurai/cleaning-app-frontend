@@ -182,7 +182,7 @@ const styles = StyleSheet.create(theme => ({
 	},
 	tasksContainer: {
 		flex: 1,
-		margin: { xs: 0, md: theme.spacing(3) },
+		marginHorizontal: { xs: 0, md: theme.spacing(2) },
 	},
 	scrollContentContainer: {
 		paddingVertical: theme.spacing(2),

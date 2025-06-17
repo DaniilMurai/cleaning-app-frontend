@@ -123,7 +123,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isVisible, onClose }) => 
 				</View>
 
 				<Button variant="contained" onPress={onClose} style={styles.doneButton}>
-					<Typography>{t("common.save") || "Done"}</Typography>
+					{t("common.save") || "Done"}
 				</Button>
 			</View>
 		</ModalContainer>
@@ -153,7 +153,7 @@ const styles = StyleSheet.create(theme => ({
 		paddingVertical: theme.spacing(2),
 	},
 	title: {
-		color: theme.colors.primary.contrastText,
+		color: theme.colors.primary.text,
 		fontWeight: "bold",
 	},
 	closeButton: {
@@ -161,7 +161,7 @@ const styles = StyleSheet.create(theme => ({
 		borderRadius: theme.borderRadius(5),
 	},
 	iconColor: {
-		color: theme.colors.primary.contrastText,
+		color: theme.colors.primary.text,
 	},
 	content: {
 		padding: theme.spacing(3),
@@ -200,22 +200,21 @@ const styles = StyleSheet.create(theme => ({
 		borderColor: theme.colors.border,
 	},
 	activeThemeOption: {
-		backgroundColor: theme.colors.primary.light,
+		backgroundColor: theme.colors.primary.main,
 		borderColor: theme.colors.primary.main,
 	},
 	themeIcon: {
 		color: theme.colors.text.secondary,
 	},
 	activeThemeIcon: {
-		color: theme.colors.primary.main,
+		color: theme.colors.primary.text,
 	},
 	optionText: {
 		marginLeft: theme.spacing(1.5),
 		color: theme.colors.text.secondary,
 	},
 	activeOptionText: {
-		color: theme.colors.primary.main,
-		fontWeight: "bold",
+		color: theme.colors.primary.text,
 	},
 	languageSelector: {
 		borderWidth: 1,
@@ -232,7 +231,7 @@ const styles = StyleSheet.create(theme => ({
 		alignSelf: "center",
 		paddingHorizontal: theme.spacing(4),
 		marginBottom: theme.spacing(3),
-		marginTop: theme.spacing(8),
+		zIndex: -1,
 		borderRadius: theme.borderRadius(3),
 		backgroundColor: theme.colors.primary.main,
 	},

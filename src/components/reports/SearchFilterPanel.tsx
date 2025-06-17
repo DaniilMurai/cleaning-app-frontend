@@ -74,11 +74,7 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 						variant={"text"}
 						color={"secondary"}
 					>
-						<FontAwesome5
-							name={"times"}
-							size={20}
-							color={styles.iconColorSecondary.color}
-						/>
+						<FontAwesome5 name={"times"} size={20} color={styles.closeIcon.color} />
 					</Button>
 				</View>
 			</View>
@@ -183,8 +179,8 @@ const styles = StyleSheet.create(theme => ({
 	iconColor: {
 		color: theme.colors.text.primary,
 	},
-	iconColorSecondary: {
-		color: theme.colors.secondary.main,
+	closeIcon: {
+		color: theme.colors.error.main,
 	},
 	headerContainer: {
 		flexDirection: "row",
@@ -206,11 +202,4 @@ const styles = StyleSheet.create(theme => ({
 		},
 		gap: theme.spacing(2),
 	},
-	// contentContainer2Floor: {
-	// 	flexDirection: {
-	// 		xs: "column",
-	//
-	// 	},
-	// 	gap: theme.spacing(2),
-	// },
 }));
