@@ -122,25 +122,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isVisible, onClose }) => 
 							style={styles.picker}
 						/>
 					</View>
-					{/* Секция смены пароля */}
-					{/*<View style={styles.section}>*/}
-					{/*	<View style={styles.sectionHeader}>*/}
-					{/*		<Typography variant="h6" style={styles.sectionTitle}>*/}
-					{/*			{t("profile.security") || "Security"}*/}
-					{/*		</Typography>*/}
-					{/*	</View>*/}
-
-					{/*	<View style={styles.buttonsContainer}>*/}
-					{/*		<Button*/}
-					{/*			variant="outlined"*/}
-					{/*			size="small"*/}
-					{/*			onPress={onChangePassword} // Вызываем колбэк*/}
-					{/*			style={styles.changePasswordButton}*/}
-					{/*		>*/}
-					{/*			{t("profile.changePassword")}*/}
-					{/*		</Button>*/}
-					{/*	</View>*/}
-					{/*</View>*/}
 				</View>
 
 				<Button variant="contained" onPress={onClose} style={styles.doneButton}>

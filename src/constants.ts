@@ -4,7 +4,7 @@ export const DEFAULT_LANG = process.env.EXPO_PUBLIC_DEFAULT_LANG || "en";
 export const ApiUrl =
 	(Platform.OS === "android"
 		? process.env.EXPO_PUBLIC_ANDROID_API_URL || process.env.EXPO_PUBLIC_API_URL
-		: process.env.EXPO_PUBLIC_API_URL) || "https://cleaningcompanybackend.onrender.com/";
+		: process.env.EXPO_PUBLIC_API_URL) || "https://cleaningcompanybackend-eszc.onrender.com/";
 
 // Добавьте проверку
 console.log("API URL:", ApiUrl);
