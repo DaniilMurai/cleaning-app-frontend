@@ -4,7 +4,7 @@ import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import AdminTabs from "@/components/adminTabs/AdminTabs";
 import LocationsTab from "@/components/adminTabs/LocationsTab/LocationsTab";
-import AssignmentsTab from "@/components/adminTabs/AssignmentsTab";
+import AssignmentsTab from "@/components/Assignment/AssignmentsTab";
 import { useAdminData } from "@/core/hooks/admin/useAdminData";
 import useModals from "@/core/hooks/shared/useModals";
 import { useAdminMutations } from "@/core/hooks/mutations/useAdminMutations";
@@ -82,7 +82,6 @@ export default function AdminPage() {
 					locations={adminData.locations || []}
 					dailyAssignments={adminData.dailyAssignments || []}
 					users={users}
-					dailyAssignmentsIsLoading={adminData.dailyAssignmentsIsLoading}
 					dailyAssignmentMutation={mutations.dailyAssignmentMutation}
 					modal={modal}
 				/>

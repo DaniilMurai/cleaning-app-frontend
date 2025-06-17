@@ -1,33 +1,97 @@
 import React, { useState } from "react";
-import { View } from "react-native";
+import { Text, View } from "react-native"; // Добавлен Text
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
-import DateTimePicker, { DateType } from "react-native-ui-datepicker";
+import DateTimePicker, { CalendarComponents, DateType } from "react-native-ui-datepicker";
 import dayjs from "dayjs";
 
 interface Props {
 	assignedDates: DateType[];
 	onConfirm?: (date: Date) => void;
-	// onCancel?: () => void;
 }
 
 export default function Calendar({ assignedDates, onConfirm }: Props) {
 	const { theme } = useUnistyles();
 
 	const [selectedDate, setSelectedDate] = useState<DateType>();
+	const [pressedDate, setPressedDate] = useState<DateType>(); // Состояние для нажатого дня
 
 	const handleConfirm = (date: DateType) => {
 		setSelectedDate(dayjs(date as Date));
+		setPressedDate(date); // Сохраняем нажатую дату
 
 		if (onConfirm) {
 			onConfirm(date as Date);
 		}
 	};
 
+	// Кастомный рендер дня
+	const renderDay = (props: { date: DateType }) => {
+		const date = props.date;
+		const dayjsDate = dayjs(date);
+		const today = dayjs(new Date());
+		const isPressed = pressedDate && dayjsDate.isSame(pressedDate, "day");
+		const isAssigned = assignedDates.some(d => dayjs(d).isSame(dayjsDate, "day"));
+		const isToday = dayjsDate.isSame(today, "day");
+
+		let dayStyle = {};
+		let textStyle = {};
+
+		if (isPressed) {
+			// Стиль для нажатого дня
+			dayStyle = {
+				backgroundColor: theme.colors.secondary.main,
+				borderRadius: theme.borderRadius(10),
+			};
+			textStyle = { color: theme.colors.primary.text, fontSize: 14 };
+		} else if (isToday) {
+			dayStyle = {
+				color: theme.colors.success.main,
+				backgroundColor: theme.colors.success.dark,
+				borderRadius: theme.borderRadius(10),
+			};
+			textStyle = {
+				color: theme.colors.primary.text,
+				fontSize: 14,
+			};
+		} else if (isAssigned) {
+			// Стиль для назначенных дней
+			dayStyle = {
+				backgroundColor: theme.colors.primary.main,
+				borderRadius: theme.borderRadius(10),
+				color: theme.colors.primary.text,
+			};
+			textStyle = {
+				color: theme.colors.primary.text,
+				fontSize: 14,
+			};
+		} else {
+			dayStyle = {
+				color: theme.colors.text.primary,
+			};
+			textStyle = {
+				color: theme.colors.text.primary,
+				fontSize: 14,
+			};
+		}
+
+		return (
+			<View style={[styles.dayContainer, dayStyle]}>
+				<Text style={[styles.dayText, textStyle]}>{dayjsDate.date()}</Text>
+			</View>
+		);
+	};
+
+	// Собираем объект CalendarComponents
+	const components: CalendarComponents = {
+		Day: renderDay,
+	};
+
 	return (
 		<View style={styles.modalOverlay}>
 			<View style={styles.pickerContainer}>
 				<DateTimePicker
-					mode={"multiple"}
+					mode="single" // Изменено на одиночный выбор
+					components={components} // Передаем кастомный рендер
 					styles={{
 						header: {
 							backgroundColor: theme.colors.primary.light,
@@ -35,12 +99,9 @@ export default function Calendar({ assignedDates, onConfirm }: Props) {
 						day: {
 							color: theme.colors.text.primary,
 						},
-						today: {
-							// backgroundColor: theme.colors.primary.main,
-							borderColor: theme.colors.primary.main,
-							borderWidth: 2,
-							borderRadius: theme.borderRadius(10),
-						},
+						// today: {
+						// 	color: theme.colors.secondary.main,
+						// },
 						time_label: { color: theme.colors.text.primary },
 						day_label: {
 							color: theme.colors.text.primary,
@@ -48,19 +109,19 @@ export default function Calendar({ assignedDates, onConfirm }: Props) {
 						button_prev_image: { tintColor: theme.colors.primary.text },
 						button_next_image: { tintColor: theme.colors.primary.text },
 						weekday_label: { color: theme.colors.text.primary },
-						selected: {
-							backgroundColor: theme.colors.primary.main,
-							borderRadius: theme.borderRadius(10),
-							color: theme.colors.primary.text,
-							maxWidth: "90%",
-							maxHeight: "90%",
-						},
+						// selected: {
+						// 	backgroundColor: theme.colors.primary.main,
+						// 	borderRadius: theme.borderRadius(10),
+						// 	color: theme.colors.primary.text,
+						// 	maxWidth: "90%",
+						// 	maxHeight: "90%",
+						// },
 						selected_label: {
 							color: theme.colors.primary.text,
 						},
 					}}
-					dates={[...assignedDates, selectedDate]}
-					onChange={({ datePressed }) => handleConfirm(datePressed)}
+					date={selectedDate} // Для одиночного выбора используем date вместо dates
+					onChange={({ date }) => handleConfirm(date)}
 				/>
 			</View>
 		</View>
@@ -100,15 +161,15 @@ const styles = StyleSheet.create(theme => ({
 		shadowOpacity: 0.2,
 		shadowRadius: 4,
 	},
-	buttonRow: {
-		flexDirection: "row",
-		justifyContent: "flex-end",
-		padding: theme.spacing(2),
+	// Стили для кастомного дня
+	dayContainer: {
+		justifyContent: "center",
+		alignItems: "center",
+		width: 36,
+		height: 36,
 	},
-	pickerNumbers: {
-		color: theme.colors.text.primary,
-	},
-	buttonPrevNext: {
-		backgroundColor: theme.colors.primary.main,
+	dayText: {
+		fontSize: 16,
+		fontWeight: "500",
 	},
 }));

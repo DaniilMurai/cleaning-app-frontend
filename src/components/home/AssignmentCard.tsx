@@ -6,7 +6,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import Collapse from "@/ui/common/Collapse";
 import { useTranslation } from "react-i18next";
 import TaskTimer from "@/ui/date/TaskTimer";
-import { formatToDate, formatToTime, getFormatedDate } from "@/core/utils/dateUtils";
+import { formatToDate, getFormatedDate } from "@/core/utils/dateUtils";
 import RoomSection from "./RoomSection";
 import { AssignmentStatus, DailyAssignmentForUserResponse } from "@/api/client";
 import getStatusBadge from "@/components/reports/StatusBadge";
@@ -55,15 +55,26 @@ export default function AssignmentCard({
 		>
 			<TouchableOpacity style={styles.cardHeader} onPress={toggleExpand}>
 				<View style={[styles.wrappableText, styles.dataContainer]}>
-					<View style={styles.headerWithIcon}>
-						<FontAwesome5
-							name={isExpanded ? "angle-down" : "angle-right"}
-							size={16}
-							color={styles.collapseIcon.color}
-						/>
-						<Typography variant="h5" style={styles.wrappableText} numberOfLines={0}>
-							{assignment.location.name}
-						</Typography>
+					<View
+						style={{
+							flex: 1,
+							width: "100%",
+							flexDirection: "row",
+							justifyContent: "space-between",
+							alignItems: "flex-end",
+						}}
+					>
+						<View style={styles.headerWithIcon}>
+							<FontAwesome5
+								name={isExpanded ? "angle-down" : "angle-right"}
+								size={16}
+								color={styles.collapseIcon.color}
+							/>
+							<Typography variant="h5" style={styles.wrappableText} numberOfLines={0}>
+								{assignment.location.name}
+							</Typography>
+						</View>
+						<Typography>{getStatusBadge(assignment.status, theme)}</Typography>
 					</View>
 					<Typography variant="body1" style={styles.wrappableText} numberOfLines={0}>
 						{t("components.dailyAssignmentsList.address")}:{" "}
@@ -79,30 +90,9 @@ export default function AssignmentCard({
 							{t("admin.userNote")}: {assignment.user_note}
 						</Typography>
 					)}
-					<View style={styles.container}>
-						<View style={styles.timeContainer}>
-							<FontAwesome5 name={"clock"} size={16} color={styles.clockIcon.color} />
-							<Typography color={styles.clockIcon.color}>
-								{formatToTime(assignment.date)}
-							</Typography>
-						</View>
-						<Typography>{getStatusBadge(assignment.status, theme)}</Typography>
-					</View>
-
-					{/*{(assignment.status === AssignmentStatus.completed ||*/}
-					{/*	assignment.status === AssignmentStatus.partially_completed ||*/}
-					{/*	assignment.status === AssignmentStatus.in_progress) && (*/}
-					{/*	<TaskTimer*/}
-					{/*		onStatusChange={onStatusChange}*/}
-					{/*		alreadyDoneTime={alreadyDoneTime}*/}
-					{/*		initialStatus={initialStatus}*/}
-					{/*		startTimeBackend={startTimeBackend}*/}
-					{/*	/>*/}
-					{/*)}*/}
 				</View>
 			</TouchableOpacity>
 			<Collapse expanded={isExpanded}>
-				{/*{assignment.status === AssignmentStatus.not_started && (*/}
 				{formatToDate(assignment.date) === getFormatedDate(new Date()) && (
 					<TaskTimer
 						onStatusChange={onStatusChange}
@@ -111,7 +101,6 @@ export default function AssignmentCard({
 						startTimeBackend={startTimeBackend}
 					/>
 				)}
-				{/*)}*/}
 				<View style={styles.divider} />
 				<Typography variant="subtitle1" style={styles.wrappableText}>
 					{t("admin.rooms")}
@@ -137,6 +126,7 @@ const styles = StyleSheet.create(theme => ({
 		borderLeftColor: theme.colors.success.main,
 	},
 	dataContainer: {
+		flex: 1,
 		gap: theme.spacing(1),
 	},
 	cardHeader: {

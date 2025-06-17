@@ -17,8 +17,9 @@ import {
 	EditDailyAssignmentParams,
 } from "@/api/admin";
 import CustomPicker from "@/ui/common/Picker";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import DateInput from "@/ui/date/DateInput";
+import DatesInput from "@/ui/date/DatesInput";
 
 interface Location {
 	id: number;
@@ -50,7 +51,18 @@ export function CreateDailyAssignmentForm({
 		admin_note: "",
 	});
 
+	const [dates, setDates] = useState<Dayjs[]>([]);
+
 	const handleSubmit = () => {
+		if (!dates || dates.length === 0) return;
+
+		dates.forEach(date => {
+			onSubmit({
+				...formData,
+				date: date.format("YYYY-MM-DD HH:mm"),
+			});
+		});
+
 		onSubmit(formData);
 	};
 
@@ -104,10 +116,17 @@ export function CreateDailyAssignmentForm({
 				/>
 			</View>
 
-			<DateInput
+			{/*<DateInput*/}
+			{/*	label={t("components.dailyAssignmentsList.date") + "*"}*/}
+			{/*	value={formData.date}*/}
+			{/*	onChange={newDate => setFormData(prev => ({ ...prev, date: newDate }))}*/}
+			{/*	style={styles.dateContainer}*/}
+			{/*/>*/}
+
+			<DatesInput
 				label={t("components.dailyAssignmentsList.date") + "*"}
-				value={formData.date}
-				onChange={newDate => setFormData(prev => ({ ...prev, date: newDate }))}
+				values={dates.map(date => date.format("YYYY-MM-DD HH:mm"))}
+				onChange={newDates => setDates(newDates.map(v => dayjs(v)))}
 				style={styles.dateContainer}
 			/>
 

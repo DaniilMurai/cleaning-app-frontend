@@ -5,38 +5,43 @@ import dayjs, { Dayjs } from "dayjs";
 import { useUnistyles } from "react-native-unistyles";
 import { Typography } from "@/ui";
 
-interface DateInputProps {
+interface DatesInputProps {
 	label: string;
-	value: string; // ISO: YYYY-MM-DD
-	onChange: (newDate: string) => void;
+	values: string[]; // ISO: YYYY-MM-DD
+	onChange: (newDates: string[]) => void;
 	style?: StyleProp<ViewStyle>;
 	error?: boolean;
 }
 
-export default function DateInput({ label, value, onChange, style }: DateInputProps) {
+export default function DatesInput({ label, values, onChange, style }: DatesInputProps) {
 	const { theme } = useUnistyles();
 
-	// Internal dayjs state
-	const [pickerDate, setPickerDate] = useState<Dayjs>(dayjs(value));
+	// Internal state as array of Dayjs
+	const [pickerDates, setPickerDates] = useState<Dayjs[]>(() => values.map(v => dayjs(v)));
 
-	// Sync if value prop changes externally
+	// Sync with external props
+	// Замените текущий useEffect на этот код:
 	useEffect(() => {
-		if (dayjs(value).isValid()) {
-			setPickerDate(dayjs(value));
-		}
-	}, [value]);
+		const validDates = values.map(v => dayjs(v)).filter(d => d.isValid());
 
-	const handleDateChange = (selected: Dayjs | Date) => {
-		const newDayjs = dayjs(selected);
-		setPickerDate(newDayjs);
-		onChange(newDayjs.format("YYYY-MM-DD HH:mm"));
+		setPickerDates(validDates);
+	}, [values]);
+	const handleDateChange = (selected: Dayjs[] | Date[]) => {
+		// Фильтруем только валидные даты
+		const validDates = (selected as Date[]).map(d => dayjs(d)).filter(d => d.isValid());
+
+		setPickerDates(validDates);
+		onChange(validDates.map(d => d.format("YYYY-MM-DD HH:mm")));
 	};
 
 	return (
 		<View style={style}>
 			<Typography
 				variant="body2"
-				style={{ color: theme.colors.text.secondary, marginBottom: theme.spacing(0.5) }}
+				style={{
+					color: theme.colors.text.secondary,
+					marginBottom: theme.spacing(0.5),
+				}}
 			>
 				{label}
 			</Typography>
@@ -48,9 +53,10 @@ export default function DateInput({ label, value, onChange, style }: DateInputPr
 				}}
 			>
 				<DateTimePicker
-					mode="single"
-					date={pickerDate}
-					onChange={({ date }) => handleDateChange(date as Date)}
+					mode="multiple"
+					dates={(pickerDates ?? []).map(d => d.toDate())}
+					onChange={({ dates }) => handleDateChange(dates as Date[])}
+					timePicker={true}
 					styles={{
 						header: {
 							backgroundColor: theme.colors.primary.light,
