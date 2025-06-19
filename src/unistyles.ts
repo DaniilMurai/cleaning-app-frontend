@@ -27,12 +27,14 @@ const themedColors = {
 			main: "#ef8d1e",
 			dark: "#a96209",
 			text: "#fff",
+			background: "#ef8d1e1a",
 		},
 		error: {
 			light: "#ef9a9a",
 			main: "#f44336",
 			dark: "#c62828",
 			text: "#ffffff",
+			background: "#f443361a",
 		},
 		success: {
 			light: "#e5f6ea",
@@ -94,13 +96,14 @@ const themedColors = {
 			main: "#fbbf24", // amber-400
 			dark: "#b45309", // amber-700
 			text: "#1f2937",
-			background: "#FBBF241F",
+			background: "#fbbf241a",
 		},
 		error: {
 			light: "#fca5a5",
 			main: "#f87171", // red-400
 			dark: "#b91c1c",
 			text: "#ffffff",
+			background: "#f871711a",
 		},
 		success: {
 			light: "#4ade80", // green-400

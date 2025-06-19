@@ -159,6 +159,41 @@
     "noResults": "Keine Ergebnisse"
   },
   "components": {
+    "searchFilterPanel": {
+      "searchAndFilters": "Suche & Filter",
+      "clearAll": "Alle löschen",
+      "search": "Suche",
+      "searchPlaceholder": "Benutzer oder Gebäude suchen...",
+      "allStatuses": "Alle Status",
+      "status": "Status",
+      "orderBy": "Sortieren nach",
+      "direction": "Richtung",
+      "descending": "Absteigend",
+      "ascending": "Aufsteigend",
+      "orderByOptions": {
+        "id": "ID",
+        "user_id": "Benutzer",
+        "status": "Status",
+        "start_time": "Startzeit",
+        "end_time": "Endzeit"
+      }
+    },
+    "reportsTable": {
+      "username": "Benutzername",
+      "location": "Gebäude",
+      "date": "Datum",
+      "status": "Status",
+      "start": "Start",
+      "end": "Ende",
+      "duration": "Dauer"
+    },
+    "status": {
+      "completed": "Abgeschlossen",
+      "in_progress": "In Bearbeitung",
+      "not_started": "Nicht begonnen",
+      "partially_completed": "Teilweise abgeschlossen",
+      "not_completed": "Nicht abgeschlossen"
+    },
     "infoItem": {
       "notAvailable": "N/V"
     },

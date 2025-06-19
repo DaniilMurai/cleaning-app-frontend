@@ -5,12 +5,13 @@ import {
 	ReportResponse,
 } from "@/api/admin";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, useUnistyles } from "react-native-unistyles";
+import { StyleSheet } from "react-native-unistyles";
 import { ScrollView, View } from "react-native";
 import { Typography } from "@/ui";
 import { formatTime, formatToDate, formatToDateTime, formatToTime } from "@/core/utils/dateUtils";
 import { LegendList } from "@legendapp/list";
-import getStatusBadge from "@/components/reports/StatusBadge";
+import GetStatusBadge from "@/components/reports/StatusBadge";
+import { useTranslation } from "react-i18next";
 
 interface Props {
 	reports: ReportResponse[];
@@ -20,11 +21,11 @@ interface Props {
 }
 
 export default function ReportsTable({ reports, assignments, users = [], locations = [] }: Props) {
-	const [page, setPage] = useState<number>(1);
+	const [page, setPage] = useState<number>(2);
+
+	const { t } = useTranslation();
 
 	const data = reports.slice(0, page * 10);
-
-	const { theme } = useUnistyles();
 
 	useEffect(() => {
 		setPage(1);
@@ -35,11 +36,7 @@ export default function ReportsTable({ reports, assignments, users = [], locatio
 
 		console.log("getMoreReports called");
 
-		setPage(prev => {
-			const newPage = prev + 1;
-			console.log(`Updating page to ${newPage}, showing ${newPage * 10} items`);
-			return newPage;
-		});
+		setPage(prev => prev + 1);
 	};
 
 	const getUserFullName = (report: ReportResponse) => {
@@ -59,18 +56,31 @@ export default function ReportsTable({ reports, assignments, users = [], locatio
 
 	const renderHeader = () => (
 		<View style={[styles.row, styles.header, { height: 48 }]}>
-			<Typography style={[styles.cell, { flex: 2 }]}>Username</Typography>
-			<Typography style={[styles.cell, { flex: 2 }]}>Location</Typography>
-			<Typography style={[styles.cell, { flex: 2 }]}>Date</Typography>
-			<Typography style={[styles.cell, { flex: 2 }]}>Status</Typography>
-			<Typography style={[styles.cell, { flex: 2 }]}>Start</Typography>
-			<Typography style={[styles.cell, { flex: 2 }]}>End</Typography>
-			<Typography style={[styles.cell, { flex: 2 }]}>Duration</Typography>
+			<Typography style={[styles.cell, { flex: 2 }]}>
+				{t("components.reportsTable.username")}
+			</Typography>
+			<Typography style={[styles.cell, { flex: 2 }]}>
+				{t("components.reportsTable.location")}
+			</Typography>
+			<Typography style={[styles.cell, { flex: 2 }]}>
+				{t("components.reportsTable.date")}
+			</Typography>
+			<Typography style={[styles.cell, { flex: 2.5 }]}>
+				{t("components.reportsTable.status")}
+			</Typography>
+			<Typography style={[styles.cell, { flex: 1 }]}>
+				{t("components.reportsTable.start")}
+			</Typography>
+			<Typography style={[styles.cell, { flex: 1 }]}>
+				{t("components.reportsTable.end")}
+			</Typography>
+			<Typography style={[styles.cell, { flex: 1.5 }]}>
+				{t("components.reportsTable.duration")}
+			</Typography>
 		</View>
 	);
 
 	const renderItem = ({ item }: { item: ReportResponse }) => {
-		console.log("Rendering item:", item.id); // DEBUG
 		const assignment = getAssignment(item);
 		const date = assignment ? formatToDateTime(assignment.date) : "—";
 		const locationName = getLocationName(assignment);
@@ -100,12 +110,12 @@ export default function ReportsTable({ reports, assignments, users = [], locatio
 				<Typography style={[styles.cell, { flex: 2 }]}>{getUserFullName(item)}</Typography>
 				<Typography style={[styles.cell, { flex: 2 }]}>{locationName}</Typography>
 				<Typography style={[styles.cell, { flex: 2 }]}>{date}</Typography>
-				<Typography style={[styles.cell, { flex: 2 }]}>
-					{getStatusBadge(item.status, theme)}
+				<Typography style={[styles.cell, { flex: 2.5 }]}>
+					<GetStatusBadge status={item.status} />
 				</Typography>
-				<Typography style={[styles.cell, { flex: 2 }]}>{start_time}</Typography>
-				<Typography style={[styles.cell, { flex: 2 }]}>{end_time}</Typography>
-				<Typography style={[styles.cell, { flex: 2 }]}>{duration}</Typography>
+				<Typography style={[styles.cell, { flex: 1 }]}>{start_time}</Typography>
+				<Typography style={[styles.cell, { flex: 1 }]}>{end_time}</Typography>
+				<Typography style={[styles.cell, { flex: 1.5 }]}>{duration}</Typography>
 			</View>
 		);
 	};
@@ -115,7 +125,7 @@ export default function ReportsTable({ reports, assignments, users = [], locatio
 			horizontal
 			nestedScrollEnabled // Android: позволяет вертикальному и горизонтальному скроллам работать вместе
 			showsHorizontalScrollIndicator={false}
-			contentContainerStyle={{ width: "100%", minWidth: 118 * 7 }}
+			contentContainerStyle={{ width: "100%", minWidth: 140 * 7 }}
 		>
 			<LegendList
 				data={data}

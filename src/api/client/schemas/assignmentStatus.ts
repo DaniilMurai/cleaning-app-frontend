@@ -10,6 +10,7 @@ export type AssignmentStatus = (typeof AssignmentStatus)[keyof typeof Assignment
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AssignmentStatus = {
 	not_started: "not_started",
+	not_completed: "not_completed",
 	in_progress: "in_progress",
 	partially_completed: "partially_completed",
 	completed: "completed",

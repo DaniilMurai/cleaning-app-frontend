@@ -159,6 +159,41 @@
     "noResults": "Нет результатов"
   },
   "components": {
+    "searchFilterPanel": {
+      "searchAndFilters": "Поиск и фильтры",
+      "clearAll": "Очистить все",
+      "search": "Поиск",
+      "searchPlaceholder": "Поиск пользователей или мест...",
+      "allStatuses": "Все статусы",
+      "status": "Статус",
+      "orderBy": "Сортировать по",
+      "direction": "Направление",
+      "descending": "По убыванию",
+      "ascending": "По возрастанию",
+      "orderByOptions": {
+        "id": "ID",
+        "user_id": "Пользователь",
+        "status": "Статус",
+        "start_time": "Время начала",
+        "end_time": "Время окончания"
+      }
+    },
+    "reportsTable": {
+      "username": "Имя пользователя",
+      "location": "Местоположение",
+      "date": "Дата",
+      "status": "Статус",
+      "start": "Начало",
+      "end": "Конец",
+      "duration": "Длительность"
+    },
+    "status": {
+      "completed": "Выполнено",
+      "in_progress": "В процессе",
+      "not_started": "Не начато",
+      "partially_completed": "Частично выполнено",
+      "not_completed": "Не выполнено"
+    },
     "infoItem": {
       "notAvailable": "Н/Д"
     },

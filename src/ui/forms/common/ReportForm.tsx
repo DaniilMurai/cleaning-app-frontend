@@ -1,11 +1,15 @@
 // src/ui/components/reports/ReportForm.tsx
-import React, { useState } from "react";
-import { Image, Platform, ScrollView, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Image, ScrollView, TouchableOpacity, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { Button, Card, Input, ModalContainer, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useTranslation } from "react-i18next";
+import { type AssignmentReportResponse, AssignmentStatus } from "@/api/client";
+import RoomTaskCollapse from "@/components/reports/RoomTaskCollapse";
+import { formatTime } from "@/core/utils/dateUtils";
+import GetStatusBadge from "@/components/reports/StatusBadge";
 
 interface Media {
 	type: "image" | "video";
@@ -13,24 +17,67 @@ interface Media {
 }
 
 interface ReportFormProps extends React.ComponentProps<typeof View> {
-	taskId?: number;
-	roomId?: number;
-	onSubmit: (data: { text: string; media: string[] }) => Promise<void>;
+	assignmentAndReport: AssignmentReportResponse | null;
+	onSubmit: (data: {
+		text?: string;
+		media?: string[];
+		status: AssignmentStatus;
+	}) => Promise<void>;
 	onCancel: () => void;
+	totalTime: number;
 }
 
-export default function ReportForm({ taskId, roomId, onCancel, onSubmit }: ReportFormProps) {
+type TasksRoomChecks = Record<number, Record<number, boolean>>;
+
+export default function ReportForm({
+	assignmentAndReport,
+	onCancel,
+	onSubmit,
+	totalTime,
+}: ReportFormProps) {
 	const { t } = useTranslation();
 	const [text, setText] = useState("");
 	const [media, setMedia] = useState<Media[]>([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [mediaPickerVisible, setMediaPickerVisible] = useState(false);
 
+	const [status, setStatus] = useState<AssignmentStatus>("completed");
+	// Состояние для хранения отметок комнат всех задач
+	const [tasksRoomChecks, setTasksRoomChecks] = useState<TasksRoomChecks>({});
+
 	const handleCancel = () => {
 		// Вызываем переданный обработчик отмены
 		onCancel();
 	};
 
+	useEffect(() => {
+		if (assignmentAndReport) {
+			const initialChecks: TasksRoomChecks = {};
+
+			assignmentAndReport.assignment.tasks?.forEach(task => {
+				initialChecks[task.id] = {};
+
+				// Инициализируем все комнаты как выполненные
+				const roomIds = assignmentAndReport.assignment.room_tasks
+					?.filter(rt => rt.task_id === task.id)
+					.map(rt => rt.room_id);
+
+				roomIds?.forEach(roomId => {
+					initialChecks[task.id][roomId] = true;
+				});
+			});
+
+			setTasksRoomChecks(initialChecks);
+		}
+	}, [assignmentAndReport]);
+
+	// Обработчик изменений в комнатах
+	const handleRoomChecksChange = (taskId: number, roomChecks: Record<number, boolean>) => {
+		setTasksRoomChecks(prev => ({
+			...prev,
+			[taskId]: roomChecks,
+		}));
+	};
 	// Обработчик для выбора изображения из галереи
 	const pickImage = async () => {
 		const result = await ImagePicker.launchImageLibraryAsync({
@@ -45,71 +92,52 @@ export default function ReportForm({ taskId, roomId, onCancel, onSubmit }: Repor
 		setMediaPickerVisible(false);
 	};
 
-	// Обработчик для съемки изображения с камеры
-	const takePhoto = async () => {
-		const { status } = await ImagePicker.requestCameraPermissionsAsync();
-
-		if (status === "granted") {
-			const result = await ImagePicker.launchCameraAsync({
-				allowsEditing: true,
-				quality: 0.8,
-			});
-
-			if (!result.canceled && result.assets && result.assets.length > 0) {
-				setMedia([...media, { type: "image", uri: result.assets[0].uri }]);
-			}
-		}
-		setMediaPickerVisible(false);
-	};
-
-	const recordVideo = async () => {
-		let status;
-
-		if (Platform.OS === "web") {
-			// Специальная обработка для Web
-			status = await handleWebCameraPermissions();
-		} else {
-			// Для мобильных устройств
-			const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
-			status = cameraStatus;
-		}
-
-		// Остальной код без изменений
-	};
-
-	// Дополнительная функция для Web
-	const handleWebCameraPermissions = async (): Promise<string> => {
-		try {
-			// Реализация для Web-среды
-			if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-				const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-				stream.getTracks().forEach(track => track.stop());
-				return "granted";
-			}
-			return "denied";
-		} catch (error) {
-			console.error("Web camera error:", error);
-			return "denied";
-		}
-	};
-
 	// Удаление медиафайла
 	const removeMedia = (index: number) => {
 		setMedia(media.filter((_, i) => i !== index));
 	};
 
-	// Отправка отчета
-	const handleSubmit = async () => {
-		// if (!text.trim() && media.length === 0) return;
+	useEffect(() => {
+		const status = getStatus();
+		setStatus(status);
+	}, [tasksRoomChecks]);
 
+	const getStatus = () => {
+		// Определяем общий статус выполнения
+		const allTasksDone = Object.values(tasksRoomChecks).every(taskChecks =>
+			Object.values(taskChecks).every(checked => checked)
+		);
+
+		const someTasksDone = Object.values(tasksRoomChecks).some(taskChecks =>
+			Object.values(taskChecks).some(checked => checked)
+		);
+
+		// let status = "not_completed";
+		// Если пользователь вообще не сможет сделать задагние нужно будет поставить это
+		let status: AssignmentStatus = "partially_completed";
+		if (allTasksDone) {
+			status = "completed";
+		} else if (someTasksDone) {
+			status = "partially_completed";
+		}
+		return status;
+	};
+
+	// При отправке определяем статус
+	const handleSubmit = async () => {
 		setIsSubmitting(true);
 		try {
+			const status = getStatus();
+
 			const onlyUris = media.map(item => item.uri);
-			await onSubmit({ text, media: onlyUris });
+			await onSubmit({
+				text,
+				media: onlyUris,
+				status, // Передаем статус
+			});
+
 			setText("");
 			setMedia([]);
-		} catch (error) {
-			console.error("Error submitting report:", error);
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -117,72 +145,164 @@ export default function ReportForm({ taskId, roomId, onCancel, onSubmit }: Repor
 
 	return (
 		<Card variant={"outlined"} style={styles.container}>
-			<Typography variant="h5" style={styles.title}>
-				{t("reports.createReport")}
-			</Typography>
-
-			<View style={styles.inputContainer}>
-				<ScrollView style={styles.textInputContainer} keyboardShouldPersistTaps="handled">
-					<Input
-						style={styles.textInputMultiLine}
-						value={text}
-						onChangeText={text => setText(text)}
-						placeholder={t("reports.enterReportText")}
-						multiline={true}
-					/>
-				</ScrollView>
-
-				{media.length > 0 && (
-					<ScrollView horizontal style={styles.mediaPreviewContainer}>
-						{media.map((item, index) => (
-							<View key={index} style={styles.mediaPreview}>
-								<Image source={{ uri: item.uri }} style={styles.previewImage} />
-								<TouchableOpacity
-									style={styles.removeButton}
-									onPress={() => removeMedia(index)}
-								>
-									<FontAwesome5 name="times-circle" size={20} color="red" />
-								</TouchableOpacity>
-								{item.type === "video" && (
-									<View style={styles.videoIndicator}>
-										<FontAwesome5 name="video" size={16} color="white" />
-									</View>
-								)}
-							</View>
-						))}
-					</ScrollView>
-				)}
-
-				<View style={styles.actionButtons}>
-					<Button
-						variant="contained"
-						color="primary"
-						size="medium"
-						onPress={() => setMediaPickerVisible(true)}
-					>
-						<FontAwesome5 name="image" size={16} color={styles.iconColor} />
-					</Button>
-					<View style={styles.buttonsContainer}>
-						<Button
-							variant="outlined"
-							color="secondary"
-							size="medium"
-							onPress={handleCancel}
-						>
-							{t("common.cancel")}
-						</Button>
-
-						<Button
-							variant="contained"
-							color="primary"
-							size="medium"
-							loading={isSubmitting}
-							onPress={handleSubmit}
-						>
-							{t("reports.submit")}
-						</Button>
+			<ScrollView style={{ flex: 1 }} contentContainerStyle={styles.scrollViewContent}>
+				<View style={styles.headerContainer}>
+					<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+						<Typography>{assignmentAndReport?.assignment.location.name}</Typography>
+						<GetStatusBadge status={status} />
 					</View>
+					<Typography color={styles.dateText.color}>
+						<FontAwesome5 name={"clock"} size={16} />
+						{"  "}
+						{t("components.reportsTable.duration") + ": "}
+						{formatTime(totalTime)}
+					</Typography>
 				</View>
+				<Card variant={"default"} style={styles.borderColor}>
+					<View style={styles.taskContainer}>
+						<View style={styles.submitIconContainer}>
+							<FontAwesome5 name={"check"} color={styles.iconColor.color} size={20} />
+						</View>
+						<View style={styles.helpTextContainer}>
+							<Typography variant={"h6"}>Выполненные задания</Typography>
+							<Typography variant={"subtitle2"} color={styles.dateText.color}>
+								Отметьте выполненные задачи и комнаты
+							</Typography>
+						</View>
+					</View>
+
+					{assignmentAndReport?.assignment.tasks?.map(task => (
+						<Card variant={"default"} style={styles.borderColor}>
+							<RoomTaskCollapse
+								key={task.id}
+								rooms={assignmentAndReport?.assignment.rooms ?? []}
+								task={task}
+								roomTasks={assignmentAndReport?.assignment.room_tasks ?? []}
+								onRoomChecksChange={handleRoomChecksChange}
+							/>
+						</Card>
+					))}
+				</Card>
+				<View style={styles.inputContainer}>
+					<Card variant={"default"} style={styles.borderColor}>
+						<View style={styles.taskContainer}>
+							<View style={styles.mediaIconContainer}>
+								<FontAwesome5
+									name="file-alt"
+									size={20}
+									color={styles.mediaIconColor.color}
+								/>
+							</View>
+							<View style={styles.helpTextContainer}>
+								<Typography variant={"h6"}>Текст отчета</Typography>
+								<Typography color={styles.dateText.color}>
+									Добавьте дополнительные комментарии о выполнении задач
+								</Typography>
+							</View>
+						</View>
+						<ScrollView
+							style={styles.textInputContainer}
+							keyboardShouldPersistTaps="handled"
+						>
+							<Input
+								variant={"filled"}
+								style={styles.textInputMultiLine}
+								value={text}
+								onChangeText={text => setText(text)}
+								placeholder={t("reports.enterReportText")}
+								multiline={true}
+							/>
+						</ScrollView>
+					</Card>
+
+					<Card variant={"default"} style={styles.borderColor}>
+						<View style={styles.taskContainer}>
+							<View style={styles.mediaIconContainer}>
+								<FontAwesome5
+									name="image"
+									size={20}
+									color={styles.mediaIconColor.color}
+								/>
+							</View>
+							<View style={styles.helpTextContainer}>
+								<Typography variant={"h6"}>Фото для отчета</Typography>
+								<Typography color={styles.dateText.color}>
+									Добавьте фотографии выполненной работы
+								</Typography>
+							</View>
+						</View>
+						<TouchableOpacity style={styles.mediaContainer} onPress={pickImage}>
+							<FontAwesome5
+								name={"share-square"}
+								size={30}
+								color={styles.dateText.color}
+							/>
+							<Typography variant={"body1"}>Добавить фотографии</Typography>
+
+							<Typography variant={"body2"} color={styles.dateText.color}>
+								Перетащите файлы сюда или нажмите для выбора
+							</Typography>
+						</TouchableOpacity>
+						{media.length > 0 && (
+							<ScrollView horizontal style={styles.mediaPreviewContainer}>
+								{media.map((item, index) => (
+									<View key={index} style={styles.mediaPreview}>
+										<Image
+											source={{ uri: item.uri }}
+											style={styles.previewImage}
+										/>
+										<TouchableOpacity
+											style={styles.removeButton}
+											onPress={() => removeMedia(index)}
+										>
+											<FontAwesome5
+												name="times-circle"
+												size={20}
+												color="red"
+											/>
+										</TouchableOpacity>
+										{item.type === "video" && (
+											<View style={styles.videoIndicator}>
+												<FontAwesome5
+													name="video"
+													size={16}
+													color="white"
+												/>
+											</View>
+										)}
+									</View>
+								))}
+							</ScrollView>
+						)}
+					</Card>
+				</View>
+			</ScrollView>
+
+			<View style={styles.actionButtons}>
+				<Button
+					style={styles.ButtonAction}
+					variant="outlined"
+					color="secondary"
+					size="medium"
+					onPress={handleCancel}
+				>
+					<FontAwesome5 name="times" size={16} color={styles.iconColorCancel.color} />
+					{"  "}
+					{t("common.cancel")}
+				</Button>
+
+				<Button
+					variant="contained"
+					color="primary"
+					style={styles.ButtonAction}
+					size="medium"
+					loading={isSubmitting}
+					onPress={handleSubmit}
+				>
+					<FontAwesome5 name="check" size={16} color={styles.iconColorSubmit.color} />
+					{"  "}
+					{t("reports.submit")}
+				</Button>
 			</View>
 
 			{/* Модальное окно для выбора типа медиа */}
@@ -198,14 +318,6 @@ export default function ReportForm({ taskId, roomId, onCancel, onSubmit }: Repor
 					<View style={styles.mediaOptions}>
 						<Button variant="tint" color="primary" size="medium" onPress={pickImage}>
 							{t("reports.chooseFromGallery")}
-						</Button>
-
-						<Button variant="tint" color="primary" size="medium" onPress={takePhoto}>
-							{t("reports.takePhoto")}
-						</Button>
-
-						<Button variant="tint" color="primary" size="medium" onPress={recordVideo}>
-							{t("reports.recordVideo")}
 						</Button>
 					</View>
 
@@ -228,6 +340,68 @@ const styles = StyleSheet.create(theme => ({
 	container: {
 		padding: theme.spacing(2),
 		marginVertical: theme.spacing(2),
+		maxHeight: "85%",
+		height: "85%",
+
+		margin: "auto",
+		backgroundColor: theme.colors.background.default,
+	},
+	scrollViewContent: {
+		flex: 1,
+		gap: theme.spacing(3),
+	},
+	dateText: {
+		color: theme.colors.text.disabled,
+		flexWrap: "wrap",
+		flexShrink: 1,
+	},
+	helpTextContainer: {
+		flexWrap: "wrap",
+		flexShrink: 1,
+	},
+	borderColor: {
+		borderColor: theme.colors.border,
+		borderWidth: 1,
+	},
+	mediaContainer: {
+		padding: theme.spacing(2),
+		alignItems: "center",
+		justifyContent: "center",
+		borderColor: theme.colors.border,
+		borderWidth: 1,
+		gap: theme.spacing(2),
+		borderRadius: theme.borderRadius(2),
+	},
+	headerContainer: {
+		padding: theme.spacing(3),
+		gap: theme.spacing(1),
+		backgroundColor: theme.colors.primary.mainOpacity,
+		borderRadius: theme.borderRadius(2),
+		borderWidth: 1,
+		borderColor: theme.colors.border,
+	},
+	taskContainer: {
+		flexDirection: "row",
+		gap: theme.spacing(2),
+	},
+	submitIconContainer: {
+		width: 48,
+		height: 48,
+		borderRadius: theme.borderRadius(10),
+		backgroundColor: theme.colors.primary.mainOpacity,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	mediaIconContainer: {
+		width: 48,
+		height: 48,
+		borderRadius: theme.borderRadius(10),
+		backgroundColor: theme.colors.progress.background,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	mediaIconColor: {
+		color: theme.colors.progress.main,
 	},
 	title: {
 		marginBottom: theme.spacing(2),
@@ -243,8 +417,9 @@ const styles = StyleSheet.create(theme => ({
 		minHeight: 100,
 		borderWidth: 1,
 		textAlignVertical: "top",
+		backgroundColor: theme.colors.background.default,
 		borderColor: theme.colors.border,
-		borderRadius: theme.borderRadius(1),
+		borderRadius: theme.borderRadius(2),
 		padding: theme.spacing(1),
 		fontSize: 16,
 	},
@@ -282,8 +457,14 @@ const styles = StyleSheet.create(theme => ({
 	},
 	actionButtons: {
 		flexDirection: "row",
-		justifyContent: "space-between",
 		marginTop: theme.spacing(1),
+		gap: theme.spacing(2),
+		alignContent: "center",
+	},
+	ButtonAction: {
+		flex: 1,
+
+		alignItems: "center",
 	},
 	mediaPickerCard: {
 		padding: theme.spacing(2),
@@ -298,12 +479,20 @@ const styles = StyleSheet.create(theme => ({
 	},
 	cancelButton: {
 		marginTop: theme.spacing(1),
+		alignSelf: "flex-end",
 	},
 	iconColor: {
 		color: theme.colors.primary.main,
 	},
+	iconColorSubmit: {
+		color: theme.colors.primary.text,
+	},
+	iconColorCancel: {
+		color: theme.colors.secondary.main,
+	},
 	buttonsContainer: {
 		flexDirection: "row",
 		gap: theme.spacing(2),
+		flex: 1,
 	},
 }));

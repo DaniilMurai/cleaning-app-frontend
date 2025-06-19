@@ -9,7 +9,7 @@ import TaskTimer from "@/ui/date/TaskTimer";
 import { formatToDate, getFormatedDate } from "@/core/utils/dateUtils";
 import RoomSection from "./RoomSection";
 import { AssignmentStatus, DailyAssignmentForUserResponse } from "@/api/client";
-import getStatusBadge from "@/components/reports/StatusBadge";
+import GetStatusBadge from "@/components/reports/StatusBadge";
 
 interface Props {
 	assignment: DailyAssignmentForUserResponse;
@@ -90,7 +90,7 @@ export default function AssignmentCard({
 								{assignment.location.name}
 							</Typography>
 						</View>
-						<Typography>{getStatusBadge(assignment.status, theme)}</Typography>
+						<GetStatusBadge status={status} />
 					</View>
 					<Typography variant="body1" style={styles.wrappableText} numberOfLines={0}>
 						{t("components.dailyAssignmentsList.address")}:{" "}

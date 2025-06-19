@@ -8,6 +8,7 @@ import React, { useState } from "react";
 import { AdminReadUser, DailyAssignmentResponse, LocationResponse } from "@/api/admin";
 import { StyleSheet } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
+import NoAssignments from "@/components/Assignment/RenderNoAssignments";
 
 interface props {
 	dailyAssignments: DailyAssignmentResponse[];
@@ -83,8 +84,7 @@ export default function RenderDailyAssignments({
 									color={styles.collapseIcon.color}
 								/>
 								<Typography variant="h5">
-									{location?.name ?? "Unknown Location"} -{" "}
-									{formatToDate(assignment.date)}
+									{location?.name ?? "Unknown Location"}
 								</Typography>
 							</View>
 							<View style={styles.actionButtons}>
@@ -132,7 +132,9 @@ export default function RenderDailyAssignments({
 			});
 	};
 
-	return render();
+	const assignments = render();
+
+	return assignments.length === 0 ? <NoAssignments selectedDate={selectedDate} /> : render();
 }
 
 const styles = StyleSheet.create(theme => ({

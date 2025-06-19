@@ -2,9 +2,11 @@ import { GetReportsParams } from "@/api/admin";
 import { StyleSheet } from "react-native-unistyles";
 import { Button, Input, Picker, Typography } from "@/ui";
 import { PickerOption } from "@/ui/common/Picker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { useDebounce } from "@uidotdev/usehooks";
+import { useTranslation } from "react-i18next";
 
 interface props {
 	params: GetReportsParams;
@@ -13,36 +15,20 @@ interface props {
 	onChangeVisible: (isVisible: boolean) => void;
 }
 
-const statusOptions: PickerOption[] = [
-	{ label: "All Statuses", value: "" },
-	{ label: "Completed", value: "completed" },
-	{ label: "Not Started", value: "not_started" },
-	{ label: "In Progress", value: "in_progress" },
-	{ label: "Partially Completed", value: "partially_completed" },
-];
-
-const orderByOptions: PickerOption[] = [
-	{ label: "id", value: "id" },
-	{ label: "Full Name", value: "user_id" },
-	// {
-	// 	label: "Location",
-	// 	value: "daily_assignment_id.location_id",
-	// },
-	// { label: "Date", value: "daily_assignment.date" },
-	{ label: "Status", value: "status" },
-	{ label: "Start", value: "start_time" },
-	{ label: "End", value: "end_time" },
-	// { label: "Duration", value: "duration_seconds" },
-];
-
-const directionOptions: PickerOption[] = [
-	{ label: "descending", value: "desc" },
-	{ label: "ascending", value: "asc" },
-];
 //TODO status и search не работают из за бэкэнда
 export default function SearchFilterPanel({ params, onAction, isVisible, onChangeVisible }: props) {
 	const [status, setStatus] = useState<string | null>(null);
 	const [search, setSearch] = useState<string>(params.search ?? "");
+
+	const { t } = useTranslation();
+
+	const debouncedSearch = useDebounce(search, 300);
+
+	useEffect(() => {
+		newParams.search = debouncedSearch;
+		console.log("render useEffect" + newParams.search);
+		onAction(newParams);
+	}, [debouncedSearch]);
 
 	if (!isVisible) {
 		return null;
@@ -58,16 +44,38 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 		onAction(newParams);
 	};
 
+	// Локализованные опции
+	const statusOptions: PickerOption[] = [
+		{ label: t("components.searchFilterPanel.allStatuses"), value: "" },
+		{ label: t("components.status.completed"), value: "completed" },
+		{ label: t("components.status.not_started"), value: "not_started" },
+		{ label: t("components.status.in_progress"), value: "in_progress" },
+		{ label: t("components.status.partially_completed"), value: "partially_completed" },
+	];
+
+	const orderByOptions: PickerOption[] = [
+		{ label: t("components.searchFilterPanel.orderByOptions.id"), value: "id" },
+		{ label: t("components.searchFilterPanel.orderByOptions.user_id"), value: "user_id" },
+		{ label: t("components.searchFilterPanel.orderByOptions.status"), value: "status" },
+		{ label: t("components.searchFilterPanel.orderByOptions.start_time"), value: "start_time" },
+		{ label: t("components.searchFilterPanel.orderByOptions.end_time"), value: "end_time" },
+	];
+
+	const directionOptions: PickerOption[] = [
+		{ label: t("components.searchFilterPanel.descending"), value: "desc" },
+		{ label: t("components.searchFilterPanel.ascending"), value: "asc" },
+	];
+
 	return (
 		<View style={styles.container}>
 			<View style={styles.headerContainer}>
 				<Typography>
-					<FontAwesome5 name="filter" size={20} color={styles.iconColor.color} /> Search &
-					Filters
+					<FontAwesome5 name="filter" size={20} color={styles.iconColor.color} />
+					{t("components.searchFilterPanel.searchAndFilters")}
 				</Typography>
 				<View style={{ flexDirection: "row", gap: 8 }}>
 					<Button variant={"text"} onPress={handleClear}>
-						Clear All
+						{t("components.searchFilterPanel.clearAll")}
 					</Button>
 					<Button
 						onPress={() => onChangeVisible(false)}
@@ -81,9 +89,9 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 			<View style={styles.contentContainer}>
 				<View style={styles.searchContainer}>
 					<Input
-						label={"Search"}
+						label={t("components.searchFilterPanel.search")}
 						size={"large"}
-						placeholder={" Search users or locations..."}
+						placeholder={t("components.searchFilterPanel.searchPlaceholder")}
 						style={styles.input}
 						value={search}
 						icon={
@@ -93,33 +101,28 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 								color={styles.iconColor.color}
 							/>
 						}
-						onChangeText={text => {
-							setSearch(text);
-							newParams.search = text;
-							onAction(newParams);
-						}}
+						onChangeText={setSearch}
 					/>
 				</View>
 				<View style={styles.pickersContainer}>
 					<View style={styles.pickerContainer}>
 						<Picker
-							placeholder={"All Statuses"}
+							placeholder={t("components.searchFilterPanel.allStatuses")}
 							style={styles.picker}
-							label={"Status"}
+							label={t("components.searchFilterPanel.status")}
 							options={statusOptions}
-							value={status ?? "id"}
+							value={status ?? ""}
 							onChange={setStatus}
 						/>
 					</View>
 
 					<View style={styles.pickerContainer}>
 						<Picker
-							placeholder={"id"}
+							placeholder={t("components.searchFilterPanel.orderByOptions.id")}
 							style={styles.picker}
-							label={"Order by"}
+							label={t("components.searchFilterPanel.orderBy")}
 							options={orderByOptions}
 							value={params.order_by ?? "id"}
-							// onChange={setOrder}
 							onChange={value => {
 								value ? (newParams.order_by = value) : "id";
 								onAction(newParams);
@@ -128,11 +131,10 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 					</View>
 					<View style={styles.pickerContainer}>
 						<Picker
-							label={"Direction"}
+							label={t("components.searchFilterPanel.direction")}
 							style={styles.picker}
 							options={directionOptions}
 							value={params.direction ?? "desc"}
-							// onChange={setDirection}
 							onChange={value => {
 								value ? (newParams.direction = value) : "desc";
 								onAction(newParams);

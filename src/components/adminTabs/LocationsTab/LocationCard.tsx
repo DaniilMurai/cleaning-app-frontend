@@ -8,7 +8,7 @@ import { StyleSheet } from "react-native-unistyles";
 import { LocationResponse } from "@/api/admin";
 import { DeleteLocationConfirm, EditLocationForm } from "@/ui/forms/common/LocationForms";
 import { useTranslation } from "react-i18next";
-import RoomCard, { RoomCardProps } from "@/components/adminTabs/LocationsTab/RoomCard";
+import RoomCard, { RoomCardProps } from "@/components/adminTabs/LocationsTab/Rooms/RoomCard";
 import { CreateRoomForm } from "@/ui/forms/common/RoomForms";
 
 interface LocationCardProps extends Omit<RoomCardProps, "room"> {
@@ -74,7 +74,7 @@ export default function LocationCard({ location, locationMutation, ...props }: L
 					<Typography variant="subtitle1">{t("admin.rooms")}</Typography>
 
 					{!locationRooms.length ? (
-						<Typography style={styles.emptyState}>{t("admin.noRooms")}</Typography>
+						<Typography style={styles.emptyState}> {t("admin.noRooms")}</Typography>
 					) : (
 						locationRooms.map(room => <RoomCard key={room.id} room={room} {...props} />)
 					)}
@@ -86,8 +86,7 @@ export default function LocationCard({ location, locationMutation, ...props }: L
 							setShowCreateRoom(true);
 						}}
 					>
-						<FontAwesome5 name="plus" size={14} />
-						{t("admin.addRoom")}
+						<FontAwesome5 name="plus" size={14} /> {t("admin.addRoom")}
 					</Button>
 				</Collapse>
 			</Card>

@@ -1,42 +1,41 @@
 import { Typography } from "@/ui";
 import React from "react";
+import { useUnistyles } from "react-native-unistyles";
+import { AssignmentStatus } from "@/api/admin";
+import { useTranslation } from "react-i18next";
 
-export default function getStatusBadge(
-	status: string,
-	theme: {
-		colors: {
-			success: { background: any; textOnBackground: any };
-			warning: { main: any; dark: any };
-			progress: { background: any; main: any };
-			not_started: { background: any; main: any };
-		};
-		spacing: (arg0: number) => any;
-	}
-) {
+interface Props {
+	status: AssignmentStatus;
+}
+
+export default function GetStatusBadge({ status }: Props) {
+	const { theme } = useUnistyles();
+	const { t } = useTranslation();
+
 	const statusConfig = {
 		completed: {
-			label: "Completed",
+			label: t("components.status.completed") || "Completed",
 			style: {
 				backgroundColor: theme.colors.success.background, // green-100
 				color: theme.colors.success.textOnBackground, // green-800
 			},
 		},
 		partially_completed: {
-			label: "Partially Completed",
+			label: t("components.status.partially_completed") || "Partially Completed",
 			style: {
-				backgroundColor: theme.colors.warning.main,
-				color: theme.colors.warning.dark,
+				color: theme.colors.warning.main,
+				backgroundColor: theme.colors.warning.background,
 			},
 		},
 		in_progress: {
-			label: "In Progress",
+			label: t("components.status.in_progress") || "In Progress",
 			style: {
 				backgroundColor: theme.colors.progress.background, // blue-100
 				color: theme.colors.progress.main, // blue-800
 			},
 		},
 		not_started: {
-			label: "Not Started",
+			label: t("components.status.not_started") || "Not Started",
 			style: {
 				backgroundColor: theme.colors.not_started.background, // gray-100
 				color: theme.colors.not_started.main, // gray-800

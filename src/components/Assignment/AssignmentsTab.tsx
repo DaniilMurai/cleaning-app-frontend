@@ -95,19 +95,6 @@ export default function AssignmentsTab({
 
 	return (
 		<View style={{ flex: 1 }}>
-			<View style={styles.headerContainer}>
-				<Button variant="contained" onPress={() => modal.openModal("createAssignment")}>
-					<FontAwesome5 name="plus" size={16} color={styles.iconColor.color} />
-				</Button>
-				<Button
-					variant={"outlined"}
-					style={{ marginHorizontal: 10 }}
-					onPress={() => setManyColumns(!manyColumns)}
-				>
-					<FontAwesome5 name={manyColumns ? "list" : "th"} size={16} />
-				</Button>
-			</View>
-
 			<ScrollView
 				style={styles.scrollContainer}
 				contentContainerStyle={styles.scrollContentContainer}
@@ -124,7 +111,19 @@ export default function AssignmentsTab({
 					{/* Задачи справа */}
 					<View style={styles.tasksContainer}>
 						<View style={styles.dateTaskContainer}>
-							<Typography variant={"h5"}>{t("admin.tasks")}</Typography>
+							<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+								<Typography variant={"h5"}>{t("admin.tasks")}</Typography>
+								<Button
+									variant="contained"
+									onPress={() => modal.openModal("createAssignment")}
+								>
+									<FontAwesome5
+										name="plus"
+										size={16}
+										color={styles.iconColor.color}
+									/>
+								</Button>
+							</View>
 							<Typography variant={"body1"} color={styles.dateText.color}>
 								{selectedDate
 									.toLocaleDateString(currentLanguage, {
@@ -171,7 +170,7 @@ const styles = StyleSheet.create(theme => ({
 			sm: "column",
 			md: "row",
 		},
-		gap: { xs: theme.spacing(2), sm: theme.spacing(0), md: theme.spacing(6) },
+		gap: { xs: theme.spacing(3), sm: theme.spacing(0), md: theme.spacing(6) },
 	},
 	sidebar: {
 		flex: { sm: 1, md: 0.5 },

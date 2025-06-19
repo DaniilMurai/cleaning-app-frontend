@@ -71,9 +71,9 @@ const styles = StyleSheet.create(theme => ({
 				},
 			},
 			variant: {
+				default: {},
 				outlined: {},
 				contained: {},
-				default: {},
 			},
 			color: {
 				primary: {},
@@ -86,6 +86,14 @@ const styles = StyleSheet.create(theme => ({
 				variant: "default",
 				styles: {
 					backgroundColor: theme.colors.background.paper,
+					borderRadius: theme.borderRadius(3),
+				},
+			},
+			{
+				color: "secondary",
+				variant: "default",
+				styles: {
+					backgroundColor: theme.colors.background.default,
 					borderRadius: theme.borderRadius(3),
 				},
 			},

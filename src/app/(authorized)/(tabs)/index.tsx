@@ -1,8 +1,9 @@
 import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import React, { useState } from "react";
-import { Card, Loading, ModalContainer, Typography } from "@/ui";
+import { Loading, ModalContainer, Typography } from "@/ui";
 import {
+	type AssignmentReportResponse,
 	AssignmentStatus,
 	CreateReport,
 	UpdateReport,
@@ -17,8 +18,8 @@ import { formatToDate, getFormatedDate } from "@/core/utils/dateUtils";
 import { useTranslation } from "react-i18next";
 import Calendar from "@/components/user/calendar/Calendar";
 import { useLanguage } from "@/core/context/LanguageContext";
-import { FontAwesome5 } from "@expo/vector-icons";
 import { useCurrentUser } from "@/core/auth";
+import NoAssignments from "@/components/Assignment/RenderNoAssignments";
 
 export default function DailyAssignmentsList() {
 	const user = useCurrentUser();
@@ -46,6 +47,13 @@ export default function DailyAssignmentsList() {
 	const [startTime, setStartTime] = useState<number | null>(null);
 	const [endTime, setEndTime] = useState<number | null>(null);
 	const [showReport, setShowReport] = useState(false);
+	const [assignmentId, setAssignmentId] = useState<number | null>(null);
+
+	const [totalTime, setTotalTime] = useState<number>(0);
+
+	const [assignmentAndReport, setAssignmentAndReport] = useState<AssignmentReportResponse | null>(
+		null
+	);
 
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
@@ -105,13 +113,19 @@ export default function DailyAssignmentsList() {
 					console.log(
 						"updateReportResponse start_time" + updateReportResponse.start_time
 					);
-				await updateAssignmentMutation.mutateAsync({
+				const updateAssignmentResponse = await updateAssignmentMutation.mutateAsync({
 					params: {
 						assignment_id: assignmentId,
 						status: newStatus,
 					},
 				});
+
+				setAssignmentAndReport({
+					assignment: updateAssignmentResponse,
+					report: updateReportResponse,
+				});
 			}
+			setAssignmentId(assignmentId);
 			setReportId(reportid);
 			await dailyAssignmentsAndReportsRefetch(); //хз надо или не посмотрю
 
@@ -119,6 +133,8 @@ export default function DailyAssignmentsList() {
 				newStatus === AssignmentStatus.completed ||
 				newStatus === AssignmentStatus.partially_completed
 			) {
+				setTotalTime(totalTime);
+
 				setShowReport(true);
 			}
 		} catch (error) {
@@ -126,7 +142,11 @@ export default function DailyAssignmentsList() {
 		}
 	};
 
-	const handleReportSubmit = async (data: { text?: string; media?: string[] }) => {
+	const handleReportSubmit = async (data: {
+		text?: string;
+		media?: string[];
+		status: AssignmentStatus;
+	}) => {
 		if (!user || !startTime || !endTime || !reportId || !dailyAssignmentsAndReports) return;
 
 		if (startTime > endTime) return;
@@ -141,7 +161,7 @@ export default function DailyAssignmentsList() {
 					media_links: data?.media,
 					start_time: startTime.toString(),
 					end_time: endTime.toString(),
-					status,
+					status: data.status, // Используем переданный статус
 				},
 			});
 			setShowReport(false);
@@ -207,72 +227,6 @@ export default function DailyAssignmentsList() {
 		return dailyAssignmentsAndReports.map(ar => ar.assignment.date);
 	};
 
-	const renderNoAssignments = () => {
-		if (assignments && assignments.length === 0) {
-			if (getFormatedDate(selectedDate) === getFormatedDate(new Date())) {
-				return (
-					<View style={styles.emptyStateContainer}>
-						<Card variant={"default"} style={styles.noAssignmentCard}>
-							<View
-								style={{
-									justifyContent: "center",
-									alignItems: "center",
-								}}
-							>
-								<View style={styles.iconContainer}>
-									<FontAwesome5
-										name={"clock"}
-										color={styles.iconColor.color}
-										size={26}
-									/>
-								</View>
-							</View>
-							<Typography
-								color="primary"
-								variant="h4"
-								style={{ textAlign: "center", marginBottom: 8 }}
-							>
-								{t("admin.noAssignmentsForToday")}
-							</Typography>
-							<Typography variant="body1" style={{ textAlign: "center" }}>
-								{t("admin.enjoyTime")}
-							</Typography>
-						</Card>
-					</View>
-				);
-			} else {
-				return (
-					<View style={styles.emptyStateContainer}>
-						<Card variant={"default"} style={styles.noAssignmentCard}>
-							<View
-								style={{
-									justifyContent: "center",
-									alignItems: "center",
-								}}
-							>
-								<View style={styles.iconContainer}>
-									<FontAwesome5
-										name={"clock"}
-										color={styles.iconColor.color}
-										size={26}
-									/>
-								</View>
-							</View>
-							<Typography
-								variant="h5"
-								style={{ alignSelf: "center", marginBottom: 8 }}
-							>
-								{t("admin.noAssignmentsPlanned", {
-									date: getFormatedDate(selectedDate),
-								})}
-							</Typography>
-						</Card>
-					</View>
-				);
-			}
-		}
-	};
-
 	const assignments = DailyAssignmentsListRender();
 	const assignmentDates = getDailyAssignmentDates();
 
@@ -297,7 +251,7 @@ export default function DailyAssignmentsList() {
 						</Typography>
 					</View>
 					{assignments.length === 0 ? (
-						renderNoAssignments()
+						<NoAssignments selectedDate={selectedDate} />
 					) : (
 						<View style={styles.scrollContainer}>{assignments}</View>
 					)}
@@ -309,6 +263,8 @@ export default function DailyAssignmentsList() {
 					<ReportForm
 						onCancel={() => setShowReport(false)}
 						onSubmit={handleReportSubmit}
+						assignmentAndReport={assignmentAndReport}
+						totalTime={totalTime}
 					/>
 				</ModalContainer>
 			)}
@@ -323,12 +279,12 @@ const styles = StyleSheet.create(theme => ({
 	},
 	contentContainer: {
 		paddingVertical: theme.spacing(2),
-		paddingHorizontal: theme.spacing(3),
+		paddingHorizontal: theme.spacing(2),
 	},
 	tasksContainer: {
 		flex: 1,
 		gap: theme.spacing(2),
-		margin: { xs: 0, md: theme.spacing(3) },
+		marginHorizontal: { xs: 0, md: theme.spacing(3) },
 	},
 	scrollContainer: {
 		flex: 1,
@@ -344,7 +300,7 @@ const styles = StyleSheet.create(theme => ({
 			sm: "column",
 			md: "row",
 		},
-		gap: { sm: theme.spacing(0), md: theme.spacing(6) },
+		gap: { xs: theme.spacing(3), sm: theme.spacing(0), md: theme.spacing(6) },
 	},
 	sidebar: {
 		flex: { sm: 1, md: 0.5 },
@@ -358,9 +314,7 @@ const styles = StyleSheet.create(theme => ({
 	dateText: {
 		color: theme.colors.text.disabled,
 	},
-	dateTaskContainer: {
-		marginTop: theme.spacing(2),
-	},
+	dateTaskContainer: {},
 	iconColor: {
 		color: theme.colors.primary.main,
 	},
