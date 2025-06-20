@@ -26,7 +26,7 @@ export default function DailyAssignmentsList() {
 
 	const {
 		handleStatusChange,
-		handleReportSubmit, // Добавлена новая функция
+		handleReportSubmit,
 		showReport,
 		totalTime,
 		assignmentAndReport,
@@ -101,8 +101,6 @@ export default function DailyAssignmentsList() {
 		</ScrollView>
 	);
 }
-
-// Стили остаются без изменений
 
 const styles = StyleSheet.create(theme => ({
 	container: {

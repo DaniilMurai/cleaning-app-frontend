@@ -112,9 +112,7 @@ export default function Calendar({ assignedDates, onConfirm }: Props) {
 						day: {
 							color: theme.colors.text.primary,
 						},
-						// today: {
-						// 	color: theme.colors.secondary.main,
-						// },
+
 						time_label: { color: theme.colors.text.primary },
 						day_label: {
 							color: theme.colors.text.primary,
@@ -122,13 +120,6 @@ export default function Calendar({ assignedDates, onConfirm }: Props) {
 						button_prev_image: { tintColor: theme.colors.primary.text },
 						button_next_image: { tintColor: theme.colors.primary.text },
 						weekday_label: { color: theme.colors.text.primary },
-						// selected: {
-						// 	backgroundColor: theme.colors.primary.main,
-						// 	borderRadius: theme.borderRadius(10),
-						// 	color: theme.colors.primary.text,
-						// 	maxWidth: "90%",
-						// 	maxHeight: "90%",
-						// },
 						selected_label: {
 							color: theme.colors.primary.text,
 						},

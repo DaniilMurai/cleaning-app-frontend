@@ -1,14 +1,14 @@
 import { Link, Stack } from "expo-router";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import Typography from "@/ui/common/Typography";
+import { Button } from "@/ui";
 
 export default function NotFoundScreen() {
 	return (
 		<View style={styles.container}>
 			<Stack.Screen options={{ title: "Oops, Not Found" }} />
 			<Link href="/">
-				<Typography>Not Found</Typography>
+				<Button variant={"text"}>Not Found</Button>
 			</Link>
 		</View>
 	);
