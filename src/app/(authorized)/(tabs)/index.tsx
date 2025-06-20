@@ -37,7 +37,6 @@ export default function DailyAssignmentsList() {
 	});
 
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-
 	if (dailyAssignmentsAndReportsIsLoading) {
 		return <Loading />;
 	}
