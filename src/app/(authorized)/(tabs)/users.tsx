@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native-unistyles";
 import { Button, Loading, ModalContainer } from "@/ui";
 import { useState } from "react";
 
-import { RegisterUserData, useGetUsers, UserSchema } from "@/api/admin";
+import { useGetUsers, UserSchema } from "@/api/admin";
 import EditUserForm from "@/ui/forms/user/EditUserForm";
 import CreateUserForm from "@/ui/forms/user/CreateUserForm";
 import UsersList from "@/components/lists/UsersList";
@@ -59,37 +59,6 @@ export default function UsersPage() {
 		refetch,
 	});
 
-	const handleEditUser = (user: UserSchema) => {
-		setSelectedUser(user);
-		setModalState(prev => ({ ...prev, editMode: true }));
-	};
-
-	const handleCreateUserClick = () => {
-		setModalState(prev => ({ ...prev, createMode: true }));
-	};
-
-	const handleForgetPasswordClick = async (user_id: number) => {
-		await handleForgetPassword(user_id);
-	};
-
-	const handleGetInviteLinkClick = async (user_id: number) => {
-		await handleGetInviteLink(user_id);
-	};
-
-	const handleUpdateUserSubmit = async (userData: Partial<UserSchema>) => {
-		if (selectedUser) {
-			await handleUpdateUser(selectedUser, userData);
-		}
-	};
-
-	const handleCreateUserSubmit = async (userData: RegisterUserData) => {
-		await handleCreateUser(userData);
-	};
-
-	const handleRefetchUsers = async () => {
-		await refetch();
-	};
-
 	if (isLoading) {
 		return <Loading />;
 	}
@@ -101,7 +70,7 @@ export default function UsersPage() {
 					<Button
 						variant="outlined"
 						style={{ marginHorizontal: 10 }}
-						onPress={handleRefetchUsers}
+						onPress={async () => await refetch()}
 						loading={isFetching}
 					>
 						<FontAwesome5 name="sync" size={20} style={styles.icon} />
@@ -116,17 +85,20 @@ export default function UsersPage() {
 					<Button
 						variant="contained"
 						style={{ marginHorizontal: 10 }}
-						onPress={handleCreateUserClick}
+						onPress={() => setModalState(prev => ({ ...prev, createMode: true }))}
 					>
 						<FontAwesome5 name="user-plus" size={20} style={styles.addUserIcon} />
 					</Button>
 				</View>
 				<UsersList
 					users={users || []}
-					onEditUser={handleEditUser}
+					onEditUser={user => {
+						setSelectedUser(user);
+						setModalState(prev => ({ ...prev, editMode: true }));
+					}}
 					onDeleteUser={handleDeleteUser}
-					onForgetPassword={handleForgetPasswordClick}
-					onActivateUser={handleGetInviteLinkClick}
+					onForgetPassword={async userId => handleForgetPassword(userId)}
+					onActivateUser={async userId => await handleGetInviteLink(userId)}
 					manyColumns={manyColumns}
 				/>
 			</ScrollView>
@@ -139,7 +111,11 @@ export default function UsersPage() {
 				{selectedUser && (
 					<EditUserForm
 						user={selectedUser}
-						onSubmit={handleUpdateUserSubmit}
+						onSubmit={async (userData: Partial<UserSchema>) => {
+							if (selectedUser) {
+								await handleUpdateUser(selectedUser, userData);
+							}
+						}}
 						onClose={() => setModalState(prev => ({ ...prev, editMode: false }))}
 						isLoading={updateMutation.isPending}
 					/>
@@ -152,7 +128,7 @@ export default function UsersPage() {
 				onClose={() => setModalState(prev => ({ ...prev, createMode: false }))}
 			>
 				<CreateUserForm
-					onSubmit={handleCreateUserSubmit}
+					onSubmit={async userData => await handleCreateUser(userData)}
 					onClose={() => setModalState(prev => ({ ...prev, createMode: false }))}
 					isLoading={createMutation.isPending}
 				/>
