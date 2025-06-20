@@ -27,7 +27,7 @@ interface Location {
 }
 
 interface CreateDailyAssignmentFormProps {
-	onSubmit: (assignmentData: DailyAssignmentCreate) => void;
+	onSubmit: (assignmentData: DailyAssignmentCreate[]) => void;
 	onClose: () => void;
 	isLoading?: boolean;
 	users: AdminReadUser[];
@@ -54,13 +54,12 @@ export function CreateDailyAssignmentForm({
 
 	const handleSubmit = () => {
 		if (!dates || dates.length === 0) return;
+		const updatedData: DailyAssignmentCreate[] = dates.map(date => ({
+			...formData,
+			date: date.format("YYYY-MM-DD HH:mm"),
+		}));
 
-		dates.forEach(date => {
-			onSubmit({
-				...formData,
-				date: date.format("YYYY-MM-DD HH:mm"),
-			});
-		});
+		onSubmit(updatedData);
 	};
 
 	const getUserDisplayName = (user: AdminReadUser) => {
@@ -112,13 +111,6 @@ export function CreateDailyAssignmentForm({
 					style={styles.input}
 				/>
 			</View>
-
-			{/*<DateInput*/}
-			{/*	label={t("components.dailyAssignmentsList.date") + "*"}*/}
-			{/*	value={formData.date}*/}
-			{/*	onChange={newDate => setFormData(prev => ({ ...prev, date: newDate }))}*/}
-			{/*	style={styles.dateContainer}*/}
-			{/*/>*/}
 
 			<DatesInput
 				label={t("components.dailyAssignmentsList.date") + "*"}

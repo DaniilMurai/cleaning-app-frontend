@@ -4,6 +4,7 @@ import {
 	DeleteDailyAssignmentParams,
 	EditDailyAssignmentParams,
 	useCreateDailyAssignment,
+	useCreateDailyAssignmentsBatch,
 	useDeleteDailyAssignment,
 	useEditDailyAssignment,
 } from "@/api/admin";
@@ -21,6 +22,15 @@ export default function useDailyAssignmentMutation(options: {
 		createGenericMutation({
 			mutation: {},
 			entityName: "Daily Assignment created",
+			onSuccess: onSuccessCreate,
+			refetch,
+		})
+	);
+
+	const createDailyAssignmentsBatchMutation = useCreateDailyAssignmentsBatch(
+		createGenericMutation({
+			mutation: {},
+			entityName: "Daily Assignments created",
 			onSuccess: onSuccessCreate,
 			refetch,
 		})
@@ -47,6 +57,9 @@ export default function useDailyAssignmentMutation(options: {
 		await createDailyAssignmentMutation.mutateAsync({ data });
 	};
 
+	const handleCreateDailyAssignmentsBatch = async (data: DailyAssignmentCreate[]) => {
+		await createDailyAssignmentsBatchMutation.mutateAsync({ data });
+	};
 	const handleUpdateDailyAssignment = async (
 		daily_assignment_id: EditDailyAssignmentParams,
 		data: DailyAssignmentUpdate
@@ -61,9 +74,11 @@ export default function useDailyAssignmentMutation(options: {
 	};
 
 	return {
+		handleCreateDailyAssignmentsBatch,
 		handleCreateDailyAssignment,
 		handleUpdateDailyAssignment,
 		handleDeleteDailyAssignment,
+		createDailyAssignmentsBatchMutation,
 		createDailyAssignmentMutation,
 		updateDailyAssignmentMutation,
 		deleteDailyAssignmentMutation,

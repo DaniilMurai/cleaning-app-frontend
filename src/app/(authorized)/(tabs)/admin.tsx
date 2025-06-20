@@ -50,7 +50,6 @@ export default function AdminPage() {
 			dailyAssignmentsRefetch: adminData.dailyAssignmentsRefetch,
 		}
 	);
-
 	return (
 		<View style={styles.container}>
 			<AdminTabs activeTab={activeTab} setActiveTab={setActiveTab} />

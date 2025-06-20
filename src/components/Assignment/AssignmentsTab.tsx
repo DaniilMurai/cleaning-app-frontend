@@ -47,7 +47,7 @@ export default function AssignmentsTab({
 					onClose={() => modal.closeModal("createAssignment")}
 				>
 					<CreateDailyAssignmentForm
-						onSubmit={dailyAssignmentMutation.handleCreateDailyAssignment}
+						onSubmit={dailyAssignmentMutation.handleCreateDailyAssignmentsBatch}
 						onClose={() => modal.closeModal("createAssignment")}
 						users={users || []}
 						locations={locations}

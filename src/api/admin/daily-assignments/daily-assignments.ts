@@ -496,3 +496,86 @@ export const useDeleteDailyAssignment = <
 
 	return useMutation(mutationOptions, queryClient);
 };
+/**
+ * @summary Create Daily Assignments Batch
+ */
+export const createDailyAssignmentsBatch = (
+	dailyAssignmentCreate: DailyAssignmentCreate[],
+	signal?: AbortSignal
+) => {
+	return getAxios<DailyAssignmentResponse[]>({
+		url: `/admin/daily-assignments/assignments`,
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		data: dailyAssignmentCreate,
+		signal,
+	});
+};
+
+export const getCreateDailyAssignmentsBatchMutationOptions = <
+	TError = ErrorType<HTTPValidationError>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof createDailyAssignmentsBatch>>,
+		TError,
+		{ data: DailyAssignmentCreate[] },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof createDailyAssignmentsBatch>>,
+	TError,
+	{ data: DailyAssignmentCreate[] },
+	TContext
+> => {
+	const mutationKey = ["createDailyAssignmentsBatch"];
+	const { mutation: mutationOptions } = options
+		? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+			? options
+			: { ...options, mutation: { ...options.mutation, mutationKey } }
+		: { mutation: { mutationKey } };
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof createDailyAssignmentsBatch>>,
+		{ data: DailyAssignmentCreate[] }
+	> = props => {
+		const { data } = props ?? {};
+
+		return createDailyAssignmentsBatch(data);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type CreateDailyAssignmentsBatchMutationResult = NonNullable<
+	Awaited<ReturnType<typeof createDailyAssignmentsBatch>>
+>;
+export type CreateDailyAssignmentsBatchMutationBody = DailyAssignmentCreate[];
+export type CreateDailyAssignmentsBatchMutationError = ErrorType<HTTPValidationError>;
+
+/**
+ * @summary Create Daily Assignments Batch
+ */
+export const useCreateDailyAssignmentsBatch = <
+	TError = ErrorType<HTTPValidationError>,
+	TContext = unknown,
+>(
+	options?: {
+		mutation?: UseMutationOptions<
+			Awaited<ReturnType<typeof createDailyAssignmentsBatch>>,
+			TError,
+			{ data: DailyAssignmentCreate[] },
+			TContext
+		>;
+	},
+	queryClient?: QueryClient
+): UseMutationResult<
+	Awaited<ReturnType<typeof createDailyAssignmentsBatch>>,
+	TError,
+	{ data: DailyAssignmentCreate[] },
+	TContext
+> => {
+	const mutationOptions = getCreateDailyAssignmentsBatchMutationOptions(options);
+
+	return useMutation(mutationOptions, queryClient);
+};
