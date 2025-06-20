@@ -41,6 +41,13 @@ export default function GetStatusBadge({ status }: Props) {
 				color: theme.colors.not_started.main, // gray-800
 			},
 		},
+		not_completed: {
+			label: t("components.status.not_completed") || "Not Completed",
+			style: {
+				backgroundColor: theme.colors.error.background,
+				color: theme.colors.error.main,
+			},
+		},
 	};
 
 	const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.not_started;
