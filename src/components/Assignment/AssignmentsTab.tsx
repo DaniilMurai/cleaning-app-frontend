@@ -1,6 +1,6 @@
 // src/ui/components/admin/AssignmentsTab.tsx
 import React, { useState } from "react";
-import { DimensionValue, ScrollView, useWindowDimensions, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { Button, ModalContainer, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -30,11 +30,6 @@ export default function AssignmentsTab({
 	dailyAssignmentMutation,
 	modal,
 }: AssignmentsTabProps) {
-	const { width } = useWindowDimensions();
-	const columns = width > 1200 ? 3 : width > 850 ? 2 : 1;
-	const cardWidth: DimensionValue = `${100 / columns - 3}%`; // небольшой отступ
-	const [manyColumns, setManyColumns] = useState<boolean>(false);
-
 	const { currentLanguage } = useLanguage();
 
 	const { t } = useTranslation();
@@ -140,9 +135,7 @@ export default function AssignmentsTab({
 							selectedDate={selectedDate}
 							modal={modal}
 							users={users}
-							cardWidth={cardWidth}
 							locations={locations}
-							manyColumns={manyColumns}
 						/>
 					</View>
 				</View>

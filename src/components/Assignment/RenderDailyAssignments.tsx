@@ -1,6 +1,6 @@
 import { formatToDate, getFormatedDate } from "@/core/utils/dateUtils";
 import { Button, Card } from "@/ui";
-import { DimensionValue, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Typography from "../../ui/common/Typography";
 import Collapse from "../../ui/common/Collapse";
@@ -14,9 +14,7 @@ interface props {
 	dailyAssignments: DailyAssignmentResponse[];
 	selectedDate: Date;
 	locations: LocationResponse[];
-	manyColumns: boolean;
 	users?: AdminReadUser[];
-	cardWidth: DimensionValue;
 	setSelectedAssignment: (assignment: DailyAssignmentResponse | null) => void;
 	modal: any;
 }
@@ -25,8 +23,6 @@ export default function RenderDailyAssignments({
 	dailyAssignments,
 	selectedDate,
 	locations,
-	manyColumns,
-	cardWidth,
 	setSelectedAssignment,
 	users,
 	modal,
@@ -58,17 +54,7 @@ export default function RenderDailyAssignments({
 				console.log("location", location);
 
 				return (
-					<Card
-						key={assignment.id}
-						style={[
-							styles.card,
-							manyColumns && {
-								margin: 8,
-								alignSelf: "flex-start",
-								width: cardWidth,
-							},
-						]}
-					>
+					<Card key={assignment.id} style={styles.card}>
 						<TouchableOpacity
 							style={styles.cardHeader}
 							onPress={() => toggleAssignment(assignment.id)}
