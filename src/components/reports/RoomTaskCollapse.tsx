@@ -178,7 +178,7 @@ const styles = StyleSheet.create(theme => ({
 		color: theme.colors.text.primary,
 	},
 	roomsContainer: {
-		padding: theme.spacing(2),
+		// padding: theme.spacing(2),
 		paddingLeft: theme.spacing(2),
 
 		gap: theme.spacing(1),
@@ -186,7 +186,7 @@ const styles = StyleSheet.create(theme => ({
 	roomItem: {
 		flexDirection: "row",
 		justifyContent: "space-between",
-		paddingRight: theme.spacing(3),
+		// paddingRight: theme.spacing(3),
 		marginVertical: theme.spacing(0.5),
 	},
 }));
