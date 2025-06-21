@@ -118,7 +118,7 @@ export default function useAssignmentStatusHandler({
 		}
 
 		try {
-			await updateReportMutation.mutateAsync({
+			const response = await updateReportMutation.mutateAsync({
 				params: { report_id: reportId },
 				data: {
 					daily_assignment_id: assignmentId,
@@ -130,6 +130,9 @@ export default function useAssignmentStatusHandler({
 					status: data.status,
 				},
 			});
+
+			console.log("response: " + response);
+
 			setShowReport(false);
 			await dailyAssignmentsAndReportsRefetch();
 		} catch (error) {

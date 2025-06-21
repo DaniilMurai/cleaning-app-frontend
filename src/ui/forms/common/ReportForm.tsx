@@ -114,7 +114,7 @@ export default function ReportForm({
 
 		// let status = "not_completed";
 		// Если пользователь вообще не сможет сделать задагние нужно будет поставить это
-		let status: AssignmentStatus = "partially_completed";
+		let status: AssignmentStatus = "not_completed";
 		if (allTasksDone) {
 			status = "completed";
 		} else if (someTasksDone) {
