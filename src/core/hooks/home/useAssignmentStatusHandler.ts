@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	AssignmentReportResponse,
 	AssignmentStatus,
@@ -8,6 +8,7 @@ import {
 	useUpdateDailyAssignmentStatus,
 	useUpdateReport,
 } from "@/api/client";
+import { AssignmentAndReportStorage, ReportIdStorage } from "@/core/auth/storage";
 
 interface StatusHandlerParams {
 	dailyAssignmentsAndReportsRefetch: () => Promise<any>;
@@ -32,6 +33,31 @@ export default function useAssignmentStatusHandler({
 	const createReportMutation = useCreateReport();
 	const updateReportMutation = useUpdateReport();
 	const updateAssignmentMutation = useUpdateDailyAssignmentStatus();
+
+	useEffect(() => {
+		const loadSavedData = async () => {
+			try {
+				const savedData = await AssignmentAndReportStorage.get();
+				if (savedData) {
+					const parsedData = JSON.parse(savedData);
+					setAssignmentAndReport(parsedData);
+					setReportId(parsedData?.report?.id || null);
+					setAssignmentId(parsedData?.assignment?.id || null);
+
+					if (parsedData?.report?.start_time) {
+						setStartTime(Number(parsedData.report.start_time));
+					}
+					if (parsedData?.report?.end_time) {
+						setEndTime(Number(parsedData.report.end_time));
+					}
+				}
+			} catch (error) {
+				console.error("Error loading saved assignment and report:", error);
+			}
+		};
+
+		loadSavedData();
+	}, []);
 
 	const handleStatusChange = async (
 		assignmentId: number,
@@ -72,12 +98,15 @@ export default function useAssignmentStatusHandler({
 				const updateAssignmentResponse = await updateAssignmentMutation.mutateAsync({
 					params: { assignment_id: assignmentId, status: newStatus },
 				});
-				setAssignmentAndReport({
+				const newData = {
 					assignment: updateAssignmentResponse,
 					report: report,
-				});
-				await dailyAssignmentsAndReportsRefetch();
+				};
+				setAssignmentAndReport(newData);
 				setReportId(report.id);
+				await AssignmentAndReportStorage.set(JSON.stringify(newData));
+				await ReportIdStorage.set(report.id.toString());
+				await dailyAssignmentsAndReportsRefetch();
 			} else {
 				const payload: UpdateReport = {
 					daily_assignment_id: assignmentId,
@@ -97,10 +126,15 @@ export default function useAssignmentStatusHandler({
 					}),
 				]);
 
-				setAssignmentAndReport({
+				await ReportIdStorage.set(reportid.toString());
+
+				const newData = {
 					assignment: updateAssignmentResponse,
 					report: updateReportResponse,
-				});
+				};
+
+				setAssignmentAndReport(newData);
+				await AssignmentAndReportStorage.set(JSON.stringify(newData));
 				setReportId(reportid);
 			}
 
@@ -157,7 +191,8 @@ export default function useAssignmentStatusHandler({
 			});
 
 			console.log("response: " + response);
-
+			await AssignmentAndReportStorage.remove();
+			await ReportIdStorage.remove();
 			setShowReport(false);
 			await dailyAssignmentsAndReportsRefetch();
 		} catch (error) {

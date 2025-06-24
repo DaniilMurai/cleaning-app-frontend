@@ -800,3 +800,270 @@ export function useGetDailyAssignmentsAndReportsSuspense<
 
 	return query;
 }
+
+/**
+ * @summary Get Daily Assignment And Report By Report Id
+ */
+export const getDailyAssignmentAndReportByReportId = (
+	reportId: number | undefined | null,
+	signal?: AbortSignal
+) => {
+	return getAxios<unknown>({ url: `/client/assignments/${reportId}`, method: "GET", signal });
+};
+
+export const getGetDailyAssignmentAndReportByReportIdQueryKey = (
+	reportId: number | undefined | null
+) => {
+	return [`/client/assignments/${reportId}`] as const;
+};
+
+export const getGetDailyAssignmentAndReportByReportIdQueryOptions = <
+	TData = Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	reportId: number | undefined | null,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+				TError,
+				TData
+			>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey =
+		queryOptions?.queryKey ?? getGetDailyAssignmentAndReportByReportIdQueryKey(reportId);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>
+	> = ({ signal }) => getDailyAssignmentAndReportByReportId(reportId, signal);
+
+	return { queryKey, queryFn, enabled: !!reportId, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetDailyAssignmentAndReportByReportIdQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>
+>;
+export type GetDailyAssignmentAndReportByReportIdQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetDailyAssignmentAndReportByReportId<
+	TData = Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	reportId: number | undefined | null,
+	options: {
+		query: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+					TError,
+					Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetDailyAssignmentAndReportByReportId<
+	TData = Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	reportId: number | undefined | null,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+					TError,
+					Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetDailyAssignmentAndReportByReportId<
+	TData = Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	reportId: number | undefined | null,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+				TError,
+				TData
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Daily Assignment And Report By Report Id
+ */
+
+export function useGetDailyAssignmentAndReportByReportId<
+	TData = Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	reportId: number | undefined | null,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+				TError,
+				TData
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetDailyAssignmentAndReportByReportIdQueryOptions(reportId, options);
+
+	const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetDailyAssignmentAndReportByReportIdSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	reportId: number | undefined | null,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+				TError,
+				TData
+			>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey =
+		queryOptions?.queryKey ?? getGetDailyAssignmentAndReportByReportIdQueryKey(reportId);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>
+	> = ({ signal }) => getDailyAssignmentAndReportByReportId(reportId, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+		Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetDailyAssignmentAndReportByReportIdSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>
+>;
+export type GetDailyAssignmentAndReportByReportIdSuspenseQueryError =
+	ErrorType<HTTPValidationError>;
+
+export function useGetDailyAssignmentAndReportByReportIdSuspense<
+	TData = Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	reportId: number | undefined | null,
+	options: {
+		query: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+				TError,
+				TData
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetDailyAssignmentAndReportByReportIdSuspense<
+	TData = Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	reportId: number | undefined | null,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+				TError,
+				TData
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetDailyAssignmentAndReportByReportIdSuspense<
+	TData = Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	reportId: number | undefined | null,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+				TError,
+				TData
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Daily Assignment And Report By Report Id
+ */
+
+export function useGetDailyAssignmentAndReportByReportIdSuspense<
+	TData = Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	reportId: number | undefined | null,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignmentAndReportByReportId>>,
+				TError,
+				TData
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetDailyAssignmentAndReportByReportIdSuspenseQueryOptions(
+		reportId,
+		options
+	);
+
+	const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}

@@ -10,6 +10,7 @@ import { type AssignmentReportResponse, AssignmentStatus } from "@/api/client";
 import RoomTaskCollapse from "@/components/reports/RoomTaskCollapse";
 import { formatTime } from "@/core/utils/dateUtils";
 import GetStatusBadge from "@/components/reports/StatusBadge";
+import { AssignmentAndReportStorage } from "@/core/auth/storage";
 
 interface Media {
 	type: "image" | "video";
@@ -45,31 +46,69 @@ export default function ReportForm({
 	// Состояние для хранения отметок комнат всех задач
 	const [tasksRoomChecks, setTasksRoomChecks] = useState<TasksRoomChecks>({});
 
+	// Добавим в начало компонента ReportForm
+	const [localAssignmentAndReport, setLocalAssignmentAndReport] =
+		useState<AssignmentReportResponse | null>(assignmentAndReport);
+
 	const handleCancel = () => {
 		// Вызываем переданный обработчик отмены
 		onCancel();
 	};
 
 	useEffect(() => {
-		if (assignmentAndReport) {
-			const initialChecks: TasksRoomChecks = {};
+		const init = async () => {
+			let data = assignmentAndReport;
+			if (!data) {
+				try {
+					const saved = await AssignmentAndReportStorage.get();
+					if (saved) data = JSON.parse(saved);
+				} catch (e) {
+					console.error("Storage load error", e);
+				}
+			}
 
-			assignmentAndReport.assignment.tasks?.forEach(task => {
-				initialChecks[task.id] = {};
-
-				// Инициализируем все комнаты как выполненные
-				const roomIds = assignmentAndReport.assignment.room_tasks
-					?.filter(rt => rt.task_id === task.id)
-					.map(rt => rt.room_id);
-
-				roomIds?.forEach(roomId => {
-					initialChecks[task.id][roomId] = true;
+			if (data) {
+				setLocalAssignmentAndReport(data);
+				const checks: TasksRoomChecks = {};
+				data.assignment.tasks?.forEach(task => {
+					checks[task.id] = {};
+					const roomIds = data.assignment.room_tasks
+						?.filter(rt => rt.task_id === task.id)
+						.map(rt => rt.room_id);
+					roomIds?.forEach(id => {
+						checks[task.id][id] = true;
+					});
 				});
-			});
+				setTasksRoomChecks(checks);
+			}
+		};
 
-			setTasksRoomChecks(initialChecks);
-		}
+		init();
 	}, [assignmentAndReport]);
+
+	//
+	// // Заменим все assignmentAndReport на localAssignmentAndReport в компоненте
+	//
+	// useEffect(() => {
+	// 	if (assignmentAndReport) {
+	// 		const initialChecks: TasksRoomChecks = {};
+	//
+	// 		assignmentAndReport.assignment.tasks?.forEach(task => {
+	// 			initialChecks[task.id] = {};
+	//
+	// 			// Инициализируем все комнаты как выполненные
+	// 			const roomIds = assignmentAndReport.assignment.room_tasks
+	// 				?.filter(rt => rt.task_id === task.id)
+	// 				.map(rt => rt.room_id);
+	//
+	// 			roomIds?.forEach(roomId => {
+	// 				initialChecks[task.id][roomId] = true;
+	// 			});
+	// 		});
+	//
+	// 		setTasksRoomChecks(initialChecks);
+	// 	}
+	// }, [assignmentAndReport]);
 
 	// Обработчик изменений в комнатах
 	const handleRoomChecksChange = (taskId: number, roomChecks: Record<number, boolean>) => {

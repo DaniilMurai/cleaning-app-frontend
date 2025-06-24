@@ -8,3 +8,7 @@ export const AccessTokenStorage = Storage("accessToken", true, {
 export const RefreshTokenStorage = Storage("refreshToken", true, {
 	keychainAccessible: AFTER_FIRST_UNLOCK,
 });
+
+export const ReportIdStorage = Storage("ReportId");
+
+export const AssignmentAndReportStorage = Storage("AssignmentAndReport");
