@@ -126,8 +126,10 @@ export default function ReportForm({
 	// При отправке определяем статус
 	const handleSubmit = async () => {
 		setIsSubmitting(true);
+
 		try {
 			const status = getStatus();
+			console.log("submitting status: " + status);
 
 			const onlyUris = media.map(item => item.uri);
 			await onSubmit({

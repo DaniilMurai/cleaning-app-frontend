@@ -39,14 +39,23 @@ export default function useAssignmentStatusHandler({
 		totalTime: number,
 		newStartTime: number | null,
 		newEndTime: number | null,
-		reportid: number | null
+		reportid: number | null,
+		attemptComplete?: boolean
 	) => {
 		if (!userId) return;
 
+		// ТОЛЬКО для attemptComplete (открытие модалки)
 		// Сохраняем временные метки для использования в отчете
 		setAssignmentId(assignmentId);
 		setStartTime(newStartTime);
 		setEndTime(newEndTime);
+
+		if (attemptComplete) {
+			setTotalTime(totalTime);
+			setShowReport(true);
+
+			return; // Не делаем запросы к API
+		}
 
 		try {
 			if (reportid === null) {
@@ -60,10 +69,13 @@ export default function useAssignmentStatusHandler({
 
 				const report = await createReportMutation.mutateAsync({ data: payload });
 
-				await updateAssignmentMutation.mutateAsync({
+				const updateAssignmentResponse = await updateAssignmentMutation.mutateAsync({
 					params: { assignment_id: assignmentId, status: newStatus },
 				});
-
+				setAssignmentAndReport({
+					assignment: updateAssignmentResponse,
+					report: report,
+				});
 				await dailyAssignmentsAndReportsRefetch();
 				setReportId(report.id);
 			} else {
@@ -92,10 +104,7 @@ export default function useAssignmentStatusHandler({
 				setReportId(reportid);
 			}
 
-			if (
-				newStatus === AssignmentStatus.completed ||
-				newStatus === AssignmentStatus.partially_completed
-			) {
+			if (attemptComplete) {
 				setTotalTime(totalTime);
 				setShowReport(true);
 			}
@@ -109,15 +118,31 @@ export default function useAssignmentStatusHandler({
 		media?: string[];
 		status: AssignmentStatus;
 	}) => {
+		console.log(
+			" userid: " +
+				userId +
+				" startTime: " +
+				startTime +
+				" endTime: " +
+				endTime +
+				" reportId: " +
+				reportId +
+				" assignmentId: " +
+				assignmentId
+		);
 		if (!userId || !startTime || !endTime || !reportId || !assignmentId) {
 			return;
 		}
 
 		if (startTime > endTime) {
+			console.log("startTime: " + startTime + "endtime: " + endTime);
 			return;
 		}
 
 		try {
+			await updateAssignmentMutation.mutateAsync({
+				params: { assignment_id: assignmentId, status: data.status },
+			});
 			const response = await updateReportMutation.mutateAsync({
 				params: { report_id: reportId },
 				data: {

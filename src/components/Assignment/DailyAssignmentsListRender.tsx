@@ -10,7 +10,8 @@ interface Props {
 		totalTime: number,
 		newStartTime: number | null,
 		newEndTime: number | null,
-		reportid: number | null
+		reportid: number | null,
+		attemptComplete?: boolean
 	) => void;
 }
 
@@ -33,14 +34,15 @@ export default function DailyAssignmentsListRender({ assignments, onStatusChange
 		<AssignmentCard
 			key={assignmentAndReport.assignment.id}
 			assignment={assignmentAndReport.assignment}
-			onStatusChange={(newStatus, totalTime, newStartTime, newEndTime) =>
+			onStatusChange={(newStatus, totalTime, newStartTime, newEndTime, attemptComplete) =>
 				onStatusChange(
 					assignmentAndReport.assignment.id,
 					newStatus,
 					totalTime,
 					newStartTime,
 					newEndTime,
-					assignmentAndReport.report?.id || null
+					assignmentAndReport.report?.id || null,
+					attemptComplete
 				)
 			}
 			initialStatus={assignmentAndReport.assignment.status}

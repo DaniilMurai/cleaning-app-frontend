@@ -55,10 +55,7 @@ const Checkbox = forwardRef<View, CheckboxProps>(function Checkbox(
 			onChange(!checked);
 		}
 	};
-
-	console.log("checked " + checked);
-	console.log("color " + color);
-	console.log("indeterminate " + indeterminate);
+	
 	return (
 		<Pressable
 			ref={ref}

@@ -82,7 +82,7 @@ export default function ReportsTable({ reports, assignments, users = [], locatio
 
 	const renderItem = ({ item }: { item: ReportResponse }) => {
 		const assignment = getAssignment(item);
-		const date = assignment ? formatToDateTime(assignment.date) : "—";
+		const date = assignment ? formatToDate(assignment.date) : "—";
 		const locationName = getLocationName(assignment);
 		const durationInMs = item.duration_seconds ? item.duration_seconds * 1000 : 0;
 		const duration = formatTime(durationInMs);

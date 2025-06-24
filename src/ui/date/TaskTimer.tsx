@@ -1,6 +1,6 @@
 // src/ui/components/user/TaskTimer.tsx
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { Button, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -15,8 +15,8 @@ interface TaskTimerProps {
 		status: AssignmentStatus,
 		totalTime: number,
 		startTime: number | null,
-		endTime: number | null
-		// initialElapsedTime?: number | null,
+		endTime: number | null,
+		attemptComplete?: boolean
 	) => void;
 	initialStatus?: AssignmentStatus;
 	initialElapsedTime?: number;
@@ -32,157 +32,124 @@ export default function TaskTimer({
 	startTimeBackend,
 }: TaskTimerProps) {
 	const { t } = useTranslation();
-
-	console.log("initialElapsedTime: " + initialElapsedTime);
-	const [status, setStatus] = useState<AssignmentStatus>(initialStatus);
-	const [startTime, setStartTime] = useState<number | null>(null);
-	const [endTime, setEndTime] = useState<number | null>(null);
-	const [totalElapsedTime, setTotalElapsedTime] = useState<number>(initialElapsedTime);
-	console.log("totalElapsedTime: " + totalElapsedTime);
-	const [displayTime, setDisplayTime] = useState<string>("00:00:00");
-	const [timerInterval, setTimerInterval] = useState<ReturnType<typeof setInterval> | null>(null);
+	const [status, setStatus] = useState(initialStatus);
+	const [displayTime, setDisplayTime] = useState("00:00:00");
 	const [isTimePickerVisible, setTimePickerVisible] = useState(false);
 
-	const showTimePicker = () => setTimePickerVisible(true);
-	const hideTimePicker = () => setTimePickerVisible(false);
+	const intervalRef = useRef<number | null>(null);
+	const startRef = useRef<number | null>(
+		startTimeBackend ? new Date(startTimeBackend).getTime() : null
+	);
+	const elapsedRef = useRef<number>(
+		startTimeBackend && initialStatus === AssignmentStatus.in_progress
+			? Date.now() - (startRef.current as number)
+			: initialElapsedTime * 1000
+	);
 
-	// Обработка выбора времени
-	const handleTimeConfirm = (selectedDate: Date) => {
-		hideTimePicker();
-		const now = new Date();
-		console.log("selected date: " + selectedDate);
-		const differenceMs = now.getTime() - selectedDate.getTime();
-
-		if (differenceMs < 0) {
-			// Обработка выбора будущего времени
-			alert("Нельзя выбрать будущее время");
-			return;
+	const clearTimer = useCallback(() => {
+		if (intervalRef.current) {
+			clearInterval(intervalRef.current);
+			intervalRef.current = null;
 		}
+	}, []);
 
-		setStartTime(selectedDate.getTime());
-		setTotalElapsedTime(differenceMs);
-		console.log("totalElapsedTime in handleTimeConfirm " + totalElapsedTime);
-		startTaskWithOffset(selectedDate.getTime(), differenceMs);
-	};
-
-	// Запуск задачи с учетом смещения времени
-	const startTaskWithOffset = (startTimestamp: number, initialElapsed: number) => {
-		setStartTime(startTimestamp);
-		setTotalElapsedTime(initialElapsed);
-		if (timerInterval) {
-			clearInterval(timerInterval);
+	const tick = useCallback(() => {
+		if (startRef.current !== null) {
+			elapsedRef.current = Date.now() - startRef.current;
+			setDisplayTime(formatTime(elapsedRef.current));
 		}
+	}, []);
 
-		setStatus(AssignmentStatus.in_progress);
+	const startInterval = useCallback(() => {
+		clearTimer();
+		tick();
+		intervalRef.current = setInterval(tick, 1000);
+	}, [clearTimer, tick]);
 
-		const intervalId = setInterval(() => {
-			setTotalElapsedTime(prev => prev + 1000);
-		}, 1000);
-		console.log("totalElapsedTime in startTaskWithOffset " + totalElapsedTime);
-
-		setTimerInterval(intervalId as unknown as ReturnType<typeof setInterval>);
-
-		if (onStatusChange) {
-			onStatusChange(AssignmentStatus.in_progress, initialElapsed, startTimestamp, endTime);
-		}
-	};
-
-	useEffect(() => {
-		if (startTimeBackend && status === AssignmentStatus.in_progress) {
-			const date = new Date(startTimeBackend);
-			const now = new Date();
-			console.log("useEffect status in progress");
-			setTotalElapsedTime(now.getTime() - date.getTime());
-			console.log("totalElapsedTime in useEffect 1 " + totalElapsedTime);
-
-			const intervalId = setInterval(() => {
-				setTotalElapsedTime(prev => prev + 1000);
-			}, 1000);
-			console.log("totalElapsedTime In useEffect 2 " + totalElapsedTime);
-
-			setTimerInterval(intervalId as unknown as ReturnType<typeof setInterval>);
-
-			console.log("totalElapsedTime In useEffect 3 " + totalElapsedTime);
-		}
-	}, [status]);
-
-	// Обновление отображаемого времени
-	useEffect(() => {
-		setDisplayTime(formatTime(totalElapsedTime));
-		console.log("totalElapsedTime in display time useEffect " + totalElapsedTime);
-	}, [totalElapsedTime]);
-
-	// Очистка интервала при размонтировании компонента
-	useEffect(() => {
-		return () => {
-			if (timerInterval) {
-				clearInterval(timerInterval);
-			}
-		};
-	}, [timerInterval]);
-
-	// Запустить задачу
 	const startTask = () => {
 		const now = Date.now();
-
-		// Остановить любые существующие интервалы
-		if (timerInterval) {
-			clearInterval(timerInterval);
-		}
-
+		startRef.current = now;
+		elapsedRef.current = 0;
 		setStatus(AssignmentStatus.in_progress);
-		setStartTime(now);
+		startInterval();
+		onStatusChange?.(AssignmentStatus.in_progress, elapsedRef.current, startRef.current, null);
+	};
 
-		// Устанавливаем интервал для обновления таймера
-		const intervalId = setInterval(() => {
-			setTotalElapsedTime(prev => {
-				// Увеличиваем на 1 секунду
-				return prev + 1000;
-			});
-		}, 1000);
-		console.log("totalElapsedTime in startTask" + totalElapsedTime);
-
-		setTimerInterval(intervalId as unknown as ReturnType<typeof setInterval>);
-
-		// Вызываем колбэк, если он предоставлен
-		if (onStatusChange) {
-			onStatusChange(AssignmentStatus.in_progress, totalElapsedTime, now, endTime);
-		}
+	const startWithOffset = (picked: number) => {
+		startRef.current = picked;
+		elapsedRef.current = Date.now() - picked;
+		setStatus(AssignmentStatus.in_progress);
+		startInterval();
+		onStatusChange?.(AssignmentStatus.in_progress, elapsedRef.current, startRef.current, null);
 	};
 
 	const cancelTask = () => {
 		if (status !== AssignmentStatus.in_progress) return;
-
-		if (timerInterval) {
-			clearInterval(timerInterval);
-			setTimerInterval(null);
-		}
+		clearTimer();
 		setStatus(AssignmentStatus.not_started);
-		setStartTime(null);
-		setTotalElapsedTime(0);
-		console.log("totalElapsedTime in canselTask" + totalElapsedTime);
+		onStatusChange?.(AssignmentStatus.not_started, 0, null, null);
+		startRef.current = null;
+		elapsedRef.current = 0;
 		setDisplayTime("00:00:00");
-		if (onStatusChange) {
-			onStatusChange(AssignmentStatus.not_started, 0, null, null);
-		}
 	};
 
-	// Завершить задачу
-	const completeTask = () => {
-		// Остановить интервал
-		const now = Date.now();
-		if (timerInterval) {
-			clearInterval(timerInterval);
-			setTimerInterval(null);
-		}
-		setEndTime(now);
-		setStatus(AssignmentStatus.completed);
-
-		// Вызываем колбэк, если он предоставлен
-		if (onStatusChange) {
-			onStatusChange(AssignmentStatus.completed, totalElapsedTime, startTime, now);
-		}
+	const attemptComplete = () => {
+		// только сигнализируем, не останавливаем таймер
+		const endTime = Date.now();
+		onStatusChange?.(status, elapsedRef.current, startRef.current, endTime, true);
 	};
+
+	const handleTimeConfirm = (selectedDate: Date) => {
+		setTimePickerVisible(false);
+		const picked = selectedDate.getTime();
+		if (picked > Date.now()) {
+			alert(t("components.taskTimer.futureTimeError"));
+			return;
+		}
+		startWithOffset(picked);
+	};
+
+	// Инициализация при монтировании
+	useEffect(() => {
+		if (initialStatus === AssignmentStatus.in_progress && startRef.current !== null) {
+			setStatus(AssignmentStatus.in_progress);
+			startInterval();
+		}
+		if (
+			initialStatus === AssignmentStatus.completed ||
+			initialStatus === AssignmentStatus.partially_completed ||
+			initialStatus === AssignmentStatus.not_completed
+		) {
+			clearTimer();
+			setStatus(initialStatus);
+			setDisplayTime(formatTime(elapsedRef.current));
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	// Реагируем на изменение initialStatus из родителя
+	useEffect(() => {
+		if (
+			(initialStatus === AssignmentStatus.completed ||
+				initialStatus === AssignmentStatus.partially_completed ||
+				initialStatus === AssignmentStatus.not_completed) &&
+			status === AssignmentStatus.in_progress
+		) {
+			clearTimer();
+			setStatus(initialStatus);
+			setDisplayTime(formatTime(elapsedRef.current));
+		}
+		if (
+			initialStatus === AssignmentStatus.in_progress &&
+			status !== AssignmentStatus.in_progress &&
+			startRef.current !== null
+		) {
+			setStatus(AssignmentStatus.in_progress);
+			startInterval();
+		}
+	}, [initialStatus, status, startInterval, clearTimer]);
+
+	useEffect(() => clearTimer, [clearTimer]);
 
 	return (
 		<View style={styles.timerContainer}>
@@ -199,15 +166,14 @@ export default function TaskTimer({
 							onPress={startTask}
 							style={[styles.commonButton, styles.startButton]}
 						>
-							<FontAwesome5 name="play" size={14} color={styles.iconColor} />
+							<FontAwesome5 name="play" size={14} />
 						</Button>
-
 						<Button
 							variant="outlined"
-							onPress={showTimePicker}
+							onPress={() => setTimePickerVisible(true)}
 							style={[styles.commonButton, styles.otherTimeButton]}
 						>
-							<FontAwesome5 name="clock" size={14} color={styles.iconColor} />
+							<FontAwesome5 name="clock" size={14} />
 						</Button>
 					</>
 				)}
@@ -219,34 +185,46 @@ export default function TaskTimer({
 							onPress={cancelTask}
 							style={[styles.commonButton, styles.cancelButton]}
 						>
-							<FontAwesome5 name="ban" size={14} color={styles.iconColor} />
+							<FontAwesome5 name="ban" size={14} />
 						</Button>
-
 						<Button
 							variant="contained"
-							onPress={completeTask}
+							onPress={attemptComplete}
 							style={[styles.commonButton, styles.completeButton]}
 						>
-							<FontAwesome5 name="check" size={14} color={styles.iconColor} />
+							<FontAwesome5 name="check" size={14} />
 						</Button>
 					</>
 				)}
 
-				{status === AssignmentStatus.completed && (
-					<Typography variant="subtitle1" style={styles.completedText}>
-						{t("components.taskTimer.completed")}
+				{(status === AssignmentStatus.completed ||
+					status === AssignmentStatus.partially_completed ||
+					status === AssignmentStatus.not_completed) && (
+					<Typography
+						variant="subtitle1"
+						style={
+							status === AssignmentStatus.completed
+								? styles.completedText
+								: status === AssignmentStatus.partially_completed
+									? styles.partiallyCompletedText
+									: styles.notCompletedText
+						}
+					>
+						{t(
+							status === AssignmentStatus.completed
+								? "components.taskTimer.completed"
+								: status === AssignmentStatus.partially_completed
+									? "components.status.partially_completed"
+									: "components.status.not_completed"
+						)}
 					</Typography>
 				)}
 
-				{/* Модальное окно выбора времени */}
 				<DateInputModal
 					isVisible={isTimePickerVisible}
 					mode="time"
-					onConfirm={selectedTime => {
-						handleTimeConfirm(selectedTime);
-						console.log(selectedTime);
-					}}
-					onCancel={hideTimePicker}
+					onConfirm={handleTimeConfirm}
+					onCancel={() => setTimePickerVisible(false)}
 					maximumDate={new Date()}
 				/>
 			</View>
@@ -300,6 +278,14 @@ const styles = StyleSheet.create(theme => ({
 	},
 	completedText: {
 		color: theme.colors.success.main,
+		fontWeight: "bold",
+	},
+	partiallyCompletedText: {
+		color: theme.colors.warning.main,
+		fontWeight: "bold",
+	},
+	notCompletedText: {
+		color: theme.colors.error.main,
 		fontWeight: "bold",
 	},
 	commonButton: {

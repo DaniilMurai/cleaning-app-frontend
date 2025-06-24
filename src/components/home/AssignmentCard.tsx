@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { Card, Typography } from "@/ui";
@@ -17,7 +17,8 @@ interface Props {
 		status: AssignmentStatus,
 		totalTime: number,
 		startTime: number | null,
-		endTime: number | null
+		endTime: number | null,
+		attemptComplete?: boolean
 	) => void;
 	initialStatus?: AssignmentStatus;
 	alreadyDoneTime?: number;
@@ -43,12 +44,16 @@ export default function AssignmentCard({
 		status: AssignmentStatus,
 		totalTime: number,
 		startTime: number | null,
-		endTime: number | null
+		endTime: number | null,
+		attemptComplete?: boolean
 	) => {
-		setStatus(status);
+		// Не обновляем статус при attemptComplete
+		if (!attemptComplete) {
+			setStatus(status);
+		}
 
 		if (onStatusChange) {
-			onStatusChange(status, totalTime, startTime, endTime);
+			onStatusChange(status, totalTime, startTime, endTime, attemptComplete);
 		}
 	};
 
@@ -62,10 +67,16 @@ export default function AssignmentCard({
 				return theme.colors.warning.main;
 			case "not_started":
 				return theme.colors.not_started.main;
+			case "not_completed":
+				return theme.colors.error.main;
 			default:
 				return null;
 		}
 	};
+
+	useEffect(() => {
+		setStatus(assignment.status);
+	}, [assignment.status]);
 
 	return (
 		<Card borderLeftColor={getBorderColor(status)} variant={"contained"} style={styles.card}>
