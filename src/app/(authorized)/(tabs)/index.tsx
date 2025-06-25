@@ -29,7 +29,7 @@ export default function DailyAssignmentsList() {
 		handleReportSubmit,
 		showReport,
 		totalTime,
-		assignmentAndReport,
+		assignment,
 		setShowReport,
 	} = useAssignmentStatusHandler({
 		dailyAssignmentsAndReportsRefetch,
@@ -52,6 +52,15 @@ export default function DailyAssignmentsList() {
 	const assignmentDates = dailyAssignmentsAndReports
 		? dailyAssignmentsAndReports.map(ar => ar.assignment.date)
 		: [];
+
+	filteredAssignments.map(ass => {
+		console.log(
+			"assignment status in index: " +
+				ass.assignment.status +
+				" start_time: " +
+				ass.assignment.start_time
+		);
+	});
 
 	return (
 		<ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
@@ -93,7 +102,7 @@ export default function DailyAssignmentsList() {
 					<ReportForm
 						onCancel={() => setShowReport(false)}
 						onSubmit={handleReportSubmit}
-						assignmentAndReport={assignmentAndReport}
+						assignment={assignment}
 						totalTime={totalTime}
 					/>
 				</ModalContainer>

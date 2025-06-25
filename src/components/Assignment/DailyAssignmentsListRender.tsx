@@ -10,7 +10,6 @@ interface Props {
 		totalTime: number,
 		newStartTime: number | null,
 		newEndTime: number | null,
-		reportid: number | null,
 		attemptComplete?: boolean
 	) => void;
 }
@@ -18,9 +17,10 @@ interface Props {
 const statusOrder: Record<AssignmentStatus, number> = {
 	in_progress: 0,
 	not_started: 1,
-	not_completed: 2,
-	partially_completed: 3,
-	completed: 4,
+	expired: 2,
+	not_completed: 3,
+	partially_completed: 4,
+	completed: 5,
 };
 
 export default function DailyAssignmentsListRender({ assignments, onStatusChange }: Props) {
@@ -29,6 +29,15 @@ export default function DailyAssignmentsListRender({ assignments, onStatusChange
 	const sortedAssignments = [...assignments].sort(
 		(a, b) => statusOrder[a.assignment.status] - statusOrder[b.assignment.status]
 	);
+
+	sortedAssignments.map(assignmentAndReport => {
+		console.log(
+			"status in DailyAssignmentsListRender: " +
+				assignmentAndReport.assignment.status +
+				" start_time: " +
+				assignmentAndReport.assignment.start_time
+		);
+	});
 
 	return sortedAssignments.map(assignmentAndReport => (
 		<AssignmentCard
@@ -41,17 +50,19 @@ export default function DailyAssignmentsListRender({ assignments, onStatusChange
 					totalTime,
 					newStartTime,
 					newEndTime,
-					assignmentAndReport.report?.id || null,
 					attemptComplete
 				)
 			}
 			initialStatus={assignmentAndReport.assignment.status}
-			alreadyDoneTime={assignmentAndReport.report?.duration_seconds ?? 0}
+			alreadyDoneTime={
+				assignmentAndReport.report?.duration_seconds ??
+				assignmentAndReport.assignment?.duration_seconds ??
+				0
+			}
 			startTimeBackend={
-				assignmentAndReport.report &&
-				assignmentAndReport.report.status === AssignmentStatus.in_progress &&
+				assignmentAndReport.assignment &&
 				assignmentAndReport.assignment.status === AssignmentStatus.in_progress
-					? assignmentAndReport.report.start_time
+					? assignmentAndReport.assignment.start_time
 					: null
 			}
 		/>

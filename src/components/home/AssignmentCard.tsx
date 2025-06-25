@@ -40,6 +40,8 @@ export default function AssignmentCard({
 
 	const [status, setStatus] = useState<AssignmentStatus>(initialStatus || assignment.status);
 
+	console.log("assignment in AssignmentCard: " + assignment.status + " " + assignment.start_time);
+
 	const handleStatusChange = (
 		status: AssignmentStatus,
 		totalTime: number,

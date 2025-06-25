@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import {
-	AssignmentReportResponse,
 	AssignmentStatus,
-	CreateReport,
-	UpdateReport,
+	DailyAssignmentForUserResponse,
+	DailyAssignmentForUserUpdate,
 	useCreateReport,
-	useUpdateDailyAssignmentStatus,
-	useUpdateReport,
+	useUpdateDailyAssignment,
 } from "@/api/client";
-import { AssignmentAndReportStorage, ReportIdStorage } from "@/core/auth/storage";
+import { AssignmentStorage } from "@/core/auth/storage";
 
 interface StatusHandlerParams {
 	dailyAssignmentsAndReportsRefetch: () => Promise<any>;
@@ -19,35 +17,30 @@ export default function useAssignmentStatusHandler({
 	dailyAssignmentsAndReportsRefetch,
 	userId,
 }: StatusHandlerParams) {
-	const [reportId, setReportId] = useState<number | null>(null);
 	const [assignmentId, setAssignmentId] = useState<number | null>(null);
 	const [startTime, setStartTime] = useState<number | null>(null);
 	const [endTime, setEndTime] = useState<number | null>(null);
 	const [showReport, setShowReport] = useState(false);
 	const [totalTime, setTotalTime] = useState(0);
 
-	const [assignmentAndReport, setAssignmentAndReport] = useState<AssignmentReportResponse | null>(
-		null
-	);
+	const [assignment, setAssignment] = useState<DailyAssignmentForUserResponse | null>(null);
 
 	const createReportMutation = useCreateReport();
-	const updateReportMutation = useUpdateReport();
-	const updateAssignmentMutation = useUpdateDailyAssignmentStatus();
+	const updateAssignmentMutation = useUpdateDailyAssignment();
 
 	useEffect(() => {
 		const loadSavedData = async () => {
 			try {
-				const savedData = await AssignmentAndReportStorage.get();
+				const savedData = await AssignmentStorage.get();
 				if (savedData) {
 					const parsedData = JSON.parse(savedData);
-					setAssignmentAndReport(parsedData);
-					setReportId(parsedData?.report?.id || null);
-					setAssignmentId(parsedData?.assignment?.id || null);
+					setAssignment(parsedData);
+					setAssignmentId(parsedData?.id || null);
 
-					if (parsedData?.report?.start_time) {
+					if (parsedData?.start_time) {
 						setStartTime(Number(parsedData.report.start_time));
 					}
-					if (parsedData?.report?.end_time) {
+					if (parsedData?.end_time) {
 						setEndTime(Number(parsedData.report.end_time));
 					}
 				}
@@ -65,7 +58,6 @@ export default function useAssignmentStatusHandler({
 		totalTime: number,
 		newStartTime: number | null,
 		newEndTime: number | null,
-		reportid: number | null,
 		attemptComplete?: boolean
 	) => {
 		if (!userId) return;
@@ -84,64 +76,28 @@ export default function useAssignmentStatusHandler({
 		}
 
 		try {
-			if (reportid === null) {
-				const payload: CreateReport = {
-					daily_assignment_id: assignmentId,
-					user_id: userId,
-					status: newStatus,
-					start_time: newStartTime?.toString() || null,
-					end_time: newEndTime?.toString() || null,
-				};
+			const updateAssignmentData: DailyAssignmentForUserUpdate = {
+				start_time: newStartTime?.toString() || null,
+				end_time: newEndTime?.toString() || null,
+				status: newStatus,
+			};
 
-				const report = await createReportMutation.mutateAsync({ data: payload });
+			const updateAssignmentResponse = await updateAssignmentMutation.mutateAsync({
+				params: { assignment_id: assignmentId },
+				data: updateAssignmentData,
+			});
 
-				const updateAssignmentResponse = await updateAssignmentMutation.mutateAsync({
-					params: { assignment_id: assignmentId, status: newStatus },
-				});
-				const newData = {
-					assignment: updateAssignmentResponse,
-					report: report,
-				};
-				setAssignmentAndReport(newData);
-				setReportId(report.id);
-				await AssignmentAndReportStorage.set(JSON.stringify(newData));
-				await ReportIdStorage.set(report.id.toString());
-				await dailyAssignmentsAndReportsRefetch();
-			} else {
-				const payload: UpdateReport = {
-					daily_assignment_id: assignmentId,
-					user_id: userId,
-					status: newStatus,
-					start_time: newStartTime?.toString(),
-					end_time: newEndTime?.toString(),
-				};
+			console.log(
+				"updateAssignmentResponse in useAssignmentStatusHandler: " +
+					updateAssignmentResponse.status +
+					" " +
+					updateAssignmentResponse.start_time
+			);
 
-				const [updateReportResponse, updateAssignmentResponse] = await Promise.all([
-					updateReportMutation.mutateAsync({
-						data: payload,
-						params: { report_id: reportid },
-					}),
-					updateAssignmentMutation.mutateAsync({
-						params: { assignment_id: assignmentId, status: newStatus },
-					}),
-				]);
+			setAssignment(updateAssignmentResponse);
+			await AssignmentStorage.set(JSON.stringify(updateAssignmentResponse));
 
-				await ReportIdStorage.set(reportid.toString());
-
-				const newData = {
-					assignment: updateAssignmentResponse,
-					report: updateReportResponse,
-				};
-
-				setAssignmentAndReport(newData);
-				await AssignmentAndReportStorage.set(JSON.stringify(newData));
-				setReportId(reportid);
-			}
-
-			if (attemptComplete) {
-				setTotalTime(totalTime);
-				setShowReport(true);
-			}
+			await dailyAssignmentsAndReportsRefetch();
 		} catch (error) {
 			console.error("Error updating report:", error);
 		}
@@ -159,12 +115,10 @@ export default function useAssignmentStatusHandler({
 				startTime +
 				" endTime: " +
 				endTime +
-				" reportId: " +
-				reportId +
 				" assignmentId: " +
 				assignmentId
 		);
-		if (!userId || !startTime || !endTime || !reportId || !assignmentId) {
+		if (!userId || !startTime || !endTime || !assignmentId) {
 			return;
 		}
 
@@ -174,11 +128,18 @@ export default function useAssignmentStatusHandler({
 		}
 
 		try {
+			const updateAssignmentData: DailyAssignmentForUserUpdate = {
+				start_time: startTime.toString(),
+				end_time: endTime.toString(),
+				status: data.status,
+			};
+
 			await updateAssignmentMutation.mutateAsync({
-				params: { assignment_id: assignmentId, status: data.status },
+				params: { assignment_id: assignmentId },
+				data: updateAssignmentData,
 			});
-			const response = await updateReportMutation.mutateAsync({
-				params: { report_id: reportId },
+
+			const response = await createReportMutation.mutateAsync({
 				data: {
 					daily_assignment_id: assignmentId,
 					user_id: userId,
@@ -190,9 +151,8 @@ export default function useAssignmentStatusHandler({
 				},
 			});
 
-			console.log("response: " + response);
-			await AssignmentAndReportStorage.remove();
-			await ReportIdStorage.remove();
+			console.log("response in useAssignmentStatusHandler: " + response);
+			await AssignmentStorage.remove();
 			setShowReport(false);
 			await dailyAssignmentsAndReportsRefetch();
 		} catch (error) {
@@ -205,7 +165,7 @@ export default function useAssignmentStatusHandler({
 		handleReportSubmit,
 		showReport,
 		totalTime,
-		assignmentAndReport,
+		assignment,
 		setShowReport,
 	};
 }

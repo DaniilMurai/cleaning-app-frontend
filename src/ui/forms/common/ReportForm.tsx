@@ -6,11 +6,11 @@ import { Button, Card, Input, ModalContainer, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useTranslation } from "react-i18next";
-import { type AssignmentReportResponse, AssignmentStatus } from "@/api/client";
+import { AssignmentStatus, DailyAssignmentForUserResponse } from "@/api/client";
 import RoomTaskCollapse from "@/components/reports/RoomTaskCollapse";
 import { formatTime } from "@/core/utils/dateUtils";
 import GetStatusBadge from "@/components/reports/StatusBadge";
-import { AssignmentAndReportStorage } from "@/core/auth/storage";
+import { AssignmentStorage } from "@/core/auth/storage";
 
 interface Media {
 	type: "image" | "video";
@@ -18,7 +18,7 @@ interface Media {
 }
 
 interface ReportFormProps extends React.ComponentProps<typeof View> {
-	assignmentAndReport: AssignmentReportResponse | null;
+	assignment: DailyAssignmentForUserResponse | null;
 	onSubmit: (data: {
 		text?: string;
 		media?: string[];
@@ -30,12 +30,7 @@ interface ReportFormProps extends React.ComponentProps<typeof View> {
 
 type TasksRoomChecks = Record<number, Record<number, boolean>>;
 
-export default function ReportForm({
-	assignmentAndReport,
-	onCancel,
-	onSubmit,
-	totalTime,
-}: ReportFormProps) {
+export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }: ReportFormProps) {
 	const { t } = useTranslation();
 	const [text, setText] = useState("");
 	const [media, setMedia] = useState<Media[]>([]);
@@ -48,7 +43,7 @@ export default function ReportForm({
 
 	// Добавим в начало компонента ReportForm
 	const [localAssignmentAndReport, setLocalAssignmentAndReport] =
-		useState<AssignmentReportResponse | null>(assignmentAndReport);
+		useState<DailyAssignmentForUserResponse | null>(assignment);
 
 	const handleCancel = () => {
 		// Вызываем переданный обработчик отмены
@@ -57,10 +52,10 @@ export default function ReportForm({
 
 	useEffect(() => {
 		const init = async () => {
-			let data = assignmentAndReport;
+			let data = assignment;
 			if (!data) {
 				try {
-					const saved = await AssignmentAndReportStorage.get();
+					const saved = await AssignmentStorage.get();
 					if (saved) data = JSON.parse(saved);
 				} catch (e) {
 					console.error("Storage load error", e);
@@ -70,9 +65,9 @@ export default function ReportForm({
 			if (data) {
 				setLocalAssignmentAndReport(data);
 				const checks: TasksRoomChecks = {};
-				data.assignment.tasks?.forEach(task => {
+				data.tasks?.forEach(task => {
 					checks[task.id] = {};
-					const roomIds = data.assignment.room_tasks
+					const roomIds = data.room_tasks
 						?.filter(rt => rt.task_id === task.id)
 						.map(rt => rt.room_id);
 					roomIds?.forEach(id => {
@@ -84,31 +79,7 @@ export default function ReportForm({
 		};
 
 		init();
-	}, [assignmentAndReport]);
-
-	//
-	// // Заменим все assignmentAndReport на localAssignmentAndReport в компоненте
-	//
-	// useEffect(() => {
-	// 	if (assignmentAndReport) {
-	// 		const initialChecks: TasksRoomChecks = {};
-	//
-	// 		assignmentAndReport.assignment.tasks?.forEach(task => {
-	// 			initialChecks[task.id] = {};
-	//
-	// 			// Инициализируем все комнаты как выполненные
-	// 			const roomIds = assignmentAndReport.assignment.room_tasks
-	// 				?.filter(rt => rt.task_id === task.id)
-	// 				.map(rt => rt.room_id);
-	//
-	// 			roomIds?.forEach(roomId => {
-	// 				initialChecks[task.id][roomId] = true;
-	// 			});
-	// 		});
-	//
-	// 		setTasksRoomChecks(initialChecks);
-	// 	}
-	// }, [assignmentAndReport]);
+	}, [assignment]);
 
 	// Обработчик изменений в комнатах
 	const handleRoomChecksChange = (taskId: number, roomChecks: Record<number, boolean>) => {
@@ -189,7 +160,7 @@ export default function ReportForm({
 			<ScrollView style={{ flex: 1 }} contentContainerStyle={styles.scrollViewContent}>
 				<View style={styles.headerContainer}>
 					<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-						<Typography>{assignmentAndReport?.assignment.location.name}</Typography>
+						<Typography>{assignment?.location.name}</Typography>
 						<GetStatusBadge status={status} />
 					</View>
 					<Typography color={styles.dateText.color}>
@@ -212,13 +183,13 @@ export default function ReportForm({
 						</View>
 					</View>
 
-					{assignmentAndReport?.assignment.tasks?.map(task => (
+					{assignment?.tasks?.map(task => (
 						<Card variant={"default"} style={styles.borderColor}>
 							<RoomTaskCollapse
 								key={task.id}
-								rooms={assignmentAndReport?.assignment.rooms ?? []}
+								rooms={assignment?.rooms ?? []}
 								task={task}
-								roomTasks={assignmentAndReport?.assignment.room_tasks ?? []}
+								roomTasks={assignment?.room_tasks ?? []}
 								onRoomChecksChange={handleRoomChecksChange}
 							/>
 						</Card>

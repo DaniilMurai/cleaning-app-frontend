@@ -11,4 +11,4 @@ export const RefreshTokenStorage = Storage("refreshToken", true, {
 
 export const ReportIdStorage = Storage("ReportId");
 
-export const AssignmentAndReportStorage = Storage("AssignmentAndReport");
+export const AssignmentStorage = Storage("Assignment");

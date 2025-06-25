@@ -13,6 +13,9 @@ import type { DailyAssignmentForUserResponseAdminNote } from "./dailyAssignmentF
 import type { DailyAssignmentForUserResponseUserNote } from "./dailyAssignmentForUserResponseUserNote";
 import type { DailyAssignmentForUserResponseStartTime } from "./dailyAssignmentForUserResponseStartTime";
 import type { DailyAssignmentForUserResponseEndTime } from "./dailyAssignmentForUserResponseEndTime";
+import type { DailyAssignmentForUserResponseDurationSeconds } from "./dailyAssignmentForUserResponseDurationSeconds";
+import type { DailyAssignmentForUserResponseDurationMinutes } from "./dailyAssignmentForUserResponseDurationMinutes";
+import type { DailyAssignmentForUserResponseDurationHours } from "./dailyAssignmentForUserResponseDurationHours";
 
 export interface DailyAssignmentForUserResponse {
 	id: number;
@@ -27,4 +30,10 @@ export interface DailyAssignmentForUserResponse {
 	user_note?: DailyAssignmentForUserResponseUserNote;
 	start_time?: DailyAssignmentForUserResponseStartTime;
 	end_time?: DailyAssignmentForUserResponseEndTime;
+	/** Вычисляет длительность в секундах */
+	readonly duration_seconds: DailyAssignmentForUserResponseDurationSeconds;
+	/** Возвращает длительность в минутах */
+	readonly duration_minutes: DailyAssignmentForUserResponseDurationMinutes;
+	/** Возвращает длительность в часах */
+	readonly duration_hours: DailyAssignmentForUserResponseDurationHours;
 }
