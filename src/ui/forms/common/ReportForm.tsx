@@ -160,7 +160,7 @@ export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }
 			<ScrollView style={{ flex: 1 }} contentContainerStyle={styles.scrollViewContent}>
 				<View style={styles.headerContainer}>
 					<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-						<Typography>{assignment?.location.name}</Typography>
+						<Typography>{localAssignmentAndReport?.location.name}</Typography>
 						<GetStatusBadge status={status} />
 					</View>
 					<Typography color={styles.dateText.color}>
@@ -183,13 +183,13 @@ export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }
 						</View>
 					</View>
 
-					{assignment?.tasks?.map(task => (
+					{localAssignmentAndReport?.tasks?.map(task => (
 						<Card variant={"default"} style={styles.borderColor}>
 							<RoomTaskCollapse
 								key={task.id}
-								rooms={assignment?.rooms ?? []}
+								rooms={localAssignmentAndReport?.rooms ?? []}
 								task={task}
-								roomTasks={assignment?.room_tasks ?? []}
+								roomTasks={localAssignmentAndReport?.room_tasks ?? []}
 								onRoomChecksChange={handleRoomChecksChange}
 							/>
 						</Card>

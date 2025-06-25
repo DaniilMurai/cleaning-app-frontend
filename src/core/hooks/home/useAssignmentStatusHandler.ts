@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
 	AssignmentStatus,
 	DailyAssignmentForUserResponse,
@@ -28,29 +28,30 @@ export default function useAssignmentStatusHandler({
 	const createReportMutation = useCreateReport();
 	const updateAssignmentMutation = useUpdateDailyAssignment();
 
-	useEffect(() => {
-		const loadSavedData = async () => {
-			try {
-				const savedData = await AssignmentStorage.get();
-				if (savedData) {
-					const parsedData = JSON.parse(savedData);
-					setAssignment(parsedData);
-					setAssignmentId(parsedData?.id || null);
-
-					if (parsedData?.start_time) {
-						setStartTime(Number(parsedData.report.start_time));
-					}
-					if (parsedData?.end_time) {
-						setEndTime(Number(parsedData.report.end_time));
-					}
-				}
-			} catch (error) {
-				console.error("Error loading saved assignment and report:", error);
-			}
-		};
-
-		loadSavedData();
-	}, []);
+	// useEffect(() => {
+	// 	const loadSavedData = async () => {
+	// 		try {
+	// 			const savedData = await AssignmentStorage.get();
+	// 			if (savedData) {
+	// 				const parsedData = JSON.parse(savedData);
+	// 				setAssignment(parsedData);
+	// 				setAssignmentId(parsedData?.id || null);
+	//
+	// 				// if (parsedData?.start_time) {
+	// 				// 	console.log("ParsedData status: " + Number(parsedData.start_time));
+	// 				// 	setStartTime(formatTime(parsedData.start_time));
+	// 				// }
+	// 				// if (parsedData?.end_time) {
+	// 				// 	setEndTime(Number(parsedData.end_time));
+	// 				// }
+	// 			}
+	// 		} catch (error) {
+	// 			console.error("Error loading saved assignment and report:", error);
+	// 		}
+	// 	};
+	//
+	// 	loadSavedData();
+	// }, []);
 
 	const handleStatusChange = async (
 		assignmentId: number,
@@ -76,6 +77,7 @@ export default function useAssignmentStatusHandler({
 		}
 
 		try {
+			console.log("newStartTime: " + newStartTime);
 			const updateAssignmentData: DailyAssignmentForUserUpdate = {
 				start_time: newStartTime?.toString() || null,
 				end_time: newEndTime?.toString() || null,
@@ -88,14 +90,16 @@ export default function useAssignmentStatusHandler({
 			});
 
 			console.log(
-				"updateAssignmentResponse in useAssignmentStatusHandler: " +
-					updateAssignmentResponse.status +
-					" " +
-					updateAssignmentResponse.start_time
+				"Server response in useAssignmentStatusHandler:",
+				updateAssignmentResponse.id,
+				updateAssignmentResponse.status,
+				updateAssignmentResponse.start_time
 			);
 
 			setAssignment(updateAssignmentResponse);
 			await AssignmentStorage.set(JSON.stringify(updateAssignmentResponse));
+			const store = await AssignmentStorage.get();
+			console.log("Storage: " + store);
 
 			await dailyAssignmentsAndReportsRefetch();
 		} catch (error) {

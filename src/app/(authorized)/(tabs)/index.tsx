@@ -53,14 +53,14 @@ export default function DailyAssignmentsList() {
 		? dailyAssignmentsAndReports.map(ar => ar.assignment.date)
 		: [];
 
-	filteredAssignments.map(ass => {
-		console.log(
-			"assignment status in index: " +
-				ass.assignment.status +
-				" start_time: " +
-				ass.assignment.start_time
-		);
-	});
+	console.log(
+		"Filtered assignments statuses:",
+		filteredAssignments.map(a => ({
+			id: a.assignment.id,
+			status: a.assignment.status,
+			start_time: a.assignment.start_time,
+		}))
+	);
 
 	return (
 		<ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
