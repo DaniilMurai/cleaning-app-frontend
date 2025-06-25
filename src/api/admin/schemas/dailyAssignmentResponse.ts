@@ -6,6 +6,8 @@
  */
 import type { DailyAssignmentResponseAdminNote } from "./dailyAssignmentResponseAdminNote";
 import type { DailyAssignmentResponseUserNote } from "./dailyAssignmentResponseUserNote";
+import type { DailyAssignmentResponseStartTime } from "./dailyAssignmentResponseStartTime";
+import type { DailyAssignmentResponseEndTime } from "./dailyAssignmentResponseEndTime";
 
 export interface DailyAssignmentResponse {
 	id: number;
@@ -14,4 +16,6 @@ export interface DailyAssignmentResponse {
 	date: string;
 	admin_note?: DailyAssignmentResponseAdminNote;
 	user_note?: DailyAssignmentResponseUserNote;
+	start_time?: DailyAssignmentResponseStartTime;
+	end_time?: DailyAssignmentResponseEndTime;
 }

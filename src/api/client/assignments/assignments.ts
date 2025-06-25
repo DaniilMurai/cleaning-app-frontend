@@ -25,8 +25,10 @@ import type {
 import type {
 	AssignmentReportResponse,
 	DailyAssignmentForUserResponse,
+	DailyAssignmentForUserUpdate,
 	GetDailyAssignmentByIdParams,
 	HTTPValidationError,
+	UpdateDailyAssignmentParams,
 	UpdateDailyAssignmentStatusParams,
 } from ".././schemas";
 
@@ -1067,3 +1069,87 @@ export function useGetDailyAssignmentAndReportByReportIdSuspense<
 
 	return query;
 }
+
+/**
+ * @summary Update Daily Assignment
+ */
+export const updateDailyAssignment = (
+	dailyAssignmentForUserUpdate: DailyAssignmentForUserUpdate,
+	params: UpdateDailyAssignmentParams
+) => {
+	return getAxios<DailyAssignmentForUserResponse>({
+		url: `/client/assignments/`,
+		method: "PATCH",
+		headers: { "Content-Type": "application/json" },
+		data: dailyAssignmentForUserUpdate,
+		params,
+	});
+};
+
+export const getUpdateDailyAssignmentMutationOptions = <
+	TError = ErrorType<HTTPValidationError>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof updateDailyAssignment>>,
+		TError,
+		{ data: DailyAssignmentForUserUpdate; params: UpdateDailyAssignmentParams },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof updateDailyAssignment>>,
+	TError,
+	{ data: DailyAssignmentForUserUpdate; params: UpdateDailyAssignmentParams },
+	TContext
+> => {
+	const mutationKey = ["updateDailyAssignment"];
+	const { mutation: mutationOptions } = options
+		? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+			? options
+			: { ...options, mutation: { ...options.mutation, mutationKey } }
+		: { mutation: { mutationKey } };
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof updateDailyAssignment>>,
+		{ data: DailyAssignmentForUserUpdate; params: UpdateDailyAssignmentParams }
+	> = props => {
+		const { data, params } = props ?? {};
+
+		return updateDailyAssignment(data, params);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateDailyAssignmentMutationResult = NonNullable<
+	Awaited<ReturnType<typeof updateDailyAssignment>>
+>;
+export type UpdateDailyAssignmentMutationBody = DailyAssignmentForUserUpdate;
+export type UpdateDailyAssignmentMutationError = ErrorType<HTTPValidationError>;
+
+/**
+ * @summary Update Daily Assignment
+ */
+export const useUpdateDailyAssignment = <
+	TError = ErrorType<HTTPValidationError>,
+	TContext = unknown,
+>(
+	options?: {
+		mutation?: UseMutationOptions<
+			Awaited<ReturnType<typeof updateDailyAssignment>>,
+			TError,
+			{ data: DailyAssignmentForUserUpdate; params: UpdateDailyAssignmentParams },
+			TContext
+		>;
+	},
+	queryClient?: QueryClient
+): UseMutationResult<
+	Awaited<ReturnType<typeof updateDailyAssignment>>,
+	TError,
+	{ data: DailyAssignmentForUserUpdate; params: UpdateDailyAssignmentParams },
+	TContext
+> => {
+	const mutationOptions = getUpdateDailyAssignmentMutationOptions(options);
+
+	return useMutation(mutationOptions, queryClient);
+};

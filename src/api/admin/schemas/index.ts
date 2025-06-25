@@ -14,6 +14,8 @@ export * from "./dailyAssignmentCreate";
 export * from "./dailyAssignmentCreateAdminNote";
 export * from "./dailyAssignmentResponse";
 export * from "./dailyAssignmentResponseAdminNote";
+export * from "./dailyAssignmentResponseEndTime";
+export * from "./dailyAssignmentResponseStartTime";
 export * from "./dailyAssignmentResponseUserNote";
 export * from "./dailyAssignmentUpdate";
 export * from "./dailyAssignmentUpdateAdminNote";

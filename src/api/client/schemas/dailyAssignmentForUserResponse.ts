@@ -11,6 +11,8 @@ import type { RoomTaskResponse } from "./roomTaskResponse";
 import type { AssignmentStatus } from "./assignmentStatus";
 import type { DailyAssignmentForUserResponseAdminNote } from "./dailyAssignmentForUserResponseAdminNote";
 import type { DailyAssignmentForUserResponseUserNote } from "./dailyAssignmentForUserResponseUserNote";
+import type { DailyAssignmentForUserResponseStartTime } from "./dailyAssignmentForUserResponseStartTime";
+import type { DailyAssignmentForUserResponseEndTime } from "./dailyAssignmentForUserResponseEndTime";
 
 export interface DailyAssignmentForUserResponse {
 	id: number;
@@ -23,4 +25,6 @@ export interface DailyAssignmentForUserResponse {
 	status: AssignmentStatus;
 	admin_note?: DailyAssignmentForUserResponseAdminNote;
 	user_note?: DailyAssignmentForUserResponseUserNote;
+	start_time?: DailyAssignmentForUserResponseStartTime;
+	end_time?: DailyAssignmentForUserResponseEndTime;
 }
