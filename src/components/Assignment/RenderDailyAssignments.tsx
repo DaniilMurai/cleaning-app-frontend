@@ -60,18 +60,27 @@ export default function RenderDailyAssignments({
 							onPress={() => toggleAssignment(assignment.id)}
 						>
 							<View style={styles.headerWithIcon}>
-								<FontAwesome5
-									name={
-										expandedAssignments[assignment.id]
-											? "angle-down"
-											: "angle-right"
-									}
-									size={16}
-									color={styles.collapseIcon.color}
-								/>
-								<Typography variant="h5">
-									{location?.name ?? "Unknown Location"}
-								</Typography>
+								{(assignment.user_note || assignment.admin_note) && (
+									<FontAwesome5
+										name={
+											expandedAssignments[assignment.id]
+												? "angle-down"
+												: "angle-right"
+										}
+										size={16}
+										color={styles.collapseIcon.color}
+									/>
+								)}
+								<View style={{ flexDirection: "column" }}>
+									<Typography variant="h5">
+										{location?.name ?? "Unknown Location"}
+									</Typography>
+									<Typography>
+										{t("profile.username")}:{" "}
+										{getUserById(assignment.user_id)?.full_name ||
+											getUserById(assignment.user_id)?.full_name}
+									</Typography>
+								</View>
 							</View>
 							<View style={styles.actionButtons}>
 								<Button
@@ -96,12 +105,13 @@ export default function RenderDailyAssignments({
 							</View>
 						</TouchableOpacity>
 
-						<Collapse expanded={expandedAssignments[assignment.id]}>
-							<Typography>
-								{t("profile.username")}:{" "}
-								{getUserById(assignment.user_id)?.full_name ||
-									getUserById(assignment.user_id)?.full_name}
-							</Typography>
+						<Collapse
+							expanded={
+								assignment.user_note || assignment.admin_note
+									? expandedAssignments[assignment.id]
+									: false
+							}
+						>
 							{assignment.admin_note && (
 								<Typography>
 									{t("admin.adminNote")}: {assignment.admin_note}
