@@ -7,6 +7,7 @@ import {
 	useUpdateDailyAssignment,
 } from "@/api/client";
 import { AssignmentStorage } from "@/core/auth/storage";
+import { convertMsToUTC } from "@/core/utils/dateUtils";
 
 interface StatusHandlerParams {
 	dailyAssignmentsAndReportsRefetch: () => Promise<any>;
@@ -79,8 +80,8 @@ export default function useAssignmentStatusHandler({
 		try {
 			console.log("newStartTime: " + newStartTime);
 			const updateAssignmentData: DailyAssignmentForUserUpdate = {
-				start_time: newStartTime?.toString() || null,
-				end_time: newEndTime?.toString() || null,
+				start_time: newStartTime ? convertMsToUTC(newStartTime) : null,
+				end_time: newEndTime ? convertMsToUTC(newEndTime) : null,
 				status: newStatus,
 			};
 
@@ -133,8 +134,8 @@ export default function useAssignmentStatusHandler({
 
 		try {
 			const updateAssignmentData: DailyAssignmentForUserUpdate = {
-				start_time: startTime.toString(),
-				end_time: endTime.toString(),
+				start_time: convertMsToUTC(startTime),
+				end_time: convertMsToUTC(endTime),
 				status: data.status,
 			};
 
@@ -149,8 +150,8 @@ export default function useAssignmentStatusHandler({
 					user_id: userId,
 					message: data?.text,
 					media_links: data?.media,
-					start_time: startTime.toString(),
-					end_time: endTime.toString(),
+					start_time: convertMsToUTC(startTime),
+					end_time: convertMsToUTC(endTime),
 					status: data.status,
 				},
 			});

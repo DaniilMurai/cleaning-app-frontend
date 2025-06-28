@@ -43,6 +43,10 @@ export const convertToUtc = (localDate: Date): string => {
 	return toZonedTime(localDate, timeZone).toISOString();
 };
 
+export const convertMsToUTC = (ms: number): string => {
+	return convertToUtc(new Date(ms));
+};
+
 // Функция для форматирования времени
 export const formatTime = (timeInMs: number): string => {
 	const totalSeconds = Math.floor(timeInMs / 1000);
