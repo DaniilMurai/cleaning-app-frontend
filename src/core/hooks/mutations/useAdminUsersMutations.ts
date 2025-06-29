@@ -1,5 +1,6 @@
 // src/hooks/useAdminUsersMutations.ts
 import {
+	AdminReadUser,
 	RegisterUserData,
 	useCreateUser,
 	useDeleteUser,
@@ -7,7 +8,6 @@ import {
 	useGetInviteLink,
 	useUpdateUser,
 } from "@/api/admin";
-import { UserSchema } from "@/api/admin/schemas/userSchema";
 import { AlertUtils } from "@/core/utils/alerts";
 
 export function useAdminUsersMutations(options: {
@@ -90,7 +90,10 @@ export function useAdminUsersMutations(options: {
 		},
 	});
 
-	const handleUpdateUser = async (selectedUser: UserSchema, userData: Partial<UserSchema>) => {
+	const handleUpdateUser = async (
+		selectedUser: AdminReadUser,
+		userData: Partial<AdminReadUser>
+	) => {
 		await updateMutation.mutateAsync({
 			params: { user_id: selectedUser.id },
 			data: userData,

@@ -7,7 +7,7 @@ export { default as Collapse } from "./common/Collapse";
 export { default as DropdownMenu } from "./common/DropdownMenu";
 export { default as Input } from "./common/Input";
 export { default as Loading } from "./common/Loading";
-export { default as ModalContainer } from "./common/ModalContainer";
+export { default as Dialog } from "./common/Dialog";
 export { default as Paper } from "./common/Paper";
 export { default as Picker } from "./common/Picker";
 export { default as Select } from "./common/Select";

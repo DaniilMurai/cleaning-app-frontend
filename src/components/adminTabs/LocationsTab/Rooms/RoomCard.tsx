@@ -1,8 +1,8 @@
-import { ModalContainer } from "@/ui";
+import { Dialog } from "@/ui";
 import React, { useState } from "react";
 import { LocationResponse, RoomResponse, RoomTaskResponse, TaskResponse } from "@/api/admin";
 import { DeleteRoomConfirm, EditRoomForm } from "@/ui/forms/common/RoomForms";
-import TasksList from "@/components/lists/TasksList";
+import TasksListDialog from "@/components/lists/TasksListDialog";
 import RoomCardHeader from "@/components/adminTabs/LocationsTab/Rooms/RoomCardHeader";
 
 export interface RoomCardProps {
@@ -55,39 +55,35 @@ export default function RoomCard({
 				onUnlinkTask={handleUnlinkTask}
 			/>
 
-			<ModalContainer visible={showEdit} onClose={() => setShowEdit(false)}>
+			<Dialog visible={showEdit} onClose={() => setShowEdit(false)}>
 				<EditRoomForm
 					onSubmit={roomMutation.handleUpdateRoom}
 					onClose={() => setShowEdit(false)}
 					room={room}
 					isLoading={roomMutation.updateRoomMutation.isPending}
 				/>
-			</ModalContainer>
+			</Dialog>
 
-			<ModalContainer visible={showDelete} onClose={() => setShowDelete(false)}>
+			<Dialog visible={showDelete} onClose={() => setShowDelete(false)}>
 				<DeleteRoomConfirm
 					room={room}
 					onConfirm={roomMutation.handleDeleteRoom}
 					onClose={() => setShowDelete(false)}
 					isLoading={roomMutation.deleteRoomMutation.isPending}
 				/>
-			</ModalContainer>
+			</Dialog>
 
-			<ModalContainer
+			<TasksListDialog
 				visible={showCreateRoomTask}
 				onClose={() => setShowCreateRoomTask(false)}
-			>
-				<TasksList
-					onClose={() => setShowCreateRoomTask(false)}
-					tasks={tasks}
-					rooms={rooms}
-					room={room}
-					locations={locations}
-					roomTasks={roomTasks}
-					tasksRefetch={tasksRefetch}
-					roomTasksRefetch={roomTasksRefetch}
-				/>
-			</ModalContainer>
+				tasks={tasks}
+				rooms={rooms}
+				room={room}
+				locations={locations}
+				roomTasks={roomTasks}
+				tasksRefetch={tasksRefetch}
+				roomTasksRefetch={roomTasksRefetch}
+			/>
 		</>
 	);
 }

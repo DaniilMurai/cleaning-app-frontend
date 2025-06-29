@@ -144,6 +144,15 @@ const themedColors = {
 export type ThemedColorsType = typeof themedColors;
 export type ColorsType = ThemedColorsType[keyof ThemedColorsType];
 
+const breakpoints = {
+	xs: 0,
+	sm: 576,
+	md: 740,
+	lg: 992,
+	xl: 1200,
+	xxl: 1400,
+} as const;
+
 const buildTheme = (colors: ColorsType) => {
 	return {
 		colors,
@@ -176,20 +185,12 @@ const buildTheme = (colors: ColorsType) => {
 			23: "0px 11px 14px -7px rgba(0,0,0,0.2),0px 23px 36px 3px rgba(0,0,0,0.14),0px 9px 44px 8px rgba(0,0,0,0.12)",
 			24: "0px 11px 15px -7px rgba(0,0,0,0.2),0px 24px 38px 3px rgba(0,0,0,0.14),0px 9px 46px 8px rgba(0,0,0,0.12)",
 		} as Record<number, string>,
+		breakpoints,
 	};
 };
 
-const breakpoints = {
-	xs: 0,
-	sm: 576,
-	md: 740,
-	lg: 992,
-	xl: 1200,
-	superLarge: 1400,
-	tvLike: 2000,
-} as const;
-
-type AppBreakpoints = typeof breakpoints;
+export type AppBreakpoints = typeof breakpoints;
+export type AppBreakpoint = keyof AppBreakpoints;
 
 // Определение тем
 export const themes = {

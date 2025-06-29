@@ -2,7 +2,7 @@
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
-import { Button, ModalContainer } from "@/ui";
+import { Button, Dialog } from "@/ui";
 import Typography from "@/ui/common/Typography";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
@@ -20,7 +20,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isVisible, onClose }) => 
 	const { currentLanguage, changeLanguage, availableLanguages } = useLanguage();
 
 	return (
-		<ModalContainer visible={isVisible} onClose={onClose}>
+		<Dialog visible={isVisible} onClose={onClose}>
 			<View style={styles.container}>
 				<View style={styles.header}>
 					<Typography variant="h5" style={styles.title}>
@@ -126,7 +126,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isVisible, onClose }) => 
 					{t("common.save") || "Done"}
 				</Button>
 			</View>
-		</ModalContainer>
+		</Dialog>
 	);
 };
 

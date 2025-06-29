@@ -80,7 +80,7 @@ const styles = StyleSheet.create(theme => ({
 			xs: theme.spacing(2),
 			lg: theme.spacing(4),
 			xl: theme.spacing(5),
-			superLarge: theme.spacing(12),
+			xxl: theme.spacing(12),
 		},
 		paddingVertical: theme.spacing(4),
 	},

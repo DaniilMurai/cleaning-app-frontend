@@ -59,29 +59,14 @@ export default function AssignmentCard({
 		}
 	};
 
-	const getBorderColor = (status: AssignmentStatus) => {
-		switch (status) {
-			case "completed":
-				return theme.colors.success.main;
-			case "in_progress":
-				return theme.colors.progress.main;
-			case "partially_completed":
-				return theme.colors.warning.main;
-			case "not_started":
-				return theme.colors.not_started.main;
-			case "not_completed":
-				return theme.colors.error.main;
-			default:
-				return null;
-		}
-	};
-
 	useEffect(() => {
 		setStatus(assignment.status);
 	}, [assignment.status]);
 
+	styles.useVariants({ status });
+
 	return (
-		<Card borderLeftColor={getBorderColor(status)} variant={"contained"} style={styles.card}>
+		<Card variant={"contained"} style={styles.card}>
 			<TouchableOpacity style={styles.cardHeader} onPress={toggleExpand}>
 				<View style={[styles.wrappableText, styles.dataContainer]}>
 					<View
@@ -105,10 +90,12 @@ export default function AssignmentCard({
 						</View>
 						<GetStatusBadge status={status} />
 					</View>
-					<Typography variant="body1" style={styles.wrappableText} numberOfLines={0}>
-						{t("components.dailyAssignmentsList.address")}:{" "}
-						{assignment.location.address}
-					</Typography>
+					{!!assignment.location.address && (
+						<Typography variant="body1" style={styles.wrappableText} numberOfLines={0}>
+							{t("components.dailyAssignmentsList.address")}:{" "}
+							{assignment.location.address}
+						</Typography>
+					)}
 					{assignment.admin_note && (
 						<Typography style={styles.wrappableText} numberOfLines={0}>
 							{t("admin.adminNote")}: {assignment.admin_note}
@@ -150,6 +137,30 @@ const styles = StyleSheet.create(theme => ({
 	card: {
 		marginBottom: theme.spacing(2),
 		padding: theme.spacing(2),
+		borderLeftWidth: 5,
+		boxShadow: "none",
+		variants: {
+			status: {
+				not_started: {
+					borderLeftColor: theme.colors.not_started.main,
+				},
+				in_progress: {
+					borderLeftColor: theme.colors.progress.main,
+				},
+				completed: {
+					borderLeftColor: theme.colors.success.main,
+				},
+				partially_completed: {
+					borderLeftColor: theme.colors.warning.main,
+				},
+				not_completed: {
+					borderLeftColor: theme.colors.error.main,
+				},
+				expired: {
+					borderLeftColor: theme.colors.error.main,
+				},
+			},
+		},
 	},
 	borderLeftColor: {
 		borderLeftColor: theme.colors.success.main,

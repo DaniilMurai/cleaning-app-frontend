@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { Button, ModalContainer, Typography } from "@/ui";
+import { Button, Dialog, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { AdminReadUser, DailyAssignmentResponse, LocationResponse } from "@/api/admin";
 import {
@@ -42,7 +42,7 @@ export default function AssignmentsTab({
 	const renderModals = () => (
 		<>
 			{modal.modals.createAssignment && (
-				<ModalContainer
+				<Dialog
 					visible={modal.modals.createAssignment}
 					onClose={() => modal.closeModal("createAssignment")}
 				>
@@ -53,11 +53,11 @@ export default function AssignmentsTab({
 						locations={locations}
 						isLoading={dailyAssignmentMutation.createDailyAssignmentMutation.isPending}
 					/>
-				</ModalContainer>
+				</Dialog>
 			)}
 
 			{modal.modals.editAssignment && !!selectedAssignment && (
-				<ModalContainer
+				<Dialog
 					visible={modal.modals.editAssignment}
 					onClose={() => modal.closeModal("editAssignment")}
 				>
@@ -69,11 +69,11 @@ export default function AssignmentsTab({
 						locations={locations}
 						isLoading={dailyAssignmentMutation.updateDailyAssignmentMutation.isPending}
 					/>
-				</ModalContainer>
+				</Dialog>
 			)}
 
 			{modal.modals.deleteAssignment && !!selectedAssignment && (
-				<ModalContainer
+				<Dialog
 					visible={modal.modals.deleteAssignment}
 					onClose={() => modal.closeModal("deleteAssignment")}
 				>
@@ -83,7 +83,7 @@ export default function AssignmentsTab({
 						onClose={() => modal.closeModal("deleteAssignment")}
 						isLoading={dailyAssignmentMutation.deleteDailyAssignmentMutation.isPending}
 					/>
-				</ModalContainer>
+				</Dialog>
 			)}
 		</>
 	);

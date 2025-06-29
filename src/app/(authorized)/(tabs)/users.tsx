@@ -1,10 +1,10 @@
 // src/pages/AdminPanelPage.tsx
 import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { Button, Loading, ModalContainer } from "@/ui";
+import { Button, Dialog, Loading } from "@/ui";
 import { useState } from "react";
 
-import { useGetUsers, UserSchema } from "@/api/admin";
+import { AdminReadUser, useGetUsers } from "@/api/admin";
 import EditUserForm from "@/ui/forms/user/EditUserForm";
 import CreateUserForm from "@/ui/forms/user/CreateUserForm";
 import UsersList from "@/components/lists/UsersList";
@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 export default function UsersPage() {
 	const { t } = useTranslation();
 
-	const [selectedUser, setSelectedUser] = useState<UserSchema | null>(null);
+	const [selectedUser, setSelectedUser] = useState<AdminReadUser | null>(null);
 	const [inviteLink, setInviteLink] = useState("");
 	const [resetLink, setResetLink] = useState("");
 
@@ -104,14 +104,14 @@ export default function UsersPage() {
 			</ScrollView>
 
 			{/* Edit User Modal */}
-			<ModalContainer
+			<Dialog
 				visible={modalState.editMode}
 				onClose={() => setModalState(prev => ({ ...prev, editMode: false }))}
 			>
 				{selectedUser && (
 					<EditUserForm
 						user={selectedUser}
-						onSubmit={async (userData: Partial<UserSchema>) => {
+						onSubmit={async (userData: Partial<AdminReadUser>) => {
 							if (selectedUser) {
 								await handleUpdateUser(selectedUser, userData);
 							}
@@ -120,10 +120,10 @@ export default function UsersPage() {
 						isLoading={updateMutation.isPending}
 					/>
 				)}
-			</ModalContainer>
+			</Dialog>
 
 			{/* Create User Modal */}
-			<ModalContainer
+			<Dialog
 				visible={modalState.createMode}
 				onClose={() => setModalState(prev => ({ ...prev, createMode: false }))}
 			>
@@ -132,10 +132,10 @@ export default function UsersPage() {
 					onClose={() => setModalState(prev => ({ ...prev, createMode: false }))}
 					isLoading={createMutation.isPending}
 				/>
-			</ModalContainer>
+			</Dialog>
 
 			{/* Reset Link Modal */}
-			<ModalContainer
+			<Dialog
 				visible={modalState.resetLinkModal}
 				onClose={() => setModalState(prev => ({ ...prev, resetLinkModal: false }))}
 			>
@@ -144,10 +144,10 @@ export default function UsersPage() {
 					link={resetLink}
 					onClose={() => setModalState(prev => ({ ...prev, resetLinkModal: false }))}
 				/>
-			</ModalContainer>
+			</Dialog>
 
 			{/* Invite Link Modal */}
-			<ModalContainer
+			<Dialog
 				visible={modalState.inviteLinkModal}
 				onClose={() => setModalState(prev => ({ ...prev, inviteLinkModal: false }))}
 			>
@@ -156,7 +156,7 @@ export default function UsersPage() {
 					link={inviteLink}
 					onClose={() => setModalState(prev => ({ ...prev, inviteLinkModal: false }))}
 				/>
-			</ModalContainer>
+			</Dialog>
 		</View>
 	);
 }

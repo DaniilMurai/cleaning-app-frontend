@@ -8,15 +8,15 @@ import Typography from "@/ui/common/Typography";
 
 import { roleOptions, statusOptions } from "@/core/helpers/Role-StatusOptions";
 import { StyleSheet } from "react-native-unistyles";
-import { UserRole, UserSchema, UserStatus } from "@/api/admin";
+import { AdminReadUser, UserRole, UserStatus } from "@/api/admin";
 import CustomPicker from "@/ui/common/Picker";
 import { useTranslation } from "react-i18next";
 import { useIsSuperAdmin } from "@/core/auth";
 
 interface EditUserFormProps {
-	user: UserSchema;
+	user: AdminReadUser;
 	onClose: () => void;
-	onSubmit: (userData: Partial<UserSchema>) => void;
+	onSubmit: (userData: Partial<AdminReadUser>) => void;
 	isLoading?: boolean;
 }
 
@@ -24,7 +24,7 @@ export default function EditUserForm({ user, onClose, onSubmit, isLoading }: Edi
 	const isSuperAdmin = useIsSuperAdmin();
 	const { t } = useTranslation();
 
-	const [formData, setFormData] = useState<Partial<UserSchema>>({
+	const [formData, setFormData] = useState<Partial<AdminReadUser>>({
 		nickname: user.nickname,
 		role: user.role,
 		status: user.status,
@@ -44,7 +44,7 @@ export default function EditUserForm({ user, onClose, onSubmit, isLoading }: Edi
 
 			<Input
 				label="Nickname"
-				value={formData.nickname}
+				value={formData.nickname ?? ""}
 				onChangeText={text => setFormData({ ...formData, nickname: text })}
 				style={styles.input}
 			/>

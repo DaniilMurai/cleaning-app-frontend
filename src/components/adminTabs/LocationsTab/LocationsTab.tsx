@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { Button, ModalContainer } from "@/ui";
+import { Button, Dialog } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { LocationResponse, RoomResponse, RoomTaskResponse, TaskResponse } from "@/api/admin";
 import { CreateLocationForm } from "@/ui/forms/common/LocationForms";
@@ -60,16 +60,13 @@ export default function LocationsTab({
 					))}
 			</ScrollView>
 
-			<ModalContainer
-				visible={showCreateLocation}
-				onClose={() => setShowCreateLocation(false)}
-			>
+			<Dialog visible={showCreateLocation} onClose={() => setShowCreateLocation(false)}>
 				<CreateLocationForm
 					onSubmit={locationMutation.handleCreateLocation}
 					onClose={() => setShowCreateLocation(false)}
 					isLoading={locationMutation.createLocationMutation.isPending}
 				/>
-			</ModalContainer>
+			</Dialog>
 		</View>
 	);
 }

@@ -1,5 +1,4 @@
 // TaskForms.tsx
-import { View } from "react-native";
 import { Button } from "@/ui";
 import Input from "@/ui/common/Input";
 import { useState } from "react";
@@ -8,6 +7,7 @@ import Typography from "@/ui/common/Typography";
 import { StyleSheet } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
 import { TaskCreate, TaskResponse, TaskUpdate } from "@/api/admin";
+import DialogActions from "@/ui/common/DialogActions";
 
 interface CreateTaskFormProps {
 	onSubmit: (taskData: TaskCreate) => void;
@@ -56,14 +56,14 @@ export function CreateTaskForm({ onSubmit, onClose, isLoading }: CreateTaskFormP
 				keyboardType="numeric"
 			/>
 
-			<View style={styles.buttonsContainer}>
+			<DialogActions>
 				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
 					{t("admin.createTask")}
 				</Button>
 				<Button variant="outlined" onPress={onClose}>
 					{t("common.close")}
 				</Button>
-			</View>
+			</DialogActions>
 		</Card>
 	);
 }
@@ -116,14 +116,14 @@ export function EditTaskForm({ task, onSubmit, onClose, isLoading }: EditTaskFor
 				keyboardType="numeric"
 			/>
 
-			<View style={styles.buttonsContainer}>
+			<DialogActions>
 				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
 					{t("common.save")}
 				</Button>
 				<Button variant="outlined" onPress={onClose}>
 					{t("common.cancel")}
 				</Button>
-			</View>
+			</DialogActions>
 		</Card>
 	);
 }
@@ -148,7 +148,7 @@ export function DeleteTaskConfirm({ task, onConfirm, onClose, isLoading }: Delet
 				{t("admin.deleteTaskConfirmation", { title: task.title })}
 			</Typography>
 
-			<View style={styles.buttonsContainer}>
+			<DialogActions>
 				<Button
 					variant="contained"
 					style={styles.buttonError}
@@ -160,7 +160,7 @@ export function DeleteTaskConfirm({ task, onConfirm, onClose, isLoading }: Delet
 				<Button variant="outlined" onPress={onClose}>
 					{t("common.cancel")}
 				</Button>
-			</View>
+			</DialogActions>
 		</Card>
 	);
 }
@@ -184,12 +184,6 @@ const styles = StyleSheet.create(theme => ({
 	},
 	input: {
 		marginBottom: theme.spacing(0.5),
-	},
-	buttonsContainer: {
-		flexDirection: "row",
-		justifyContent: "flex-end",
-		marginTop: theme.spacing(3),
-		gap: theme.spacing(2),
 	},
 	buttonError: {
 		backgroundColor: theme.colors.error.main,

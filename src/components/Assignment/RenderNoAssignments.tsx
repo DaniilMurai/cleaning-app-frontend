@@ -17,7 +17,7 @@ export default function NoAssignments({ selectedDate }: props) {
 		if (getFormatedDate(selectedDate) === getFormatedDate(new Date())) {
 			return (
 				<View style={styles.emptyStateContainer}>
-					<Card variant={"default"} style={styles.noAssignmentCard}>
+					<Card variant={"standard"} style={styles.noAssignmentCard}>
 						<View
 							style={{
 								justifyContent: "center",
@@ -48,7 +48,7 @@ export default function NoAssignments({ selectedDate }: props) {
 		} else {
 			return (
 				<View style={styles.emptyStateContainer}>
-					<Card variant={"default"} style={styles.noAssignmentCard}>
+					<Card variant={"standard"} style={styles.noAssignmentCard}>
 						<View
 							style={{
 								justifyContent: "center",

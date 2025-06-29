@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Image, ScrollView, TouchableOpacity, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { Button, Card, Input, ModalContainer, Typography } from "@/ui";
+import { Button, Card, Dialog, Input, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useTranslation } from "react-i18next";
@@ -156,8 +156,8 @@ export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }
 	};
 
 	return (
-		<Card variant={"outlined"} style={styles.container}>
-			<ScrollView style={{ flex: 1 }} contentContainerStyle={styles.scrollViewContent}>
+		<>
+			<ScrollView style={{ flexShrink: 1 }} contentContainerStyle={styles.scrollViewContent}>
 				<View style={styles.headerContainer}>
 					<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
 						<Typography>{localAssignmentAndReport?.location.name}</Typography>
@@ -170,7 +170,7 @@ export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }
 						{formatTime(totalTime)}
 					</Typography>
 				</View>
-				<Card variant={"default"} style={styles.borderColor}>
+				<Card variant={"standard"} style={styles.borderColor}>
 					<View style={styles.taskContainer}>
 						<View style={styles.submitIconContainer}>
 							<FontAwesome5 name={"check"} color={styles.iconColor.color} size={20} />
@@ -184,7 +184,7 @@ export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }
 					</View>
 
 					{localAssignmentAndReport?.tasks?.map(task => (
-						<Card variant={"default"} style={styles.borderColor}>
+						<Card variant={"standard"} style={styles.borderColor}>
 							<RoomTaskCollapse
 								key={task.id}
 								rooms={localAssignmentAndReport?.rooms ?? []}
@@ -196,7 +196,7 @@ export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }
 					))}
 				</Card>
 				<View style={styles.inputContainer}>
-					<Card variant={"default"} style={styles.borderColor}>
+					<Card variant={"standard"} style={styles.borderColor}>
 						<View style={styles.taskContainer}>
 							<View style={styles.mediaIconContainer}>
 								<FontAwesome5
@@ -227,7 +227,7 @@ export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }
 						</ScrollView>
 					</Card>
 
-					<Card variant={"default"} style={styles.borderColor}>
+					<Card variant={"standard"} style={styles.borderColor}>
 						<View style={styles.taskContainer}>
 							<View style={styles.mediaIconContainer}>
 								<FontAwesome5
@@ -318,10 +318,7 @@ export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }
 			</View>
 
 			{/* Модальное окно для выбора типа медиа */}
-			<ModalContainer
-				visible={mediaPickerVisible}
-				onClose={() => setMediaPickerVisible(false)}
-			>
+			<Dialog visible={mediaPickerVisible} onClose={() => setMediaPickerVisible(false)}>
 				<Card style={styles.mediaPickerCard}>
 					<Typography variant="h5" style={styles.mediaPickerTitle}>
 						{t("reports.selectMediaType")}
@@ -343,21 +340,12 @@ export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }
 						{t("common.cancel")}
 					</Button>
 				</Card>
-			</ModalContainer>
-		</Card>
+			</Dialog>
+		</>
 	);
 }
 
 const styles = StyleSheet.create(theme => ({
-	container: {
-		padding: theme.spacing(2),
-		marginVertical: theme.spacing(2),
-		maxHeight: "85%",
-		height: "85%",
-
-		margin: "auto",
-		backgroundColor: theme.colors.background.default,
-	},
 	scrollViewContent: {
 		flex: 1,
 		gap: theme.spacing(3),
@@ -391,6 +379,7 @@ const styles = StyleSheet.create(theme => ({
 		borderRadius: theme.borderRadius(2),
 		borderWidth: 1,
 		borderColor: theme.colors.border,
+		marginBottom: theme.spacing(2),
 	},
 	taskContainer: {
 		flexDirection: "row",
@@ -420,6 +409,7 @@ const styles = StyleSheet.create(theme => ({
 	},
 	inputContainer: {
 		gap: theme.spacing(2),
+		marginTop: theme.spacing(2),
 	},
 	textInputContainer: {
 		maxHeight: 200,

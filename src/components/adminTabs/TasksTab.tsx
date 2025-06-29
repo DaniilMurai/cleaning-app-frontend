@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { ScrollView, TouchableOpacity, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import Typography from "@/ui/common/Typography";
-import { Button, Card, ModalContainer } from "@/ui";
+import { Button, Card, Dialog } from "@/ui";
 import { useTranslation } from "react-i18next";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Collapse from "@/ui/common/Collapse";
@@ -51,7 +51,7 @@ export default function TasksTab({
 	// Модальные окна для Task
 	const renderTaskModals = () => (
 		<>
-			<ModalContainer
+			<Dialog
 				visible={modal.modals.createTask}
 				onClose={() => modal.closeModal("createTask")}
 			>
@@ -60,9 +60,9 @@ export default function TasksTab({
 					onClose={() => modal.closeModal("createTask")}
 					isLoading={taskMutation.createTaskMutation.isPending}
 				/>
-			</ModalContainer>
+			</Dialog>
 
-			<ModalContainer
+			<Dialog
 				visible={modal.modals.editTask && !!selectedTask}
 				onClose={() => modal.closeModal("editTask")}
 			>
@@ -74,9 +74,9 @@ export default function TasksTab({
 						isLoading={taskMutation.updateTaskMutation.isPending}
 					/>
 				)}
-			</ModalContainer>
+			</Dialog>
 
-			<ModalContainer
+			<Dialog
 				visible={modal.modals.deleteTask && !!selectedTask}
 				onClose={() => modal.closeModal("deleteTask")}
 			>
@@ -88,7 +88,7 @@ export default function TasksTab({
 						isLoading={taskMutation.deleteTaskMutation.isPending}
 					/>
 				)}
-			</ModalContainer>
+			</Dialog>
 		</>
 	);
 

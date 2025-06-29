@@ -1,7 +1,7 @@
 import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import React, { useState } from "react";
-import { Loading, ModalContainer, Typography } from "@/ui";
+import { Dialog, Loading, Typography } from "@/ui";
 import { useGetDailyAssignmentsAndReports } from "@/api/client";
 import ReportForm from "@/ui/forms/common/ReportForm";
 import { formatToDate, getFormatedDate } from "@/core/utils/dateUtils";
@@ -98,14 +98,22 @@ export default function DailyAssignmentsList() {
 			</View>
 
 			{showReport && (
-				<ModalContainer visible={showReport} onClose={() => setShowReport(false)}>
+				<Dialog
+					visible={showReport}
+					onClose={() => setShowReport(false)}
+					maxWidth={"md"}
+					fullWidth
+					cardProps={{ variant: "outlined" }}
+					card
+					scrollView={false}
+				>
 					<ReportForm
 						onCancel={() => setShowReport(false)}
 						onSubmit={handleReportSubmit}
 						assignment={assignment}
 						totalTime={totalTime}
 					/>
-				</ModalContainer>
+				</Dialog>
 			)}
 		</ScrollView>
 	);

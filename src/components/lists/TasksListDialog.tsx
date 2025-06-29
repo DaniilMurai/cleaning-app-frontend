@@ -1,20 +1,20 @@
 import { LocationResponse, RoomResponse, RoomTaskResponse, TaskResponse } from "@/api/admin";
-import { Button, Card, ModalContainer } from "@/ui";
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import { Button, Card, Dialog } from "@/ui";
+import { TouchableOpacity, View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Typography from "../../ui/common/Typography";
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native-unistyles";
 import Collapse from "@/ui/common/Collapse";
-import { CreateTaskForm, DeleteTaskConfirm, EditTaskForm } from "@/ui/forms/common/TaskForms";
 import { useTranslation } from "react-i18next";
 import useTaskMutation from "@/core/hooks/mutations/useTaskMutation";
 import useRoomTaskMutation from "@/core/hooks/mutations/useRoomTaskMutation";
 import useModals from "@/core/hooks/shared/useModals";
 import { createMutationHandlersFactory } from "@/core/utils/mutationHandlers";
+import { DialogProps } from "@/ui/common/Dialog";
+import { CreateTaskForm, DeleteTaskConfirm, EditTaskForm } from "@/ui/forms/common/TaskForms";
 
-interface TasksListProps {
-	onClose: () => void;
+interface TasksListProps extends DialogProps {
 	tasks?: TaskResponse[];
 	rooms?: RoomResponse[];
 	room?: RoomResponse;
@@ -24,7 +24,7 @@ interface TasksListProps {
 	roomTasksRefetch?: () => void;
 }
 
-export default function TasksList({
+export default function TasksListDialog({
 	onClose,
 	tasks,
 	roomTasks,
@@ -33,6 +33,7 @@ export default function TasksList({
 	locations,
 	tasksRefetch,
 	roomTasksRefetch,
+	...props
 }: TasksListProps) {
 	const { t } = useTranslation();
 
@@ -82,146 +83,141 @@ export default function TasksList({
 	};
 
 	return (
-		<Card
-			size={"large"}
-			variant={"default"}
-			style={[
-				// styles.cardContainer,
-				{
-					maxHeight: "80%",
-					marginVertical: "auto",
-				},
-			]}
-		>
-			<View style={styles.headerContainer}>
-				<Button variant="contained">
-					<FontAwesome5
-						name="plus"
-						size={16}
-						color={styles.iconColor.color}
-						onPress={() => {
-							modal.openModal("createTask");
-						}}
-					/>
-					{/*+*/}
-				</Button>
-			</View>
-			<ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
-				{tasks &&
-					tasks.map(task => (
-						<Card key={task.id} variant="outlined" style={styles.card}>
-							<TouchableOpacity
-								style={styles.cardHeader}
-								onPress={() => toggleTask(task.id)}
-							>
-								<View style={styles.headerWithIcon}>
-									<FontAwesome5
-										name={expandedTasks[task.id] ? "angle-down" : "angle-right"}
-										size={16}
-										color={styles.collapseIcon.color}
-									/>
-									<Typography variant="h5">{task.title}</Typography>
-								</View>
-								<View style={styles.actionButtons}>
-									<Button
-										variant="outlined"
-										onPress={() => {
-											setSelectedTask(task);
-											handleCreateRoomTask(task, room!).then(() =>
-												roomTaskMutationHandlers.refetch()
-											);
-										}}
-									>
-										{/*Добавить*/}
-										<FontAwesome5 name="link" size={14} />
-									</Button>
-									<Button
-										variant="outlined"
-										onPress={() => {
-											setSelectedTask(task);
-											modal.openModal("editTask");
-										}}
-									>
-										<FontAwesome5 name="edit" size={14} />
-									</Button>
-									<Button
-										variant="outlined"
-										style={styles.deleteButton}
-										onPress={() => {
-											setSelectedTask(task);
-											modal.openModal("deleteTask");
-										}}
-									>
-										<FontAwesome5 name="trash" size={14} />
-									</Button>
-								</View>
-							</TouchableOpacity>
-
-							<Collapse expanded={expandedTasks[task.id]}>
-								<Typography>
-									{task.description || t("common.noDescription")}
+		<>
+			<Dialog
+				{...props}
+				onClose={onClose}
+				card
+				cardProps={{
+					size: "large",
+					variant: "standard",
+				}}
+				scrollView
+				header={
+					<View style={styles.headerContainer}>
+						<Button
+							variant="contained"
+							onPress={() => {
+								modal.openModal("createTask");
+							}}
+						>
+							<FontAwesome5 name="plus" size={16} color={styles.iconColor.color} />
+							{/*+*/}
+						</Button>
+					</View>
+				}
+				actions={
+					<Button variant={"outlined"} style={styles.buttonExit} onPress={onClose}>
+						{t("common.close")}
+					</Button>
+				}
+			>
+				{tasks?.map(task => (
+					<Card key={task.id} variant="outlined" style={styles.card}>
+						<TouchableOpacity
+							style={styles.cardHeader}
+							onPress={() => toggleTask(task.id)}
+						>
+							<View style={styles.headerWithIcon}>
+								<FontAwesome5
+									name={expandedTasks[task.id] ? "angle-down" : "angle-right"}
+									size={16}
+									color={styles.collapseIcon.color}
+								/>
+								<Typography variant="h5" style={styles.cartTitle}>
+									{task.title}
 								</Typography>
-								<Typography variant="h5">
-									{t("admin.frequency")}:{" "}
-									{task.frequency === 1
-										? t("admin.daily")
-										: t("admin.everyXDays", { count: task.frequency })}
-								</Typography>
+							</View>
+							<View style={styles.actionButtons}>
+								<Button
+									variant="outlined"
+									onPress={() => {
+										setSelectedTask(task);
+										handleCreateRoomTask(task, room!).then(() =>
+											roomTaskMutationHandlers.refetch()
+										);
+									}}
+								>
+									{/*Добавить*/}
+									<FontAwesome5 name="link" size={14} />
+								</Button>
+								<Button
+									variant="outlined"
+									onPress={() => {
+										setSelectedTask(task);
+										modal.openModal("editTask");
+									}}
+								>
+									<FontAwesome5 name="edit" size={14} />
+								</Button>
+								<Button
+									variant="outlined"
+									style={styles.deleteButton}
+									onPress={() => {
+										setSelectedTask(task);
+										modal.openModal("deleteTask");
+									}}
+								>
+									<FontAwesome5 name="trash" size={14} />
+								</Button>
+							</View>
+						</TouchableOpacity>
 
-								<View style={styles.divider} />
-								<Typography variant="subtitle2">
-									{t("admin.assignedRooms")}
-								</Typography>
+						<Collapse expanded={expandedTasks[task.id]}>
+							<Typography>{task.description || t("common.noDescription")}</Typography>
+							<Typography variant="h5">
+								{t("admin.frequency")}:{" "}
+								{task.frequency === 1
+									? t("admin.daily")
+									: t("admin.everyXDays", { count: task.frequency })}
+							</Typography>
 
-								{rooms &&
-									locations &&
-									roomTasks &&
-									roomTasks
-										.filter(rt => rt.task_id === task.id)
-										.map(roomTask => {
-											const room = rooms.find(r => r.id === roomTask.room_id);
-											const location = room
-												? locations.find(l => l.id === room.location_id)
-												: null;
+							<View style={styles.divider} />
+							<Typography variant="subtitle2">{t("admin.assignedRooms")}</Typography>
 
-											return room && location ? (
-												<View
-													key={roomTask.id}
-													style={styles.assignmentItem}
-												>
-													<Typography>
-														{location.name} - {room.name}
-													</Typography>
-													<Button
-														variant="text"
-														style={styles.deleteButton}
-													>
-														<FontAwesome5 name="unlink" size={12} />
-													</Button>
-												</View>
-											) : null;
-										})}
-							</Collapse>
-						</Card>
-					))}
-			</ScrollView>
-			<Button variant={"outlined"} style={styles.buttonExit} onPress={onClose}>
-				{t("common.close")}
-			</Button>
-			<ModalContainer
+							{rooms &&
+								locations &&
+								roomTasks &&
+								roomTasks
+									.filter(rt => rt.task_id === task.id)
+									.map(roomTask => {
+										const room = rooms.find(r => r.id === roomTask.room_id);
+										const location = room
+											? locations.find(l => l.id === room.location_id)
+											: null;
+
+										return room && location ? (
+											<View key={roomTask.id} style={styles.assignmentItem}>
+												<Typography>
+													{location.name} - {room.name}
+												</Typography>
+												<Button variant="text" style={styles.deleteButton}>
+													<FontAwesome5 name="unlink" size={12} />
+												</Button>
+											</View>
+										) : null;
+									})}
+						</Collapse>
+					</Card>
+				))}
+			</Dialog>
+
+			<Dialog
 				visible={modal.modals.createTask}
 				onClose={() => modal.closeModal("createTask")}
+				maxWidth={"xs"}
 			>
 				<CreateTaskForm
 					onSubmit={taskMutation.handleCreateTask}
 					onClose={() => modal.closeModal("createTask")}
 					isLoading={taskMutation.createTaskMutation.isPending}
 				/>
-			</ModalContainer>
+			</Dialog>
 
-			<ModalContainer
+			<Dialog
 				visible={modal.modals.editTask && !!selectedTask}
 				onClose={() => modal.closeModal("editTask")}
+				maxWidth={"xs"}
 			>
 				{selectedTask && (
 					<EditTaskForm
@@ -231,11 +227,12 @@ export default function TasksList({
 						isLoading={taskMutation.updateTaskMutation.isPending}
 					/>
 				)}
-			</ModalContainer>
+			</Dialog>
 
-			<ModalContainer
+			<Dialog
 				visible={modal.modals.deleteTask && !!selectedTask}
 				onClose={() => modal.closeModal("deleteTask")}
+				maxWidth={"xs"}
 			>
 				{selectedTask && (
 					<DeleteTaskConfirm
@@ -245,23 +242,14 @@ export default function TasksList({
 						isLoading={taskMutation.deleteTaskMutation.isPending}
 					/>
 				)}
-			</ModalContainer>
-		</Card>
+			</Dialog>
+		</>
 	);
 }
 
 const styles = StyleSheet.create(theme => ({
 	cardContainer: {
 		backgroundColor: theme.colors.background.main,
-	},
-	scrollContainer: {
-		flex: 1,
-		maxHeight: "100%",
-		padding: theme.spacing(2),
-	},
-	scrollContent: {
-		flexGrow: 1, // Разрешаем контенту растягиваться
-		paddingBottom: theme.spacing(5), // Отступ снизу
 	},
 	headerContainer: {
 		flexDirection: "row-reverse",
@@ -318,5 +306,10 @@ const styles = StyleSheet.create(theme => ({
 	},
 	buttonExit: {
 		alignSelf: "flex-end",
+	},
+	cartTitle: {
+		flexShrink: 1,
+		overflow: "hidden",
+		textOverflow: "ellipsis",
 	},
 }));

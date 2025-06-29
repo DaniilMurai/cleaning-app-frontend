@@ -2,7 +2,7 @@ import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import Typography from "@/ui/common/Typography";
 import { useState } from "react";
-import { Button, Card, ModalContainer } from "@/ui";
+import { Button, Card, Dialog } from "@/ui";
 import { UpdateUserData, useGetCurrentUser, UserUpdatePassword } from "@/api/users";
 import UpdateCurrentUserForm from "@/ui/forms/user/UpdateCurrentUserForm";
 import { useCurrentUserMutations } from "@/core/hooks/mutations/useCurrentUserMutations";
@@ -121,7 +121,7 @@ export default function ProfilePage() {
 				onClose={() => setIsSettingsModalOpen(false)}
 			/>
 
-			<ModalContainer onClose={() => setIsEditing(false)} visible={isEditing}>
+			<Dialog onClose={() => setIsEditing(false)} visible={isEditing}>
 				<UpdateCurrentUserForm
 					user={user as UpdateUserData}
 					onClose={() => setIsEditing(false)}
@@ -129,19 +129,16 @@ export default function ProfilePage() {
 					isLoading={updateMutation.isPending}
 					error={updateError}
 				/>
-			</ModalContainer>
+			</Dialog>
 
-			<ModalContainer
-				onClose={() => setIsChangingPassword(false)}
-				visible={isChangingPassword}
-			>
+			<Dialog onClose={() => setIsChangingPassword(false)} visible={isChangingPassword}>
 				<UpdateCurrentUserPasswordForm
 					onClose={() => setIsChangingPassword(false)}
 					onSubmit={handleChangingPasswordSubmit}
 					isLoading={changePasswordMutation.isPending}
 					error={changePasswordError}
 				/>
-			</ModalContainer>
+			</Dialog>
 		</View>
 	);
 }

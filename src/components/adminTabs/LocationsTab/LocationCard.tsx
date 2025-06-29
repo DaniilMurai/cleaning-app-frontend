@@ -1,7 +1,7 @@
 import { TouchableOpacity, View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Typography from "../../../ui/common/Typography";
-import { Button, Card, ModalContainer } from "@/ui";
+import { Button, Card, Dialog } from "@/ui";
 import Collapse from "../../../ui/common/Collapse";
 import React, { useMemo, useState } from "react";
 import { StyleSheet } from "react-native-unistyles";
@@ -91,31 +91,31 @@ export default function LocationCard({ location, locationMutation, ...props }: L
 				</Collapse>
 			</Card>
 
-			<ModalContainer visible={showEdit} onClose={() => setShowEdit(false)}>
+			<Dialog visible={showEdit} onClose={() => setShowEdit(false)}>
 				<EditLocationForm
 					location={location}
 					onSubmit={locationMutation.handleUpdateLocation}
 					onClose={() => setShowEdit(false)}
 					isLoading={locationMutation.updateLocationMutation.isPending}
 				/>
-			</ModalContainer>
+			</Dialog>
 
-			<ModalContainer visible={showDelete} onClose={() => setShowDelete(false)}>
+			<Dialog visible={showDelete} onClose={() => setShowDelete(false)}>
 				<DeleteLocationConfirm
 					location={location}
 					onConfirm={locationMutation.handleDeleteLocation}
 					onClose={() => setShowDelete(false)}
 					isLoading={locationMutation.deleteLocationMutation.isPending}
 				/>
-			</ModalContainer>
-			<ModalContainer visible={showCreateRoom} onClose={() => setShowCreateRoom(false)}>
+			</Dialog>
+			<Dialog visible={showCreateRoom} onClose={() => setShowCreateRoom(false)}>
 				<CreateRoomForm
 					onSubmit={roomMutation.handleCreateRoom}
 					onClose={() => setShowCreateRoom(false)}
 					location_id={location.id}
 					isLoading={roomMutation.createRoomMutation.isPending}
 				/>
-			</ModalContainer>
+			</Dialog>
 		</>
 	);
 }

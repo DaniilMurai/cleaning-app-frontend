@@ -4,15 +4,15 @@ import { StyleSheet } from "react-native-unistyles";
 import Card from "@/ui/common/Card";
 import Typography from "@/ui/common/Typography";
 import DropdownMenu from "@/ui/common/DropdownMenu";
-import { UserSchema } from "@/api/admin";
+import { AdminReadUser } from "@/api/admin";
 import { useTranslation } from "react-i18next";
 import { useIsSuperAdmin } from "@/core/auth";
 
 interface UsersListProps {
-	users: UserSchema[];
+	users: AdminReadUser[];
 	onForgetPassword: (userId: number) => void;
 	onActivateUser: (userId: number) => void;
-	onEditUser: (user: UserSchema) => void;
+	onEditUser: (user: AdminReadUser) => void;
 	onDeleteUser: (userId: number) => void;
 	manyColumns?: boolean;
 }
