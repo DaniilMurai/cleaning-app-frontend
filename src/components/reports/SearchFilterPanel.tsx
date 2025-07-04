@@ -7,6 +7,7 @@ import { View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useDebounce } from "@uidotdev/usehooks";
 import { useTranslation } from "react-i18next";
+import ExportReportsPanel from "@/components/reports/ExportReportsPanel";
 
 interface props {
 	params: GetReportsParams;
@@ -21,6 +22,7 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 	const [search, setSearch] = useState<string>(params.search ?? "");
 
 	const { t } = useTranslation();
+	const [isVisibleExportReports, setIsVisibleExportReports] = useState(false);
 
 	const debouncedSearch = useDebounce(search, 300);
 
@@ -140,6 +142,18 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 								onAction(newParams);
 							}}
 						/>
+					</View>
+					<View style={{ alignSelf: "flex-end", marginBottom: 8 }}>
+						<ExportReportsPanel
+							isVisible={isVisibleExportReports}
+							onClose={() => setIsVisibleExportReports(false)}
+						/>
+						<Button
+							variant={"outlined"}
+							onPress={() => setIsVisibleExportReports(true)}
+						>
+							Generate Export
+						</Button>
 					</View>
 				</View>
 			</View>

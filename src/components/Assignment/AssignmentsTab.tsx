@@ -4,7 +4,12 @@ import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { Button, Dialog, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { AdminReadUser, DailyAssignmentResponse, LocationResponse } from "@/api/admin";
+import {
+	AdminReadUser,
+	DailyAssignmentResponse,
+	LocationResponse,
+	useGetDailyAssignmentsDates,
+} from "@/api/admin";
 import {
 	CreateDailyAssignmentForm,
 	DeleteDailyAssignmentConfirm,
@@ -25,7 +30,6 @@ interface AssignmentsTabProps {
 
 export default function AssignmentsTab({
 	locations,
-	dailyAssignments,
 	users,
 	dailyAssignmentMutation,
 	modal,
@@ -34,10 +38,12 @@ export default function AssignmentsTab({
 
 	const { t } = useTranslation();
 
+	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+
 	// Состояния для управления развернутыми/свернутыми элементами
 	const [selectedAssignment, setSelectedAssignment] = useState<DailyAssignmentResponse | null>();
 
-	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+	const { data: assignmentsDates } = useGetDailyAssignmentsDates();
 
 	const renderModals = () => (
 		<>
@@ -98,7 +104,7 @@ export default function AssignmentsTab({
 					{/* Календарь слева */}
 					<View style={styles.sidebar}>
 						<Calendar
-							assignedDates={dailyAssignments.map(assignment => assignment.date)}
+							assignedDates={assignmentsDates ?? [""]}
 							onConfirm={date => setSelectedDate(date)}
 						/>
 					</View>
@@ -130,9 +136,8 @@ export default function AssignmentsTab({
 							</Typography>
 						</View>
 						<RenderDailyAssignments
-							dailyAssignments={dailyAssignments}
-							setSelectedAssignment={setSelectedAssignment}
 							selectedDate={selectedDate}
+							setSelectedAssignment={setSelectedAssignment}
 							modal={modal}
 							users={users}
 							locations={locations}

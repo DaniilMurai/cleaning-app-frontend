@@ -109,7 +109,8 @@ export default function AssignmentCard({
 				</View>
 			</TouchableOpacity>
 			<Collapse expanded={isExpanded}>
-				{formatToDate(assignment.date) === getFormatedDate(new Date()) && (
+				{(formatToDate(assignment.date) === getFormatedDate(new Date()) ||
+					assignment.status === AssignmentStatus.in_progress) && (
 					<TaskTimer
 						onStatusChange={handleStatusChange}
 						alreadyDoneTime={alreadyDoneTime}

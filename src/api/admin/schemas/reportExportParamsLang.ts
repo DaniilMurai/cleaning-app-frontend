@@ -5,4 +5,4 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type UpdateReportMessage = string | null;
+export type ReportExportParamsLang = string | null;

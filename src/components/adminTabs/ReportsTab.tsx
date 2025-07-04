@@ -24,7 +24,7 @@ export default function ReportsTab({ users, assignments, locations }: Props) {
 		order_by: "id",
 		direction: "desc",
 	});
-
+	// const [isVisibleExportReports, setIsVisibleExportReports] = useState(false);
 	const [isVisibleFilterPanel, setIsVisibleFilterPanel] = useState(true);
 
 	const { data: reports, isLoading, refetch } = useGetReports(queryParams);
@@ -55,6 +55,13 @@ export default function ReportsTab({ users, assignments, locations }: Props) {
 					onAction={handleSearch}
 					onChangeVisible={isVisible => setIsVisibleFilterPanel(isVisible)}
 				/>
+				{/*<ExportReportsPanel*/}
+				{/*	isVisible={isVisibleExportReports}*/}
+				{/*	onClose={() => setIsVisibleExportReports(false)}*/}
+				{/*/>*/}
+				{/*<Button variant={"outlined"} onPress={() => setIsVisibleExportReports(true)}>*/}
+				{/*	Generate Export*/}
+				{/*</Button>*/}
 			</View>
 			<View style={styles.scrollContainer}>
 				{reports ? (
@@ -88,6 +95,7 @@ const styles = StyleSheet.create(theme => ({
 		flex: 1,
 	},
 	headerContainer: {
+		// flexDirection: "column",
 		flexDirection: "row",
 		alignItems: "center",
 		marginBottom: theme.spacing(2),

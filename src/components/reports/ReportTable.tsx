@@ -130,7 +130,7 @@ export default function ReportsTable({ reports, assignments, users = [], locatio
 			<LegendList
 				data={data}
 				keyExtractor={item => item.id.toString()}
-				estimatedItemSize={48}
+				// estimatedItemSize={48}
 				// Ширина списка равна контенту, а не экрану
 				style={{ minWidth: 118 * 7 }}
 				ListHeaderComponent={renderHeader}

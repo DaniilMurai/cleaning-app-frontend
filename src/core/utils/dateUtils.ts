@@ -3,9 +3,9 @@ import { toZonedTime } from "date-fns-tz";
 import { format } from "date-fns";
 
 // Кэшируем временную зону при первом вызове
-let cachedTimeZone: string | null = null;
+export let cachedTimeZone: string | null = null;
 
-const getTimeZone = (): string => {
+export const getTimeZone = (): string => {
 	if (!cachedTimeZone) {
 		cachedTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 	}
@@ -57,12 +57,12 @@ export const formatTime = (timeInMs: number): string => {
 	return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 };
 
-export function getFormatedDate(date: Date) {
+export function getFormatedDate(date: Date, char: string = ".") {
 	// Получаем компоненты даты
 	const month = date.getMonth() + 1; // Месяцы от 0 до 11
 	const day = date.getDate();
 	const year = date.getFullYear();
 
 	// Форматируем с ведущими нулями
-	return `${day.toString().padStart(2, "0")}.${month.toString().padStart(2, "0")}.${year}`;
+	return `${day.toString().padStart(2, "0")}${char}${month.toString().padStart(2, "0")}${char}${year}`;
 }

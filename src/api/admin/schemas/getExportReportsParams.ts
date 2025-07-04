@@ -5,11 +5,10 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type GetDailyAssignmentsParams = {
+export type GetExportReportsParams = {
 	offset?: number | null;
 	limit?: number | null;
 	search?: string | null;
 	order_by?: string | null;
 	direction?: string | null;
-	dates?: string[] | null;
 };

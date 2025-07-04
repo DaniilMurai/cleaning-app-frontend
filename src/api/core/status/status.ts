@@ -19,14 +19,16 @@ import type {
 	UseSuspenseQueryResult,
 } from "@tanstack/react-query";
 
+import type { HTTPValidationError, HealthHeaders } from ".././schemas";
+
 import { getAxios } from "../../instance";
 import type { ErrorType } from "../../instance";
 
 /**
  * @summary Health
  */
-export const health = (signal?: AbortSignal) => {
-	return getAxios<string>({ url: `/health`, method: "GET", signal });
+export const health = (headers?: HealthHeaders, signal?: AbortSignal) => {
+	return getAxios<string>({ url: `/health`, method: "GET", headers, signal });
 };
 
 export const getHealthQueryKey = () => {
@@ -35,16 +37,19 @@ export const getHealthQueryKey = () => {
 
 export const getHealthQueryOptions = <
 	TData = Awaited<ReturnType<typeof health>>,
-	TError = ErrorType<unknown>,
->(options?: {
-	query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>>;
-}) => {
+	TError = ErrorType<HTTPValidationError>,
+>(
+	headers?: HealthHeaders,
+	options?: {
+		query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>>;
+	}
+) => {
 	const { query: queryOptions } = options ?? {};
 
 	const queryKey = queryOptions?.queryKey ?? getHealthQueryKey();
 
 	const queryFn: QueryFunction<Awaited<ReturnType<typeof health>>> = ({ signal }) =>
-		health(signal);
+		health(headers, signal);
 
 	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
 		Awaited<ReturnType<typeof health>>,
@@ -54,9 +59,13 @@ export const getHealthQueryOptions = <
 };
 
 export type HealthQueryResult = NonNullable<Awaited<ReturnType<typeof health>>>;
-export type HealthQueryError = ErrorType<unknown>;
+export type HealthQueryError = ErrorType<HTTPValidationError>;
 
-export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = ErrorType<unknown>>(
+export function useHealth<
+	TData = Awaited<ReturnType<typeof health>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	headers: undefined | HealthHeaders,
 	options: {
 		query: Partial<UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>> &
 			Pick<
@@ -70,7 +79,11 @@ export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = E
 	},
 	queryClient?: QueryClient
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = ErrorType<unknown>>(
+export function useHealth<
+	TData = Awaited<ReturnType<typeof health>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	headers?: HealthHeaders,
 	options?: {
 		query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>> &
 			Pick<
@@ -84,7 +97,11 @@ export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = E
 	},
 	queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = ErrorType<unknown>>(
+export function useHealth<
+	TData = Awaited<ReturnType<typeof health>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	headers?: HealthHeaders,
 	options?: {
 		query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>>;
 	},
@@ -94,13 +111,17 @@ export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = E
  * @summary Health
  */
 
-export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = ErrorType<unknown>>(
+export function useHealth<
+	TData = Awaited<ReturnType<typeof health>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	headers?: HealthHeaders,
 	options?: {
 		query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>>;
 	},
 	queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-	const queryOptions = getHealthQueryOptions(options);
+	const queryOptions = getHealthQueryOptions(headers, options);
 
 	const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
 		queryKey: DataTag<QueryKey, TData, TError>;
@@ -113,16 +134,19 @@ export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = E
 
 export const getHealthSuspenseQueryOptions = <
 	TData = Awaited<ReturnType<typeof health>>,
-	TError = ErrorType<unknown>,
->(options?: {
-	query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>>;
-}) => {
+	TError = ErrorType<HTTPValidationError>,
+>(
+	headers?: HealthHeaders,
+	options?: {
+		query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>>;
+	}
+) => {
 	const { query: queryOptions } = options ?? {};
 
 	const queryKey = queryOptions?.queryKey ?? getHealthQueryKey();
 
 	const queryFn: QueryFunction<Awaited<ReturnType<typeof health>>> = ({ signal }) =>
-		health(signal);
+		health(headers, signal);
 
 	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
 		Awaited<ReturnType<typeof health>>,
@@ -132,12 +156,13 @@ export const getHealthSuspenseQueryOptions = <
 };
 
 export type HealthSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof health>>>;
-export type HealthSuspenseQueryError = ErrorType<unknown>;
+export type HealthSuspenseQueryError = ErrorType<HTTPValidationError>;
 
 export function useHealthSuspense<
 	TData = Awaited<ReturnType<typeof health>>,
-	TError = ErrorType<unknown>,
+	TError = ErrorType<HTTPValidationError>,
 >(
+	headers: undefined | HealthHeaders,
 	options: {
 		query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>>;
 	},
@@ -145,8 +170,9 @@ export function useHealthSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useHealthSuspense<
 	TData = Awaited<ReturnType<typeof health>>,
-	TError = ErrorType<unknown>,
+	TError = ErrorType<HTTPValidationError>,
 >(
+	headers?: HealthHeaders,
 	options?: {
 		query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>>;
 	},
@@ -154,8 +180,9 @@ export function useHealthSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useHealthSuspense<
 	TData = Awaited<ReturnType<typeof health>>,
-	TError = ErrorType<unknown>,
+	TError = ErrorType<HTTPValidationError>,
 >(
+	headers?: HealthHeaders,
 	options?: {
 		query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>>;
 	},
@@ -167,14 +194,15 @@ export function useHealthSuspense<
 
 export function useHealthSuspense<
 	TData = Awaited<ReturnType<typeof health>>,
-	TError = ErrorType<unknown>,
+	TError = ErrorType<HTTPValidationError>,
 >(
+	headers?: HealthHeaders,
 	options?: {
 		query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>>;
 	},
 	queryClient?: QueryClient
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-	const queryOptions = getHealthSuspenseQueryOptions(options);
+	const queryOptions = getHealthSuspenseQueryOptions(headers, options);
 
 	const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
 		TData,

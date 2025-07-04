@@ -9,6 +9,7 @@ import type { CreateReportMediaLinks } from "./createReportMediaLinks";
 import type { CreateReportStartTime } from "./createReportStartTime";
 import type { CreateReportEndTime } from "./createReportEndTime";
 import type { AssignmentStatus } from "./assignmentStatus";
+import type { CreateReportReportRooms } from "./createReportReportRooms";
 
 export interface CreateReport {
 	daily_assignment_id: number;
@@ -18,4 +19,5 @@ export interface CreateReport {
 	start_time?: CreateReportStartTime;
 	end_time?: CreateReportEndTime;
 	status: AssignmentStatus;
+	report_rooms?: CreateReportReportRooms;
 }

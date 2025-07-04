@@ -1,10 +1,9 @@
 import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import React, { useState } from "react";
-import { Dialog, Loading, Typography } from "@/ui";
-import { useGetDailyAssignmentsAndReports } from "@/api/client";
+import { Dialog, Typography } from "@/ui";
+import { useGetDailyAssignmentsAndReports, useGetDailyAssignmentsDates } from "@/api/client";
 import ReportForm from "@/ui/forms/common/ReportForm";
-import { formatToDate, getFormatedDate } from "@/core/utils/dateUtils";
 import { useTranslation } from "react-i18next";
 import Calendar from "@/components/user/calendar/Calendar";
 import { useLanguage } from "@/core/context/LanguageContext";
@@ -12,17 +11,33 @@ import { useCurrentUser } from "@/core/auth";
 import NoAssignments from "@/components/Assignment/RenderNoAssignments";
 import useAssignmentStatusHandler from "@/core/hooks/home/useAssignmentStatusHandler";
 import DailyAssignmentsListRender from "@/components/Assignment/DailyAssignmentsListRender";
+import dayjs from "dayjs";
+import { keepPreviousData } from "@tanstack/query-core";
 
 export default function DailyAssignmentsList() {
 	const user = useCurrentUser();
 	const { t } = useTranslation();
 	const { currentLanguage } = useLanguage();
 
-	const {
-		data: dailyAssignmentsAndReports,
-		isLoading: dailyAssignmentsAndReportsIsLoading,
-		refetch: dailyAssignmentsAndReportsRefetch,
-	} = useGetDailyAssignmentsAndReports();
+	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+
+	const { data: dailyAssignmentsAndReports, refetch: dailyAssignmentsAndReportsRefetch } =
+		useGetDailyAssignmentsAndReports(
+			{
+				start_date: null,
+				end_date: null,
+				dates: [dayjs(selectedDate).format("YYYY-MM-DD")],
+			},
+			{
+				query: {
+					enabled: !!selectedDate,
+					placeholderData: keepPreviousData,
+					refetchOnMount: false,
+				},
+			}
+		);
+
+	const { data: assignmentDates } = useGetDailyAssignmentsDates();
 
 	const {
 		handleStatusChange,
@@ -36,39 +51,13 @@ export default function DailyAssignmentsList() {
 		userId: user?.id,
 	});
 
-	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-	if (dailyAssignmentsAndReportsIsLoading) {
-		return <Loading />;
-	}
-
-	const getFilteredAssignments = () => {
-		if (!dailyAssignmentsAndReports) return [];
-
-		const date = getFormatedDate(selectedDate);
-		return dailyAssignmentsAndReports.filter(ar => formatToDate(ar.assignment.date) === date);
-	};
-
-	const filteredAssignments = getFilteredAssignments();
-	const assignmentDates = dailyAssignmentsAndReports
-		? dailyAssignmentsAndReports.map(ar => ar.assignment.date)
-		: [];
-
-	console.log(
-		"Filtered assignments statuses:",
-		filteredAssignments.map(a => ({
-			id: a.assignment.id,
-			status: a.assignment.status,
-			start_time: a.assignment.start_time,
-		}))
-	);
-
 	return (
 		<ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
 			<View style={styles.page}>
 				<View style={styles.sidebar}>
 					<Calendar
 						onConfirm={(date: Date) => setSelectedDate(date)}
-						assignedDates={assignmentDates}
+						assignedDates={assignmentDates ?? []}
 					/>
 				</View>
 				<View style={styles.tasksContainer}>
@@ -84,12 +73,12 @@ export default function DailyAssignmentsList() {
 								.replace(/^./, str => str.toUpperCase())}
 						</Typography>
 					</View>
-					{filteredAssignments.length === 0 ? (
+					{dailyAssignmentsAndReports?.length === 0 ? (
 						<NoAssignments selectedDate={selectedDate} />
 					) : (
 						<View style={styles.scrollContainer}>
 							<DailyAssignmentsListRender
-								assignments={filteredAssignments}
+								assignments={dailyAssignmentsAndReports ?? []}
 								onStatusChange={handleStatusChange}
 							/>
 						</View>

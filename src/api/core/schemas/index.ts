@@ -5,4 +5,12 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./hTTPValidationError";
+export * from "./healthHeaders";
 export * from "./root200";
+export * from "./rootHeaders";
+export * from "./testErrorBody";
+export * from "./testErrorBodyAnyOf";
+export * from "./testErrorHeaders";
+export * from "./validationError";
+export * from "./validationErrorLocItem";

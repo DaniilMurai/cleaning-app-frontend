@@ -11,6 +11,7 @@ import type { UpdateReportMediaLinks } from "./updateReportMediaLinks";
 import type { UpdateReportStartTime } from "./updateReportStartTime";
 import type { UpdateReportEndTime } from "./updateReportEndTime";
 import type { UpdateReportStatus } from "./updateReportStatus";
+import type { UpdateReportReportRooms } from "./updateReportReportRooms";
 
 /**
  * Схема для обновления отчета
@@ -23,4 +24,5 @@ export interface UpdateReport {
 	start_time?: UpdateReportStartTime;
 	end_time?: UpdateReportEndTime;
 	status?: UpdateReportStatus;
+	report_rooms?: UpdateReportReportRooms;
 }

@@ -9,6 +9,7 @@ import type { ReportResponseMediaLinks } from "./reportResponseMediaLinks";
 import type { ReportResponseStartTime } from "./reportResponseStartTime";
 import type { ReportResponseEndTime } from "./reportResponseEndTime";
 import type { AssignmentStatus } from "./assignmentStatus";
+import type { ReportResponseReportRooms } from "./reportResponseReportRooms";
 import type { ReportResponseDurationSeconds } from "./reportResponseDurationSeconds";
 import type { ReportResponseDurationMinutes } from "./reportResponseDurationMinutes";
 import type { ReportResponseDurationHours } from "./reportResponseDurationHours";
@@ -25,6 +26,7 @@ export interface ReportResponse {
 	end_time?: ReportResponseEndTime;
 	status: AssignmentStatus;
 	id: number;
+	report_rooms?: ReportResponseReportRooms;
 	/** Вычисляет длительность в секундах */
 	readonly duration_seconds: ReportResponseDurationSeconds;
 	/** Возвращает длительность в минутах */

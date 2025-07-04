@@ -497,6 +497,224 @@ export const useDeleteDailyAssignment = <
 	return useMutation(mutationOptions, queryClient);
 };
 /**
+ * @summary Get Daily Assignments Dates
+ */
+export const getDailyAssignmentsDates = (signal?: AbortSignal) => {
+	return getAxios<string[]>({ url: `/admin/daily-assignments/dates`, method: "GET", signal });
+};
+
+export const getGetDailyAssignmentsDatesQueryKey = () => {
+	return [`/admin/daily-assignments/dates`] as const;
+};
+
+export const getGetDailyAssignmentsDatesQueryOptions = <
+	TData = Awaited<ReturnType<typeof getDailyAssignmentsDates>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof getDailyAssignmentsDates>>, TError, TData>
+	>;
+}) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetDailyAssignmentsDatesQueryKey();
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof getDailyAssignmentsDates>>> = ({
+		signal,
+	}) => getDailyAssignmentsDates(signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof getDailyAssignmentsDates>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetDailyAssignmentsDatesQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getDailyAssignmentsDates>>
+>;
+export type GetDailyAssignmentsDatesQueryError = ErrorType<unknown>;
+
+export function useGetDailyAssignmentsDates<
+	TData = Awaited<ReturnType<typeof getDailyAssignmentsDates>>,
+	TError = ErrorType<unknown>,
+>(
+	options: {
+		query: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getDailyAssignmentsDates>>, TError, TData>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getDailyAssignmentsDates>>,
+					TError,
+					Awaited<ReturnType<typeof getDailyAssignmentsDates>>
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetDailyAssignmentsDates<
+	TData = Awaited<ReturnType<typeof getDailyAssignmentsDates>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getDailyAssignmentsDates>>, TError, TData>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getDailyAssignmentsDates>>,
+					TError,
+					Awaited<ReturnType<typeof getDailyAssignmentsDates>>
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetDailyAssignmentsDates<
+	TData = Awaited<ReturnType<typeof getDailyAssignmentsDates>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getDailyAssignmentsDates>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Daily Assignments Dates
+ */
+
+export function useGetDailyAssignmentsDates<
+	TData = Awaited<ReturnType<typeof getDailyAssignmentsDates>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getDailyAssignmentsDates>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetDailyAssignmentsDatesQueryOptions(options);
+
+	const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetDailyAssignmentsDatesSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof getDailyAssignmentsDates>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseSuspenseQueryOptions<Awaited<ReturnType<typeof getDailyAssignmentsDates>>, TError, TData>
+	>;
+}) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetDailyAssignmentsDatesQueryKey();
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof getDailyAssignmentsDates>>> = ({
+		signal,
+	}) => getDailyAssignmentsDates(signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+		Awaited<ReturnType<typeof getDailyAssignmentsDates>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetDailyAssignmentsDatesSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getDailyAssignmentsDates>>
+>;
+export type GetDailyAssignmentsDatesSuspenseQueryError = ErrorType<unknown>;
+
+export function useGetDailyAssignmentsDatesSuspense<
+	TData = Awaited<ReturnType<typeof getDailyAssignmentsDates>>,
+	TError = ErrorType<unknown>,
+>(
+	options: {
+		query: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignmentsDates>>,
+				TError,
+				TData
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetDailyAssignmentsDatesSuspense<
+	TData = Awaited<ReturnType<typeof getDailyAssignmentsDates>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignmentsDates>>,
+				TError,
+				TData
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetDailyAssignmentsDatesSuspense<
+	TData = Awaited<ReturnType<typeof getDailyAssignmentsDates>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignmentsDates>>,
+				TError,
+				TData
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Daily Assignments Dates
+ */
+
+export function useGetDailyAssignmentsDatesSuspense<
+	TData = Awaited<ReturnType<typeof getDailyAssignmentsDates>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignmentsDates>>,
+				TError,
+				TData
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetDailyAssignmentsDatesSuspenseQueryOptions(options);
+
+	const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+/**
  * @summary Create Daily Assignments Batch
  */
 export const createDailyAssignmentsBatch = (

@@ -4,22 +4,31 @@
  * Neuer Standard API
  * OpenAPI spec version: 0.1.0
  */
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import type {
 	DataTag,
 	DefinedInitialDataOptions,
 	DefinedUseQueryResult,
+	MutationFunction,
 	QueryClient,
 	QueryFunction,
 	QueryKey,
 	UndefinedInitialDataOptions,
+	UseMutationOptions,
+	UseMutationResult,
 	UseQueryOptions,
 	UseQueryResult,
 	UseSuspenseQueryOptions,
 	UseSuspenseQueryResult,
 } from "@tanstack/react-query";
 
-import type { Root200 } from ".././schemas";
+import type {
+	HTTPValidationError,
+	Root200,
+	RootHeaders,
+	TestErrorBody,
+	TestErrorHeaders,
+} from ".././schemas";
 
 import { getAxios } from "../../instance";
 import type { ErrorType } from "../../instance";
@@ -27,8 +36,8 @@ import type { ErrorType } from "../../instance";
 /**
  * @summary Root
  */
-export const root = (signal?: AbortSignal) => {
-	return getAxios<Root200>({ url: `/`, method: "GET", signal });
+export const root = (headers?: RootHeaders, signal?: AbortSignal) => {
+	return getAxios<Root200>({ url: `/`, method: "GET", headers, signal });
 };
 
 export const getRootQueryKey = () => {
@@ -37,15 +46,17 @@ export const getRootQueryKey = () => {
 
 export const getRootQueryOptions = <
 	TData = Awaited<ReturnType<typeof root>>,
-	TError = ErrorType<unknown>,
->(options?: {
-	query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof root>>, TError, TData>>;
-}) => {
+	TError = ErrorType<HTTPValidationError>,
+>(
+	headers?: RootHeaders,
+	options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof root>>, TError, TData>> }
+) => {
 	const { query: queryOptions } = options ?? {};
 
 	const queryKey = queryOptions?.queryKey ?? getRootQueryKey();
 
-	const queryFn: QueryFunction<Awaited<ReturnType<typeof root>>> = ({ signal }) => root(signal);
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof root>>> = ({ signal }) =>
+		root(headers, signal);
 
 	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
 		Awaited<ReturnType<typeof root>>,
@@ -55,9 +66,13 @@ export const getRootQueryOptions = <
 };
 
 export type RootQueryResult = NonNullable<Awaited<ReturnType<typeof root>>>;
-export type RootQueryError = ErrorType<unknown>;
+export type RootQueryError = ErrorType<HTTPValidationError>;
 
-export function useRoot<TData = Awaited<ReturnType<typeof root>>, TError = ErrorType<unknown>>(
+export function useRoot<
+	TData = Awaited<ReturnType<typeof root>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	headers: undefined | RootHeaders,
 	options: {
 		query: Partial<UseQueryOptions<Awaited<ReturnType<typeof root>>, TError, TData>> &
 			Pick<
@@ -71,7 +86,11 @@ export function useRoot<TData = Awaited<ReturnType<typeof root>>, TError = Error
 	},
 	queryClient?: QueryClient
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useRoot<TData = Awaited<ReturnType<typeof root>>, TError = ErrorType<unknown>>(
+export function useRoot<
+	TData = Awaited<ReturnType<typeof root>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	headers?: RootHeaders,
 	options?: {
 		query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof root>>, TError, TData>> &
 			Pick<
@@ -85,7 +104,11 @@ export function useRoot<TData = Awaited<ReturnType<typeof root>>, TError = Error
 	},
 	queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useRoot<TData = Awaited<ReturnType<typeof root>>, TError = ErrorType<unknown>>(
+export function useRoot<
+	TData = Awaited<ReturnType<typeof root>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	headers?: RootHeaders,
 	options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof root>>, TError, TData>> },
 	queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -93,11 +116,15 @@ export function useRoot<TData = Awaited<ReturnType<typeof root>>, TError = Error
  * @summary Root
  */
 
-export function useRoot<TData = Awaited<ReturnType<typeof root>>, TError = ErrorType<unknown>>(
+export function useRoot<
+	TData = Awaited<ReturnType<typeof root>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	headers?: RootHeaders,
 	options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof root>>, TError, TData>> },
 	queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-	const queryOptions = getRootQueryOptions(options);
+	const queryOptions = getRootQueryOptions(headers, options);
 
 	const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
 		queryKey: DataTag<QueryKey, TData, TError>;
@@ -110,15 +137,19 @@ export function useRoot<TData = Awaited<ReturnType<typeof root>>, TError = Error
 
 export const getRootSuspenseQueryOptions = <
 	TData = Awaited<ReturnType<typeof root>>,
-	TError = ErrorType<unknown>,
->(options?: {
-	query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof root>>, TError, TData>>;
-}) => {
+	TError = ErrorType<HTTPValidationError>,
+>(
+	headers?: RootHeaders,
+	options?: {
+		query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof root>>, TError, TData>>;
+	}
+) => {
 	const { query: queryOptions } = options ?? {};
 
 	const queryKey = queryOptions?.queryKey ?? getRootQueryKey();
 
-	const queryFn: QueryFunction<Awaited<ReturnType<typeof root>>> = ({ signal }) => root(signal);
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof root>>> = ({ signal }) =>
+		root(headers, signal);
 
 	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
 		Awaited<ReturnType<typeof root>>,
@@ -128,12 +159,13 @@ export const getRootSuspenseQueryOptions = <
 };
 
 export type RootSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof root>>>;
-export type RootSuspenseQueryError = ErrorType<unknown>;
+export type RootSuspenseQueryError = ErrorType<HTTPValidationError>;
 
 export function useRootSuspense<
 	TData = Awaited<ReturnType<typeof root>>,
-	TError = ErrorType<unknown>,
+	TError = ErrorType<HTTPValidationError>,
 >(
+	headers: undefined | RootHeaders,
 	options: {
 		query: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof root>>, TError, TData>>;
 	},
@@ -141,8 +173,9 @@ export function useRootSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useRootSuspense<
 	TData = Awaited<ReturnType<typeof root>>,
-	TError = ErrorType<unknown>,
+	TError = ErrorType<HTTPValidationError>,
 >(
+	headers?: RootHeaders,
 	options?: {
 		query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof root>>, TError, TData>>;
 	},
@@ -150,8 +183,9 @@ export function useRootSuspense<
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useRootSuspense<
 	TData = Awaited<ReturnType<typeof root>>,
-	TError = ErrorType<unknown>,
+	TError = ErrorType<HTTPValidationError>,
 >(
+	headers?: RootHeaders,
 	options?: {
 		query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof root>>, TError, TData>>;
 	},
@@ -163,14 +197,15 @@ export function useRootSuspense<
 
 export function useRootSuspense<
 	TData = Awaited<ReturnType<typeof root>>,
-	TError = ErrorType<unknown>,
+	TError = ErrorType<HTTPValidationError>,
 >(
+	headers?: RootHeaders,
 	options?: {
 		query?: Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof root>>, TError, TData>>;
 	},
 	queryClient?: QueryClient
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-	const queryOptions = getRootSuspenseQueryOptions(options);
+	const queryOptions = getRootSuspenseQueryOptions(headers, options);
 
 	const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
 		TData,
@@ -181,3 +216,83 @@ export function useRootSuspense<
 
 	return query;
 }
+
+/**
+ * @summary Test Error
+ */
+export const testError = (
+	testErrorBody: TestErrorBody,
+	headers?: TestErrorHeaders,
+	signal?: AbortSignal
+) => {
+	return getAxios<unknown>({
+		url: `/error`,
+		method: "POST",
+		headers: { "Content-Type": "application/json", ...headers },
+		data: testErrorBody,
+		signal,
+	});
+};
+
+export const getTestErrorMutationOptions = <
+	TError = ErrorType<HTTPValidationError>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof testError>>,
+		TError,
+		{ data: TestErrorBody; headers?: TestErrorHeaders },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof testError>>,
+	TError,
+	{ data: TestErrorBody; headers?: TestErrorHeaders },
+	TContext
+> => {
+	const mutationKey = ["testError"];
+	const { mutation: mutationOptions } = options
+		? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+			? options
+			: { ...options, mutation: { ...options.mutation, mutationKey } }
+		: { mutation: { mutationKey } };
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof testError>>,
+		{ data: TestErrorBody; headers?: TestErrorHeaders }
+	> = props => {
+		const { data, headers } = props ?? {};
+
+		return testError(data, headers);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type TestErrorMutationResult = NonNullable<Awaited<ReturnType<typeof testError>>>;
+export type TestErrorMutationBody = TestErrorBody;
+export type TestErrorMutationError = ErrorType<HTTPValidationError>;
+
+/**
+ * @summary Test Error
+ */
+export const useTestError = <TError = ErrorType<HTTPValidationError>, TContext = unknown>(
+	options?: {
+		mutation?: UseMutationOptions<
+			Awaited<ReturnType<typeof testError>>,
+			TError,
+			{ data: TestErrorBody; headers?: TestErrorHeaders },
+			TContext
+		>;
+	},
+	queryClient?: QueryClient
+): UseMutationResult<
+	Awaited<ReturnType<typeof testError>>,
+	TError,
+	{ data: TestErrorBody; headers?: TestErrorHeaders },
+	TContext
+> => {
+	const mutationOptions = getTestErrorMutationOptions(options);
+
+	return useMutation(mutationOptions, queryClient);
+};
