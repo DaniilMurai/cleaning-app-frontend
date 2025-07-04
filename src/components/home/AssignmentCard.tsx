@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
-import { StyleSheet, useUnistyles } from "react-native-unistyles";
+import { StyleSheet } from "react-native-unistyles";
 import { Card, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Collapse from "@/ui/common/Collapse";
@@ -35,8 +35,6 @@ export default function AssignmentCard({
 	const { t } = useTranslation();
 	const [isExpanded, setIsExpanded] = useState(false);
 	const toggleExpand = () => setIsExpanded(prev => !prev);
-
-	const { theme } = useUnistyles();
 
 	const [status, setStatus] = useState<AssignmentStatus>(initialStatus || assignment.status);
 

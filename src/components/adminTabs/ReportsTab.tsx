@@ -27,7 +27,7 @@ export default function ReportsTab({ users, assignments, locations }: Props) {
 	// const [isVisibleExportReports, setIsVisibleExportReports] = useState(false);
 	const [isVisibleFilterPanel, setIsVisibleFilterPanel] = useState(true);
 
-	const { data: reports, isLoading, refetch } = useGetReports(queryParams);
+	const { data: reports } = useGetReports(queryParams);
 
 	// Обновляем параметры запроса
 	const handleSearch = (newParams: Partial<GetReportsParams>) => {
