@@ -6,6 +6,7 @@
  */
 import type { ReportExportResponseUserId } from "./reportExportResponseUserId";
 import type { ReportExportResponseLang } from "./reportExportResponseLang";
+import type { ReportStatus } from "./reportStatus";
 
 export interface ReportExportResponse {
 	export_type: string;
@@ -15,4 +16,5 @@ export interface ReportExportResponse {
 	user_id?: ReportExportResponseUserId;
 	lang?: ReportExportResponseLang;
 	id: number;
+	status: ReportStatus;
 }

@@ -15,7 +15,8 @@
     "selectMediaType": "Medientyp auswählen",
     "chooseFromGallery": "Aus Galerie auswählen",
     "takePhoto": "Foto aufnehmen",
-    "recordVideo": "Video aufnehmen"
+    "recordVideo": "Video aufnehmen",
+    "exportReports": "Berichte exportieren"
   },
   "tabs": {
     "home": "Startseite",

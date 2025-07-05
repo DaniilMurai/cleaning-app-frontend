@@ -25,14 +25,6 @@ export default function AdminTabs({ activeTab, setActiveTab }: AdminTabsProps) {
 				</Typography>
 			</TouchableOpacity>
 
-			{/*<TouchableOpacity*/}
-			{/*	style={[styles.tab, activeTab === "tasks" && styles.activeTab]}*/}
-			{/*	onPress={() => setActiveTab("tasks")}*/}
-			{/*>*/}
-			{/*	<Typography style={[styles.tabText, activeTab === "tasks" && styles.activeTabText]}>*/}
-			{/*		{t("admin.tasks")}*/}
-			{/*	</Typography>*/}
-			{/*</TouchableOpacity>*/}
 			<TouchableOpacity
 				style={[styles.tab, activeTab === "assignments" && styles.activeTab]}
 				onPress={() => setActiveTab("assignments")}
@@ -43,6 +35,7 @@ export default function AdminTabs({ activeTab, setActiveTab }: AdminTabsProps) {
 					{t("admin.assignments")}
 				</Typography>
 			</TouchableOpacity>
+
 			<TouchableOpacity
 				style={[styles.tab, activeTab === "reports" && styles.activeTab]}
 				onPress={() => setActiveTab("reports")}
@@ -51,6 +44,17 @@ export default function AdminTabs({ activeTab, setActiveTab }: AdminTabsProps) {
 					style={[styles.tabText, activeTab === "reports" && styles.activeTabText]}
 				>
 					{t("reports.reports")}
+				</Typography>
+			</TouchableOpacity>
+
+			<TouchableOpacity
+				style={[styles.tab, activeTab === "exportReports" && styles.activeTab]}
+				onPress={() => setActiveTab("exportReports")}
+			>
+				<Typography
+					style={[styles.tabText, activeTab === "exportReports" && styles.activeTabText]}
+				>
+					{t("reports.exportReports")}
 				</Typography>
 			</TouchableOpacity>
 		</View>

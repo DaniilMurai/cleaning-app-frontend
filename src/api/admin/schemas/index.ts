@@ -82,6 +82,7 @@ export * from "./reportResponseMessage";
 export * from "./reportResponseReportRooms";
 export * from "./reportResponseStartTime";
 export * from "./reportRoomResponse";
+export * from "./reportStatus";
 export * from "./roomCreate";
 export * from "./roomResponse";
 export * from "./roomStatus";

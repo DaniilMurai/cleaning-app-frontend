@@ -7,7 +7,6 @@ import { View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useDebounce } from "@uidotdev/usehooks";
 import { useTranslation } from "react-i18next";
-import ExportReportsDialog from "@/components/reports/ExportReportsDialog";
 
 interface props {
 	params: GetReportsParams;
@@ -22,7 +21,6 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 	const [search, setSearch] = useState<string>(params.search ?? "");
 
 	const { t } = useTranslation();
-	const [isVisibleExportReports, setIsVisibleExportReports] = useState(false);
 
 	const debouncedSearch = useDebounce(search, 300);
 
@@ -143,18 +141,6 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 							}}
 						/>
 					</View>
-					<View style={{ alignSelf: "flex-end", marginBottom: 8 }}>
-						<ExportReportsDialog
-							isVisible={isVisibleExportReports}
-							onClose={() => setIsVisibleExportReports(false)}
-						/>
-						<Button
-							variant={"outlined"}
-							onPress={() => setIsVisibleExportReports(true)}
-						>
-							Generate Export
-						</Button>
-					</View>
 				</View>
 			</View>
 		</View>
@@ -168,6 +154,7 @@ const styles = StyleSheet.create(theme => ({
 		padding: theme.spacing(3),
 		borderRadius: theme.spacing(1),
 		gap: theme.spacing(4),
+		width: "100%",
 	},
 	contentContainer: {
 		flexDirection: {

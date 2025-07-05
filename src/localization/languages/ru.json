@@ -15,7 +15,8 @@
     "selectMediaType": "Выберите тип медиа",
     "chooseFromGallery": "Выбрать из галереи",
     "takePhoto": "Сделать фото",
-    "recordVideo": "Записать видео"
+    "recordVideo": "Записать видео",
+    "exportReports": "Экспорт отчетов"
   },
   "tabs": {
     "home": "Главная",

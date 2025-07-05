@@ -55,13 +55,7 @@ export default function ReportsTab({ users, assignments, locations }: Props) {
 					onAction={handleSearch}
 					onChangeVisible={isVisible => setIsVisibleFilterPanel(isVisible)}
 				/>
-				{/*<ExportReportsPanel*/}
-				{/*	isVisible={isVisibleExportReports}*/}
-				{/*	onClose={() => setIsVisibleExportReports(false)}*/}
-				{/*/>*/}
-				{/*<Button variant={"outlined"} onPress={() => setIsVisibleExportReports(true)}>*/}
-				{/*	Generate Export*/}
-				{/*</Button>*/}
+				{/*<ExportReportsPanel />*/}
 			</View>
 			<View style={styles.scrollContainer}>
 				{reports ? (
@@ -97,9 +91,11 @@ const styles = StyleSheet.create(theme => ({
 	headerContainer: {
 		// flexDirection: "column",
 		flexDirection: "row",
+		// justifyContent: "center",
 		alignItems: "center",
 		marginBottom: theme.spacing(2),
 		zIndex: 10,
+		// gap: theme.spacing(2),
 	},
 	buttonContainer: {
 		flexDirection: "row-reverse",
