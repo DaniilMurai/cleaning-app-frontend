@@ -7,7 +7,7 @@ import { View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useDebounce } from "@uidotdev/usehooks";
 import { useTranslation } from "react-i18next";
-import ExportReportsPanel from "@/components/reports/ExportReportsPanel";
+import ExportReportsDialog from "@/components/reports/ExportReportsDialog";
 
 interface props {
 	params: GetReportsParams;
@@ -144,7 +144,7 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 						/>
 					</View>
 					<View style={{ alignSelf: "flex-end", marginBottom: 8 }}>
-						<ExportReportsPanel
+						<ExportReportsDialog
 							isVisible={isVisibleExportReports}
 							onClose={() => setIsVisibleExportReports(false)}
 						/>

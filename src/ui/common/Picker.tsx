@@ -6,14 +6,14 @@ import { FontAwesome5 } from "@expo/vector-icons";
 
 export interface PickerOption {
 	label: string;
-	value: string;
+	value: string | null;
 }
 
 interface CustomPickerProps {
 	label?: string;
-	value?: string;
+	value?: string | null;
 	options: PickerOption[];
-	onChange: (value: string) => void;
+	onChange: (value: string | null) => void;
 	style?: any;
 	placeholder?: string;
 }
@@ -66,7 +66,7 @@ export default function CustomPicker({
 		}
 	}, [isOpen, options.length]);
 
-	const handleSelect = (value: string) => {
+	const handleSelect = (value: string | null) => {
 		onChange(value);
 		setIsOpen(false);
 	};

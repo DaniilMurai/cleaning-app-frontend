@@ -2,39 +2,42 @@ import { Button, Dialog, Picker, Typography } from "@/ui";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { PickerOption } from "@/ui/common/Picker";
 import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import RangeDatesInput from "@/ui/date/RangeDatesInput";
-import { ReportExportParams, useCreateExportReports } from "@/api/admin";
+import { ReportExportParams, useCreateExportReports, useGetUsers } from "@/api/admin";
 import { getTimeZone } from "@/core/utils/dateUtils";
 import { useLanguage } from "@/core/context/LanguageContext";
 import dayjs from "dayjs";
+import Checkbox from "@/ui/common/CheckBox";
+import { PickerOption } from "@/ui/common/Picker";
 
 interface ExportReportsPanelProps {
 	isVisible: boolean;
 	onClose: () => void;
 }
 
-export default function ExportReportsPanel({ isVisible, onClose }: ExportReportsPanelProps) {
+export const DATE_FORMAT = "YYYY-MM-DD";
+
+export default function ExportReportsDialog({ isVisible, onClose }: ExportReportsPanelProps) {
 	const { t } = useTranslation();
 	const { currentLanguage } = useLanguage();
 	const mutation = useCreateExportReports();
+	const [showCsv, setShowCsv] = useState<boolean>(true);
+	const [showExcel, setShowExcel] = useState<boolean>(false);
+	const today = dayjs(Date.now()).format(DATE_FORMAT);
 
-	const ExportType: PickerOption[] = [
-		{ label: "csv", value: "csv" },
-		{ label: "xlsx", value: "excel" },
-	];
-	const today = dayjs(Date.now()).format("YYYY-MM-DD");
+	const [userId, setUserId] = useState<number | null>(null);
+	const { data: users } = useGetUsers();
+
 	const timeZone = getTimeZone();
-	console.log("timeZone: " + timeZone);
 	const [formData, setFormData] = useState<ReportExportParams>({
 		export_type: "csv",
 		start_date: today,
 		end_date: today,
 		timezone: timeZone ?? "Europe/Berlin",
 		lang: currentLanguage,
-		// user_id: null,
+		user_id: null,
 	});
 
 	const handleSubmit = async () => {
@@ -47,40 +50,53 @@ export default function ExportReportsPanel({ isVisible, onClose }: ExportReports
 			);
 			return;
 		}
-
-		const response = await mutation.mutateAsync({
-			data: formData,
-		});
-		console.log("response: " + response);
+		try {
+			await mutation.mutateAsync({ data: formData });
+			alert("succes");
+			onClose();
+		} catch (e) {
+			console.error(e);
+			alert(t("reports.export_failed"));
+		}
 	};
 
-	//
-	// const handleSubmit = () => {
-	// 	if (!dates || dates.length === 0) return;
-	// 	const updatedData: DailyAssignmentCreate[] = dates.map(date => ({
-	// 		...formData,
-	// 		date: date.format("YYYY-MM-DD HH:mm"),
-	// 	}));
-	//
-	// 	onSubmit(updatedData);
-	// };
+	const getUsers = (): PickerOption[] => {
+		if (!users) return [];
+
+		const mappedUsers = users?.map(user => ({
+			label: user.full_name ?? "unknown",
+			value: user.id.toString(),
+		}));
+
+		return [{ label: "All users", value: null }, ...mappedUsers];
+	};
+
+	const selectFormat = (format: "csv" | "excel") => {
+		setShowCsv(format === "csv");
+		setShowExcel(format === "excel");
+		setFormData(prev => ({ ...prev, export_type: format }));
+	};
 
 	return (
 		<Dialog
 			visible={isVisible}
 			onClose={onClose}
 			card
+			maxWidth={"md"}
+			fullWidth
 			cardProps={{ size: "large", variant: "standard" }}
 			scrollView
 			header={
 				<View style={styles.headerContainer}>
 					<View style={styles.headerWithIconContainer}>
-						<FontAwesome5
-							name={"file-alt"}
-							size={20}
-							color={styles.fileAltIconColor.color}
-						/>
-						<Typography variant={"h5"}>Управление отчетами</Typography>
+						<View style={styles.iconContainer}>
+							<FontAwesome5
+								name={"file-alt"}
+								size={20}
+								color={styles.fileAltIconColor.color}
+							/>
+						</View>
+						<Typography variant={"h5"}>Генерация отчетов</Typography>
 					</View>
 				</View>
 			}
@@ -113,33 +129,57 @@ export default function ExportReportsPanel({ isVisible, onClose }: ExportReports
 			}
 		>
 			<View style={styles.contentContainer}>
-				<View style={styles.pickerContainer}>
-					<Picker
-						onChange={data => {
-							setFormData(prev => ({
-								...prev,
-								export_type: data,
-							}));
-							console.log("change 3");
-						}}
-						label={"format"}
-						options={ExportType}
-						value={formData.export_type}
-					/>
-				</View>
-				<Typography variant={"h6"}>Выбери range</Typography>
+				<Picker
+					value={userId ? userId.toString() : null}
+					placeholder={"All users"}
+					onChange={value => {
+						const parsed = value !== null ? parseInt(value) : null;
+						setUserId(parsed);
+						setFormData(prev => ({
+							...prev,
+							user_id: parsed,
+						}));
+						console.log("value: " + value);
+					}}
+					options={getUsers()}
+				/>
+
+				{/*<Typography variant={"h6"}>Выбери Diapazon дат</Typography>*/}
 				<RangeDatesInput
-					startValue={today}
-					endValue={today}
+					startValue={formData.start_date}
+					endValue={formData.end_date}
 					onChange={(startDate, endDate) => {
 						setFormData(prev => ({
 							...prev,
 							start_date: startDate,
 							end_date: endDate,
 						}));
+
 						console.log("startDate: " + startDate + " EndDate " + endDate);
 					}}
 				/>
+				{formData.start_date && formData.end_date && (
+					<View style={styles.periodContainer}>
+						<Typography>
+							Выбранный Period: {formData.start_date} - {formData.end_date}
+						</Typography>
+					</View>
+				)}
+				<View style={styles.checkBoxContainer}>
+					<Typography>Choose Format:</Typography>
+					<Checkbox
+						size={"large"}
+						label={"CSV (.csv)"}
+						checked={showCsv}
+						onChange={() => selectFormat("csv")}
+					/>
+					<Checkbox
+						size={"large"}
+						label={"Excel (.xlsx)"}
+						checked={showExcel}
+						onChange={() => selectFormat("excel")}
+					/>
+				</View>
 			</View>
 		</Dialog>
 	);
@@ -159,6 +199,23 @@ const styles = StyleSheet.create(theme => ({
 	headerWithIconContainer: {
 		flexDirection: "row",
 		alignItems: "center",
+		gap: theme.spacing(1),
+	},
+	checkBoxContainer: {
+		flex: 1,
+		flexDirection: "row",
+		gap: theme.spacing(4),
+	},
+	periodContainer: {
+		flex: 1,
+
+		alignItems: "center",
+		backgroundColor: theme.colors.primary.mainOpacity,
+		padding: theme.spacing(2),
+		borderRadius: theme.borderRadius(3),
+	},
+	daysButtonsContainer: {
+		flexDirection: "row",
 		gap: theme.spacing(1),
 	},
 	fileAltIconColor: {
@@ -182,7 +239,14 @@ const styles = StyleSheet.create(theme => ({
 		marginTop: theme.spacing(1),
 		alignSelf: "flex-end",
 	},
-
+	iconContainer: {
+		width: 48,
+		height: 48,
+		borderRadius: theme.borderRadius(10),
+		backgroundColor: theme.colors.primary.mainOpacity,
+		justifyContent: "center",
+		alignItems: "center",
+	},
 	iconColorSubmit: {
 		color: theme.colors.primary.text,
 	},
