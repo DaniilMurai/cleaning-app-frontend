@@ -63,6 +63,13 @@ export default function GetStatusBadge({ status, reportStatus }: Props) {
 				color: theme.colors.error.main,
 			},
 		},
+		expired: {
+			label: t("components.status.expired") || "Expired",
+			style: {
+				backgroundColor: theme.colors.error.background,
+				color: theme.colors.error.main,
+			},
+		},
 	};
 
 	const key =

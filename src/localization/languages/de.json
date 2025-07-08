@@ -198,7 +198,8 @@
       "partially_completed": "Teilweise abgeschlossen",
       "not_completed": "Nicht abgeschlossen",
       "waiting": "Wartet",
-      "failed": "Fehlgeschlagen"
+      "failed": "Fehlgeschlagen",
+      "expired": "Abgelaufen"
     },
     "infoItem": {
       "notAvailable": "N/V"

@@ -198,7 +198,8 @@
       "partially_completed": "Частично выполнено",
       "not_completed": "Не выполнено",
       "waiting": "Ожидание",
-      "failed": "Ошибка"
+      "failed": "Ошибка",
+      "expired": "Просрочено"
     },
     "infoItem": {
       "notAvailable": "Н/Д"
