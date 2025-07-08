@@ -8,26 +8,24 @@ import { StyleSheet } from "react-native-unistyles";
 import downloadAndShareFile from "@/core/utils/downloadAndShareFile";
 import { ApiUrl } from "@/constants";
 import GetStatusBadge from "@/components/reports/StatusBadge";
-import { useTranslation } from "react-i18next";
+import StatusBadgeIcon from "./StatusBadgeIcon";
 
 const LIMIT = 5;
 
 interface ExportReportsPickerProps extends ViewProps {}
 
 export default function ExportReportsPicker({ ...props }: ExportReportsPickerProps) {
-	const { t } = useTranslation();
-	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
-		useGetExportReportsInfinite(
-			{ limit: LIMIT },
-			{
-				query: {
-					getNextPageParam: (lastPage, allPages) => {
-						if (!lastPage || lastPage.length < LIMIT) return undefined;
-						return allPages.length * LIMIT;
-					},
+	const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetExportReportsInfinite(
+		{ limit: LIMIT },
+		{
+			query: {
+				getNextPageParam: (lastPage, allPages) => {
+					if (!lastPage || lastPage.length < LIMIT) return undefined;
+					return allPages.length * LIMIT;
 				},
-			}
-		);
+			},
+		}
+	);
 	console.log("data: ", data);
 
 	const downloadExp = async (id: number, status: ReportStatus) => {
@@ -40,7 +38,7 @@ export default function ExportReportsPicker({ ...props }: ExportReportsPickerPro
 	};
 
 	return (
-		<View style={{ zIndex: 10, minWidth: 300 }} {...props}>
+		<View style={{ zIndex: 10, minWidth: 300, maxWidth: 325 }} {...props}>
 			<BasePopover
 				trigger={
 					<Button>
@@ -52,7 +50,7 @@ export default function ExportReportsPicker({ ...props }: ExportReportsPickerPro
 				maxWidth={300}
 			>
 				<ScrollView
-					style={{ height: 400, maxHeight: 600, minWidth: 300 }}
+					style={{ height: 400, maxHeight: 600, minWidth: 300, width: 320 }}
 					onScroll={({ nativeEvent }) => {
 						const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
 						const isBottom =
@@ -63,6 +61,7 @@ export default function ExportReportsPicker({ ...props }: ExportReportsPickerPro
 						}
 					}}
 					scrollEventThrottle={100}
+					contentContainerStyle={{ flexGrow: 1 }}
 				>
 					{data?.pages?.map(pages =>
 						pages.map(report => (
@@ -74,9 +73,11 @@ export default function ExportReportsPicker({ ...props }: ExportReportsPickerPro
 											justifyContent: "space-between",
 										}}
 									>
+										<StatusBadgeIcon reportStatus={report.status} />
+
 										<Typography variant={"h6"} style={{ marginBottom: 4 }}>
-											{report.export_type.toUpperCase()} —{" "}
-											<GetStatusBadge reportStatus={report.status} />
+											{formatToDate(report.start_date)} →{" "}
+											{formatToDate(report.end_date)}
 										</Typography>
 										<Button
 											disabled={report.status !== ReportStatus.completed}
@@ -86,28 +87,36 @@ export default function ExportReportsPicker({ ...props }: ExportReportsPickerPro
 										</Button>
 									</View>
 
-									<Typography>
-										{formatToDate(report.start_date)} →{" "}
-										{formatToDate(report.end_date)}
-									</Typography>
-
-									{report.timezone && (
-										<Typography>
-											{t("reports.timezone")}: {report.timezone}
-										</Typography>
-									)}
-
 									{report.user_full_name && (
-										<Typography>
-											{t("components.dailyAssignmentsList.user")}:{" "}
+										<Typography variant={"body2"}>
+											<FontAwesome5 name={"user"} size={16} />{" "}
 											{report.user_full_name}
 										</Typography>
 									)}
-									{report.lang && (
-										<Typography>
-											{t("settings.language")}: {t(report.lang)}
-										</Typography>
-									)}
+
+									<View style={styles.badgesContainer}>
+										{report.timezone && (
+											<GetStatusBadge
+												text={report.timezone}
+												style={styles.timezoneLabel}
+												color={styles.timezoneLabel.color}
+											/>
+										)}
+										<GetStatusBadge
+											text={report.export_type.toUpperCase()}
+											style={styles.formatLabel}
+											color={styles.formatLabel.color}
+										/>
+										{report.lang && (
+											<GetStatusBadge
+												style={styles.langLabel}
+												text={report.lang.toUpperCase()}
+												color={styles.langLabel.color}
+											/>
+										)}
+
+										{/*<GetStatusBadge reportStatus={report.status} />*/}
+									</View>
 								</View>
 								<View style={styles.divider} />
 							</>
@@ -138,5 +147,29 @@ const styles = StyleSheet.create(theme => ({
 		flexDirection: "row",
 		alignItems: "center",
 		gap: theme.spacing(2),
+	},
+	langLabel: {
+		color: theme.colors.warning.main,
+		backgroundColor: theme.colors.warning.background,
+	},
+	formatLabel: {
+		color: theme.colors.secondary.main,
+		backgroundColor: theme.colors.secondary.background,
+	},
+	timezoneLabel: {
+		color: theme.colors.primary.main,
+		backgroundColor: theme.colors.primary.mainOpacity,
+	},
+	badgesContainer: {
+		flexDirection: "row",
+		gap: theme.spacing(1),
+	},
+	iconWithBackgroundContainer: {
+		width: 36,
+		height: 36,
+		borderRadius: theme.borderRadius(10),
+		// backgroundColor: theme.colors.primary.mainOpacity,
+		justifyContent: "center",
+		alignItems: "center",
 	},
 }));

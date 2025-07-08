@@ -78,7 +78,16 @@ export default function BasePopover({
 				<Pressable onPress={toggle}>{trigger}</Pressable>
 			)}
 
-			<Animated.View style={[styles.popover, animatedStyle, { maxWidth: maxWidth }]}>
+			<Animated.View
+				style={[
+					styles.popover,
+					animatedStyle,
+					{
+						minWidth: maxWidth ?? 300,
+						alignSelf: "flex-start",
+					},
+				]}
+			>
 				{isScrolled ? (
 					<ScrollView contentContainerStyle={styles.content}>
 						{enhancedChildren}

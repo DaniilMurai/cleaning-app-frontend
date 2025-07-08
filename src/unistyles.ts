@@ -15,6 +15,7 @@ const themedColors = {
 			light: "#ffaaaa",
 			dark: "#a83f3f",
 			text: "#000",
+			background: "#FF6B6B1A",
 		},
 		info: {
 			light: "#03a9f4",
@@ -84,6 +85,7 @@ const themedColors = {
 			light: "#a46a6a",
 			dark: "#592929",
 			text: "#fff",
+			background: "#834a4a1a",
 		},
 		info: {
 			light: "#03a9f4",
