@@ -15,9 +15,7 @@ interface props {
 	onChangeVisible: (isVisible: boolean) => void;
 }
 
-//TODO status и search не работают из за бэкэнда
 export default function SearchFilterPanel({ params, onAction, isVisible, onChangeVisible }: props) {
-	const [status, setStatus] = useState<string | null>(null);
 	const [search, setSearch] = useState<string>(params.search ?? "");
 
 	const { t } = useTranslation();
@@ -39,6 +37,7 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 	const handleClear = () => {
 		setSearch("");
 		newParams.search = "";
+		newParams.status = "";
 		newParams.order_by = "id";
 		newParams.direction = "desc";
 		onAction(newParams);
@@ -51,6 +50,8 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 		{ label: t("components.status.not_started"), value: "not_started" },
 		{ label: t("components.status.in_progress"), value: "in_progress" },
 		{ label: t("components.status.partially_completed"), value: "partially_completed" },
+		{ label: t("components.status.not_completed"), value: "not_completed" },
+		{ label: t("components.status.expired"), value: "expired" },
 	];
 
 	const orderByOptions: PickerOption[] = [
@@ -111,8 +112,11 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 							style={styles.picker}
 							label={t("components.searchFilterPanel.status")}
 							options={statusOptions}
-							value={status ?? ""}
-							onChange={setStatus}
+							value={params.status ?? "All statuses"}
+							onChange={value => {
+								newParams.status = value; // даже если ""
+								onAction(newParams);
+							}}
 						/>
 					</View>
 
