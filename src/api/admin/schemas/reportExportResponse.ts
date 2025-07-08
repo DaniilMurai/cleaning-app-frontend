@@ -4,17 +4,17 @@
  * Neuer Standard Admin API
  * OpenAPI spec version: 0.1.0
  */
-import type { ReportExportResponseUserId } from "./reportExportResponseUserId";
 import type { ReportExportResponseLang } from "./reportExportResponseLang";
 import type { ReportStatus } from "./reportStatus";
+import type { ReportExportResponseUserFullName } from "./reportExportResponseUserFullName";
 
 export interface ReportExportResponse {
 	export_type: string;
 	start_date: string;
 	end_date: string;
 	timezone?: string;
-	user_id?: ReportExportResponseUserId;
 	lang?: ReportExportResponseLang;
 	id: number;
 	status: ReportStatus;
+	user_full_name?: ReportExportResponseUserFullName;
 }

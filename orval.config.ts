@@ -52,7 +52,11 @@ export default defineConfig({
 			override: {
 				query: {
 					useSuspenseQuery: true,
+					useSuspenseInfiniteQuery: true,
+					useInfinite: true,
 				},
+				transformer: Transformer,
+
 				mutator: {
 					path: ".././instance.ts",
 					name: "getAxios",
@@ -76,7 +80,11 @@ export default defineConfig({
 			override: {
 				query: {
 					useSuspenseQuery: true,
+					useSuspenseInfiniteQuery: true,
+					useInfinite: true,
 				},
+				transformer: Transformer,
+
 				mutator: {
 					path: ".././instance.ts",
 					name: "getAxios",
@@ -100,7 +108,11 @@ export default defineConfig({
 			override: {
 				query: {
 					useSuspenseQuery: true,
+					useSuspenseInfiniteQuery: true,
+					useInfinite: true,
 				},
+				transformer: Transformer,
+
 				mutator: {
 					path: ".././instance.ts",
 					name: "getAxios",
@@ -124,7 +136,11 @@ export default defineConfig({
 			override: {
 				query: {
 					useSuspenseQuery: true,
+					useSuspenseInfiniteQuery: true,
+					useInfinite: true,
 				},
+				transformer: Transformer,
+				
 				mutator: {
 					path: ".././instance.ts",
 					name: "getAxios",

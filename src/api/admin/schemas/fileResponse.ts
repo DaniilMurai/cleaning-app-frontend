@@ -5,4 +5,8 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type ReportExportResponseUserId = number | null;
+export interface FileResponse {
+	path: string;
+	media_type: string;
+	filename: string;
+}

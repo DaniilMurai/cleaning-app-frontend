@@ -94,7 +94,7 @@ const styles = StyleSheet.create(theme => ({
 				},
 				h6: {
 					fontWeight: "500",
-					fontSize: 20,
+					fontSize: 18,
 					lineHeight: 20 * 1.6,
 				},
 				subtitle1: {

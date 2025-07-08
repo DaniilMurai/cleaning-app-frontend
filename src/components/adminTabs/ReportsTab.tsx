@@ -1,16 +1,16 @@
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { Button, Typography } from "@/ui";
+import { Button } from "@/ui";
 import {
 	AdminReadUser,
 	DailyAssignmentResponse,
 	GetReportsParams,
 	LocationResponse,
-	useGetReports,
 } from "@/api/admin";
 import ReportsTable from "@/components/reports/ReportTable";
-import { useState } from "react";
+import React, { useState } from "react";
 import SearchFilterPanel from "@/components/reports/SearchFilterPanel";
+import ExportReportsPicker from "@/components/reports/ExportReportsPicker";
 
 interface Props {
 	users: AdminReadUser[];
@@ -26,8 +26,6 @@ export default function ReportsTab({ users, assignments, locations }: Props) {
 	});
 	// const [isVisibleExportReports, setIsVisibleExportReports] = useState(false);
 	const [isVisibleFilterPanel, setIsVisibleFilterPanel] = useState(true);
-
-	const { data: reports } = useGetReports(queryParams);
 
 	// Обновляем параметры запроса
 	const handleSearch = (newParams: Partial<GetReportsParams>) => {
@@ -55,19 +53,16 @@ export default function ReportsTab({ users, assignments, locations }: Props) {
 					onAction={handleSearch}
 					onChangeVisible={isVisible => setIsVisibleFilterPanel(isVisible)}
 				/>
-				{/*<ExportReportsPanel />*/}
 			</View>
 			<View style={styles.scrollContainer}>
-				{reports ? (
-					<ReportsTable
-						reports={reports}
-						users={users}
-						assignments={assignments}
-						locations={locations}
-					/>
-				) : (
-					<Typography>No Reports Found</Typography>
-				)}
+				<ExportReportsPicker />
+
+				<ReportsTable
+					queryParams={queryParams}
+					users={users}
+					assignments={assignments}
+					locations={locations}
+				/>
 			</View>
 		</View>
 	);

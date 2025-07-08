@@ -10,7 +10,6 @@ import useModals from "@/core/hooks/shared/useModals";
 import { useAdminMutations } from "@/core/hooks/mutations/useAdminMutations";
 import { useGetUsers } from "@/api/admin";
 import ReportsTab from "@/components/adminTabs/ReportsTab";
-import ExportReportsTab from "@/components/adminTabs/ExportReportsTab";
 
 export default function AdminPage() {
 	const [activeTab, setActiveTab] = useState("locations");
@@ -68,8 +67,6 @@ export default function AdminPage() {
 					tasksRefetch={adminData.tasksRefetch}
 				/>
 			)}
-
-			{activeTab === "exportReports" && <ExportReportsTab />}
 
 			{activeTab === "reports" && (
 				<ReportsTab

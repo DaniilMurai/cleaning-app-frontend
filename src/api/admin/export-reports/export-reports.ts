@@ -4,25 +4,38 @@
  * Neuer Standard Admin API
  * OpenAPI spec version: 0.1.0
  */
-import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import {
+	useInfiniteQuery,
+	useMutation,
+	useQuery,
+	useSuspenseInfiniteQuery,
+	useSuspenseQuery,
+} from "@tanstack/react-query";
 import type {
 	DataTag,
 	DefinedInitialDataOptions,
+	DefinedUseInfiniteQueryResult,
 	DefinedUseQueryResult,
+	InfiniteData,
 	MutationFunction,
 	QueryClient,
 	QueryFunction,
 	QueryKey,
 	UndefinedInitialDataOptions,
+	UseInfiniteQueryOptions,
+	UseInfiniteQueryResult,
 	UseMutationOptions,
 	UseMutationResult,
 	UseQueryOptions,
 	UseQueryResult,
+	UseSuspenseInfiniteQueryOptions,
+	UseSuspenseInfiniteQueryResult,
 	UseSuspenseQueryOptions,
 	UseSuspenseQueryResult,
 } from "@tanstack/react-query";
 
 import type {
+	FileResponse,
 	GetExportReportsParams,
 	HTTPValidationError,
 	ReportExportParams,
@@ -127,6 +140,175 @@ export const getExportReports = (params?: GetExportReportsParams, signal?: Abort
 export const getGetExportReportsQueryKey = (params?: GetExportReportsParams) => {
 	return [`/admin/export-reports/`, ...(params ? [params] : [])] as const;
 };
+
+export const getGetExportReportsInfiniteQueryOptions = <
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getExportReports>>,
+		GetExportReportsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetExportReportsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getExportReports>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getExportReports>>,
+				QueryKey,
+				GetExportReportsParams["offset"]
+			>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetExportReportsQueryKey(params);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getExportReports>>,
+		QueryKey,
+		GetExportReportsParams["offset"]
+	> = ({ signal, pageParam }) =>
+		getExportReports({ ...params, offset: pageParam || params?.["offset"] }, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getExportReports>>,
+		TError,
+		TData,
+		Awaited<ReturnType<typeof getExportReports>>,
+		QueryKey,
+		GetExportReportsParams["offset"]
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetExportReportsInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getExportReports>>
+>;
+export type GetExportReportsInfiniteQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetExportReportsInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getExportReports>>,
+		GetExportReportsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: undefined | GetExportReportsParams,
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getExportReports>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getExportReports>>,
+				QueryKey,
+				GetExportReportsParams["offset"]
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getExportReports>>,
+					TError,
+					Awaited<ReturnType<typeof getExportReports>>,
+					QueryKey
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetExportReportsInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getExportReports>>,
+		GetExportReportsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetExportReportsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getExportReports>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getExportReports>>,
+				QueryKey,
+				GetExportReportsParams["offset"]
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getExportReports>>,
+					TError,
+					Awaited<ReturnType<typeof getExportReports>>,
+					QueryKey
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetExportReportsInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getExportReports>>,
+		GetExportReportsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetExportReportsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getExportReports>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getExportReports>>,
+				QueryKey,
+				GetExportReportsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Export Reports
+ */
+
+export function useGetExportReportsInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getExportReports>>,
+		GetExportReportsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetExportReportsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getExportReports>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getExportReports>>,
+				QueryKey,
+				GetExportReportsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetExportReportsInfiniteQueryOptions(params, options);
+
+	const query = useInfiniteQuery(queryOptions, queryClient) as UseInfiniteQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
 
 export const getGetExportReportsQueryOptions = <
 	TData = Awaited<ReturnType<typeof getExportReports>>,
@@ -323,6 +505,159 @@ export function useGetExportReportsSuspense<
 		TData,
 		TError
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetExportReportsSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getExportReports>>,
+		GetExportReportsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetExportReportsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getExportReports>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getExportReports>>,
+				QueryKey,
+				GetExportReportsParams["offset"]
+			>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetExportReportsQueryKey(params);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getExportReports>>,
+		QueryKey,
+		GetExportReportsParams["offset"]
+	> = ({ signal, pageParam }) =>
+		getExportReports({ ...params, offset: pageParam || params?.["offset"] }, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getExportReports>>,
+		TError,
+		TData,
+		Awaited<ReturnType<typeof getExportReports>>,
+		QueryKey,
+		GetExportReportsParams["offset"]
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetExportReportsSuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getExportReports>>
+>;
+export type GetExportReportsSuspenseInfiniteQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetExportReportsSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getExportReports>>,
+		GetExportReportsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: undefined | GetExportReportsParams,
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getExportReports>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getExportReports>>,
+				QueryKey,
+				GetExportReportsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetExportReportsSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getExportReports>>,
+		GetExportReportsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetExportReportsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getExportReports>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getExportReports>>,
+				QueryKey,
+				GetExportReportsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetExportReportsSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getExportReports>>,
+		GetExportReportsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetExportReportsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getExportReports>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getExportReports>>,
+				QueryKey,
+				GetExportReportsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Export Reports
+ */
+
+export function useGetExportReportsSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getExportReports>>,
+		GetExportReportsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetExportReportsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getExportReports>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getExportReports>>,
+				QueryKey,
+				GetExportReportsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetExportReportsSuspenseInfiniteQueryOptions(params, options);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
 
 	query.queryKey = queryOptions.queryKey;
 
@@ -526,6 +861,210 @@ export function useDownloadExportSuspense<
 	queryClient?: QueryClient
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 	const queryOptions = getDownloadExportSuspenseQueryOptions(exportId, options);
+
+	const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+/**
+ * @summary Export Type
+ */
+export const exportType = (exportId: number | undefined | null, signal?: AbortSignal) => {
+	return getAxios<FileResponse>({
+		url: `/admin/export-reports/${exportId}/type`,
+		method: "GET",
+		signal,
+	});
+};
+
+export const getExportTypeQueryKey = (exportId: number | undefined | null) => {
+	return [`/admin/export-reports/${exportId}/type`] as const;
+};
+
+export const getExportTypeQueryOptions = <
+	TData = Awaited<ReturnType<typeof exportType>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	exportId: number | undefined | null,
+	options?: {
+		query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof exportType>>, TError, TData>>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getExportTypeQueryKey(exportId);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof exportType>>> = ({ signal }) =>
+		exportType(exportId, signal);
+
+	return { queryKey, queryFn, enabled: !!exportId, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof exportType>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type ExportTypeQueryResult = NonNullable<Awaited<ReturnType<typeof exportType>>>;
+export type ExportTypeQueryError = ErrorType<HTTPValidationError>;
+
+export function useExportType<
+	TData = Awaited<ReturnType<typeof exportType>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	exportId: number | undefined | null,
+	options: {
+		query: Partial<UseQueryOptions<Awaited<ReturnType<typeof exportType>>, TError, TData>> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof exportType>>,
+					TError,
+					Awaited<ReturnType<typeof exportType>>
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useExportType<
+	TData = Awaited<ReturnType<typeof exportType>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	exportId: number | undefined | null,
+	options?: {
+		query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof exportType>>, TError, TData>> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof exportType>>,
+					TError,
+					Awaited<ReturnType<typeof exportType>>
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useExportType<
+	TData = Awaited<ReturnType<typeof exportType>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	exportId: number | undefined | null,
+	options?: {
+		query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof exportType>>, TError, TData>>;
+	},
+	queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Export Type
+ */
+
+export function useExportType<
+	TData = Awaited<ReturnType<typeof exportType>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	exportId: number | undefined | null,
+	options?: {
+		query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof exportType>>, TError, TData>>;
+	},
+	queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getExportTypeQueryOptions(exportId, options);
+
+	const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getExportTypeSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof exportType>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	exportId: number | undefined | null,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<Awaited<ReturnType<typeof exportType>>, TError, TData>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getExportTypeQueryKey(exportId);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof exportType>>> = ({ signal }) =>
+		exportType(exportId, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+		Awaited<ReturnType<typeof exportType>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type ExportTypeSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof exportType>>>;
+export type ExportTypeSuspenseQueryError = ErrorType<HTTPValidationError>;
+
+export function useExportTypeSuspense<
+	TData = Awaited<ReturnType<typeof exportType>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	exportId: number | undefined | null,
+	options: {
+		query: Partial<
+			UseSuspenseQueryOptions<Awaited<ReturnType<typeof exportType>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useExportTypeSuspense<
+	TData = Awaited<ReturnType<typeof exportType>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	exportId: number | undefined | null,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<Awaited<ReturnType<typeof exportType>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useExportTypeSuspense<
+	TData = Awaited<ReturnType<typeof exportType>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	exportId: number | undefined | null,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<Awaited<ReturnType<typeof exportType>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Export Type
+ */
+
+export function useExportTypeSuspense<
+	TData = Awaited<ReturnType<typeof exportType>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	exportId: number | undefined | null,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<Awaited<ReturnType<typeof exportType>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getExportTypeSuspenseQueryOptions(exportId, options);
 
 	const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
 		TData,

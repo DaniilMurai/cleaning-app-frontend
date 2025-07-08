@@ -1,4 +1,6 @@
 {
+  "ru": "Русский",
+  "de": "Немецкий",
   "settings": {
     "title": "Настройки",
     "theme": "Тема",
@@ -16,7 +18,8 @@
     "chooseFromGallery": "Выбрать из галереи",
     "takePhoto": "Сделать фото",
     "recordVideo": "Записать видео",
-    "exportReports": "Экспорт отчетов"
+    "exportReports": "Экспорт отчетов",
+    "timezone": "Часовой пояс"
   },
   "tabs": {
     "home": "Главная",
@@ -193,7 +196,9 @@
       "in_progress": "В процессе",
       "not_started": "Не начато",
       "partially_completed": "Частично выполнено",
-      "not_completed": "Не выполнено"
+      "not_completed": "Не выполнено",
+      "waiting": "Ожидание",
+      "failed": "Ошибка"
     },
     "infoItem": {
       "notAvailable": "Н/Д"

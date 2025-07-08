@@ -1,14 +1,15 @@
 import { Typography } from "@/ui";
 import React from "react";
 import { useUnistyles } from "react-native-unistyles";
-import { AssignmentStatus } from "@/api/admin";
+import { AssignmentStatus, ReportStatus } from "@/api/admin";
 import { useTranslation } from "react-i18next";
 
 interface Props {
-	status: AssignmentStatus;
+	status?: AssignmentStatus;
+	reportStatus?: ReportStatus;
 }
 
-export default function GetStatusBadge({ status }: Props) {
+export default function GetStatusBadge({ status, reportStatus }: Props) {
 	const { theme } = useUnistyles();
 	const { t } = useTranslation();
 
@@ -48,9 +49,30 @@ export default function GetStatusBadge({ status }: Props) {
 				color: theme.colors.error.main,
 			},
 		},
+		waiting: {
+			label: t("components.status.waiting") || "Waiting",
+			style: {
+				backgroundColor: theme.colors.not_started.background,
+				color: theme.colors.not_started.main,
+			},
+		},
+		failed: {
+			label: t("components.status.failed") || "Failed",
+			style: {
+				backgroundColor: theme.colors.error.background,
+				color: theme.colors.error.main,
+			},
+		},
 	};
 
-	const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.not_started;
+	const key =
+		reportStatus && statusConfig[reportStatus as keyof typeof statusConfig]
+			? reportStatus
+			: status && statusConfig[status as keyof typeof statusConfig]
+				? status
+				: "not_started";
+
+	const config = statusConfig[key as keyof typeof statusConfig];
 
 	return (
 		<Typography

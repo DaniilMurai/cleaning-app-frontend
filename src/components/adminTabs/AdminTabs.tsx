@@ -46,17 +46,6 @@ export default function AdminTabs({ activeTab, setActiveTab }: AdminTabsProps) {
 					{t("reports.reports")}
 				</Typography>
 			</TouchableOpacity>
-
-			<TouchableOpacity
-				style={[styles.tab, activeTab === "exportReports" && styles.activeTab]}
-				onPress={() => setActiveTab("exportReports")}
-			>
-				<Typography
-					style={[styles.tabText, activeTab === "exportReports" && styles.activeTabText]}
-				>
-					{t("reports.exportReports")}
-				</Typography>
-			</TouchableOpacity>
 		</View>
 	);
 }

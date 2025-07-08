@@ -1,12 +1,14 @@
 import {
 	AdminReadUser,
 	DailyAssignmentResponse,
+	GetReportsParams,
 	LocationResponse,
 	ReportResponse,
+	useGetReportsInfinite,
 } from "@/api/admin";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet } from "react-native-unistyles";
-import { ScrollView, View } from "react-native";
+import { ActivityIndicator, ScrollView, View } from "react-native";
 import { Typography } from "@/ui";
 import { formatTime, formatToDate, formatToDateTime, formatToTime } from "@/core/utils/dateUtils";
 import { LegendList } from "@legendapp/list";
@@ -14,30 +16,43 @@ import GetStatusBadge from "@/components/reports/StatusBadge";
 import { useTranslation } from "react-i18next";
 
 interface Props {
-	reports: ReportResponse[];
+	queryParams: Partial<GetReportsParams>;
 	users?: AdminReadUser[];
 	assignments?: DailyAssignmentResponse[];
 	locations?: LocationResponse[];
 }
 
-export default function ReportsTable({ reports, assignments, users = [], locations = [] }: Props) {
+const LIMIT = 20;
+
+export default function ReportsTable({
+	queryParams,
+	assignments,
+	users = [],
+	locations = [],
+}: Props) {
 	const [page, setPage] = useState<number>(2);
 
 	const { t } = useTranslation();
+	// const { data: reports } = useGetReports(queryParams);
+	const params = { ...queryParams, limit: LIMIT };
+	const {
+		data: reports,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+		isLoading,
+		isError,
+		error,
+	} = useGetReportsInfinite(params, {
+		query: {
+			getNextPageParam: (lastPage, allPages) => {
+				if (!lastPage || lastPage.length < LIMIT) return undefined;
+				return allPages.length * LIMIT;
+			},
+		},
+	});
 
-	const data = reports.slice(0, page * 10);
-
-	useEffect(() => {
-		setPage(1);
-	}, [reports]);
-
-	const getMoreReports = () => {
-		if (page * 10 >= reports.length) return;
-
-		console.log("getMoreReports called");
-
-		setPage(prev => prev + 1);
-	};
+	const data = reports?.pages?.flat() ?? [];
 
 	const getUserFullName = (report: ReportResponse) => {
 		const user = users.find(u => report.user_id === u.id);
@@ -128,16 +143,21 @@ export default function ReportsTable({ reports, assignments, users = [], locatio
 			contentContainerStyle={{ width: "100%", minWidth: 140 * 7 }}
 		>
 			<LegendList
-				data={data}
-				keyExtractor={item => item.id.toString()}
-				// estimatedItemSize={48}
+				data={data ?? []}
+				keyExtractor={(item, index) => `${item.id}-${index}`}
+				estimatedItemSize={48}
 				// Ширина списка равна контенту, а не экрану
 				style={{ minWidth: 118 * 7 }}
 				ListHeaderComponent={renderHeader}
 				renderItem={renderItem}
 				recycleItems
-				onEndReached={getMoreReports}
-				onEndReachedThreshold={0.01}
+				onEndReached={() => {
+					if (hasNextPage && !isFetchingNextPage) {
+						fetchNextPage();
+					}
+				}}
+				onEndReachedThreshold={0.2}
+				ListFooterComponent={isFetchingNextPage ? <ActivityIndicator /> : null}
 			/>
 		</ScrollView>
 	);

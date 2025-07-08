@@ -15,7 +15,6 @@ export default function TabsLayout() {
 			screenOptions={{
 				headerRight: () => (
 					<View style={{ flexDirection: "row", marginRight: 10 }}>
-						{/*<ThemeSwitcher />*/}
 						<LanguageSwitcher />
 					</View>
 				),

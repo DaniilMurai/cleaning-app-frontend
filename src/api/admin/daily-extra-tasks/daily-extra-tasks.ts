@@ -4,20 +4,32 @@
  * Neuer Standard Admin API
  * OpenAPI spec version: 0.1.0
  */
-import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import {
+	useInfiniteQuery,
+	useMutation,
+	useQuery,
+	useSuspenseInfiniteQuery,
+	useSuspenseQuery,
+} from "@tanstack/react-query";
 import type {
 	DataTag,
 	DefinedInitialDataOptions,
+	DefinedUseInfiniteQueryResult,
 	DefinedUseQueryResult,
+	InfiniteData,
 	MutationFunction,
 	QueryClient,
 	QueryFunction,
 	QueryKey,
 	UndefinedInitialDataOptions,
+	UseInfiniteQueryOptions,
+	UseInfiniteQueryResult,
 	UseMutationOptions,
 	UseMutationResult,
 	UseQueryOptions,
 	UseQueryResult,
+	UseSuspenseInfiniteQueryOptions,
+	UseSuspenseInfiniteQueryResult,
 	UseSuspenseQueryOptions,
 	UseSuspenseQueryResult,
 } from "@tanstack/react-query";
@@ -51,6 +63,175 @@ export const getDailyExtraTasks = (params?: GetDailyExtraTasksParams, signal?: A
 export const getGetDailyExtraTasksQueryKey = (params?: GetDailyExtraTasksParams) => {
 	return [`/admin/daily-extra-tasks/`, ...(params ? [params] : [])] as const;
 };
+
+export const getGetDailyExtraTasksInfiniteQueryOptions = <
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getDailyExtraTasks>>,
+		GetDailyExtraTasksParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetDailyExtraTasksParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDailyExtraTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getDailyExtraTasks>>,
+				QueryKey,
+				GetDailyExtraTasksParams["offset"]
+			>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetDailyExtraTasksQueryKey(params);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getDailyExtraTasks>>,
+		QueryKey,
+		GetDailyExtraTasksParams["offset"]
+	> = ({ signal, pageParam }) =>
+		getDailyExtraTasks({ ...params, offset: pageParam || params?.["offset"] }, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getDailyExtraTasks>>,
+		TError,
+		TData,
+		Awaited<ReturnType<typeof getDailyExtraTasks>>,
+		QueryKey,
+		GetDailyExtraTasksParams["offset"]
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetDailyExtraTasksInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getDailyExtraTasks>>
+>;
+export type GetDailyExtraTasksInfiniteQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetDailyExtraTasksInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getDailyExtraTasks>>,
+		GetDailyExtraTasksParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: undefined | GetDailyExtraTasksParams,
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDailyExtraTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getDailyExtraTasks>>,
+				QueryKey,
+				GetDailyExtraTasksParams["offset"]
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getDailyExtraTasks>>,
+					TError,
+					Awaited<ReturnType<typeof getDailyExtraTasks>>,
+					QueryKey
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetDailyExtraTasksInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getDailyExtraTasks>>,
+		GetDailyExtraTasksParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetDailyExtraTasksParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDailyExtraTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getDailyExtraTasks>>,
+				QueryKey,
+				GetDailyExtraTasksParams["offset"]
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getDailyExtraTasks>>,
+					TError,
+					Awaited<ReturnType<typeof getDailyExtraTasks>>,
+					QueryKey
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetDailyExtraTasksInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getDailyExtraTasks>>,
+		GetDailyExtraTasksParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetDailyExtraTasksParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDailyExtraTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getDailyExtraTasks>>,
+				QueryKey,
+				GetDailyExtraTasksParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Daily Extra Tasks
+ */
+
+export function useGetDailyExtraTasksInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getDailyExtraTasks>>,
+		GetDailyExtraTasksParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetDailyExtraTasksParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDailyExtraTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getDailyExtraTasks>>,
+				QueryKey,
+				GetDailyExtraTasksParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetDailyExtraTasksInfiniteQueryOptions(params, options);
+
+	const query = useInfiniteQuery(queryOptions, queryClient) as UseInfiniteQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
 
 export const getGetDailyExtraTasksQueryOptions = <
 	TData = Awaited<ReturnType<typeof getDailyExtraTasks>>,
@@ -249,6 +430,159 @@ export function useGetDailyExtraTasksSuspense<
 		TData,
 		TError
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetDailyExtraTasksSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getDailyExtraTasks>>,
+		GetDailyExtraTasksParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetDailyExtraTasksParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDailyExtraTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getDailyExtraTasks>>,
+				QueryKey,
+				GetDailyExtraTasksParams["offset"]
+			>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetDailyExtraTasksQueryKey(params);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getDailyExtraTasks>>,
+		QueryKey,
+		GetDailyExtraTasksParams["offset"]
+	> = ({ signal, pageParam }) =>
+		getDailyExtraTasks({ ...params, offset: pageParam || params?.["offset"] }, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getDailyExtraTasks>>,
+		TError,
+		TData,
+		Awaited<ReturnType<typeof getDailyExtraTasks>>,
+		QueryKey,
+		GetDailyExtraTasksParams["offset"]
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetDailyExtraTasksSuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getDailyExtraTasks>>
+>;
+export type GetDailyExtraTasksSuspenseInfiniteQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetDailyExtraTasksSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getDailyExtraTasks>>,
+		GetDailyExtraTasksParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: undefined | GetDailyExtraTasksParams,
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDailyExtraTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getDailyExtraTasks>>,
+				QueryKey,
+				GetDailyExtraTasksParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetDailyExtraTasksSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getDailyExtraTasks>>,
+		GetDailyExtraTasksParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetDailyExtraTasksParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDailyExtraTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getDailyExtraTasks>>,
+				QueryKey,
+				GetDailyExtraTasksParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetDailyExtraTasksSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getDailyExtraTasks>>,
+		GetDailyExtraTasksParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetDailyExtraTasksParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDailyExtraTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getDailyExtraTasks>>,
+				QueryKey,
+				GetDailyExtraTasksParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Daily Extra Tasks
+ */
+
+export function useGetDailyExtraTasksSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getDailyExtraTasks>>,
+		GetDailyExtraTasksParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetDailyExtraTasksParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDailyExtraTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getDailyExtraTasks>>,
+				QueryKey,
+				GetDailyExtraTasksParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetDailyExtraTasksSuspenseInfiniteQueryOptions(params, options);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
 
 	query.queryKey = queryOptions.queryKey;
 

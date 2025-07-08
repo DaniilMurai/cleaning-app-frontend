@@ -4,20 +4,32 @@
  * Neuer Standard Admin API
  * OpenAPI spec version: 0.1.0
  */
-import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import {
+	useInfiniteQuery,
+	useMutation,
+	useQuery,
+	useSuspenseInfiniteQuery,
+	useSuspenseQuery,
+} from "@tanstack/react-query";
 import type {
 	DataTag,
 	DefinedInitialDataOptions,
+	DefinedUseInfiniteQueryResult,
 	DefinedUseQueryResult,
+	InfiniteData,
 	MutationFunction,
 	QueryClient,
 	QueryFunction,
 	QueryKey,
 	UndefinedInitialDataOptions,
+	UseInfiniteQueryOptions,
+	UseInfiniteQueryResult,
 	UseMutationOptions,
 	UseMutationResult,
 	UseQueryOptions,
 	UseQueryResult,
+	UseSuspenseInfiniteQueryOptions,
+	UseSuspenseInfiniteQueryResult,
 	UseSuspenseQueryOptions,
 	UseSuspenseQueryResult,
 } from "@tanstack/react-query";
@@ -43,6 +55,158 @@ export const getReports = (params?: GetReportsParams, signal?: AbortSignal) => {
 export const getGetReportsQueryKey = (params?: GetReportsParams) => {
 	return [`/admin/reports/`, ...(params ? [params] : [])] as const;
 };
+
+export const getGetReportsInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getReports>>, GetReportsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetReportsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getReports>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getReports>>,
+				QueryKey,
+				GetReportsParams["offset"]
+			>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetReportsQueryKey(params);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getReports>>,
+		QueryKey,
+		GetReportsParams["offset"]
+	> = ({ signal, pageParam }) =>
+		getReports({ ...params, offset: pageParam || params?.["offset"] }, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getReports>>,
+		TError,
+		TData,
+		Awaited<ReturnType<typeof getReports>>,
+		QueryKey,
+		GetReportsParams["offset"]
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetReportsInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getReports>>>;
+export type GetReportsInfiniteQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetReportsInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getReports>>, GetReportsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: undefined | GetReportsParams,
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getReports>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getReports>>,
+				QueryKey,
+				GetReportsParams["offset"]
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getReports>>,
+					TError,
+					Awaited<ReturnType<typeof getReports>>,
+					QueryKey
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetReportsInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getReports>>, GetReportsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetReportsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getReports>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getReports>>,
+				QueryKey,
+				GetReportsParams["offset"]
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getReports>>,
+					TError,
+					Awaited<ReturnType<typeof getReports>>,
+					QueryKey
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetReportsInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getReports>>, GetReportsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetReportsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getReports>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getReports>>,
+				QueryKey,
+				GetReportsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Reports
+ */
+
+export function useGetReportsInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getReports>>, GetReportsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetReportsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getReports>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getReports>>,
+				QueryKey,
+				GetReportsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetReportsInfiniteQueryOptions(params, options);
+
+	const query = useInfiniteQuery(queryOptions, queryClient) as UseInfiniteQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
 
 export const getGetReportsQueryOptions = <
 	TData = Awaited<ReturnType<typeof getReports>>,
@@ -227,6 +391,144 @@ export function useGetReportsSuspense<
 		TData,
 		TError
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetReportsSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getReports>>, GetReportsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetReportsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getReports>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getReports>>,
+				QueryKey,
+				GetReportsParams["offset"]
+			>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetReportsQueryKey(params);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getReports>>,
+		QueryKey,
+		GetReportsParams["offset"]
+	> = ({ signal, pageParam }) =>
+		getReports({ ...params, offset: pageParam || params?.["offset"] }, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getReports>>,
+		TError,
+		TData,
+		Awaited<ReturnType<typeof getReports>>,
+		QueryKey,
+		GetReportsParams["offset"]
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetReportsSuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getReports>>
+>;
+export type GetReportsSuspenseInfiniteQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetReportsSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getReports>>, GetReportsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: undefined | GetReportsParams,
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getReports>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getReports>>,
+				QueryKey,
+				GetReportsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetReportsSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getReports>>, GetReportsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetReportsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getReports>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getReports>>,
+				QueryKey,
+				GetReportsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetReportsSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getReports>>, GetReportsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetReportsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getReports>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getReports>>,
+				QueryKey,
+				GetReportsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Reports
+ */
+
+export function useGetReportsSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getReports>>, GetReportsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetReportsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getReports>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getReports>>,
+				QueryKey,
+				GetReportsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetReportsSuspenseInfiniteQueryOptions(params, options);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
 
 	query.queryKey = queryOptions.queryKey;
 

@@ -4,14 +4,14 @@
  * Neuer Standard Admin API
  * OpenAPI spec version: 0.1.0
  */
-import type { ReportExportParamsUserId } from "./reportExportParamsUserId";
 import type { ReportExportParamsLang } from "./reportExportParamsLang";
+import type { ReportExportParamsUserId } from "./reportExportParamsUserId";
 
 export interface ReportExportParams {
 	export_type: string;
 	start_date: string;
 	end_date: string;
 	timezone?: string;
-	user_id?: ReportExportParamsUserId;
 	lang?: ReportExportParamsLang;
+	user_id?: ReportExportParamsUserId;
 }

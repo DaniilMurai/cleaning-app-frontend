@@ -4,20 +4,32 @@
  * Neuer Standard Admin API
  * OpenAPI spec version: 0.1.0
  */
-import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import {
+	useInfiniteQuery,
+	useMutation,
+	useQuery,
+	useSuspenseInfiniteQuery,
+	useSuspenseQuery,
+} from "@tanstack/react-query";
 import type {
 	DataTag,
 	DefinedInitialDataOptions,
+	DefinedUseInfiniteQueryResult,
 	DefinedUseQueryResult,
+	InfiniteData,
 	MutationFunction,
 	QueryClient,
 	QueryFunction,
 	QueryKey,
 	UndefinedInitialDataOptions,
+	UseInfiniteQueryOptions,
+	UseInfiniteQueryResult,
 	UseMutationOptions,
 	UseMutationResult,
 	UseQueryOptions,
 	UseQueryResult,
+	UseSuspenseInfiniteQueryOptions,
+	UseSuspenseInfiniteQueryResult,
 	UseSuspenseQueryOptions,
 	UseSuspenseQueryResult,
 } from "@tanstack/react-query";
@@ -46,6 +58,158 @@ export const getTasks = (params?: GetTasksParams, signal?: AbortSignal) => {
 export const getGetTasksQueryKey = (params?: GetTasksParams) => {
 	return [`/admin/tasks/`, ...(params ? [params] : [])] as const;
 };
+
+export const getGetTasksInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getTasks>>, GetTasksParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getTasks>>,
+				QueryKey,
+				GetTasksParams["offset"]
+			>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetTasksQueryKey(params);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getTasks>>,
+		QueryKey,
+		GetTasksParams["offset"]
+	> = ({ signal, pageParam }) =>
+		getTasks({ ...params, offset: pageParam || params?.["offset"] }, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getTasks>>,
+		TError,
+		TData,
+		Awaited<ReturnType<typeof getTasks>>,
+		QueryKey,
+		GetTasksParams["offset"]
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetTasksInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getTasks>>>;
+export type GetTasksInfiniteQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetTasksInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getTasks>>, GetTasksParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: undefined | GetTasksParams,
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getTasks>>,
+				QueryKey,
+				GetTasksParams["offset"]
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getTasks>>,
+					TError,
+					Awaited<ReturnType<typeof getTasks>>,
+					QueryKey
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetTasksInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getTasks>>, GetTasksParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getTasks>>,
+				QueryKey,
+				GetTasksParams["offset"]
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getTasks>>,
+					TError,
+					Awaited<ReturnType<typeof getTasks>>,
+					QueryKey
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetTasksInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getTasks>>, GetTasksParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getTasks>>,
+				QueryKey,
+				GetTasksParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Tasks
+ */
+
+export function useGetTasksInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getTasks>>, GetTasksParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getTasks>>,
+				QueryKey,
+				GetTasksParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetTasksInfiniteQueryOptions(params, options);
+
+	const query = useInfiniteQuery(queryOptions, queryClient) as UseInfiniteQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
 
 export const getGetTasksQueryOptions = <
 	TData = Awaited<ReturnType<typeof getTasks>>,
@@ -230,6 +394,142 @@ export function useGetTasksSuspense<
 		TData,
 		TError
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetTasksSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getTasks>>, GetTasksParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getTasks>>,
+				QueryKey,
+				GetTasksParams["offset"]
+			>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetTasksQueryKey(params);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getTasks>>,
+		QueryKey,
+		GetTasksParams["offset"]
+	> = ({ signal, pageParam }) =>
+		getTasks({ ...params, offset: pageParam || params?.["offset"] }, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getTasks>>,
+		TError,
+		TData,
+		Awaited<ReturnType<typeof getTasks>>,
+		QueryKey,
+		GetTasksParams["offset"]
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetTasksSuspenseInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getTasks>>>;
+export type GetTasksSuspenseInfiniteQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetTasksSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getTasks>>, GetTasksParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: undefined | GetTasksParams,
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getTasks>>,
+				QueryKey,
+				GetTasksParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetTasksSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getTasks>>, GetTasksParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getTasks>>,
+				QueryKey,
+				GetTasksParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetTasksSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getTasks>>, GetTasksParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getTasks>>,
+				QueryKey,
+				GetTasksParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Tasks
+ */
+
+export function useGetTasksSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getTasks>>, GetTasksParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getTasks>>,
+				QueryKey,
+				GetTasksParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetTasksSuspenseInfiniteQueryOptions(params, options);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
 
 	query.queryKey = queryOptions.queryKey;
 

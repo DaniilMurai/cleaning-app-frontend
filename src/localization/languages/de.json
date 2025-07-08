@@ -1,4 +1,6 @@
 {
+  "ru": "Russisch",
+  "de": "Deutsch",
   "settings": {
     "title": "Einstellungen",
     "theme": "Thema",
@@ -16,7 +18,8 @@
     "chooseFromGallery": "Aus Galerie auswählen",
     "takePhoto": "Foto aufnehmen",
     "recordVideo": "Video aufnehmen",
-    "exportReports": "Berichte exportieren"
+    "exportReports": "Berichte exportieren",
+    "timezone": "Zeitzone"
   },
   "tabs": {
     "home": "Startseite",
@@ -193,7 +196,9 @@
       "in_progress": "In Bearbeitung",
       "not_started": "Nicht begonnen",
       "partially_completed": "Teilweise abgeschlossen",
-      "not_completed": "Nicht abgeschlossen"
+      "not_completed": "Nicht abgeschlossen",
+      "waiting": "Wartet",
+      "failed": "Fehlgeschlagen"
     },
     "infoItem": {
       "notAvailable": "N/V"

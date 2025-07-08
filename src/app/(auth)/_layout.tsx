@@ -10,7 +10,6 @@ export default function AuthLayout() {
 			screenOptions={{
 				headerRight: () => (
 					<View style={{ flexDirection: "row", marginRight: 10 }}>
-						{/*<ThemeSwitcher />*/}
 						<LanguageSwitcher />
 					</View>
 				),

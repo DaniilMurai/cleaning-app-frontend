@@ -4,20 +4,32 @@
  * Neuer Standard Admin API
  * OpenAPI spec version: 0.1.0
  */
-import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import {
+	useInfiniteQuery,
+	useMutation,
+	useQuery,
+	useSuspenseInfiniteQuery,
+	useSuspenseQuery,
+} from "@tanstack/react-query";
 import type {
 	DataTag,
 	DefinedInitialDataOptions,
+	DefinedUseInfiniteQueryResult,
 	DefinedUseQueryResult,
+	InfiniteData,
 	MutationFunction,
 	QueryClient,
 	QueryFunction,
 	QueryKey,
 	UndefinedInitialDataOptions,
+	UseInfiniteQueryOptions,
+	UseInfiniteQueryResult,
 	UseMutationOptions,
 	UseMutationResult,
 	UseQueryOptions,
 	UseQueryResult,
+	UseSuspenseInfiniteQueryOptions,
+	UseSuspenseInfiniteQueryResult,
 	UseSuspenseQueryOptions,
 	UseSuspenseQueryResult,
 } from "@tanstack/react-query";
@@ -51,6 +63,158 @@ export const getRoomTasks = (params?: GetRoomTasksParams, signal?: AbortSignal) 
 export const getGetRoomTasksQueryKey = (params?: GetRoomTasksParams) => {
 	return [`/admin/room-tasks/`, ...(params ? [params] : [])] as const;
 };
+
+export const getGetRoomTasksInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getRoomTasks>>, GetRoomTasksParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetRoomTasksParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getRoomTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getRoomTasks>>,
+				QueryKey,
+				GetRoomTasksParams["offset"]
+			>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetRoomTasksQueryKey(params);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getRoomTasks>>,
+		QueryKey,
+		GetRoomTasksParams["offset"]
+	> = ({ signal, pageParam }) =>
+		getRoomTasks({ ...params, offset: pageParam || params?.["offset"] }, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getRoomTasks>>,
+		TError,
+		TData,
+		Awaited<ReturnType<typeof getRoomTasks>>,
+		QueryKey,
+		GetRoomTasksParams["offset"]
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetRoomTasksInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getRoomTasks>>>;
+export type GetRoomTasksInfiniteQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetRoomTasksInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getRoomTasks>>, GetRoomTasksParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: undefined | GetRoomTasksParams,
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getRoomTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getRoomTasks>>,
+				QueryKey,
+				GetRoomTasksParams["offset"]
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getRoomTasks>>,
+					TError,
+					Awaited<ReturnType<typeof getRoomTasks>>,
+					QueryKey
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetRoomTasksInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getRoomTasks>>, GetRoomTasksParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetRoomTasksParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getRoomTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getRoomTasks>>,
+				QueryKey,
+				GetRoomTasksParams["offset"]
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getRoomTasks>>,
+					TError,
+					Awaited<ReturnType<typeof getRoomTasks>>,
+					QueryKey
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetRoomTasksInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getRoomTasks>>, GetRoomTasksParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetRoomTasksParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getRoomTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getRoomTasks>>,
+				QueryKey,
+				GetRoomTasksParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Room Tasks
+ */
+
+export function useGetRoomTasksInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getRoomTasks>>, GetRoomTasksParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetRoomTasksParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getRoomTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getRoomTasks>>,
+				QueryKey,
+				GetRoomTasksParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetRoomTasksInfiniteQueryOptions(params, options);
+
+	const query = useInfiniteQuery(queryOptions, queryClient) as UseInfiniteQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
 
 export const getGetRoomTasksQueryOptions = <
 	TData = Awaited<ReturnType<typeof getRoomTasks>>,
@@ -235,6 +399,144 @@ export function useGetRoomTasksSuspense<
 		TData,
 		TError
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetRoomTasksSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getRoomTasks>>, GetRoomTasksParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetRoomTasksParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getRoomTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getRoomTasks>>,
+				QueryKey,
+				GetRoomTasksParams["offset"]
+			>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetRoomTasksQueryKey(params);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getRoomTasks>>,
+		QueryKey,
+		GetRoomTasksParams["offset"]
+	> = ({ signal, pageParam }) =>
+		getRoomTasks({ ...params, offset: pageParam || params?.["offset"] }, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getRoomTasks>>,
+		TError,
+		TData,
+		Awaited<ReturnType<typeof getRoomTasks>>,
+		QueryKey,
+		GetRoomTasksParams["offset"]
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetRoomTasksSuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getRoomTasks>>
+>;
+export type GetRoomTasksSuspenseInfiniteQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetRoomTasksSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getRoomTasks>>, GetRoomTasksParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: undefined | GetRoomTasksParams,
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getRoomTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getRoomTasks>>,
+				QueryKey,
+				GetRoomTasksParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetRoomTasksSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getRoomTasks>>, GetRoomTasksParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetRoomTasksParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getRoomTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getRoomTasks>>,
+				QueryKey,
+				GetRoomTasksParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetRoomTasksSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getRoomTasks>>, GetRoomTasksParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetRoomTasksParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getRoomTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getRoomTasks>>,
+				QueryKey,
+				GetRoomTasksParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Room Tasks
+ */
+
+export function useGetRoomTasksSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getRoomTasks>>, GetRoomTasksParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetRoomTasksParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getRoomTasks>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getRoomTasks>>,
+				QueryKey,
+				GetRoomTasksParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetRoomTasksSuspenseInfiniteQueryOptions(params, options);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
 
 	query.queryKey = queryOptions.queryKey;
 

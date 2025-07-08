@@ -4,20 +4,32 @@
  * Neuer Standard Admin API
  * OpenAPI spec version: 0.1.0
  */
-import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import {
+	useInfiniteQuery,
+	useMutation,
+	useQuery,
+	useSuspenseInfiniteQuery,
+	useSuspenseQuery,
+} from "@tanstack/react-query";
 import type {
 	DataTag,
 	DefinedInitialDataOptions,
+	DefinedUseInfiniteQueryResult,
 	DefinedUseQueryResult,
+	InfiniteData,
 	MutationFunction,
 	QueryClient,
 	QueryFunction,
 	QueryKey,
 	UndefinedInitialDataOptions,
+	UseInfiniteQueryOptions,
+	UseInfiniteQueryResult,
 	UseMutationOptions,
 	UseMutationResult,
 	UseQueryOptions,
 	UseQueryResult,
+	UseSuspenseInfiniteQueryOptions,
+	UseSuspenseInfiniteQueryResult,
 	UseSuspenseQueryOptions,
 	UseSuspenseQueryResult,
 } from "@tanstack/react-query";
@@ -46,6 +58,158 @@ export const getRooms = (params?: GetRoomsParams, signal?: AbortSignal) => {
 export const getGetRoomsQueryKey = (params?: GetRoomsParams) => {
 	return [`/admin/rooms/`, ...(params ? [params] : [])] as const;
 };
+
+export const getGetRoomsInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getRooms>>, GetRoomsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetRoomsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getRooms>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getRooms>>,
+				QueryKey,
+				GetRoomsParams["offset"]
+			>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetRoomsQueryKey(params);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getRooms>>,
+		QueryKey,
+		GetRoomsParams["offset"]
+	> = ({ signal, pageParam }) =>
+		getRooms({ ...params, offset: pageParam || params?.["offset"] }, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getRooms>>,
+		TError,
+		TData,
+		Awaited<ReturnType<typeof getRooms>>,
+		QueryKey,
+		GetRoomsParams["offset"]
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetRoomsInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getRooms>>>;
+export type GetRoomsInfiniteQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetRoomsInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getRooms>>, GetRoomsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: undefined | GetRoomsParams,
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getRooms>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getRooms>>,
+				QueryKey,
+				GetRoomsParams["offset"]
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getRooms>>,
+					TError,
+					Awaited<ReturnType<typeof getRooms>>,
+					QueryKey
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetRoomsInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getRooms>>, GetRoomsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetRoomsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getRooms>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getRooms>>,
+				QueryKey,
+				GetRoomsParams["offset"]
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getRooms>>,
+					TError,
+					Awaited<ReturnType<typeof getRooms>>,
+					QueryKey
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetRoomsInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getRooms>>, GetRoomsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetRoomsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getRooms>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getRooms>>,
+				QueryKey,
+				GetRoomsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Rooms
+ */
+
+export function useGetRoomsInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getRooms>>, GetRoomsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetRoomsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getRooms>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getRooms>>,
+				QueryKey,
+				GetRoomsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetRoomsInfiniteQueryOptions(params, options);
+
+	const query = useInfiniteQuery(queryOptions, queryClient) as UseInfiniteQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
 
 export const getGetRoomsQueryOptions = <
 	TData = Awaited<ReturnType<typeof getRooms>>,
@@ -230,6 +394,142 @@ export function useGetRoomsSuspense<
 		TData,
 		TError
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetRoomsSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getRooms>>, GetRoomsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetRoomsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getRooms>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getRooms>>,
+				QueryKey,
+				GetRoomsParams["offset"]
+			>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetRoomsQueryKey(params);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getRooms>>,
+		QueryKey,
+		GetRoomsParams["offset"]
+	> = ({ signal, pageParam }) =>
+		getRooms({ ...params, offset: pageParam || params?.["offset"] }, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getRooms>>,
+		TError,
+		TData,
+		Awaited<ReturnType<typeof getRooms>>,
+		QueryKey,
+		GetRoomsParams["offset"]
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetRoomsSuspenseInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getRooms>>>;
+export type GetRoomsSuspenseInfiniteQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetRoomsSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getRooms>>, GetRoomsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: undefined | GetRoomsParams,
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getRooms>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getRooms>>,
+				QueryKey,
+				GetRoomsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetRoomsSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getRooms>>, GetRoomsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetRoomsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getRooms>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getRooms>>,
+				QueryKey,
+				GetRoomsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetRoomsSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getRooms>>, GetRoomsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetRoomsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getRooms>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getRooms>>,
+				QueryKey,
+				GetRoomsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Rooms
+ */
+
+export function useGetRoomsSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getRooms>>, GetRoomsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetRoomsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getRooms>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getRooms>>,
+				QueryKey,
+				GetRoomsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetRoomsSuspenseInfiniteQueryOptions(params, options);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
 
 	query.queryKey = queryOptions.queryKey;
 

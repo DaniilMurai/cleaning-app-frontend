@@ -4,20 +4,32 @@
  * Neuer Standard Admin API
  * OpenAPI spec version: 0.1.0
  */
-import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import {
+	useInfiniteQuery,
+	useMutation,
+	useQuery,
+	useSuspenseInfiniteQuery,
+	useSuspenseQuery,
+} from "@tanstack/react-query";
 import type {
 	DataTag,
 	DefinedInitialDataOptions,
+	DefinedUseInfiniteQueryResult,
 	DefinedUseQueryResult,
+	InfiniteData,
 	MutationFunction,
 	QueryClient,
 	QueryFunction,
 	QueryKey,
 	UndefinedInitialDataOptions,
+	UseInfiniteQueryOptions,
+	UseInfiniteQueryResult,
 	UseMutationOptions,
 	UseMutationResult,
 	UseQueryOptions,
 	UseQueryResult,
+	UseSuspenseInfiniteQueryOptions,
+	UseSuspenseInfiniteQueryResult,
 	UseSuspenseQueryOptions,
 	UseSuspenseQueryResult,
 } from "@tanstack/react-query";
@@ -51,6 +63,158 @@ export const getLocations = (params?: GetLocationsParams, signal?: AbortSignal) 
 export const getGetLocationsQueryKey = (params?: GetLocationsParams) => {
 	return [`/admin/locations/`, ...(params ? [params] : [])] as const;
 };
+
+export const getGetLocationsInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getLocations>>, GetLocationsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetLocationsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getLocations>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getLocations>>,
+				QueryKey,
+				GetLocationsParams["offset"]
+			>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetLocationsQueryKey(params);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getLocations>>,
+		QueryKey,
+		GetLocationsParams["offset"]
+	> = ({ signal, pageParam }) =>
+		getLocations({ ...params, offset: pageParam || params?.["offset"] }, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getLocations>>,
+		TError,
+		TData,
+		Awaited<ReturnType<typeof getLocations>>,
+		QueryKey,
+		GetLocationsParams["offset"]
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetLocationsInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getLocations>>>;
+export type GetLocationsInfiniteQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetLocationsInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getLocations>>, GetLocationsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: undefined | GetLocationsParams,
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getLocations>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getLocations>>,
+				QueryKey,
+				GetLocationsParams["offset"]
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getLocations>>,
+					TError,
+					Awaited<ReturnType<typeof getLocations>>,
+					QueryKey
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetLocationsInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getLocations>>, GetLocationsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetLocationsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getLocations>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getLocations>>,
+				QueryKey,
+				GetLocationsParams["offset"]
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getLocations>>,
+					TError,
+					Awaited<ReturnType<typeof getLocations>>,
+					QueryKey
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetLocationsInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getLocations>>, GetLocationsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetLocationsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getLocations>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getLocations>>,
+				QueryKey,
+				GetLocationsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Locations
+ */
+
+export function useGetLocationsInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getLocations>>, GetLocationsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetLocationsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getLocations>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getLocations>>,
+				QueryKey,
+				GetLocationsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetLocationsInfiniteQueryOptions(params, options);
+
+	const query = useInfiniteQuery(queryOptions, queryClient) as UseInfiniteQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
 
 export const getGetLocationsQueryOptions = <
 	TData = Awaited<ReturnType<typeof getLocations>>,
@@ -235,6 +399,144 @@ export function useGetLocationsSuspense<
 		TData,
 		TError
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetLocationsSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getLocations>>, GetLocationsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetLocationsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getLocations>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getLocations>>,
+				QueryKey,
+				GetLocationsParams["offset"]
+			>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetLocationsQueryKey(params);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getLocations>>,
+		QueryKey,
+		GetLocationsParams["offset"]
+	> = ({ signal, pageParam }) =>
+		getLocations({ ...params, offset: pageParam || params?.["offset"] }, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getLocations>>,
+		TError,
+		TData,
+		Awaited<ReturnType<typeof getLocations>>,
+		QueryKey,
+		GetLocationsParams["offset"]
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetLocationsSuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getLocations>>
+>;
+export type GetLocationsSuspenseInfiniteQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetLocationsSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getLocations>>, GetLocationsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: undefined | GetLocationsParams,
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getLocations>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getLocations>>,
+				QueryKey,
+				GetLocationsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetLocationsSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getLocations>>, GetLocationsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetLocationsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getLocations>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getLocations>>,
+				QueryKey,
+				GetLocationsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetLocationsSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getLocations>>, GetLocationsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetLocationsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getLocations>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getLocations>>,
+				QueryKey,
+				GetLocationsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Locations
+ */
+
+export function useGetLocationsSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getLocations>>, GetLocationsParams["offset"]>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetLocationsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getLocations>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getLocations>>,
+				QueryKey,
+				GetLocationsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetLocationsSuspenseInfiniteQueryOptions(params, options);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
 
 	query.queryKey = queryOptions.queryKey;
 

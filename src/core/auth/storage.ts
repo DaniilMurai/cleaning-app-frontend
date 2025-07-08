@@ -9,6 +9,4 @@ export const RefreshTokenStorage = Storage("refreshToken", true, {
 	keychainAccessible: AFTER_FIRST_UNLOCK,
 });
 
-export const ReportIdStorage = Storage("ReportId");
-
 export const AssignmentStorage = Storage("Assignment");

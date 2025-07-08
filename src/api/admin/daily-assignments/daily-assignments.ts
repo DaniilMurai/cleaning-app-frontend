@@ -4,20 +4,32 @@
  * Neuer Standard Admin API
  * OpenAPI spec version: 0.1.0
  */
-import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import {
+	useInfiniteQuery,
+	useMutation,
+	useQuery,
+	useSuspenseInfiniteQuery,
+	useSuspenseQuery,
+} from "@tanstack/react-query";
 import type {
 	DataTag,
 	DefinedInitialDataOptions,
+	DefinedUseInfiniteQueryResult,
 	DefinedUseQueryResult,
+	InfiniteData,
 	MutationFunction,
 	QueryClient,
 	QueryFunction,
 	QueryKey,
 	UndefinedInitialDataOptions,
+	UseInfiniteQueryOptions,
+	UseInfiniteQueryResult,
 	UseMutationOptions,
 	UseMutationResult,
 	UseQueryOptions,
 	UseQueryResult,
+	UseSuspenseInfiniteQueryOptions,
+	UseSuspenseInfiniteQueryResult,
 	UseSuspenseQueryOptions,
 	UseSuspenseQueryResult,
 } from "@tanstack/react-query";
@@ -51,6 +63,175 @@ export const getDailyAssignments = (params?: GetDailyAssignmentsParams, signal?:
 export const getGetDailyAssignmentsQueryKey = (params?: GetDailyAssignmentsParams) => {
 	return [`/admin/daily-assignments/`, ...(params ? [params] : [])] as const;
 };
+
+export const getGetDailyAssignmentsInfiniteQueryOptions = <
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getDailyAssignments>>,
+		GetDailyAssignmentsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetDailyAssignmentsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignments>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getDailyAssignments>>,
+				QueryKey,
+				GetDailyAssignmentsParams["offset"]
+			>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetDailyAssignmentsQueryKey(params);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getDailyAssignments>>,
+		QueryKey,
+		GetDailyAssignmentsParams["offset"]
+	> = ({ signal, pageParam }) =>
+		getDailyAssignments({ ...params, offset: pageParam || params?.["offset"] }, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getDailyAssignments>>,
+		TError,
+		TData,
+		Awaited<ReturnType<typeof getDailyAssignments>>,
+		QueryKey,
+		GetDailyAssignmentsParams["offset"]
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetDailyAssignmentsInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getDailyAssignments>>
+>;
+export type GetDailyAssignmentsInfiniteQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetDailyAssignmentsInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getDailyAssignments>>,
+		GetDailyAssignmentsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: undefined | GetDailyAssignmentsParams,
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignments>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getDailyAssignments>>,
+				QueryKey,
+				GetDailyAssignmentsParams["offset"]
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getDailyAssignments>>,
+					TError,
+					Awaited<ReturnType<typeof getDailyAssignments>>,
+					QueryKey
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetDailyAssignmentsInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getDailyAssignments>>,
+		GetDailyAssignmentsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetDailyAssignmentsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignments>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getDailyAssignments>>,
+				QueryKey,
+				GetDailyAssignmentsParams["offset"]
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getDailyAssignments>>,
+					TError,
+					Awaited<ReturnType<typeof getDailyAssignments>>,
+					QueryKey
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetDailyAssignmentsInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getDailyAssignments>>,
+		GetDailyAssignmentsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetDailyAssignmentsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignments>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getDailyAssignments>>,
+				QueryKey,
+				GetDailyAssignmentsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Daily Assignments
+ */
+
+export function useGetDailyAssignmentsInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getDailyAssignments>>,
+		GetDailyAssignmentsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetDailyAssignmentsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignments>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getDailyAssignments>>,
+				QueryKey,
+				GetDailyAssignmentsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetDailyAssignmentsInfiniteQueryOptions(params, options);
+
+	const query = useInfiniteQuery(queryOptions, queryClient) as UseInfiniteQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
 
 export const getGetDailyAssignmentsQueryOptions = <
 	TData = Awaited<ReturnType<typeof getDailyAssignments>>,
@@ -249,6 +430,159 @@ export function useGetDailyAssignmentsSuspense<
 		TData,
 		TError
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetDailyAssignmentsSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getDailyAssignments>>,
+		GetDailyAssignmentsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetDailyAssignmentsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignments>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getDailyAssignments>>,
+				QueryKey,
+				GetDailyAssignmentsParams["offset"]
+			>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetDailyAssignmentsQueryKey(params);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getDailyAssignments>>,
+		QueryKey,
+		GetDailyAssignmentsParams["offset"]
+	> = ({ signal, pageParam }) =>
+		getDailyAssignments({ ...params, offset: pageParam || params?.["offset"] }, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getDailyAssignments>>,
+		TError,
+		TData,
+		Awaited<ReturnType<typeof getDailyAssignments>>,
+		QueryKey,
+		GetDailyAssignmentsParams["offset"]
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetDailyAssignmentsSuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getDailyAssignments>>
+>;
+export type GetDailyAssignmentsSuspenseInfiniteQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetDailyAssignmentsSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getDailyAssignments>>,
+		GetDailyAssignmentsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: undefined | GetDailyAssignmentsParams,
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignments>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getDailyAssignments>>,
+				QueryKey,
+				GetDailyAssignmentsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetDailyAssignmentsSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getDailyAssignments>>,
+		GetDailyAssignmentsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetDailyAssignmentsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignments>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getDailyAssignments>>,
+				QueryKey,
+				GetDailyAssignmentsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetDailyAssignmentsSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getDailyAssignments>>,
+		GetDailyAssignmentsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetDailyAssignmentsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignments>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getDailyAssignments>>,
+				QueryKey,
+				GetDailyAssignmentsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Daily Assignments
+ */
+
+export function useGetDailyAssignmentsSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getDailyAssignments>>,
+		GetDailyAssignmentsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetDailyAssignmentsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDailyAssignments>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getDailyAssignments>>,
+				QueryKey,
+				GetDailyAssignmentsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetDailyAssignmentsSuspenseInfiniteQueryOptions(params, options);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
 
 	query.queryKey = queryOptions.queryKey;
 
