@@ -39,7 +39,7 @@ export default function AssignmentsTab({
 	const { t } = useTranslation();
 
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-
+	
 	// Состояния для управления развернутыми/свернутыми элементами
 	const [selectedAssignment, setSelectedAssignment] = useState<DailyAssignmentResponse | null>();
 

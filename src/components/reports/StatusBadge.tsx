@@ -3,11 +3,10 @@ import React from "react";
 import { useUnistyles } from "react-native-unistyles";
 import { AssignmentStatus, ReportStatus } from "@/api/admin";
 import { useTranslation } from "react-i18next";
-import { TypographyProps } from "@/ui/common/Typography";
-import { View } from "react-native";
+import { View, ViewProps } from "react-native";
 import { getStatusStyle } from "@/core/utils/getStatusStyle";
 
-interface Props extends TypographyProps {
+interface Props extends ViewProps {
 	status?: AssignmentStatus;
 	reportStatus?: ReportStatus;
 	text?: string;
@@ -27,7 +26,7 @@ export default function GetStatusBadge({ status, reportStatus, text, color, ...p
 						backgroundColor: theme.colors.not_started.background,
 						paddingVertical: theme.spacing(0.25),
 						paddingHorizontal: theme.spacing(1.25),
-						alignSelf: "flex-start", // если надо под контент
+						alignSelf: "flex-start",
 					},
 					props?.style,
 				]}

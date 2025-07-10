@@ -6,7 +6,7 @@ import {
 	ReportResponse,
 	useGetReportsInfinite,
 } from "@/api/admin";
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet } from "react-native-unistyles";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 import { Typography } from "@/ui";
@@ -30,19 +30,13 @@ export default function ReportsTable({
 	users = [],
 	locations = [],
 }: Props) {
-	const [page, setPage] = useState<number>(2);
-
 	const { t } = useTranslation();
-	// const { data: reports } = useGetReports(queryParams);
 	const params = { ...queryParams, limit: LIMIT };
 	const {
 		data: reports,
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
-		isLoading,
-		isError,
-		error,
 	} = useGetReportsInfinite(params, {
 		query: {
 			getNextPageParam: (lastPage, allPages) => {
@@ -164,7 +158,6 @@ export default function ReportsTable({
 }
 
 const styles = StyleSheet.create(theme => ({
-	// <Button onPress={() => setPage(prev => prev + 1)}>next</Button>
 	row: {
 		flexDirection: "row",
 		alignItems: "center",

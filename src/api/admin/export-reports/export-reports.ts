@@ -4,13 +4,6 @@
  * Neuer Standard Admin API
  * OpenAPI spec version: 0.1.0
  */
-import {
-	useInfiniteQuery,
-	useMutation,
-	useQuery,
-	useSuspenseInfiniteQuery,
-	useSuspenseQuery,
-} from "@tanstack/react-query";
 import type {
 	DataTag,
 	DefinedInitialDataOptions,
@@ -33,6 +26,13 @@ import type {
 	UseSuspenseQueryOptions,
 	UseSuspenseQueryResult,
 } from "@tanstack/react-query";
+import {
+	useInfiniteQuery,
+	useMutation,
+	useQuery,
+	useSuspenseInfiniteQuery,
+	useSuspenseQuery,
+} from "@tanstack/react-query";
 
 import type {
 	FileResponse,
@@ -42,8 +42,8 @@ import type {
 	ReportExportResponse,
 } from ".././schemas";
 
-import { getAxios } from "../../instance";
 import type { ErrorType } from "../../instance";
+import { getAxios } from "../../instance";
 
 /**
  * @summary Create Export Reports
@@ -1065,6 +1065,206 @@ export function useExportTypeSuspense<
 	queryClient?: QueryClient
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 	const queryOptions = getExportTypeSuspenseQueryOptions(exportId, options);
+
+	const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+/**
+ * @summary Stream Export Reports
+ */
+export const streamExportReports = (signal?: AbortSignal) => {
+	return getAxios<unknown>({ url: `/admin/export-reports/sse`, method: "GET", signal });
+};
+
+export const getStreamExportReportsQueryKey = () => {
+	return [`/admin/export-reports/sse`] as const;
+};
+
+export const getStreamExportReportsQueryOptions = <
+	TData = Awaited<ReturnType<typeof streamExportReports>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof streamExportReports>>, TError, TData>
+	>;
+}) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getStreamExportReportsQueryKey();
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof streamExportReports>>> = ({ signal }) =>
+		streamExportReports(signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof streamExportReports>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type StreamExportReportsQueryResult = NonNullable<
+	Awaited<ReturnType<typeof streamExportReports>>
+>;
+export type StreamExportReportsQueryError = ErrorType<unknown>;
+
+export function useStreamExportReports<
+	TData = Awaited<ReturnType<typeof streamExportReports>>,
+	TError = ErrorType<unknown>,
+>(
+	options: {
+		query: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof streamExportReports>>, TError, TData>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof streamExportReports>>,
+					TError,
+					Awaited<ReturnType<typeof streamExportReports>>
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useStreamExportReports<
+	TData = Awaited<ReturnType<typeof streamExportReports>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof streamExportReports>>, TError, TData>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof streamExportReports>>,
+					TError,
+					Awaited<ReturnType<typeof streamExportReports>>
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useStreamExportReports<
+	TData = Awaited<ReturnType<typeof streamExportReports>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof streamExportReports>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Stream Export Reports
+ */
+
+export function useStreamExportReports<
+	TData = Awaited<ReturnType<typeof streamExportReports>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof streamExportReports>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getStreamExportReportsQueryOptions(options);
+
+	const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getStreamExportReportsSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof streamExportReports>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseSuspenseQueryOptions<Awaited<ReturnType<typeof streamExportReports>>, TError, TData>
+	>;
+}) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getStreamExportReportsQueryKey();
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof streamExportReports>>> = ({ signal }) =>
+		streamExportReports(signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+		Awaited<ReturnType<typeof streamExportReports>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type StreamExportReportsSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof streamExportReports>>
+>;
+export type StreamExportReportsSuspenseQueryError = ErrorType<unknown>;
+
+export function useStreamExportReportsSuspense<
+	TData = Awaited<ReturnType<typeof streamExportReports>>,
+	TError = ErrorType<unknown>,
+>(
+	options: {
+		query: Partial<
+			UseSuspenseQueryOptions<Awaited<ReturnType<typeof streamExportReports>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useStreamExportReportsSuspense<
+	TData = Awaited<ReturnType<typeof streamExportReports>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<Awaited<ReturnType<typeof streamExportReports>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useStreamExportReportsSuspense<
+	TData = Awaited<ReturnType<typeof streamExportReports>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<Awaited<ReturnType<typeof streamExportReports>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Stream Export Reports
+ */
+
+export function useStreamExportReportsSuspense<
+	TData = Awaited<ReturnType<typeof streamExportReports>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<Awaited<ReturnType<typeof streamExportReports>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getStreamExportReportsSuspenseQueryOptions(options);
 
 	const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
 		TData,

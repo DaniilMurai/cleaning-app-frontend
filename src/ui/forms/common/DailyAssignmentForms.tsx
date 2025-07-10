@@ -88,6 +88,7 @@ export function CreateDailyAssignmentForm({
 					value={formData.user_id?.toString() || ""}
 					options={userOptions}
 					onChange={value =>
+						value &&
 						setFormData(prev => ({
 							...prev,
 							user_id: parseInt(value, 10),
@@ -103,6 +104,7 @@ export function CreateDailyAssignmentForm({
 					value={formData.location_id?.toString() || ""}
 					options={locationOptions}
 					onChange={value =>
+						value &&
 						setFormData(prev => ({
 							...prev,
 							location_id: parseInt(value, 10),
@@ -199,6 +201,7 @@ export function EditDailyAssignmentForm({
 					value={formData.user_id?.toString() || ""}
 					options={userOptions}
 					onChange={value =>
+						value &&
 						setFormData(prev => ({
 							...prev,
 							user_id: parseInt(value, 10),
@@ -214,6 +217,7 @@ export function EditDailyAssignmentForm({
 					value={formData.location_id?.toString() || ""}
 					options={locationOptions}
 					onChange={value =>
+						value &&
 						setFormData(prev => ({
 							...prev,
 							location_id: parseInt(value, 10),

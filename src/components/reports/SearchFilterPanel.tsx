@@ -33,7 +33,7 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 	}
 
 	const newParams: Partial<GetReportsParams> = {};
-
+	
 	const handleClear = () => {
 		setSearch("");
 		newParams.search = "";

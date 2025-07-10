@@ -4,7 +4,7 @@ import { useUnistyles } from "react-native-unistyles";
 import { AssignmentStatus, ReportStatus } from "@/api/admin";
 import { useTranslation } from "react-i18next";
 import { getStatusStyle } from "@/core/utils/getStatusStyle";
-import { Feather, FontAwesome5, MaterialIcons } from "@expo/vector-icons"; // любые нужные библиотеки
+import { Feather, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 
 interface StatusBadgeIconProps extends ViewProps {
 	status?: AssignmentStatus;
@@ -27,12 +27,11 @@ export default function StatusBadgeIcon({
 	const key = reportStatus ?? status ?? "not_started";
 	const config = getStatusStyle(key, theme, t);
 
-	const iconMap: Record<string, React.ReactElement> = {
+	const iconMap: Record<string, React.ReactElement<{ color?: string; size?: number }>> = {
 		waiting: <Feather name="clock" />,
 		in_progress: <Feather name="loader" />,
 		failed: <MaterialIcons name="error-outline" />,
 		completed: <FontAwesome5 name="check" />,
-		// fallback:
 		default: <Feather name="help-circle" />,
 	};
 
@@ -63,7 +62,7 @@ export default function StatusBadgeIcon({
 				}}
 			>
 				{React.cloneElement(icon, {
-					color: config.style.color,
+					color: config.style.color, // вот тут ошибка на color
 					size: size * 0.5,
 				})}
 			</View>

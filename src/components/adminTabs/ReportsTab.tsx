@@ -11,6 +11,7 @@ import ReportsTable from "@/components/reports/ReportTable";
 import React, { useState } from "react";
 import SearchFilterPanel from "@/components/reports/SearchFilterPanel";
 import ExportReportsPicker from "@/components/reports/ExportReportsPicker";
+import useExportReportSSE from "@/components/reports/useExportReportSSE";
 
 interface Props {
 	users: AdminReadUser[];
@@ -20,6 +21,7 @@ interface Props {
 
 export default function ReportsTab({ users, assignments, locations }: Props) {
 	// Состояние для параметров запроса
+	useExportReportSSE();
 	const [queryParams, setQueryParams] = useState<GetReportsParams>({
 		order_by: "id",
 		direction: "desc",

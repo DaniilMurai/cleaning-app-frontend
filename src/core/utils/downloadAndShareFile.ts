@@ -5,7 +5,7 @@ import { AccessTokenStorage } from "@/core/auth/storage";
 
 export default async function downloadAndShareFile(url: string, filename: string) {
 	const token = await AccessTokenStorage.get();
-	//TODO что делать если токена не будет?
+	//TODO если не будет токена нужно его обновить, хз как это сделать
 	console.log(token);
 	if (Platform.OS === "web") {
 		try {

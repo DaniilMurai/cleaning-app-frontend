@@ -112,12 +112,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isVisible, onClose }) => 
 							</Typography>
 						</View>
 						<CustomPicker
-							value={currentLanguage ?? t("settings.language")}
+							value={currentLanguage}
 							options={availableLanguages.map(lang => ({
 								label: lang.name,
 								value: lang.code,
 							}))}
-							onChange={value => changeLanguage(value)}
+							onChange={value => value && changeLanguage(value)}
 						/>
 					</View>
 				</View>
