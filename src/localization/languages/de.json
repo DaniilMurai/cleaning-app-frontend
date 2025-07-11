@@ -19,7 +19,10 @@
     "takePhoto": "Foto aufnehmen",
     "recordVideo": "Video aufnehmen",
     "exportReports": "Berichte exportieren",
-    "timezone": "Zeitzone"
+    "timezone": "Zeitzone",
+    "generation": "Berichtserstellung",
+    "selectedPeriod": "Ausgewählter Zeitraum",
+    "chooseFormat": "Format wählen"
   },
   "tabs": {
     "home": "Startseite",
@@ -180,7 +183,8 @@
         "status": "Status",
         "start_time": "Startzeit",
         "end_time": "Endzeit"
-      }
+      },
+      "showFilterPanel": "Filterbereich anzeigen"
     },
     "reportsTable": {
       "username": "Benutzername",

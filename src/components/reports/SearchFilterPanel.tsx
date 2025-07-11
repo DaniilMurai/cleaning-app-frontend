@@ -7,6 +7,8 @@ import { View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useDebounce } from "@uidotdev/usehooks";
 import { useTranslation } from "react-i18next";
+import ExportReportsPicker from "@/components/reports/ExportReportsPicker";
+import ExportReportsDialog from "@/components/reports/ExportReportsDialog";
 
 interface props {
 	params: GetReportsParams;
@@ -21,7 +23,7 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 	const { t } = useTranslation();
 
 	const debouncedSearch = useDebounce(search, 300);
-
+	const [showCreateExport, setShowCreateExport] = useState<boolean>(false);
 	useEffect(() => {
 		newParams.search = debouncedSearch;
 		console.log("render useEffect" + newParams.search);
@@ -33,7 +35,7 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 	}
 
 	const newParams: Partial<GetReportsParams> = {};
-	
+
 	const handleClear = () => {
 		setSearch("");
 		newParams.search = "";
@@ -114,7 +116,7 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 							options={statusOptions}
 							value={params.status ?? "All statuses"}
 							onChange={value => {
-								newParams.status = value; // даже если ""
+								newParams.status = value;
 								onAction(newParams);
 							}}
 						/>
@@ -145,6 +147,14 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 							}}
 						/>
 					</View>
+					<ExportReportsPicker />
+					<Button onPress={() => setShowCreateExport(true)}>
+						Создать экспорт отчетов
+					</Button>
+					<ExportReportsDialog
+						isVisible={showCreateExport}
+						onClose={() => setShowCreateExport(false)}
+					/>
 				</View>
 			</View>
 		</View>

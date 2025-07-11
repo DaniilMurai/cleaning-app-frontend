@@ -19,7 +19,10 @@
     "takePhoto": "Сделать фото",
     "recordVideo": "Записать видео",
     "exportReports": "Экспорт отчетов",
-    "timezone": "Часовой пояс"
+    "timezone": "Часовой пояс",
+    "generation": "Генерация отчетов",
+    "selectedPeriod": "Выбранный период",
+    "chooseFormat": "Выберите формат"
   },
   "tabs": {
     "home": "Главная",
@@ -180,7 +183,8 @@
         "status": "Статус",
         "start_time": "Время начала",
         "end_time": "Время окончания"
-      }
+      },
+      "showFilterPanel": "Показать панель фильтров"
     },
     "reportsTable": {
       "username": "Имя пользователя",

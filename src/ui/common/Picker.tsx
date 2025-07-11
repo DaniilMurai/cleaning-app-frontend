@@ -30,7 +30,7 @@ export default function CustomPicker({
 	const selectedOption = options.find(option => option.value === value);
 
 	return (
-		<View style={style}>
+		<View style={[style, { flex: 1, zIndex: 100 }]}>
 			{label && (
 				<Typography variant="body2" color="text.secondary" style={styles.label}>
 					{label}

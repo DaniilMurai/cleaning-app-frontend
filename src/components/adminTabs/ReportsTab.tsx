@@ -10,8 +10,8 @@ import {
 import ReportsTable from "@/components/reports/ReportTable";
 import React, { useState } from "react";
 import SearchFilterPanel from "@/components/reports/SearchFilterPanel";
-import ExportReportsPicker from "@/components/reports/ExportReportsPicker";
 import useExportReportSSE from "@/components/reports/useExportReportSSE";
+import { useTranslation } from "react-i18next";
 
 interface Props {
 	users: AdminReadUser[];
@@ -21,6 +21,7 @@ interface Props {
 
 export default function ReportsTab({ users, assignments, locations }: Props) {
 	// Состояние для параметров запроса
+	const { t } = useTranslation();
 	useExportReportSSE();
 	const [queryParams, setQueryParams] = useState<GetReportsParams>({
 		order_by: "id",
@@ -46,7 +47,7 @@ export default function ReportsTab({ users, assignments, locations }: Props) {
 						onPress={() => setIsVisibleFilterPanel(!isVisibleFilterPanel)}
 						style={{ marginStart: "auto" }}
 					>
-						Show Filter Panel
+						{t("components.searchFilterPanel.showFilterPanel")}
 					</Button>
 				)}
 				<SearchFilterPanel
@@ -57,8 +58,6 @@ export default function ReportsTab({ users, assignments, locations }: Props) {
 				/>
 			</View>
 			<View style={styles.scrollContainer}>
-				<ExportReportsPicker />
-
 				<ReportsTable
 					queryParams={queryParams}
 					users={users}

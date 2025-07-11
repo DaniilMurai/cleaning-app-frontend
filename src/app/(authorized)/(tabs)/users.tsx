@@ -1,8 +1,8 @@
 // src/pages/AdminPanelPage.tsx
-import { ScrollView, View } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
+import { ScrollView, useWindowDimensions, View } from "react-native";
+import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { Button, Dialog, Loading } from "@/ui";
-import { useState } from "react";
+import React, { useState } from "react";
 
 import { AdminReadUser, useGetUsers } from "@/api/admin";
 import EditUserForm from "@/ui/forms/user/EditUserForm";
@@ -19,16 +19,13 @@ export default function UsersPage() {
 	const [selectedUser, setSelectedUser] = useState<AdminReadUser | null>(null);
 	const [inviteLink, setInviteLink] = useState("");
 	const [resetLink, setResetLink] = useState("");
-
 	const [manyColumns, setManyColumns] = useState<boolean>(false);
-
 	const [modalState, setModalState] = useState({
 		editMode: false,
 		createMode: false,
 		inviteLinkModal: false,
 		resetLinkModal: false,
 	});
-
 	const { data: users, isLoading, isFetching, refetch } = useGetUsers({});
 
 	const {
@@ -63,6 +60,24 @@ export default function UsersPage() {
 		return <Loading />;
 	}
 
+	const ManyColumnButton = React.memo(() => {
+		const { width } = useWindowDimensions();
+		const { theme } = useUnistyles();
+
+		width < theme.breakpoints.lg && setManyColumns(false);
+		return (
+			width >= theme.breakpoints.lg && (
+				<Button
+					variant={"outlined"}
+					style={{ marginHorizontal: 10 }}
+					onPress={() => setManyColumns(!manyColumns)}
+				>
+					<FontAwesome5 name={manyColumns ? "list" : "th"} size={24} />
+				</Button>
+			)
+		);
+	});
+
 	return (
 		<View style={styles.container}>
 			<ScrollView contentContainerStyle={styles.scrollContent}>
@@ -75,13 +90,9 @@ export default function UsersPage() {
 					>
 						<FontAwesome5 name="sync" size={20} style={styles.icon} />
 					</Button>
-					<Button
-						variant={"outlined"}
-						style={{ marginHorizontal: 10 }}
-						onPress={() => setManyColumns(!manyColumns)}
-					>
-						<FontAwesome5 name={manyColumns ? "list" : "th"} size={24} />
-					</Button>
+
+					<ManyColumnButton />
+
 					<Button
 						variant="contained"
 						style={{ marginHorizontal: 10 }}
@@ -97,7 +108,7 @@ export default function UsersPage() {
 						setModalState(prev => ({ ...prev, editMode: true }));
 					}}
 					onDeleteUser={handleDeleteUser}
-					onForgetPassword={async userId => handleForgetPassword(userId)}
+					onForgetPassword={async userId => await handleForgetPassword(userId)}
 					onActivateUser={async userId => await handleGetInviteLink(userId)}
 					manyColumns={manyColumns}
 				/>

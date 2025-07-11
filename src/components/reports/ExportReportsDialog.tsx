@@ -96,7 +96,7 @@ export default function ExportReportsDialog({ isVisible, onClose }: ExportReport
 								color={styles.fileAltIconColor.color}
 							/>
 						</View>
-						<Typography variant={"h5"}>Генерация отчетов</Typography>
+						<Typography variant={"h5"}>{t("reports.generation")}</Typography>
 					</View>
 				</View>
 			}
@@ -144,7 +144,6 @@ export default function ExportReportsDialog({ isVisible, onClose }: ExportReport
 					options={getUsers()}
 				/>
 
-				{/*<Typography variant={"h6"}>Выбери Diapazon дат</Typography>*/}
 				<RangeDatesInput
 					startValue={formData.start_date}
 					endValue={formData.end_date}
@@ -161,12 +160,13 @@ export default function ExportReportsDialog({ isVisible, onClose }: ExportReport
 				{formData.start_date && formData.end_date && (
 					<View style={styles.periodContainer}>
 						<Typography>
-							Выбранный Period: {formData.start_date} - {formData.end_date}
+							{t("reports.selectedPeriod")}: {formData.start_date} -{" "}
+							{formData.end_date}
 						</Typography>
 					</View>
 				)}
 				<View style={styles.checkBoxContainer}>
-					<Typography>Choose Format:</Typography>
+					<Typography>{t("reports.chooseFormat")}:</Typography>
 					<Checkbox
 						size={"large"}
 						label={"CSV (.csv)"}
