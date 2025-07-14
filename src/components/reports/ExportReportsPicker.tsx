@@ -41,7 +41,7 @@ export default function ExportReportsPicker({ ...props }: ExportReportsPickerPro
 		<View style={{ zIndex: 10, minWidth: 300, maxWidth: 325 }} {...props}>
 			<BasePopover
 				trigger={
-					<Button>
+					<Button variant={"contained"} color={"black"}>
 						<FontAwesome5 name={"file"} size={16} /> Просмотреть репорты
 					</Button>
 				}

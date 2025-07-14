@@ -77,7 +77,14 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 					{t("components.searchFilterPanel.searchAndFilters")}
 				</Typography>
 				<View style={{ flexDirection: "row", gap: 8 }}>
-					<Button variant={"text"} onPress={handleClear}>
+					<Button
+						variant={"contained"}
+						color={"black"}
+						onPress={() => setShowCreateExport(true)}
+					>
+						Создать экспорт отчетов
+					</Button>
+					<Button variant={"contained"} color={"black"} onPress={handleClear}>
 						{t("components.searchFilterPanel.clearAll")}
 					</Button>
 					<Button
@@ -148,9 +155,7 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 						/>
 					</View>
 					<ExportReportsPicker />
-					<Button onPress={() => setShowCreateExport(true)}>
-						Создать экспорт отчетов
-					</Button>
+
 					<ExportReportsDialog
 						isVisible={showCreateExport}
 						onClose={() => setShowCreateExport(false)}

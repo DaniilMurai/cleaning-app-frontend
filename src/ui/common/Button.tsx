@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native-unistyles";
 import { forwardRef } from "react";
 
 export type ButtonVariant = "text" | "outlined" | "tint" | "contained";
-export type ButtonColor = "primary" | "secondary";
+export type ButtonColor = "primary" | "secondary" | "black";
 export type ButtonSize = "small" | "medium" | "large";
 
 export interface ButtonProps extends PressableProps {
@@ -54,10 +54,7 @@ const Button = forwardRef<View, ButtonProps>(function Button(
 			]}
 		>
 			{loading ? (
-				<ActivityIndicator
-					size={size === "small" ? "small" : "small"}
-					color={spinnerColor}
-				/>
+				<ActivityIndicator size={"small"} color={spinnerColor} />
 			) : wrapText ? (
 				state => (
 					<Text {...textProps} style={[styles.text, textProps?.style]}>
@@ -106,6 +103,7 @@ const styles = StyleSheet.create((theme, rt) => ({
 			color: {
 				primary: {},
 				secondary: {},
+				black: {},
 			},
 			disabled: {
 				true: {},
@@ -127,6 +125,14 @@ const styles = StyleSheet.create((theme, rt) => ({
 				styles: {
 					borderWidth: 1,
 					borderColor: theme.colors.secondary.main,
+				},
+			},
+			{
+				color: "black",
+				variant: "outlined",
+				styles: {
+					borderWidth: 1,
+					borderColor: "#141617",
 				},
 			},
 			{
@@ -155,6 +161,15 @@ const styles = StyleSheet.create((theme, rt) => ({
 				variant: "contained",
 				styles: {
 					backgroundColor: theme.colors.secondary.main,
+				},
+			},
+			{
+				color: "black",
+				variant: "contained",
+				styles: {
+					backgroundColor: "#141617",
+					borderWidth: 1,
+					borderColor: theme.colors.border,
 				},
 			},
 			{
@@ -211,6 +226,13 @@ const styles = StyleSheet.create((theme, rt) => ({
 				},
 			},
 			{
+				color: "black",
+				variant: "outlined",
+				styles: {
+					color: "#141617",
+				},
+			},
+			{
 				color: "secondary",
 				variant: "outlined",
 				styles: {
@@ -242,6 +264,13 @@ const styles = StyleSheet.create((theme, rt) => ({
 				variant: "contained",
 				styles: {
 					color: theme.colors.primary.text,
+				},
+			},
+			{
+				color: "black",
+				variant: "contained",
+				styles: {
+					color: theme.colors.text.primary,
 				},
 			},
 			{
