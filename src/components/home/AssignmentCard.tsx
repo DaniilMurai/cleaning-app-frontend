@@ -23,6 +23,7 @@ interface Props {
 	initialStatus?: AssignmentStatus;
 	alreadyDoneTime?: number;
 	startTimeBackend?: string | null;
+	isAnyAssignmentInProgress?: boolean;
 }
 
 export default function AssignmentCard({
@@ -31,14 +32,13 @@ export default function AssignmentCard({
 	alreadyDoneTime,
 	initialStatus,
 	startTimeBackend,
+	isAnyAssignmentInProgress,
 }: Props) {
 	const { t } = useTranslation();
 	const [isExpanded, setIsExpanded] = useState(false);
 	const toggleExpand = () => setIsExpanded(prev => !prev);
 
 	const [status, setStatus] = useState<AssignmentStatus>(initialStatus || assignment.status);
-
-	console.log("assignment in AssignmentCard: " + assignment.status + " " + assignment.start_time);
 
 	const handleStatusChange = (
 		status: AssignmentStatus,
@@ -107,7 +107,8 @@ export default function AssignmentCard({
 				</View>
 			</TouchableOpacity>
 			<Collapse expanded={isExpanded}>
-				{(formatToDate(assignment.date) === getFormatedDate(new Date()) ||
+				{((formatToDate(assignment.date) === getFormatedDate(new Date()) &&
+					!isAnyAssignmentInProgress) ||
 					assignment.status === AssignmentStatus.in_progress) && (
 					<TaskTimer
 						onStatusChange={handleStatusChange}

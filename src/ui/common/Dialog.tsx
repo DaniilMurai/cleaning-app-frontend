@@ -4,8 +4,7 @@ import { StyleSheet } from "react-native-unistyles";
 import React, { ReactNode } from "react";
 import { UniBlurView } from "@/ui/uni";
 import { AppBreakpoint } from "@/unistyles";
-import { Card } from "@/ui";
-import { CardProps } from "@/ui/common/Card";
+import Card, { CardProps } from "@/ui/common/Card";
 
 export interface DialogProps extends React.ComponentProps<typeof Modal> {
 	visible: boolean;

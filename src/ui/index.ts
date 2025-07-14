@@ -4,11 +4,9 @@
 export { default as Button } from "./common/Button";
 export { default as Card } from "./common/Card";
 export { default as Collapse } from "./common/Collapse";
-export { default as DropdownMenu } from "./common/DropdownMenu";
 export { default as Input } from "./common/Input";
 export { default as Loading } from "./common/Loading";
 export { default as Dialog } from "./common/Dialog";
-export { default as Paper } from "./common/Paper";
 export { default as Picker } from "./common/Picker";
 export { default as Select } from "./common/Select";
 export { default as Typography } from "./common/Typography";

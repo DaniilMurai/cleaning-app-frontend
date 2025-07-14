@@ -112,94 +112,110 @@ export default function TasksListDialog({
 					</Button>
 				}
 			>
-				{tasks?.map(task => (
-					<Card key={task.id} variant="outlined" style={styles.card}>
-						<TouchableOpacity
-							style={styles.cardHeader}
-							onPress={() => toggleTask(task.id)}
-						>
-							<View style={styles.headerWithIcon}>
-								<FontAwesome5
-									name={expandedTasks[task.id] ? "angle-down" : "angle-right"}
-									size={16}
-									color={styles.collapseIcon.color}
-								/>
-								<Typography variant="h5" style={styles.cartTitle}>
-									{task.title}
+				{tasks?.map(task => {
+					const isAlreadyInRoom = roomTasks?.find(
+						rt => rt.task_id === task.id && rt.room_id === room?.id
+					);
+					return (
+						<Card key={task.id} variant="outlined" style={styles.card}>
+							<TouchableOpacity
+								style={styles.cardHeader}
+								onPress={() => toggleTask(task.id)}
+							>
+								<View style={styles.headerWithIcon}>
+									<FontAwesome5
+										name={expandedTasks[task.id] ? "angle-down" : "angle-right"}
+										size={16}
+										color={styles.collapseIcon.color}
+									/>
+									<Typography variant="h5" style={styles.cartTitle}>
+										{task.title}
+									</Typography>
+								</View>
+								<View style={styles.actionButtons}>
+									<Button
+										variant="outlined"
+										onPress={() => {
+											setSelectedTask(task);
+											handleCreateRoomTask(task, room!).then(() =>
+												roomTaskMutationHandlers.refetch()
+											);
+										}}
+										disabled={!!isAlreadyInRoom}
+									>
+										{/*Добавить*/}
+										<FontAwesome5 name="link" size={14} />
+									</Button>
+									<Button
+										variant="outlined"
+										onPress={() => {
+											setSelectedTask(task);
+											modal.openModal("editTask");
+										}}
+									>
+										<FontAwesome5 name="edit" size={14} />
+									</Button>
+									<Button
+										variant="outlined"
+										style={styles.deleteButton}
+										onPress={() => {
+											setSelectedTask(task);
+											modal.openModal("deleteTask");
+										}}
+									>
+										<FontAwesome5 name="trash" size={14} />
+									</Button>
+								</View>
+							</TouchableOpacity>
+
+							<Collapse expanded={expandedTasks[task.id]}>
+								<Typography>
+									{task.description || t("common.noDescription")}
 								</Typography>
-							</View>
-							<View style={styles.actionButtons}>
-								<Button
-									variant="outlined"
-									onPress={() => {
-										setSelectedTask(task);
-										handleCreateRoomTask(task, room!).then(() =>
-											roomTaskMutationHandlers.refetch()
-										);
-									}}
-								>
-									{/*Добавить*/}
-									<FontAwesome5 name="link" size={14} />
-								</Button>
-								<Button
-									variant="outlined"
-									onPress={() => {
-										setSelectedTask(task);
-										modal.openModal("editTask");
-									}}
-								>
-									<FontAwesome5 name="edit" size={14} />
-								</Button>
-								<Button
-									variant="outlined"
-									style={styles.deleteButton}
-									onPress={() => {
-										setSelectedTask(task);
-										modal.openModal("deleteTask");
-									}}
-								>
-									<FontAwesome5 name="trash" size={14} />
-								</Button>
-							</View>
-						</TouchableOpacity>
+								<Typography variant="h5">
+									{t("admin.frequency")}:{" "}
+									{task.frequency === 1
+										? t("admin.daily")
+										: t("admin.everyXDays", { count: task.frequency })}
+								</Typography>
 
-						<Collapse expanded={expandedTasks[task.id]}>
-							<Typography>{task.description || t("common.noDescription")}</Typography>
-							<Typography variant="h5">
-								{t("admin.frequency")}:{" "}
-								{task.frequency === 1
-									? t("admin.daily")
-									: t("admin.everyXDays", { count: task.frequency })}
-							</Typography>
+								<View style={styles.divider} />
+								<Typography variant="subtitle2">
+									{t("admin.assignedRooms")}
+								</Typography>
 
-							<View style={styles.divider} />
-							<Typography variant="subtitle2">{t("admin.assignedRooms")}</Typography>
+								{rooms &&
+									locations &&
+									roomTasks &&
+									roomTasks
+										.filter(rt => rt.task_id === task.id)
+										.map(roomTask => {
+											const room = rooms.find(r => r.id === roomTask.room_id);
+											const location = room
+												? locations.find(l => l.id === room.location_id)
+												: null;
 
-							{rooms &&
-								locations &&
-								roomTasks &&
-								roomTasks
-									.filter(rt => rt.task_id === task.id)
-									.map(roomTask => {
-										const room = rooms.find(r => r.id === roomTask.room_id);
-										const location = room
-											? locations.find(l => l.id === room.location_id)
-											: null;
-
-										return room && location ? (
-											<View key={roomTask.id} style={styles.assignmentItem}>
-												<Typography>
-													{location.name} - {room.name}
-												</Typography>
-												<Button variant="text" style={styles.deleteButton}>
-													<FontAwesome5 name="unlink" size={12} />
-												</Button>
-											</View>
-										) : null;
-									})}
-						</Collapse>
-					</Card>
-				))}
+											return room && location ? (
+												<View
+													key={roomTask.id}
+													style={styles.assignmentItem}
+												>
+													<Typography>
+														{location.name} - {room.name}
+													</Typography>
+													<Button
+														variant="text"
+														style={styles.deleteButton}
+													>
+														<FontAwesome5 name="unlink" size={12} />
+													</Button>
+												</View>
+											) : null;
+										})}
+							</Collapse>
+						</Card>
+					);
+				})}
 			</Dialog>
 
 			<Dialog

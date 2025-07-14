@@ -30,14 +30,13 @@ export default function DailyAssignmentsListRender({ assignments, onStatusChange
 		(a, b) => statusOrder[a.assignment.status] - statusOrder[b.assignment.status]
 	);
 
-	sortedAssignments.map(assignmentAndReport => {
-		console.log(
-			"status in DailyAssignmentsListRender: " +
-				assignmentAndReport.assignment.status +
-				" start_time: " +
-				assignmentAndReport.assignment.start_time
-		);
-	});
+	let isAnyAssignmentInProgress: boolean = false;
+	for (const item of sortedAssignments) {
+		if (item.assignment.status == AssignmentStatus.in_progress) {
+			isAnyAssignmentInProgress = true;
+			break;
+		}
+	}
 
 	return sortedAssignments.map(assignmentAndReport => (
 		<AssignmentCard
@@ -65,6 +64,7 @@ export default function DailyAssignmentsListRender({ assignments, onStatusChange
 					? assignmentAndReport.assignment.start_time
 					: null
 			}
+			isAnyAssignmentInProgress={isAnyAssignmentInProgress}
 		/>
 	));
 }
