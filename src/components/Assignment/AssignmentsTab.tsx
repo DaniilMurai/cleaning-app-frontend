@@ -7,6 +7,8 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import {
 	AdminReadUser,
 	DailyAssignmentResponse,
+	DeleteDailyAssignmentParams,
+	getGetDailyAssignmentsQueryKey,
 	LocationResponse,
 	useGetDailyAssignmentsDates,
 } from "@/api/admin";
@@ -19,6 +21,7 @@ import Calendar from "@/components/user/calendar/Calendar";
 import RenderDailyAssignments from "@/components/Assignment/RenderDailyAssignments";
 import { useLanguage } from "@/core/context/LanguageContext";
 import { useTranslation } from "react-i18next";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface AssignmentsTabProps {
 	locations: LocationResponse[];
@@ -39,12 +42,23 @@ export default function AssignmentsTab({
 	const { t } = useTranslation();
 
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+	const queryClient = useQueryClient();
 
 	// Состояния для управления развернутыми/свернутыми элементами
 	const [selectedAssignment, setSelectedAssignment] = useState<DailyAssignmentResponse | null>();
 
-	const { data: assignmentsDates } = useGetDailyAssignmentsDates();
+	const { data: assignmentsDates, refetch: refetchAssignmentsDates } =
+		useGetDailyAssignmentsDates();
 
+	const deleteDailyAssignmentConfirm = async (
+		daily_assignment_id: DeleteDailyAssignmentParams
+	) => {
+		await dailyAssignmentMutation.handleDeleteDailyAssignmentGroup(daily_assignment_id);
+		const queryKey = getGetDailyAssignmentsQueryKey();
+		await queryClient.invalidateQueries({ queryKey, exact: false });
+		await refetchAssignmentsDates();
+	};
+	
 	const renderModals = () => (
 		<>
 			{modal.modals.createAssignment && (
@@ -86,7 +100,9 @@ export default function AssignmentsTab({
 					<DeleteDailyAssignmentConfirm
 						assignment={selectedAssignment}
 						// onConfirm={dailyAssignmentMutation.handleDeleteDailyAssignment}
-						onConfirm={dailyAssignmentMutation.handleDeleteDailyAssignmentGroup}
+						onConfirm={daily_assignment_id =>
+							deleteDailyAssignmentConfirm(daily_assignment_id)
+						}
 						onClose={() => modal.closeModal("deleteAssignment")} //TODO всегда удаляется группа
 						isLoading={
 							dailyAssignmentMutation.handleDeleteDailyAssignmentGroup.isPending
