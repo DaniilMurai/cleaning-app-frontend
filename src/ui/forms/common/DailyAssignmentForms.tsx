@@ -14,7 +14,9 @@ import {
 	DailyAssignmentResponse,
 	DailyAssignmentUpdate,
 	DeleteDailyAssignmentParams,
+	DeleteDailyAssignmentsGroupParams,
 	EditDailyAssignmentParams,
+	useCheckAssignmentGroup,
 } from "@/api/admin";
 import CustomPicker from "@/ui/common/Picker";
 import dayjs, { Dayjs } from "dayjs";
@@ -277,6 +279,61 @@ export function EditDailyAssignmentForm({
 			<View style={styles.buttonsContainer}>
 				<Button variant="contained" onPress={handleSubmitEdit} loading={isLoading}>
 					{t("common.save")}
+				</Button>
+				<Button variant="outlined" onPress={onClose}>
+					{t("common.cancel")}
+				</Button>
+			</View>
+		</Card>
+	);
+}
+
+interface DeleteGroupDailyAssignmentsConfirmProps {
+	assignment: DailyAssignmentResponse;
+	onGroupConfirm: (assignmentId: DeleteDailyAssignmentsGroupParams) => void;
+	onSingleConfirm: (assignmentId: DeleteDailyAssignmentParams) => void;
+	onClose: () => void;
+	isLoading: boolean;
+}
+
+export function DeleteGroupDailyAssignmentsConfirm({
+	assignment,
+	onGroupConfirm,
+	onSingleConfirm,
+	onClose,
+	isLoading,
+}: DeleteGroupDailyAssignmentsConfirmProps) {
+	const { t } = useTranslation();
+	const { data: groupData } = useCheckAssignmentGroup({ daily_assignment_id: assignment.id });
+	return (
+		<Card size="medium" style={styles.container}>
+			<Typography variant="h5" style={styles.title}>
+				{t("admin.deleteDailyAssignment")}
+			</Typography>
+
+			<Typography variant="body1">
+				Помимо задания #{assignment.id} на {assignment.date} число, существуют еще{" "}
+				{groupData && groupData.assignments_amount} задач c интервалом в{" "}
+				{groupData && groupData.interval_days}.
+			</Typography>
+
+			<View style={styles.buttonsContainer}>
+				<Button
+					variant="contained"
+					style={styles.buttonError}
+					onPress={() => onGroupConfirm({ daily_assignment_id: assignment.id })}
+					loading={isLoading}
+				>
+					Удалить всю группу задач
+				</Button>
+
+				<Button
+					variant="contained"
+					style={styles.buttonError}
+					onPress={() => onSingleConfirm({ daily_assignment_id: assignment.id })}
+					loading={isLoading}
+				>
+					{t("common.delete")}
 				</Button>
 				<Button variant="outlined" onPress={onClose}>
 					{t("common.cancel")}

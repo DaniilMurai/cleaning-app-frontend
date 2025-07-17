@@ -35,6 +35,8 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+	AssignmentGroup,
+	CheckAssignmentGroupParams,
 	DailyAssignmentCreate,
 	DailyAssignmentResponse,
 	DailyAssignmentUpdate,
@@ -1038,6 +1040,225 @@ export function useGetDailyAssignmentsDatesSuspense<
 	queryClient?: QueryClient
 ): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 	const queryOptions = getGetDailyAssignmentsDatesSuspenseQueryOptions(options);
+
+	const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+/**
+ * @summary Check Assignment Group
+ */
+export const checkAssignmentGroup = (params: CheckAssignmentGroupParams, signal?: AbortSignal) => {
+	return getAxios<AssignmentGroup>({
+		url: `/admin/daily-assignments/check-group`,
+		method: "GET",
+		params,
+		signal,
+	});
+};
+
+export const getCheckAssignmentGroupQueryKey = (params: CheckAssignmentGroupParams) => {
+	return [`/admin/daily-assignments/check-group`, ...(params ? [params] : [])] as const;
+};
+
+export const getCheckAssignmentGroupQueryOptions = <
+	TData = Awaited<ReturnType<typeof checkAssignmentGroup>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: CheckAssignmentGroupParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof checkAssignmentGroup>>, TError, TData>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getCheckAssignmentGroupQueryKey(params);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof checkAssignmentGroup>>> = ({ signal }) =>
+		checkAssignmentGroup(params, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof checkAssignmentGroup>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type CheckAssignmentGroupQueryResult = NonNullable<
+	Awaited<ReturnType<typeof checkAssignmentGroup>>
+>;
+export type CheckAssignmentGroupQueryError = ErrorType<HTTPValidationError>;
+
+export function useCheckAssignmentGroup<
+	TData = Awaited<ReturnType<typeof checkAssignmentGroup>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: CheckAssignmentGroupParams,
+	options: {
+		query: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof checkAssignmentGroup>>, TError, TData>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof checkAssignmentGroup>>,
+					TError,
+					Awaited<ReturnType<typeof checkAssignmentGroup>>
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useCheckAssignmentGroup<
+	TData = Awaited<ReturnType<typeof checkAssignmentGroup>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: CheckAssignmentGroupParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof checkAssignmentGroup>>, TError, TData>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof checkAssignmentGroup>>,
+					TError,
+					Awaited<ReturnType<typeof checkAssignmentGroup>>
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useCheckAssignmentGroup<
+	TData = Awaited<ReturnType<typeof checkAssignmentGroup>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: CheckAssignmentGroupParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof checkAssignmentGroup>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Check Assignment Group
+ */
+
+export function useCheckAssignmentGroup<
+	TData = Awaited<ReturnType<typeof checkAssignmentGroup>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: CheckAssignmentGroupParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof checkAssignmentGroup>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getCheckAssignmentGroupQueryOptions(params, options);
+
+	const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getCheckAssignmentGroupSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof checkAssignmentGroup>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: CheckAssignmentGroupParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<Awaited<ReturnType<typeof checkAssignmentGroup>>, TError, TData>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getCheckAssignmentGroupQueryKey(params);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof checkAssignmentGroup>>> = ({ signal }) =>
+		checkAssignmentGroup(params, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+		Awaited<ReturnType<typeof checkAssignmentGroup>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type CheckAssignmentGroupSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof checkAssignmentGroup>>
+>;
+export type CheckAssignmentGroupSuspenseQueryError = ErrorType<HTTPValidationError>;
+
+export function useCheckAssignmentGroupSuspense<
+	TData = Awaited<ReturnType<typeof checkAssignmentGroup>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: CheckAssignmentGroupParams,
+	options: {
+		query: Partial<
+			UseSuspenseQueryOptions<Awaited<ReturnType<typeof checkAssignmentGroup>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useCheckAssignmentGroupSuspense<
+	TData = Awaited<ReturnType<typeof checkAssignmentGroup>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: CheckAssignmentGroupParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<Awaited<ReturnType<typeof checkAssignmentGroup>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useCheckAssignmentGroupSuspense<
+	TData = Awaited<ReturnType<typeof checkAssignmentGroup>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: CheckAssignmentGroupParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<Awaited<ReturnType<typeof checkAssignmentGroup>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Check Assignment Group
+ */
+
+export function useCheckAssignmentGroupSuspense<
+	TData = Awaited<ReturnType<typeof checkAssignmentGroup>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: CheckAssignmentGroupParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<Awaited<ReturnType<typeof checkAssignmentGroup>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getCheckAssignmentGroupSuspenseQueryOptions(params, options);
 
 	const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
 		TData,

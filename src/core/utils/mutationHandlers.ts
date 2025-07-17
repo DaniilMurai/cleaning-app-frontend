@@ -22,7 +22,16 @@ export const createMutationHandlersFactory = (modal: ReturnType<typeof useModals
 			if (closeModalOnSuccess) modal.closeModal(`edit${entityName}`);
 		},
 		onSuccessDelete: () => {
-			if (closeModalOnSuccess) modal.closeModal(`delete${entityName}`);
+			if (closeModalOnSuccess) {
+				console.log("closing default modal");
+				modal.closeModal(`delete${entityName}`);
+			}
+		},
+		onSuccessDeleteGroup: () => {
+			if (closeModalOnSuccess) {
+				console.log("closing modal group");
+				modal.closeModal(`delete${entityName}Group`);
+			}
 		},
 	});
 };

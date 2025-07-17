@@ -16,8 +16,10 @@ export default function useDailyAssignmentMutation(options: {
 	onSuccessUpdate?: () => void;
 	onSuccessDelete?: () => void;
 	refetch: () => void;
+	onSuccessDeleteGroup?: () => void;
 }) {
-	const { onSuccessCreate, onSuccessUpdate, onSuccessDelete, refetch } = options;
+	const { onSuccessCreate, onSuccessUpdate, onSuccessDelete, refetch, onSuccessDeleteGroup } =
+		options;
 
 	const createDailyAssignmentMutation = useCreateDailyAssignment(
 		createGenericMutation({
@@ -54,11 +56,20 @@ export default function useDailyAssignmentMutation(options: {
 		})
 	);
 
+	const deleteSingleDailyAssignmentMutation = useDeleteDailyAssignment(
+		createGenericMutation({
+			mutation: {},
+			entityName: "Daily Assignment deleted",
+			onSuccess: onSuccessDeleteGroup,
+			refetch,
+		})
+	);
+
 	const deleteDailyAssignmentGroupMutation = useDeleteDailyAssignmentsGroup(
 		createGenericMutation({
 			mutation: {},
 			entityName: "Daily Assignments group deleted",
-			onSuccess: onSuccessDelete,
+			onSuccess: onSuccessDeleteGroup,
 			refetch,
 		})
 	);
@@ -89,16 +100,24 @@ export default function useDailyAssignmentMutation(options: {
 		await deleteDailyAssignmentGroupMutation.mutateAsync({ params: daily_assignment_id });
 	};
 
+	const handleDeleteSingleDailyAssignmentMutation = async (
+		daily_assignment_id: DeleteDailyAssignmentParams
+	) => {
+		await deleteSingleDailyAssignmentMutation.mutateAsync({ params: daily_assignment_id });
+	};
+
 	return {
 		handleCreateDailyAssignmentsBatch,
 		handleCreateDailyAssignment,
 		handleUpdateDailyAssignment,
 		handleDeleteDailyAssignment,
 		handleDeleteDailyAssignmentGroup,
+		handleDeleteSingleDailyAssignmentMutation,
 		createDailyAssignmentsBatchMutation,
 		createDailyAssignmentMutation,
 		updateDailyAssignmentMutation,
 		deleteDailyAssignmentMutation,
 		deleteDailyAssignmentGroupMutation,
+		deleteSingleDailyAssignmentMutation,
 	};
 }

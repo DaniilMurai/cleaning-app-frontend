@@ -30,6 +30,7 @@ export default function AdminPage() {
 		editLocation: false,
 		editRoom: false,
 		deleteAssignment: false,
+		deleteAssignmentGroup: false,
 		deleteTask: false,
 		deleteLocation: false,
 		deleteRoom: false,

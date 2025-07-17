@@ -3,11 +3,12 @@ import { TouchableOpacity, View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Typography from "../../ui/common/Typography";
 import Collapse from "../../ui/common/Collapse";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	AdminReadUser,
 	DailyAssignmentResponse,
 	LocationResponse,
+	useCheckAssignmentGroup,
 	useGetDailyAssignments,
 } from "@/api/admin";
 import { StyleSheet } from "react-native-unistyles";
@@ -34,6 +35,7 @@ export default function RenderDailyAssignments({
 	const [expandedAssignments, setExpandedAssignments] = useState<Record<number, boolean>>({});
 
 	const { t } = useTranslation();
+	const [assignmentIdToCheck, setAssignmentIdToCheck] = useState<number | null>(null);
 
 	const { data: dailyAssignments } = useGetDailyAssignments(
 		{
@@ -46,6 +48,26 @@ export default function RenderDailyAssignments({
 			},
 		}
 	);
+	
+	const { data: assignmentGroup } = useCheckAssignmentGroup(
+		{ daily_assignment_id: assignmentIdToCheck ?? 0 },
+		{
+			query: {
+				enabled: assignmentIdToCheck !== null,
+			},
+		}
+	);
+
+	useEffect(() => {
+		console.log("assignmentGroup: ", assignmentGroup);
+		if (!assignmentGroup) return;
+		if (assignmentGroup && assignmentGroup.assignments_amount > 1) {
+			modal.openModal("deleteAssignmentGroup");
+		} else {
+			modal.openModal("deleteAssignment");
+		}
+		setAssignmentIdToCheck(null);
+	}, [assignmentGroup]);
 
 	// Функции для обработки состояния развернутых элементов
 	const toggleAssignment = (id: number) => {
@@ -58,7 +80,6 @@ export default function RenderDailyAssignments({
 	};
 
 	const render = () => {
-		// console.log(dailyAssignments);
 		if (!dailyAssignments) return [];
 		console.log("rerender render");
 		return dailyAssignments.map(assignment => {
@@ -109,7 +130,8 @@ export default function RenderDailyAssignments({
 								style={styles.deleteButton}
 								onPress={() => {
 									setSelectedAssignment(assignment);
-									modal.openModal("deleteAssignment");
+									setAssignmentIdToCheck(assignment.id);
+									// modal.openModal("deleteAssignment");
 								}}
 							>
 								<FontAwesome5 name="trash" size={14} />

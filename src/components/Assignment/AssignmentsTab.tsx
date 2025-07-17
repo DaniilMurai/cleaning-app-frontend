@@ -10,6 +10,7 @@ import {
 	DailyAssignmentResponse,
 	DailyAssignmentUpdate,
 	DeleteDailyAssignmentParams,
+	DeleteDailyAssignmentsGroupParams,
 	EditDailyAssignmentParams,
 	getGetDailyAssignmentsQueryKey,
 	LocationResponse,
@@ -18,6 +19,7 @@ import {
 import {
 	CreateDailyAssignmentForm,
 	DeleteDailyAssignmentConfirm,
+	DeleteGroupDailyAssignmentsConfirm,
 	EditDailyAssignmentForm,
 } from "@/ui/forms/common/DailyAssignmentForms";
 import Calendar from "@/components/user/calendar/Calendar";
@@ -59,10 +61,25 @@ export default function AssignmentsTab({
 		await refetchAssignmentsDates();
 	};
 
+	const deleteDailyAssignmentGroupConfirm = async (
+		daily_assignment_id: DeleteDailyAssignmentsGroupParams
+	) => {
+		await dailyAssignmentMutation.handleDeleteDailyAssignmentGroup(daily_assignment_id);
+		await invalidateDailyAssignments();
+	};
+
 	const deleteDailyAssignmentConfirm = async (
 		daily_assignment_id: DeleteDailyAssignmentParams
 	) => {
-		await dailyAssignmentMutation.handleDeleteDailyAssignmentGroup(daily_assignment_id);
+		await dailyAssignmentMutation.handleDeleteDailyAssignment(daily_assignment_id);
+		await invalidateDailyAssignments();
+	};
+	const deleteSingleDailyAssignmentConfirm = async (
+		daily_assignment_id: DeleteDailyAssignmentParams
+	) => {
+		await dailyAssignmentMutation.handleDeleteSingleDailyAssignmentMutation(
+			daily_assignment_id
+		);
 		await invalidateDailyAssignments();
 	};
 
@@ -115,7 +132,26 @@ export default function AssignmentsTab({
 					/>
 				</Dialog>
 			)}
-
+			{modal.modals.deleteAssignmentGroup && !!selectedAssignment && (
+				<Dialog
+					visible={modal.modals.deleteAssignmentGroup}
+					onClose={() => modal.closeModal("deleteAssignmentGroup")}
+				>
+					<DeleteGroupDailyAssignmentsConfirm
+						assignment={selectedAssignment}
+						onSingleConfirm={async daily_assignment_id =>
+							await deleteSingleDailyAssignmentConfirm(daily_assignment_id)
+						}
+						onGroupConfirm={async daily_assignment_id =>
+							await deleteDailyAssignmentGroupConfirm(daily_assignment_id)
+						}
+						onClose={() => modal.closeModal("deleteAssignmentGroup")}
+						isLoading={
+							dailyAssignmentMutation.handleDeleteDailyAssignmentGroup.isPending
+						}
+					/>
+				</Dialog>
+			)}
 			{modal.modals.deleteAssignment && !!selectedAssignment && (
 				<Dialog
 					visible={modal.modals.deleteAssignment}
@@ -123,14 +159,11 @@ export default function AssignmentsTab({
 				>
 					<DeleteDailyAssignmentConfirm
 						assignment={selectedAssignment}
-						// onConfirm={dailyAssignmentMutation.handleDeleteDailyAssignment}
 						onConfirm={async daily_assignment_id =>
 							await deleteDailyAssignmentConfirm(daily_assignment_id)
 						}
-						onClose={() => modal.closeModal("deleteAssignment")} //TODO всегда удаляется группа
-						isLoading={
-							dailyAssignmentMutation.handleDeleteDailyAssignmentGroup.isPending
-						}
+						onClose={() => modal.closeModal("deleteAssignment")}
+						isLoading={dailyAssignmentMutation.handleDeleteDailyAssignment.isPending}
 					/>
 				</Dialog>
 			)}
