@@ -4,6 +4,7 @@
  * Neuer Standard Admin API
  * OpenAPI spec version: 0.1.0
  */
+import type { DailyAssignmentResponseGroupUuid } from "./dailyAssignmentResponseGroupUuid";
 import type { DailyAssignmentResponseAdminNote } from "./dailyAssignmentResponseAdminNote";
 import type { DailyAssignmentResponseUserNote } from "./dailyAssignmentResponseUserNote";
 import type { DailyAssignmentResponseStartTime } from "./dailyAssignmentResponseStartTime";
@@ -11,6 +12,7 @@ import type { DailyAssignmentResponseEndTime } from "./dailyAssignmentResponseEn
 
 export interface DailyAssignmentResponse {
 	id: number;
+	group_uuid?: DailyAssignmentResponseGroupUuid;
 	location_id: number;
 	user_id: number;
 	date: string;

@@ -5,6 +5,7 @@
   "version": "52.0.78",
   "scripts": {
     "start": "expo start",
+    "start-clear": "expo start --clear",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
     "ios": "expo run:ios",
@@ -80,7 +81,8 @@
     "react-native-unistyles": "^3.0.0-rc.5",
     "react-native-vector-icons": "^10.2.0",
     "react-native-web": "^0.20.0",
-    "react-native-webview": "13.13.5"
+    "react-native-webview": "13.13.5",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

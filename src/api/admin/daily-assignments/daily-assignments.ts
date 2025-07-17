@@ -39,6 +39,7 @@ import type {
 	DailyAssignmentResponse,
 	DailyAssignmentUpdate,
 	DeleteDailyAssignmentParams,
+	DeleteDailyAssignmentsGroupParams,
 	EditDailyAssignmentParams,
 	GetDailyAssignmentsParams,
 	HTTPValidationError,
@@ -1128,6 +1129,84 @@ export const useCreateDailyAssignmentsBatch = <
 	TContext
 > => {
 	const mutationOptions = getCreateDailyAssignmentsBatchMutationOptions(options);
+
+	return useMutation(mutationOptions, queryClient);
+};
+/**
+ * @summary Delete Daily Assignments Group
+ */
+export const deleteDailyAssignmentsGroup = (params: DeleteDailyAssignmentsGroupParams) => {
+	return getAxios<SuccessResponse>({
+		url: `/admin/daily-assignments/group`,
+		method: "DELETE",
+		params,
+	});
+};
+
+export const getDeleteDailyAssignmentsGroupMutationOptions = <
+	TError = ErrorType<HTTPValidationError>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof deleteDailyAssignmentsGroup>>,
+		TError,
+		{ params: DeleteDailyAssignmentsGroupParams },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof deleteDailyAssignmentsGroup>>,
+	TError,
+	{ params: DeleteDailyAssignmentsGroupParams },
+	TContext
+> => {
+	const mutationKey = ["deleteDailyAssignmentsGroup"];
+	const { mutation: mutationOptions } = options
+		? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+			? options
+			: { ...options, mutation: { ...options.mutation, mutationKey } }
+		: { mutation: { mutationKey } };
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof deleteDailyAssignmentsGroup>>,
+		{ params: DeleteDailyAssignmentsGroupParams }
+	> = props => {
+		const { params } = props ?? {};
+
+		return deleteDailyAssignmentsGroup(params);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteDailyAssignmentsGroupMutationResult = NonNullable<
+	Awaited<ReturnType<typeof deleteDailyAssignmentsGroup>>
+>;
+
+export type DeleteDailyAssignmentsGroupMutationError = ErrorType<HTTPValidationError>;
+
+/**
+ * @summary Delete Daily Assignments Group
+ */
+export const useDeleteDailyAssignmentsGroup = <
+	TError = ErrorType<HTTPValidationError>,
+	TContext = unknown,
+>(
+	options?: {
+		mutation?: UseMutationOptions<
+			Awaited<ReturnType<typeof deleteDailyAssignmentsGroup>>,
+			TError,
+			{ params: DeleteDailyAssignmentsGroupParams },
+			TContext
+		>;
+	},
+	queryClient?: QueryClient
+): UseMutationResult<
+	Awaited<ReturnType<typeof deleteDailyAssignmentsGroup>>,
+	TError,
+	{ params: DeleteDailyAssignmentsGroupParams },
+	TContext
+> => {
+	const mutationOptions = getDeleteDailyAssignmentsGroupMutationOptions(options);
 
 	return useMutation(mutationOptions, queryClient);
 };

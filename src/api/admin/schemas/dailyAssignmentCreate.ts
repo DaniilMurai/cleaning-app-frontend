@@ -7,6 +7,7 @@
 import type { DailyAssignmentCreateAdminNote } from "./dailyAssignmentCreateAdminNote";
 
 export interface DailyAssignmentCreate {
+	group_uuid?: string;
 	location_id: number;
 	user_id: number;
 	date: string;

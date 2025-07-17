@@ -39,7 +39,7 @@ export default function AssignmentsTab({
 	const { t } = useTranslation();
 
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-	
+
 	// Состояния для управления развернутыми/свернутыми элементами
 	const [selectedAssignment, setSelectedAssignment] = useState<DailyAssignmentResponse | null>();
 
@@ -85,9 +85,12 @@ export default function AssignmentsTab({
 				>
 					<DeleteDailyAssignmentConfirm
 						assignment={selectedAssignment}
-						onConfirm={dailyAssignmentMutation.handleDeleteDailyAssignment}
-						onClose={() => modal.closeModal("deleteAssignment")}
-						isLoading={dailyAssignmentMutation.deleteDailyAssignmentMutation.isPending}
+						// onConfirm={dailyAssignmentMutation.handleDeleteDailyAssignment}
+						onConfirm={dailyAssignmentMutation.handleDeleteDailyAssignmentGroup}
+						onClose={() => modal.closeModal("deleteAssignment")} //TODO всегда удаляется группа
+						isLoading={
+							dailyAssignmentMutation.handleDeleteDailyAssignmentGroup.isPending
+						}
 					/>
 				</Dialog>
 			)}

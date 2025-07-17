@@ -20,6 +20,7 @@ export * from "./dailyAssignmentForUserResponseDurationHours";
 export * from "./dailyAssignmentForUserResponseDurationMinutes";
 export * from "./dailyAssignmentForUserResponseDurationSeconds";
 export * from "./dailyAssignmentForUserResponseEndTime";
+export * from "./dailyAssignmentForUserResponseGroupUuid";
 export * from "./dailyAssignmentForUserResponseStartTime";
 export * from "./dailyAssignmentForUserResponseUserNote";
 export * from "./dailyAssignmentForUserUpdate";

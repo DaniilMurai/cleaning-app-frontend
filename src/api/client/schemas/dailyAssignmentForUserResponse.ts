@@ -4,6 +4,7 @@
  * Neuer Standart Client API
  * OpenAPI spec version: 0.1.0
  */
+import type { DailyAssignmentForUserResponseGroupUuid } from "./dailyAssignmentForUserResponseGroupUuid";
 import type { LocationResponse } from "./locationResponse";
 import type { RoomResponse } from "./roomResponse";
 import type { TaskResponse } from "./taskResponse";
@@ -19,6 +20,7 @@ import type { DailyAssignmentForUserResponseDurationHours } from "./dailyAssignm
 
 export interface DailyAssignmentForUserResponse {
 	id: number;
+	group_uuid?: DailyAssignmentForUserResponseGroupUuid;
 	location: LocationResponse;
 	rooms?: RoomResponse[];
 	tasks?: TaskResponse[];

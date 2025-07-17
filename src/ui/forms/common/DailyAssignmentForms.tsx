@@ -19,7 +19,9 @@ import {
 import CustomPicker from "@/ui/common/Picker";
 import dayjs, { Dayjs } from "dayjs";
 import DateInput from "@/ui/date/DateInput";
-import DatesInput from "@/ui/date/DatesInput";
+import { DatesInput } from "@/ui/date/DatesInput";
+import Checkbox from "@/ui/common/CheckBox";
+import { v4 as uuidv4 } from "uuid";
 
 interface Location {
 	id: number;
@@ -48,10 +50,18 @@ export function CreateDailyAssignmentForm({
 		user_id: users.length > 0 ? users[0].id : 0,
 		date: dayjs().format("YYYY-MM-DD HH:mm"),
 		admin_note: "",
+		group_uuid: uuidv4(),
 	});
+
+	console.log("formData: ", formData);
+
+	const [mode, setMode] = useState<"normal" | "everyWeek" | "everyTwoWeeks" | "everyMonth">(
+		"everyTwoWeeks"
+	);
 
 	const [dates, setDates] = useState<Dayjs[]>([]);
 
+	console.log("dates in DailyAssignmentForms: ", dates);
 	const handleSubmit = () => {
 		if (!dates || dates.length === 0) return;
 		const updatedData: DailyAssignmentCreate[] = dates.map(date => ({
@@ -119,8 +129,31 @@ export function CreateDailyAssignmentForm({
 				values={dates.map(date => date.format("YYYY-MM-DD HH:mm"))}
 				onChange={newDates => setDates(newDates.map(v => dayjs(v)))}
 				style={styles.dateContainer}
+				multipleEnterMode={mode}
+				limitYear={1}
 			/>
-
+			<View style={styles.modesContainer}>
+				<Checkbox
+					label={"Normal Mode"}
+					checked={mode === "normal"}
+					onChange={() => setMode("normal")}
+				/>
+				<Checkbox
+					label={"Every Week"}
+					checked={mode === "everyWeek"}
+					onChange={() => setMode("everyWeek")}
+				/>
+				<Checkbox
+					label={"Every Two Weeks"}
+					checked={mode === "everyTwoWeeks"}
+					onChange={() => setMode("everyTwoWeeks")}
+				/>
+				<Checkbox
+					label={"Every Month"}
+					checked={mode === "everyMonth"}
+					onChange={() => setMode("everyMonth")}
+				/>
+			</View>
 			<Input
 				label={t("components.dailyAssignmentsList.adminNote")}
 				value={formData.admin_note || ""}
@@ -261,6 +294,7 @@ interface DeleteDailyAssignmentConfirmProps {
 	isLoading?: boolean;
 }
 
+//TODO делать рефетч на даты уникальные ассайментов для календаря и на сами ассайменты после удаления изменения или создания
 export function DeleteDailyAssignmentConfirm({
 	assignment,
 	onConfirm,
@@ -345,5 +379,9 @@ const styles = StyleSheet.create(theme => ({
 	},
 	buttonError: {
 		backgroundColor: theme.colors.error.main,
+	},
+	modesContainer: {
+		flexDirection: "row",
+		gap: theme.spacing(2),
 	},
 }));
