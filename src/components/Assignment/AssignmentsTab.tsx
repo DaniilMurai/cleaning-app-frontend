@@ -6,8 +6,11 @@ import { Button, Dialog, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import {
 	AdminReadUser,
+	DailyAssignmentCreate,
 	DailyAssignmentResponse,
+	DailyAssignmentUpdate,
 	DeleteDailyAssignmentParams,
+	EditDailyAssignmentParams,
 	getGetDailyAssignmentsQueryKey,
 	LocationResponse,
 	useGetDailyAssignmentsDates,
@@ -50,15 +53,32 @@ export default function AssignmentsTab({
 	const { data: assignmentsDates, refetch: refetchAssignmentsDates } =
 		useGetDailyAssignmentsDates();
 
-	const deleteDailyAssignmentConfirm = async (
-		daily_assignment_id: DeleteDailyAssignmentParams
-	) => {
-		await dailyAssignmentMutation.handleDeleteDailyAssignmentGroup(daily_assignment_id);
+	const invalidateDailyAssignments = async () => {
 		const queryKey = getGetDailyAssignmentsQueryKey();
 		await queryClient.invalidateQueries({ queryKey, exact: false });
 		await refetchAssignmentsDates();
 	};
-	
+
+	const deleteDailyAssignmentConfirm = async (
+		daily_assignment_id: DeleteDailyAssignmentParams
+	) => {
+		await dailyAssignmentMutation.handleDeleteDailyAssignmentGroup(daily_assignment_id);
+		await invalidateDailyAssignments();
+	};
+
+	const createDailyAssignmentSubmit = async (assignmentData: DailyAssignmentCreate[]) => {
+		await dailyAssignmentMutation.handleCreateDailyAssignmentsBatch(assignmentData);
+		await invalidateDailyAssignments();
+	};
+
+	const editDailyAssignmentSubmit = async (
+		assignmentId: EditDailyAssignmentParams,
+		assignmentData: DailyAssignmentUpdate
+	) => {
+		await dailyAssignmentMutation.handleUpdateDailyAssignment(assignmentId, assignmentData);
+		await invalidateDailyAssignments();
+	};
+
 	const renderModals = () => (
 		<>
 			{modal.modals.createAssignment && (
@@ -67,7 +87,9 @@ export default function AssignmentsTab({
 					onClose={() => modal.closeModal("createAssignment")}
 				>
 					<CreateDailyAssignmentForm
-						onSubmit={dailyAssignmentMutation.handleCreateDailyAssignmentsBatch}
+						onSubmit={async assignmentData =>
+							await createDailyAssignmentSubmit(assignmentData)
+						}
 						onClose={() => modal.closeModal("createAssignment")}
 						users={users || []}
 						locations={locations}
@@ -83,7 +105,9 @@ export default function AssignmentsTab({
 				>
 					<EditDailyAssignmentForm
 						assignment={selectedAssignment}
-						onSubmit={dailyAssignmentMutation.handleUpdateDailyAssignment}
+						onSubmit={async (assignmentId, assignmentData) =>
+							await editDailyAssignmentSubmit(assignmentId, assignmentData)
+						}
 						onClose={() => modal.closeModal("editAssignment")}
 						users={users || []}
 						locations={locations}
@@ -100,8 +124,8 @@ export default function AssignmentsTab({
 					<DeleteDailyAssignmentConfirm
 						assignment={selectedAssignment}
 						// onConfirm={dailyAssignmentMutation.handleDeleteDailyAssignment}
-						onConfirm={daily_assignment_id =>
-							deleteDailyAssignmentConfirm(daily_assignment_id)
+						onConfirm={async daily_assignment_id =>
+							await deleteDailyAssignmentConfirm(daily_assignment_id)
 						}
 						onClose={() => modal.closeModal("deleteAssignment")} //TODO всегда удаляется группа
 						isLoading={

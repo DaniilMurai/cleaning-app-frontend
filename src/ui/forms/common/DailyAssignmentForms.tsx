@@ -68,7 +68,6 @@ export function CreateDailyAssignmentForm({
 			...formData,
 			date: date.format("YYYY-MM-DD HH:mm"),
 		}));
-
 		onSubmit(updatedData);
 	};
 
@@ -294,7 +293,6 @@ interface DeleteDailyAssignmentConfirmProps {
 	isLoading?: boolean;
 }
 
-//TODO делать рефетч на даты уникальные ассайментов для календаря и на сами ассайменты после удаления изменения или создания
 export function DeleteDailyAssignmentConfirm({
 	assignment,
 	onConfirm,
