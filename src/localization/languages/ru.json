@@ -48,7 +48,12 @@
     "submit": "Отправить",
     "yes": "Да",
     "no": "Нет",
-    "noDescription": "Без описания"
+    "noDescription": "Без описания",
+    "week": "неделю",
+    "twoWeeks": "2 недели",
+    "month": "месяц",
+    "days": "{{count}} дней",
+    "unknownInterval": "неизвестный интервал"
   },
   "auth": {
     "login": "Логин",
@@ -246,6 +251,10 @@
       "delete": "Удалить",
       "resetPassword": "Сбросить пароль",
       "activate": "Активировать"
+    },
+    "assignmentGroup": {
+      "futureAssignmentsInfo": "Помимо задания №{{id}} на {{date}}, в будущем запланировано ещё {{count}} задач с интервалом в {{interval}}.",
+      "deleteGroupButton": "Удалить всю серию задач"
     }
   }
 }

@@ -48,7 +48,12 @@
     "submit": "Senden",
     "yes": "Ja",
     "no": "Nein",
-    "noDescription": "Keine Beschreibung"
+    "noDescription": "Keine Beschreibung",
+    "week": "einer Woche",
+    "twoWeeks": "zwei Wochen",
+    "month": "einem Monat",
+    "days": "{{count}} Tagen",
+    "unknownInterval": "unbekanntem Intervall"
   },
   "auth": {
     "login": "Anmeldung",
@@ -246,6 +251,10 @@
       "delete": "Löschen",
       "resetPassword": "Passwort zurücksetzen",
       "activate": "Aktivieren"
+    },
+    "assignmentGroup": {
+      "futureAssignmentsInfo": "Zusätzlich zur Aufgabe Nr. {{id}} am {{date}} sind noch {{count}} weitere Aufgaben mit einem Intervall von {{interval}} geplant.",
+      "deleteGroupButton": "Gesamte Aufgabenserie löschen"
     }
   }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { StyleProp, View, ViewStyle } from "react-native";
 import DateTimePicker from "react-native-ui-datepicker";
 import dayjs, { Dayjs } from "dayjs";
@@ -15,6 +15,8 @@ interface DatesInputProps {
 	limitYear: number;
 }
 
+// ... импорты
+
 export function DatesInput({
 	label,
 	values,
@@ -25,100 +27,59 @@ export function DatesInput({
 }: DatesInputProps) {
 	const { theme } = useUnistyles();
 
-	const [pickerDates, setPickerDates] = useState<Dayjs[]>(() => values.map(v => dayjs(v)));
-	console.log("pickerDates in body: ", pickerDates);
-	console.log("values in body: ", values);
-	const pickerDatesRef = useRef<Dayjs[]>([]);
+	// Используем Dayjs для всех внутренних операций
+	const [selectedDates, setSelectedDates] = useState<Dayjs[]>(() =>
+		values.map(v => dayjs(v)).filter(d => d.isValid())
+	);
 
-	useEffect(() => {
-		const validDates = values.map(v => dayjs(v)).filter(d => d.isValid());
-		setPickerDates(validDates);
-		pickerDatesRef.current = validDates;
-	}, [values]);
+	// Обработчик изменения дат
+	const handleDateChange = (dates: Date[]) => {
+		const newDates = dates.map(d => dayjs(d)).filter(d => d.isValid());
 
-	function handleDateChange(selected: Dayjs[] | Date[]) {
-		const newSelection = (selected as Date[]).map(d => dayjs(d)).filter(d => d.isValid());
-		console.log("multipleEnterMode in handleDateChange: ", multipleEnterMode); // вот тут всегда обычный
-
-		const pickerDatesSet = new Set(pickerDatesRef.current.map(d => d.toISOString()));
-
-		const baseDate: Dayjs | undefined = newSelection.find(
-			item => !pickerDatesSet.has(item.toISOString())
-		);
-
-		console.log("baseDate: ", baseDate);
-		console.log("pickerDates: ", pickerDates);
-		if (!baseDate) {
-			console.log("Нет новой даты. Возможно пользователь снял выбор");
-			setPickerDates(newSelection);
+		// Если режим "normal", просто сохраняем выбранные даты
+		if (multipleEnterMode === "normal") {
+			setSelectedDates(newDates);
+			onChange(newDates.map(d => d.format("YYYY-MM-DD HH:mm")));
 			return;
 		}
 
-		let generatedDates: Dayjs[];
-		let final: Dayjs[];
+		// Для периодических режимов находим последнюю добавленную дату
+		const lastAdded = newDates.find(date => !selectedDates.some(sd => sd.isSame(date, "day")));
 
-		switch (multipleEnterMode) {
-			case "normal":
-				console.log("обычный режим");
-
-				generatedDates = newSelection;
-				final = [...pickerDates, ...generatedDates];
-
-				break;
-
-			case "everyWeek":
-				console.log("everyWeek режим");
-
-				generatedDates = [baseDate];
-				for (let i = 1; i < 52 * limitYear; i++) {
-					generatedDates.push(baseDate.add(i * 7, "day"));
-				}
-				final = generatedDates;
-
-				break;
-
-			case "everyTwoWeeks":
-				console.log("everyTwoWeeks режим");
-
-				generatedDates = [baseDate];
-				for (let i = 1; i < 26 * limitYear; i++) {
-					generatedDates.push(baseDate.add(i * 14, "day"));
-				}
-				final = generatedDates;
-
-				break;
-
-			case "everyMonth":
-				console.log("everyMonth режим");
-
-				generatedDates = [baseDate];
-				for (let i = 1; i < 12 * limitYear; i++) {
-					generatedDates.push(baseDate.add(i, "month"));
-				}
-				final = generatedDates;
-
-				break;
-
-			default:
-				console.log("обычный режим + default");
-				generatedDates = newSelection;
-				final = [...pickerDates, ...generatedDates];
-
-				break;
+		if (!lastAdded) {
+			setSelectedDates(newDates);
+			return;
 		}
 
-		const unique = final.filter(
-			(d, index, self) => index === self.findIndex(other => other.isSame(d, "day"))
+		// Генерируем даты в зависимости от режима
+		let generatedDates: Dayjs[] = [lastAdded];
+		const iterations =
+			multipleEnterMode === "everyWeek"
+				? 52 * limitYear
+				: multipleEnterMode === "everyTwoWeeks"
+					? 26 * limitYear
+					: 12 * limitYear;
+
+		const increment =
+			multipleEnterMode === "everyWeek" ? 7 : multipleEnterMode === "everyTwoWeeks" ? 14 : 1; // для месяца будем добавлять месяцы
+
+		for (let i = 1; i < iterations; i++) {
+			const newDate =
+				multipleEnterMode === "everyMonth"
+					? lastAdded.add(i, "month")
+					: lastAdded.add(i * increment, "day");
+
+			generatedDates.push(newDate);
+		}
+
+		// Объединяем с существующими датами и удаляем дубликаты
+		const allDates = [...selectedDates, ...generatedDates].filter(
+			(date, index, self) => index === self.findIndex(d => d.isSame(date, "day"))
 		);
 
-		console.log("unique", unique);
-		setPickerDates(unique);
-		pickerDatesRef.current = unique;
-
-		onChange(unique.map(d => d.format("YYYY-MM-DD HH:mm")));
-	}
-
-	console.log("multipleEnterMode in main body: ", multipleEnterMode); // вот тут правильно показывает
+		setSelectedDates(allDates);
+		onChange(allDates.map(d => d.format("YYYY-MM-DD HH:mm")));
+	};
 
 	return (
 		<View style={style}>
@@ -140,15 +101,8 @@ export function DatesInput({
 			>
 				<DateTimePicker
 					mode="multiple"
-					dates={(pickerDates ?? []).map(d => d.toDate())}
-					onChange={({ dates }) => {
-						console.log("onChange");
-						console.log("multipleEnterMode in DateTimePicker:", multipleEnterMode); // вот тут тоже всегда обычный
-
-						dates.map(date => console.log("dates: ", date));
-
-						handleDateChange(dates as Date[]);
-					}}
+					dates={selectedDates.map(d => d.toDate())}
+					onChange={({ dates }) => handleDateChange(dates as Date[])}
 					timePicker={true}
 					styles={{
 						header: {

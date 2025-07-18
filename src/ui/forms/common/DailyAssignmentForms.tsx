@@ -58,18 +58,22 @@ export function CreateDailyAssignmentForm({
 	console.log("formData: ", formData);
 
 	const [mode, setMode] = useState<"normal" | "everyWeek" | "everyTwoWeeks" | "everyMonth">(
-		"everyTwoWeeks"
+		"everyMonth"
 	);
 
 	const [dates, setDates] = useState<Dayjs[]>([]);
 
 	console.log("dates in DailyAssignmentForms: ", dates);
+
+	// Изменяем обработчик сабмита
 	const handleSubmit = () => {
-		if (!dates || dates.length === 0) return;
+		if (dates.length === 0) return;
+
 		const updatedData: DailyAssignmentCreate[] = dates.map(date => ({
 			...formData,
-			date: date.format("YYYY-MM-DD HH:mm"),
+			date: dayjs(date).format("YYYY-MM-DD HH:mm"),
 		}));
+
 		onSubmit(updatedData);
 	};
 
@@ -305,6 +309,9 @@ export function DeleteGroupDailyAssignmentsConfirm({
 }: DeleteGroupDailyAssignmentsConfirmProps) {
 	const { t } = useTranslation();
 	const { data: groupData } = useCheckAssignmentGroup({ daily_assignment_id: assignment.id });
+	const interval = groupData?.interval_days ?? 0;
+	console.log("interval: ", interval);
+	console.log("hello");
 	return (
 		<Card size="medium" style={styles.container}>
 			<Typography variant="h5" style={styles.title}>
@@ -312,9 +319,21 @@ export function DeleteGroupDailyAssignmentsConfirm({
 			</Typography>
 
 			<Typography variant="body1">
-				Помимо задания #{assignment.id} на {assignment.date} число, существуют еще{" "}
-				{groupData && groupData.assignments_amount} задач c интервалом в{" "}
-				{groupData && groupData.interval_days}.
+				{t("components.assignmentGroup.futureAssignmentsInfo", {
+					id: assignment.id,
+					date: assignment.date,
+					count: groupData?.assignments_amount ?? 0,
+					interval:
+						interval === 7
+							? t("common.week")
+							: interval === 14
+								? t("common.twoWeeks")
+								: interval >= 28
+									? t("common.month")
+									: interval > 0
+										? t("common.days", { count: interval })
+										: t("common.unknownInterval"),
+				})}
 			</Typography>
 
 			<View style={styles.buttonsContainer}>
@@ -324,7 +343,7 @@ export function DeleteGroupDailyAssignmentsConfirm({
 					onPress={() => onGroupConfirm({ daily_assignment_id: assignment.id })}
 					loading={isLoading}
 				>
-					Удалить всю группу задач
+					{t("components.assignmentGroup.deleteGroupButton")}
 				</Button>
 
 				<Button
