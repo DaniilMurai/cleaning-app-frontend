@@ -238,7 +238,7 @@
     "tasksList": {
       "title": "Название",
       "description": "Описание",
-      "frequency": "Частота (дни)"
+      "frequency": "Частота (через каждые N выполненных назначений)"
     },
     "usersList": {
       "name": "Имя",

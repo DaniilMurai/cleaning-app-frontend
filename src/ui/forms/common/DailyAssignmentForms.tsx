@@ -58,7 +58,7 @@ export function CreateDailyAssignmentForm({
 	console.log("formData: ", formData);
 
 	const [mode, setMode] = useState<"normal" | "everyWeek" | "everyTwoWeeks" | "everyMonth">(
-		"everyMonth"
+		"everyWeek"
 	);
 
 	const [dates, setDates] = useState<Dayjs[]>([]);

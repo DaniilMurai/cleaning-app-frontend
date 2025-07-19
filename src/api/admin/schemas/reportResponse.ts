@@ -4,12 +4,14 @@
  * Neuer Standard Admin API
  * OpenAPI spec version: 0.1.0
  */
-import type { ReportResponseMessage } from "./reportResponseMessage";
-import type { ReportResponseMediaLinks } from "./reportResponseMediaLinks";
 import type { ReportResponseStartTime } from "./reportResponseStartTime";
 import type { ReportResponseEndTime } from "./reportResponseEndTime";
-import type { AssignmentStatus } from "./assignmentStatus";
+import type { ReportResponseLocationName } from "./reportResponseLocationName";
+import type { ReportResponseUserFullName } from "./reportResponseUserFullName";
 import type { ReportResponseReportRooms } from "./reportResponseReportRooms";
+import type { ReportResponseMessage } from "./reportResponseMessage";
+import type { ReportResponseMediaLinks } from "./reportResponseMediaLinks";
+import type { AssignmentStatus } from "./assignmentStatus";
 import type { ReportResponseDurationSeconds } from "./reportResponseDurationSeconds";
 import type { ReportResponseDurationMinutes } from "./reportResponseDurationMinutes";
 import type { ReportResponseDurationHours } from "./reportResponseDurationHours";
@@ -18,15 +20,17 @@ import type { ReportResponseDurationHours } from "./reportResponseDurationHours"
  * Схема для ответа API
  */
 export interface ReportResponse {
-	daily_assignment_id: number;
-	user_id: number;
-	message?: ReportResponseMessage;
-	media_links?: ReportResponseMediaLinks;
 	start_time?: ReportResponseStartTime;
 	end_time?: ReportResponseEndTime;
-	status: AssignmentStatus;
 	id: number;
+	daily_assignment_id: number;
+	user_id: number;
+	location_name?: ReportResponseLocationName;
+	user_full_name?: ReportResponseUserFullName;
 	report_rooms?: ReportResponseReportRooms;
+	message?: ReportResponseMessage;
+	media_links?: ReportResponseMediaLinks;
+	status: AssignmentStatus;
 	/** Вычисляет длительность в секундах */
 	readonly duration_seconds: ReportResponseDurationSeconds;
 	/** Возвращает длительность в минутах */

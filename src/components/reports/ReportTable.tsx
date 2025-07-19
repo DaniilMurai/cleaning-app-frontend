@@ -1,8 +1,6 @@
 import {
-	AdminReadUser,
 	DailyAssignmentResponse,
 	GetReportsParams,
-	LocationResponse,
 	ReportResponse,
 	useGetReportsInfinite,
 } from "@/api/admin";
@@ -17,19 +15,12 @@ import { useTranslation } from "react-i18next";
 
 interface Props {
 	queryParams: Partial<GetReportsParams>;
-	users?: AdminReadUser[];
 	assignments?: DailyAssignmentResponse[];
-	locations?: LocationResponse[];
 }
 
 const LIMIT = 20;
 
-export default function ReportsTable({
-	queryParams,
-	assignments,
-	users = [],
-	locations = [],
-}: Props) {
+export default function ReportsTable({ queryParams, assignments }: Props) {
 	const { t } = useTranslation();
 	const params = { ...queryParams, limit: LIMIT };
 	const {
@@ -48,19 +39,8 @@ export default function ReportsTable({
 
 	const data = reports?.pages?.flat() ?? [];
 
-	const getUserFullName = (report: ReportResponse) => {
-		const user = users.find(u => report.user_id === u.id);
-		return user?.full_name ?? "Unknown User";
-	};
-
 	const getAssignment = (report: ReportResponse) => {
 		return assignments?.find(a => report.daily_assignment_id === a.id) ?? null;
-	};
-
-	const getLocationName = (assignment: DailyAssignmentResponse | null) => {
-		if (!assignment) return "—";
-		const location = locations.find(l => l.id === assignment.location_id);
-		return location?.name ?? "Unknown Location";
 	};
 
 	const renderHeader = () => (
@@ -92,9 +72,10 @@ export default function ReportsTable({
 	const renderItem = ({ item }: { item: ReportResponse }) => {
 		const assignment = getAssignment(item);
 		const date = assignment ? formatToDate(assignment.date) : "—";
-		const locationName = getLocationName(assignment);
+		const locationName = item.location_name;
 		const durationInMs = item.duration_seconds ? item.duration_seconds * 1000 : 0;
 		const duration = formatTime(durationInMs);
+		const userFullName = item.user_full_name;
 
 		let start_time = "-";
 		if (item.start_time && assignment) {
@@ -116,7 +97,7 @@ export default function ReportsTable({
 
 		return (
 			<View style={[styles.row]}>
-				<Typography style={[styles.cell, { flex: 2 }]}>{getUserFullName(item)}</Typography>
+				<Typography style={[styles.cell, { flex: 2 }]}>{userFullName}</Typography>
 				<Typography style={[styles.cell, { flex: 2 }]}>{locationName}</Typography>
 				<Typography style={[styles.cell, { flex: 2 }]}>{date}</Typography>
 				<Typography style={[styles.cell, { flex: 2.5 }]}>

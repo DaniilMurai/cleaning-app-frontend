@@ -4,20 +4,20 @@
  * Neuer Standart Client API
  * OpenAPI spec version: 0.1.0
  */
-import type { CreateReportMessage } from "./createReportMessage";
-import type { CreateReportMediaLinks } from "./createReportMediaLinks";
 import type { CreateReportStartTime } from "./createReportStartTime";
 import type { CreateReportEndTime } from "./createReportEndTime";
+import type { CreateReportMessage } from "./createReportMessage";
+import type { CreateReportMediaLinks } from "./createReportMediaLinks";
 import type { AssignmentStatus } from "./assignmentStatus";
 import type { CreateReportReportRooms } from "./createReportReportRooms";
 
 export interface CreateReport {
+	start_time?: CreateReportStartTime;
+	end_time?: CreateReportEndTime;
 	daily_assignment_id: number;
 	user_id: number;
 	message?: CreateReportMessage;
 	media_links?: CreateReportMediaLinks;
-	start_time?: CreateReportStartTime;
-	end_time?: CreateReportEndTime;
 	status: AssignmentStatus;
 	report_rooms?: CreateReportReportRooms;
 }

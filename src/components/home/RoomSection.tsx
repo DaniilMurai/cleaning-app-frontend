@@ -15,14 +15,10 @@ interface Props {
 export default function RoomSection({ assignment, room }: Props) {
 	const { t } = useTranslation();
 	const [isExpanded, setIsExpanded] = useState(false);
-
 	const toggleExpand = () => setIsExpanded(prev => !prev);
 
-	const roomTasks = assignment.room_tasks
-		?.filter(rt => rt.room_id === room.id)
-		.map(rt => assignment.tasks && assignment.tasks.find(task => task.id === rt.task_id))
-		.filter(Boolean);
-
+	const roomTasks = assignment.assigned_tasks?.filter(task => task.room.id === room.id);
+	
 	return (
 		<View style={styles.roomSection}>
 			<TouchableOpacity style={styles.roomHeader} onPress={toggleExpand}>
@@ -41,16 +37,13 @@ export default function RoomSection({ assignment, room }: Props) {
 						{t("admin.tasks")}
 					</Typography>
 					{roomTasks && roomTasks.length > 0 ? (
-						roomTasks.map(
-							task =>
-								task && (
-									<View key={task.id} style={styles.roomTaskItem}>
-										<Typography style={styles.wrappableText}>
-											{task.title}
-										</Typography>
-									</View>
-								)
-						)
+						roomTasks.map(task => (
+							<View key={task.id} style={styles.roomTaskItem}>
+								<Typography style={styles.wrappableText}>
+									{task.task.title}
+								</Typography>
+							</View>
+						))
 					) : (
 						<Typography style={styles.emptyState}>{t("admin.noTasks")}</Typography>
 					)}

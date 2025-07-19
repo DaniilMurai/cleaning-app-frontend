@@ -238,7 +238,7 @@
     "tasksList": {
       "title": "Titel",
       "description": "Beschreibung",
-      "frequency": "Häufigkeit (Tage)"
+      "frequency": "Häufigkeit (nach jeweils N erledigten Aufgaben)"
     },
     "usersList": {
       "name": "Name",
