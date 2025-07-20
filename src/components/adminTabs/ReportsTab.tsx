@@ -1,12 +1,7 @@
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { Button } from "@/ui";
-import {
-	AdminReadUser,
-	DailyAssignmentResponse,
-	GetReportsParams,
-	LocationResponse,
-} from "@/api/admin";
+import { DailyAssignmentResponse, GetReportsParams } from "@/api/admin";
 import ReportsTable from "@/components/reports/ReportTable";
 import React, { useState } from "react";
 import SearchFilterPanel from "@/components/reports/SearchFilterPanel";
@@ -14,12 +9,10 @@ import useExportReportSSE from "@/components/reports/useExportReportSSE";
 import { useTranslation } from "react-i18next";
 
 interface Props {
-	users: AdminReadUser[];
 	assignments: DailyAssignmentResponse[];
-	locations: LocationResponse[];
 }
 
-export default function ReportsTab({ users, assignments, locations }: Props) {
+export default function ReportsTab({ assignments }: Props) {
 	// Состояние для параметров запроса
 	const { t } = useTranslation();
 	useExportReportSSE();
@@ -58,12 +51,7 @@ export default function ReportsTab({ users, assignments, locations }: Props) {
 				/>
 			</View>
 			<View style={styles.scrollContainer}>
-				<ReportsTable
-					queryParams={queryParams}
-					users={users}
-					assignments={assignments}
-					locations={locations}
-				/>
+				<ReportsTable queryParams={queryParams} assignments={assignments} />
 			</View>
 		</View>
 	);

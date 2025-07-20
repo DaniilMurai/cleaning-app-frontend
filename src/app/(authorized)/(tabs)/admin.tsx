@@ -70,11 +70,7 @@ export default function AdminPage() {
 			)}
 
 			{activeTab === "reports" && (
-				<ReportsTab
-					assignments={adminData.dailyAssignments || []}
-					users={users || []}
-					locations={adminData.locations || []}
-				/>
+				<ReportsTab assignments={adminData.dailyAssignments || []} />
 			)}
 
 			{activeTab === "assignments" && (
