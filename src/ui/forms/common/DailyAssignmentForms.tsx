@@ -17,6 +17,8 @@ import {
 	DeleteDailyAssignmentsGroupParams,
 	EditDailyAssignmentParams,
 	useCheckAssignmentGroup,
+	useGetLocations,
+	useGetUsers,
 } from "@/api/admin";
 import CustomPicker from "@/ui/common/Picker";
 import dayjs, { Dayjs } from "dayjs";
@@ -34,22 +36,25 @@ interface CreateDailyAssignmentFormProps {
 	onSubmit: (assignmentData: DailyAssignmentCreate[]) => void;
 	onClose: () => void;
 	isLoading?: boolean;
-	users: AdminReadUser[];
-	locations: Location[];
+	// users: AdminReadUser[];
+	// locations: Location[];
 }
 
 export function CreateDailyAssignmentForm({
 	onSubmit,
 	onClose,
 	isLoading,
-	users,
-	locations,
+	// users,
+	// locations,
 }: CreateDailyAssignmentFormProps) {
 	const { t } = useTranslation();
 
+	const { data: users } = useGetUsers();
+	const { data: locations } = useGetLocations();
+
 	const [formData, setFormData] = useState<DailyAssignmentCreate>({
-		location_id: locations.length > 0 ? locations[0].id : 0,
-		user_id: users.length > 0 ? users[0].id : 0,
+		location_id: locations && locations.length > 0 ? locations[0].id : 0,
+		user_id: users && users.length > 0 ? users[0].id : 0,
 		date: dayjs().format("YYYY-MM-DD HH:mm"),
 		admin_note: "",
 		group_uuid: uuidv4(),
@@ -81,15 +86,19 @@ export function CreateDailyAssignmentForm({
 		return user.full_name || user.nickname || `User ${user.id}`;
 	};
 
-	const userOptions = users.map(user => ({
-		label: getUserDisplayName(user),
-		value: user.id.toString(),
-	}));
+	const userOptions =
+		users &&
+		users.map(user => ({
+			label: getUserDisplayName(user),
+			value: user.id.toString(),
+		}));
 
-	const locationOptions = locations.map(loc => ({
-		label: loc.name,
-		value: loc.id.toString(),
-	}));
+	const locationOptions =
+		locations &&
+		locations.map(loc => ({
+			label: loc.name,
+			value: loc.id.toString(),
+		}));
 
 	return (
 		<Card size="large" style={styles.container}>
@@ -101,7 +110,7 @@ export function CreateDailyAssignmentForm({
 				<CustomPicker
 					label={t("components.dailyAssignmentsList.user") + "*"}
 					value={formData.user_id?.toString() || ""}
-					options={userOptions}
+					options={userOptions ?? []}
 					onChange={value =>
 						value &&
 						setFormData(prev => ({
@@ -117,7 +126,7 @@ export function CreateDailyAssignmentForm({
 				<CustomPicker
 					label={t("components.dailyAssignmentsList.location") + "*"}
 					value={formData.location_id?.toString() || ""}
-					options={locationOptions}
+					options={locationOptions ?? []}
 					onChange={value =>
 						value &&
 						setFormData(prev => ({

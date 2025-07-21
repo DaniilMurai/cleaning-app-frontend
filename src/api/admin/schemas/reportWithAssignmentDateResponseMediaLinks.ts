@@ -5,4 +5,4 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type ReportResponseLocationName = string | null;
+export type ReportWithAssignmentDateResponseMediaLinks = string[] | null;

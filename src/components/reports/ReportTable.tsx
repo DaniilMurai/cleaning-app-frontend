@@ -1,7 +1,6 @@
 import {
-	DailyAssignmentResponse,
 	GetReportsParams,
-	ReportResponse,
+	ReportWithAssignmentDateResponse,
 	useGetReportsInfinite,
 } from "@/api/admin";
 import React from "react";
@@ -15,12 +14,11 @@ import { useTranslation } from "react-i18next";
 
 interface Props {
 	queryParams: Partial<GetReportsParams>;
-	assignments?: DailyAssignmentResponse[];
 }
 
 const LIMIT = 20;
 
-export default function ReportsTable({ queryParams, assignments }: Props) {
+export default function ReportsTable({ queryParams }: Props) {
 	const { t } = useTranslation();
 	const params = { ...queryParams, limit: LIMIT };
 	const {
@@ -38,10 +36,6 @@ export default function ReportsTable({ queryParams, assignments }: Props) {
 	});
 
 	const data = reports?.pages?.flat() ?? [];
-
-	const getAssignment = (report: ReportResponse) => {
-		return assignments?.find(a => report.daily_assignment_id === a.id) ?? null;
-	};
 
 	const renderHeader = () => (
 		<View style={[styles.row, styles.header, { height: 48 }]}>
@@ -69,17 +63,16 @@ export default function ReportsTable({ queryParams, assignments }: Props) {
 		</View>
 	);
 
-	const renderItem = ({ item }: { item: ReportResponse }) => {
-		const assignment = getAssignment(item);
-		const date = assignment ? formatToDate(assignment.date) : "—";
+	const renderItem = ({ item }: { item: ReportWithAssignmentDateResponse }) => {
+		const date = item.assignment_date ?? "—";
 		const locationName = item.location_name;
 		const durationInMs = item.duration_seconds ? item.duration_seconds * 1000 : 0;
 		const duration = formatTime(durationInMs);
 		const userFullName = item.user_full_name;
 
 		let start_time = "-";
-		if (item.start_time && assignment) {
-			if (formatToDate(assignment.date) === formatToDate(item.start_time)) {
+		if (item.start_time) {
+			if (formatToDate(date) === formatToDate(item.start_time)) {
 				start_time = formatToTime(item.start_time);
 			} else {
 				start_time = formatToDateTime(item.start_time);
@@ -87,8 +80,8 @@ export default function ReportsTable({ queryParams, assignments }: Props) {
 		}
 
 		let end_time = "-";
-		if (item.end_time && assignment) {
-			if (formatToDate(assignment.date) === formatToDate(item.end_time)) {
+		if (item.end_time) {
+			if (formatToDate(date) === formatToDate(item.end_time)) {
 				end_time = formatToTime(item.end_time);
 			} else {
 				end_time = formatToDateTime(item.end_time);

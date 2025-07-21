@@ -69,14 +69,11 @@ export default function AdminPage() {
 				/>
 			)}
 
-			{activeTab === "reports" && (
-				<ReportsTab assignments={adminData.dailyAssignments || []} />
-			)}
+			{activeTab === "reports" && <ReportsTab />}
 
 			{activeTab === "assignments" && (
 				<AssignmentsTab
 					locations={adminData.locations || []}
-					dailyAssignments={adminData.dailyAssignments || []}
 					users={users}
 					dailyAssignmentMutation={mutations.dailyAssignmentMutation}
 					modal={modal}

@@ -8,4 +8,4 @@
 /**
  * Вычисляет длительность в секундах
  */
-export type ReportResponseDurationSeconds = number | null;
+export type ReportWithAssignmentDateResponseDurationSeconds = number | null;

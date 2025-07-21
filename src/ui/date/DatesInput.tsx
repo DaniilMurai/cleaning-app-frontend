@@ -31,10 +31,11 @@ export function DatesInput({
 	const [selectedDates, setSelectedDates] = useState<Dayjs[]>(() =>
 		values.map(v => dayjs(v)).filter(d => d.isValid())
 	);
-
+	console.log("values: ", values);
 	// Обработчик изменения дат
 	const handleDateChange = (dates: Date[]) => {
 		const newDates = dates.map(d => dayjs(d)).filter(d => d.isValid());
+		console.log("values in handleDateChange: ", values);
 
 		// Если режим "normal", просто сохраняем выбранные даты
 		if (multipleEnterMode === "normal") {
@@ -42,10 +43,13 @@ export function DatesInput({
 			onChange(newDates.map(d => d.format("YYYY-MM-DD HH:mm")));
 			return;
 		}
+		//TODO selectedDate пустой
 
 		// Для периодических режимов находим последнюю добавленную дату
 		const lastAdded = newDates.find(date => !selectedDates.some(sd => sd.isSame(date, "day")));
 
+		console.log("lastAdded: ", lastAdded);
+		console.log("selectedDates: ", selectedDates);
 		if (!lastAdded) {
 			setSelectedDates(newDates);
 			return;

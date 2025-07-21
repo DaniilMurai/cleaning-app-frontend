@@ -8,4 +8,4 @@
 /**
  * Возвращает длительность в минутах
  */
-export type ReportResponseDurationMinutes = number | null;
+export type ReportWithAssignmentDateResponseDurationMinutes = number | null;

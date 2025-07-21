@@ -5,4 +5,4 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type ReportResponseMessage = string | null;
+export type ReportWithAssignmentDateResponseAssignmentDate = string | null;

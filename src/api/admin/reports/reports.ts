@@ -38,7 +38,7 @@ import type {
 	DeleteReportParams,
 	GetReportsParams,
 	HTTPValidationError,
-	ReportResponse,
+	ReportWithAssignmentDateResponse,
 	SuccessResponse,
 } from ".././schemas";
 
@@ -49,7 +49,12 @@ import type { ErrorType } from "../../instance";
  * @summary Get Reports
  */
 export const getReports = (params?: GetReportsParams, signal?: AbortSignal) => {
-	return getAxios<ReportResponse[]>({ url: `/admin/reports/`, method: "GET", params, signal });
+	return getAxios<ReportWithAssignmentDateResponse[]>({
+		url: `/admin/reports/`,
+		method: "GET",
+		params,
+		signal,
+	});
 };
 
 export const getGetReportsQueryKey = (params?: GetReportsParams) => {

@@ -6,4 +6,4 @@
  */
 import type { ReportRoomResponse } from "./reportRoomResponse";
 
-export type ReportResponseReportRooms = ReportRoomResponse[] | null;
+export type ReportWithAssignmentDateResponseReportRooms = ReportRoomResponse[] | null;

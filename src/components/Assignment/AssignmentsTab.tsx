@@ -30,7 +30,6 @@ import { useQueryClient } from "@tanstack/react-query";
 
 interface AssignmentsTabProps {
 	locations: LocationResponse[];
-	dailyAssignments: DailyAssignmentResponse[];
 	users?: AdminReadUser[];
 	dailyAssignmentMutation: any;
 	modal: any;
@@ -108,8 +107,8 @@ export default function AssignmentsTab({
 							await createDailyAssignmentSubmit(assignmentData)
 						}
 						onClose={() => modal.closeModal("createAssignment")}
-						users={users || []}
-						locations={locations}
+						// users={users || []}
+						// locations={locations}
 						isLoading={dailyAssignmentMutation.createDailyAssignmentMutation.isPending}
 					/>
 				</Dialog>
