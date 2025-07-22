@@ -5,7 +5,6 @@ import { StyleSheet } from "react-native-unistyles";
 import { Button, Dialog, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import {
-	AdminReadUser,
 	DailyAssignmentCreate,
 	DailyAssignmentResponse,
 	DailyAssignmentUpdate,
@@ -13,7 +12,6 @@ import {
 	DeleteDailyAssignmentsGroupParams,
 	EditDailyAssignmentParams,
 	getGetDailyAssignmentsQueryKey,
-	LocationResponse,
 	useGetDailyAssignmentsDates,
 } from "@/api/admin";
 import {
@@ -29,18 +27,11 @@ import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface AssignmentsTabProps {
-	locations: LocationResponse[];
-	users?: AdminReadUser[];
 	dailyAssignmentMutation: any;
 	modal: any;
 }
 
-export default function AssignmentsTab({
-	locations,
-	users,
-	dailyAssignmentMutation,
-	modal,
-}: AssignmentsTabProps) {
+export default function AssignmentsTab({ dailyAssignmentMutation, modal }: AssignmentsTabProps) {
 	const { currentLanguage } = useLanguage();
 
 	const { t } = useTranslation();
@@ -107,8 +98,6 @@ export default function AssignmentsTab({
 							await createDailyAssignmentSubmit(assignmentData)
 						}
 						onClose={() => modal.closeModal("createAssignment")}
-						// users={users || []}
-						// locations={locations}
 						isLoading={dailyAssignmentMutation.createDailyAssignmentMutation.isPending}
 					/>
 				</Dialog>
@@ -125,8 +114,6 @@ export default function AssignmentsTab({
 							await editDailyAssignmentSubmit(assignmentId, assignmentData)
 						}
 						onClose={() => modal.closeModal("editAssignment")}
-						users={users || []}
-						locations={locations}
 						isLoading={dailyAssignmentMutation.updateDailyAssignmentMutation.isPending}
 					/>
 				</Dialog>
@@ -214,8 +201,6 @@ export default function AssignmentsTab({
 							selectedDate={selectedDate}
 							setSelectedAssignment={setSelectedAssignment}
 							modal={modal}
-							users={users}
-							locations={locations}
 						/>
 					</View>
 				</View>

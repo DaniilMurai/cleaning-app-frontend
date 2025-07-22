@@ -24,11 +24,7 @@ export function useAdminData() {
 		refetch: roomTasksRefetch,
 	} = useGetRoomTasks({});
 
-	const {
-		data: dailyAssignments,
-		isLoading: dailyAssignmentsIsLoading,
-		refetch: dailyAssignmentsRefetch,
-	} = useGetDailyAssignments({});
+	const { refetch: dailyAssignmentsRefetch } = useGetDailyAssignments({});
 
 	// ... другие API хуки
 
@@ -45,8 +41,6 @@ export function useAdminData() {
 		roomTasks,
 		roomTasksIsLoading,
 		roomTasksRefetch,
-		dailyAssignments,
-		dailyAssignmentsIsLoading,
 		dailyAssignmentsRefetch,
 
 		// ... остальные возвращаемые данные

@@ -31,58 +31,61 @@ export function DatesInput({
 	const [selectedDates, setSelectedDates] = useState<Dayjs[]>(() =>
 		values.map(v => dayjs(v)).filter(d => d.isValid())
 	);
+
 	console.log("values: ", values);
 	// Обработчик изменения дат
 	const handleDateChange = (dates: Date[]) => {
-		const newDates = dates.map(d => dayjs(d)).filter(d => d.isValid());
-		console.log("values in handleDateChange: ", values);
+		setSelectedDates(prev => {
+			const newDates = dates.map(d => dayjs(d)).filter(d => d.isValid());
+			console.log("values in handleDateChange: ", values);
 
-		// Если режим "normal", просто сохраняем выбранные даты
-		if (multipleEnterMode === "normal") {
-			setSelectedDates(newDates);
-			onChange(newDates.map(d => d.format("YYYY-MM-DD HH:mm")));
-			return;
-		}
-		//TODO selectedDate пустой
+			// Если режим "normal", просто сохраняем выбранные даты
+			if (multipleEnterMode === "normal") {
+				onChange(newDates.map(d => d.format("YYYY-MM-DD HH:mm")));
+				return newDates;
+			}
 
-		// Для периодических режимов находим последнюю добавленную дату
-		const lastAdded = newDates.find(date => !selectedDates.some(sd => sd.isSame(date, "day")));
+			// Для периодических режимов находим последнюю добавленную дату
+			const lastAdded = newDates.find(date => !prev.some(sd => sd.isSame(date, "day")));
 
-		console.log("lastAdded: ", lastAdded);
-		console.log("selectedDates: ", selectedDates);
-		if (!lastAdded) {
-			setSelectedDates(newDates);
-			return;
-		}
+			console.log("lastAdded: ", lastAdded);
+			console.log("selectedDates: ", prev);
+			if (!lastAdded) {
+				return newDates;
+			}
 
-		// Генерируем даты в зависимости от режима
-		let generatedDates: Dayjs[] = [lastAdded];
-		const iterations =
-			multipleEnterMode === "everyWeek"
-				? 52 * limitYear
-				: multipleEnterMode === "everyTwoWeeks"
-					? 26 * limitYear
-					: 12 * limitYear;
+			// Генерируем даты в зависимости от режима
+			let generatedDates: Dayjs[] = [lastAdded];
+			const iterations =
+				multipleEnterMode === "everyWeek"
+					? 52 * limitYear
+					: multipleEnterMode === "everyTwoWeeks"
+						? 26 * limitYear
+						: 12 * limitYear;
 
-		const increment =
-			multipleEnterMode === "everyWeek" ? 7 : multipleEnterMode === "everyTwoWeeks" ? 14 : 1; // для месяца будем добавлять месяцы
+			const increment =
+				multipleEnterMode === "everyWeek"
+					? 7
+					: multipleEnterMode === "everyTwoWeeks"
+						? 14
+						: 1; // для месяца будем добавлять месяцы
 
-		for (let i = 1; i < iterations; i++) {
-			const newDate =
-				multipleEnterMode === "everyMonth"
-					? lastAdded.add(i, "month")
-					: lastAdded.add(i * increment, "day");
+			for (let i = 1; i < iterations; i++) {
+				const newDate =
+					multipleEnterMode === "everyMonth"
+						? lastAdded.add(i, "month")
+						: lastAdded.add(i * increment, "day");
 
-			generatedDates.push(newDate);
-		}
+				generatedDates.push(newDate);
+			}
 
-		// Объединяем с существующими датами и удаляем дубликаты
-		const allDates = [...selectedDates, ...generatedDates].filter(
-			(date, index, self) => index === self.findIndex(d => d.isSame(date, "day"))
-		);
+			const uniqueDates = generatedDates.filter(
+				(date, index, self) => index === self.findIndex(d => d.isSame(date, "day"))
+			);
 
-		setSelectedDates(allDates);
-		onChange(allDates.map(d => d.format("YYYY-MM-DD HH:mm")));
+			onChange(uniqueDates.map(d => d.format("YYYY-MM-DD HH:mm")));
+			return uniqueDates;
+		});
 	};
 
 	return (

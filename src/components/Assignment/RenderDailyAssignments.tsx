@@ -5,9 +5,7 @@ import Typography from "../../ui/common/Typography";
 import Collapse from "../../ui/common/Collapse";
 import React, { useEffect, useState } from "react";
 import {
-	AdminReadUser,
 	DailyAssignmentResponse,
-	LocationResponse,
 	useCheckAssignmentGroup,
 	useGetDailyAssignments,
 } from "@/api/admin";
@@ -19,17 +17,13 @@ import { keepPreviousData } from "@tanstack/query-core";
 
 interface props {
 	selectedDate: Date;
-	locations: LocationResponse[];
-	users?: AdminReadUser[];
 	setSelectedAssignment: (assignment: DailyAssignmentResponse | null) => void;
 	modal: any;
 }
 
 export default function RenderDailyAssignments({
 	selectedDate,
-	locations,
 	setSelectedAssignment,
-	users,
 	modal,
 }: props) {
 	const [expandedAssignments, setExpandedAssignments] = useState<Record<number, boolean>>({});
@@ -48,7 +42,7 @@ export default function RenderDailyAssignments({
 			},
 		}
 	);
-	
+
 	const { data: assignmentGroup } = useCheckAssignmentGroup(
 		{ daily_assignment_id: assignmentIdToCheck ?? 0 },
 		{
@@ -74,18 +68,11 @@ export default function RenderDailyAssignments({
 		setExpandedAssignments(prev => ({ ...prev, [id]: !prev[id] }));
 	};
 	console.log("rerender RenderDailyAssignments");
-	const getUserById = (id: number) => {
-		if (!users) return null;
-		return users.find(u => u.id === id);
-	};
 
 	const render = () => {
 		if (!dailyAssignments) return [];
 		console.log("rerender render");
 		return dailyAssignments.map(assignment => {
-			const location = locations.find(l => l.id === assignment.location_id);
-			console.log("location", location);
-
 			return (
 				<Card key={assignment.id} style={styles.card}>
 					<TouchableOpacity
@@ -106,12 +93,10 @@ export default function RenderDailyAssignments({
 							)}
 							<View style={{ flexDirection: "column" }}>
 								<Typography variant="h5">
-									{location?.name ?? "Unknown Location"}
+									{assignment.location?.name ?? "Unknown Location"}
 								</Typography>
 								<Typography>
-									{t("profile.username")}:{" "}
-									{getUserById(assignment.user_id)?.full_name ||
-										getUserById(assignment.user_id)?.full_name}
+									{t("profile.username")}: {assignment.user.full_name}
 								</Typography>
 							</View>
 						</View>

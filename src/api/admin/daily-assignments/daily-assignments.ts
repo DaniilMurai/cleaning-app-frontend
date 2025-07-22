@@ -40,6 +40,7 @@ import type {
 	DailyAssignmentCreate,
 	DailyAssignmentResponse,
 	DailyAssignmentUpdate,
+	DailyAssignmentWithLocationAndUserResponse,
 	DeleteDailyAssignmentParams,
 	DeleteDailyAssignmentsGroupParams,
 	EditDailyAssignmentParams,
@@ -55,7 +56,7 @@ import type { ErrorType } from "../../instance";
  * @summary Get Daily Assignments
  */
 export const getDailyAssignments = (params?: GetDailyAssignmentsParams, signal?: AbortSignal) => {
-	return getAxios<DailyAssignmentResponse[]>({
+	return getAxios<DailyAssignmentWithLocationAndUserResponse[]>({
 		url: `/admin/daily-assignments/`,
 		method: "GET",
 		params,
