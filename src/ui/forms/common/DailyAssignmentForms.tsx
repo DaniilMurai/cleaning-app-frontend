@@ -43,6 +43,24 @@ export function CreateDailyAssignmentForm({
 	const { data: users } = useGetUsers();
 	const { data: locations } = useGetLocations();
 
+	const getUserDisplayName = (user: AdminReadUser) => {
+		return user.full_name || user.nickname || `User ${user.id}`;
+	};
+
+	const userOptions =
+		users &&
+		users.map(user => ({
+			label: getUserDisplayName(user),
+			value: user.id.toString(),
+		}));
+
+	const locationOptions =
+		locations &&
+		locations.map(loc => ({
+			label: loc.name,
+			value: loc.id.toString(),
+		}));
+
 	const [formData, setFormData] = useState<DailyAssignmentCreate>({
 		location_id: locations && locations.length > 0 ? locations[0].id : 0,
 		user_id: users && users.length > 0 ? users[0].id : 0,
@@ -72,24 +90,6 @@ export function CreateDailyAssignmentForm({
 
 		onSubmit(updatedData);
 	};
-
-	const getUserDisplayName = (user: AdminReadUser) => {
-		return user.full_name || user.nickname || `User ${user.id}`;
-	};
-
-	const userOptions =
-		users &&
-		users.map(user => ({
-			label: getUserDisplayName(user),
-			value: user.id.toString(),
-		}));
-
-	const locationOptions =
-		locations &&
-		locations.map(loc => ({
-			label: loc.name,
-			value: loc.id.toString(),
-		}));
 
 	return (
 		<Card size="large" style={styles.container}>

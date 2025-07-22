@@ -18,7 +18,7 @@ export default function ReportsTab() {
 	});
 	// const [isVisibleExportReports, setIsVisibleExportReports] = useState(false);
 	const [isVisibleFilterPanel, setIsVisibleFilterPanel] = useState(true);
-
+	// const [show, setShow] = useState(false);
 	// Обновляем параметры запроса
 	const handleSearch = (newParams: Partial<GetReportsParams>) => {
 		setQueryParams(prev => ({
@@ -46,6 +46,10 @@ export default function ReportsTab() {
 					onChangeVisible={isVisible => setIsVisibleFilterPanel(isVisible)}
 				/>
 			</View>
+			{/*<Toast show={show}>*/}
+			{/*	<Typography>oooooooo qqqqq aalk asda alaa</Typography>*/}
+			{/*</Toast>*/}
+			{/*<Button onPress={() => setShow(prev => !prev)}>show</Button>*/}
 			<View style={styles.scrollContainer}>
 				<ReportsTable queryParams={queryParams} />
 			</View>
