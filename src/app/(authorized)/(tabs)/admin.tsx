@@ -8,15 +8,12 @@ import AssignmentsTab from "@/components/Assignment/AssignmentsTab";
 import { useAdminData } from "@/core/hooks/admin/useAdminData";
 import useModals from "@/core/hooks/shared/useModals";
 import { useAdminMutations } from "@/core/hooks/mutations/useAdminMutations";
-import { useGetUsers } from "@/api/admin";
 import ReportsTab from "@/components/adminTabs/ReportsTab";
 
 export default function AdminPage() {
 	const [activeTab, setActiveTab] = useState("locations");
 
 	const adminData = useAdminData();
-
-	const { data: users } = useGetUsers({});
 
 	const modal = useModals({
 		createLocation: false,

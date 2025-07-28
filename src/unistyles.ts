@@ -65,7 +65,7 @@ const themedColors = {
 		},
 		divider: "rgba(0, 0, 0, 0.12)",
 		shadow: "rgba(0, 0, 0, 0.1)", // Добавлено
-		border: "#e0e0e0", // Добавлено
+		border: "#989898", // Добавлено
 		disabled: {
 			background: "rgba(0, 0, 0, 0.12)",
 			text: "rgba(0, 0, 0, 0.26)",

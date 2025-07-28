@@ -167,7 +167,7 @@ const styles = StyleSheet.create((theme, rt) => ({
 				color: "black",
 				variant: "contained",
 				styles: {
-					backgroundColor: "#141617",
+					backgroundColor: theme.colors.background.main,
 					borderWidth: 1,
 					borderColor: theme.colors.border,
 				},
