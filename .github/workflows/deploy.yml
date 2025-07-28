@@ -1,0 +1,50 @@
+name: deploy.yml
+on:
+  push:
+    branches:
+      - main
+
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Use node
+        run: | 
+          nvm use
+          node -v
+
+      - name: Install dependencies
+        run: |
+          echo "running npm install"
+          npm install
+
+      - name: Export web
+        run: npx expo export --platform web
+
+      - name: Setup SSH
+        run: |
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > key.pem
+          chmod 600 key.pem
+
+      - name: Download build files to server
+        run: |
+          ssh -i key.pem ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} '
+            rm -rf /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/ &&
+            mkdir -p /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/
+          '
+          scp -i key.pem -o StrictHostKeyChecking=no -r dist/* \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/
+          ssh -i key.pem ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} '
+            rm -rf /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_old/ &&
+            mv /var/www/nginx/neuer-standard /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_old/ &&
+            mv /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/ /var/www/nginx/neuer-standard/ &&
+            rm -rf /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_old/
+          '
+
+
+
