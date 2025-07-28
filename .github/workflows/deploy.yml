@@ -41,10 +41,10 @@ jobs:
           scp -i key.pem -o StrictHostKeyChecking=no -r dist/* \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/
           ssh -i key.pem -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} '
-            rm -rf /var/www/nginx/neuer-standard-old/ &&
-            mv /var/www/nginx/neuer-standard /var/www/nginx/neuer-standard-old/ &&
-            mv /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/ /var/www/nginx/neuer-standard/ &&
-            rm -rf /var/www/nginx/neuer-standard-old
+            rm -rf /var/www/nginx/neuer-standard/web-old/ &&
+            mv /var/www/nginx/neuer-standard/web /var/www/nginx/neuer-standard/web-old/ &&
+            mv /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/ /var/www/nginx/neuer-standard/web &&
+            rm -rf /var/www/nginx/neuer-standard/web-old
           '
 
 
