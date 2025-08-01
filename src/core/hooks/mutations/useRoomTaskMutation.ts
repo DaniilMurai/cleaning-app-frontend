@@ -1,6 +1,7 @@
 import {
 	DeleteRoomTaskParams,
 	EditRoomTaskParams,
+	getGetRoomTasksQueryKey,
 	RoomTaskCreate,
 	RoomTaskUpdate,
 	useCreateRoomTask,
@@ -8,21 +9,25 @@ import {
 	useEditRoomTask,
 } from "@/api/admin";
 import { createGenericMutation } from "@/core/hooks/mutations/createGenericMutation";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function useRoomTaskMutation(options: {
 	onSuccessCreate: () => void;
 	onSuccessUpdate: () => void;
 	onSuccessDelete: () => void;
-	refetch: () => void;
 }) {
-	const { onSuccessCreate, onSuccessUpdate, onSuccessDelete, refetch } = options;
+	const { onSuccessCreate, onSuccessUpdate, onSuccessDelete } = options;
+
+	const queryClient = useQueryClient();
 
 	const createRoomTaskMutation = useCreateRoomTask(
 		createGenericMutation({
 			mutation: {},
 			entityName: "RoomTask created",
 			onSuccess: onSuccessCreate,
-			refetch,
+			// refetch,
+			invalidateQuery: () =>
+				queryClient.invalidateQueries({ queryKey: getGetRoomTasksQueryKey() }),
 		})
 	);
 	const updateRoomTaskMutation = useEditRoomTask(
@@ -30,7 +35,9 @@ export default function useRoomTaskMutation(options: {
 			mutation: {},
 			entityName: "RoomTask updated",
 			onSuccess: onSuccessUpdate,
-			refetch,
+			// refetch,
+			invalidateQuery: () =>
+				queryClient.invalidateQueries({ queryKey: getGetRoomTasksQueryKey() }),
 		})
 	);
 
@@ -39,7 +46,9 @@ export default function useRoomTaskMutation(options: {
 			mutation: {},
 			entityName: "RoomTask deleted",
 			onSuccess: onSuccessDelete,
-			refetch,
+			// refetch,
+			invalidateQuery: () =>
+				queryClient.invalidateQueries({ queryKey: getGetRoomTasksQueryKey() }),
 		})
 	);
 

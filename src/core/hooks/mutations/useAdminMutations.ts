@@ -6,46 +6,22 @@ import useTaskMutation from "@/core/hooks/mutations/useTaskMutation";
 import useRoomTaskMutation from "@/core/hooks/mutations/useRoomTaskMutation";
 import useDailyAssignmentMutation from "@/core/hooks/mutations/useDailyAssignmentMutation";
 
-export function useAdminMutations(
-	modal: {
-		modals: Record<string, boolean>;
-		openModal: (modalName: string | number) => void;
-		closeModal: (modalName: string | number) => void;
-	},
-	refetchFunctions: {
-		locationsRefetch: any;
-		roomsRefetch: any;
-		tasksRefetch: any;
-		roomTasksRefetch: any;
-		dailyAssignmentsRefetch: any;
-	}
-) {
+export function useAdminMutations(modal: {
+	modals: Record<string, boolean>;
+	openModal: (modalName: string | number) => void;
+	closeModal: (modalName: string | number) => void;
+}) {
 	const createMutationHandlers = createMutationHandlersFactory(modal);
 	// Теперь используем эту функцию для всех мутаций
-	const locationMutationHandlers = {
-		...createMutationHandlers("Location"),
-		refetch: refetchFunctions.locationsRefetch,
-	};
+	const locationMutationHandlers = createMutationHandlers("Location");
 
-	const roomMutationHandlers = {
-		...createMutationHandlers("Room"),
-		refetch: refetchFunctions.roomsRefetch,
-	};
+	const roomMutationHandlers = createMutationHandlers("Room");
 
-	const taskMutationHandlers = {
-		...createMutationHandlers("Task"),
-		refetch: refetchFunctions.tasksRefetch,
-	};
+	const taskMutationHandlers = createMutationHandlers("Task");
 
-	const roomTaskMutationHandlers = {
-		...createMutationHandlers("RoomTask"),
-		refetch: refetchFunctions.roomTasksRefetch,
-	};
+	const roomTaskMutationHandlers = createMutationHandlers("RoomTask");
 
-	const dailyAssignmentMutationHandlers = {
-		...createMutationHandlers("Assignment"),
-		refetch: refetchFunctions.dailyAssignmentsRefetch,
-	};
+	const dailyAssignmentMutationHandlers = createMutationHandlers("Assignment");
 
 	// Теперь инициализируем все хуки мутаций
 	const locationMutation = useLocationMutation(locationMutationHandlers);

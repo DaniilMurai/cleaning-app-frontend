@@ -4,34 +4,40 @@ import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { Button, Dialog } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { LocationResponse, RoomResponse, RoomTaskResponse, TaskResponse } from "@/api/admin";
+import { useGetLocations, useGetRooms, useGetRoomTasks, useGetTasks } from "@/api/admin";
 import { CreateLocationForm } from "@/ui/forms/common/LocationForms";
 import LocationCard from "@/components/adminTabs/LocationsTab/LocationCard";
+import useModals from "@/core/hooks/shared/useModals";
+import { useAdminMutations } from "@/core/hooks/mutations/useAdminMutations";
 
-interface LocationProps {
-	locations: LocationResponse[];
-	rooms: RoomResponse[];
-	tasks: TaskResponse[];
-	roomTasks: RoomTaskResponse[];
-	locationMutation: any;
-	roomMutation: any;
-	roomTaskMutation: any;
-	roomTasksRefetch: any;
-	tasksRefetch: any;
-}
-
-export default function LocationsTab({
-	locations,
-	rooms,
-	tasks,
-	roomTasks,
-	locationMutation,
-	roomTaskMutation,
-	roomMutation,
-	roomTasksRefetch,
-	tasksRefetch,
-}: LocationProps) {
+export default function LocationsTab() {
 	const [showCreateLocation, setShowCreateLocation] = useState(false);
+
+	const { data: locations } = useGetLocations();
+	const { data: rooms } = useGetRooms();
+	const { data: tasks } = useGetTasks();
+	const { data: roomTasks } = useGetRoomTasks();
+
+	const modal = useModals({
+		createLocation: false,
+		createRoom: false,
+		createTask: false,
+		createRoomTask: false,
+		editTask: false,
+		editRoomTask: false,
+		editLocation: false,
+		editRoom: false,
+		deleteTask: false,
+		deleteLocation: false,
+		deleteRoom: false,
+		deleteRoomTask: false,
+	});
+
+	const { locationMutation, roomTaskMutation, roomMutation } = useAdminMutations({
+		modals: modal.modals,
+		openModal: modal.openModal as (modalName: string | number) => void,
+		closeModal: modal.closeModal as (modalName: string | number) => void,
+	});
 
 	return (
 		<View style={{ flex: 1 }}>
@@ -47,14 +53,12 @@ export default function LocationsTab({
 						<LocationCard
 							key={location.id}
 							location={location}
-							rooms={rooms}
+							rooms={rooms || []}
 							locations={locations}
-							tasks={tasks}
-							roomTasks={roomTasks}
+							tasks={tasks || []}
+							roomTasks={roomTasks || []}
 							roomMutation={roomMutation}
 							roomTaskMutation={roomTaskMutation}
-							roomTasksRefetch={roomTasksRefetch}
-							tasksRefetch={tasksRefetch}
 							locationMutation={locationMutation}
 						/>
 					))}

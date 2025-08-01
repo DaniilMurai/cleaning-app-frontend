@@ -25,14 +25,23 @@ import RenderDailyAssignments from "@/components/Assignment/RenderDailyAssignmen
 import { useLanguage } from "@/core/context/LanguageContext";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
+import useModals from "@/core/hooks/shared/useModals";
+import { useAdminMutations } from "@/core/hooks/mutations/useAdminMutations";
 
-interface AssignmentsTabProps {
-	dailyAssignmentMutation: any;
-	modal: any;
-}
-
-export default function AssignmentsTab({ dailyAssignmentMutation, modal }: AssignmentsTabProps) {
+export default function AssignmentsTab() {
 	const { currentLanguage } = useLanguage();
+	const modal = useModals({
+		createAssignment: false,
+		editAssignment: false,
+		deleteAssignment: false,
+		deleteAssignmentGroup: false,
+	});
+
+	const { dailyAssignmentMutation } = useAdminMutations({
+		modals: modal.modals,
+		openModal: modal.openModal as (modalName: string | number) => void,
+		closeModal: modal.closeModal as (modalName: string | number) => void,
+	});
 
 	const { t } = useTranslation();
 
@@ -132,9 +141,9 @@ export default function AssignmentsTab({ dailyAssignmentMutation, modal }: Assig
 							await deleteDailyAssignmentGroupConfirm(daily_assignment_id)
 						}
 						onClose={() => modal.closeModal("deleteAssignmentGroup")}
-						isLoading={
-							dailyAssignmentMutation.handleDeleteDailyAssignmentGroup.isPending
-						}
+						// isLoading={
+						// 	dailyAssignmentMutation.handleDeleteDailyAssignmentGroup.isPending
+						// }
 					/>
 				</Dialog>
 			)}
@@ -149,7 +158,7 @@ export default function AssignmentsTab({ dailyAssignmentMutation, modal }: Assig
 							await deleteDailyAssignmentConfirm(daily_assignment_id)
 						}
 						onClose={() => modal.closeModal("deleteAssignment")}
-						isLoading={dailyAssignmentMutation.handleDeleteDailyAssignment.isPending}
+						// isLoading={dailyAssignmentMutation.handleDeleteDailyAssignment.isPending}
 					/>
 				</Dialog>
 			)}

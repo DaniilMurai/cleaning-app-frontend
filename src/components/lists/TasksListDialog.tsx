@@ -20,8 +20,6 @@ interface TasksListProps extends DialogProps {
 	room?: RoomResponse;
 	locations?: LocationResponse[];
 	roomTasks?: RoomTaskResponse[];
-	tasksRefetch?: () => void;
-	roomTasksRefetch?: () => void;
 }
 
 export default function TasksListDialog({
@@ -31,8 +29,7 @@ export default function TasksListDialog({
 	rooms,
 	room,
 	locations,
-	tasksRefetch,
-	roomTasksRefetch,
+
 	...props
 }: TasksListProps) {
 	const { t } = useTranslation();
@@ -62,15 +59,9 @@ export default function TasksListDialog({
 			closeModal: (modalName: string | number) => void;
 		}
 	);
-	const taskMutationHandlers = {
-		...createMutationHandlers("Task"),
-		refetch: tasksRefetch || (() => {}),
-	};
+	const taskMutationHandlers = createMutationHandlers("Task");
 
-	const roomTaskMutationHandlers = {
-		...createMutationHandlers("RoomTask"),
-		refetch: roomTasksRefetch || (() => {}),
-	};
+	const roomTaskMutationHandlers = createMutationHandlers("RoomTask");
 
 	const taskMutation = useTaskMutation(taskMutationHandlers);
 	const roomTaskMutation = useRoomTaskMutation(roomTaskMutationHandlers);
@@ -137,8 +128,8 @@ export default function TasksListDialog({
 										variant="outlined"
 										onPress={() => {
 											setSelectedTask(task);
-											handleCreateRoomTask(task, room!).then(() =>
-												roomTaskMutationHandlers.refetch()
+											handleCreateRoomTask(task, room!).then(
+												() => roomTaskMutationHandlers.onSuccessCreate
 											);
 										}}
 										disabled={!!isAlreadyInRoom}

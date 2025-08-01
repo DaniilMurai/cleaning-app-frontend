@@ -3,6 +3,7 @@ import {
 	DailyAssignmentUpdate,
 	DeleteDailyAssignmentParams,
 	EditDailyAssignmentParams,
+	getGetDailyAssignmentsQueryKey,
 	useCreateDailyAssignment,
 	useCreateDailyAssignmentsBatch,
 	useDeleteDailyAssignment,
@@ -10,23 +11,27 @@ import {
 	useEditDailyAssignment,
 } from "@/api/admin";
 import { createGenericMutation } from "@/core/hooks/mutations/createGenericMutation";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function useDailyAssignmentMutation(options: {
 	onSuccessCreate?: () => void;
 	onSuccessUpdate?: () => void;
 	onSuccessDelete?: () => void;
-	refetch: () => void;
 	onSuccessDeleteGroup?: () => void;
 }) {
-	const { onSuccessCreate, onSuccessUpdate, onSuccessDelete, refetch, onSuccessDeleteGroup } =
-		options;
+	const { onSuccessCreate, onSuccessUpdate, onSuccessDelete, onSuccessDeleteGroup } = options;
+
+	const queryClient = useQueryClient();
 
 	const createDailyAssignmentMutation = useCreateDailyAssignment(
 		createGenericMutation({
 			mutation: {},
 			entityName: "Daily Assignment created",
 			onSuccess: onSuccessCreate,
-			refetch,
+			invalidateQuery: () =>
+				queryClient.invalidateQueries({
+					queryKey: getGetDailyAssignmentsQueryKey(),
+				}),
 		})
 	);
 
@@ -35,7 +40,10 @@ export default function useDailyAssignmentMutation(options: {
 			mutation: {},
 			entityName: "Daily Assignments created",
 			onSuccess: onSuccessCreate,
-			refetch,
+			invalidateQuery: () =>
+				queryClient.invalidateQueries({
+					queryKey: getGetDailyAssignmentsQueryKey(),
+				}),
 		})
 	);
 
@@ -44,7 +52,10 @@ export default function useDailyAssignmentMutation(options: {
 			mutation: {},
 			entityName: "Daily Assignment updated",
 			onSuccess: onSuccessUpdate,
-			refetch,
+			invalidateQuery: () =>
+				queryClient.invalidateQueries({
+					queryKey: getGetDailyAssignmentsQueryKey(),
+				}),
 		})
 	);
 	const deleteDailyAssignmentMutation = useDeleteDailyAssignment(
@@ -52,7 +63,10 @@ export default function useDailyAssignmentMutation(options: {
 			mutation: {},
 			entityName: "Daily Assignment deleted",
 			onSuccess: onSuccessDelete,
-			refetch,
+			invalidateQuery: () =>
+				queryClient.invalidateQueries({
+					queryKey: getGetDailyAssignmentsQueryKey(),
+				}),
 		})
 	);
 
@@ -61,7 +75,10 @@ export default function useDailyAssignmentMutation(options: {
 			mutation: {},
 			entityName: "Daily Assignment deleted",
 			onSuccess: onSuccessDeleteGroup,
-			refetch,
+			invalidateQuery: () =>
+				queryClient.invalidateQueries({
+					queryKey: getGetDailyAssignmentsQueryKey(),
+				}),
 		})
 	);
 
@@ -70,7 +87,10 @@ export default function useDailyAssignmentMutation(options: {
 			mutation: {},
 			entityName: "Daily Assignments group deleted",
 			onSuccess: onSuccessDeleteGroup,
-			refetch,
+			invalidateQuery: () =>
+				queryClient.invalidateQueries({
+					queryKey: getGetDailyAssignmentsQueryKey(),
+				}),
 		})
 	);
 

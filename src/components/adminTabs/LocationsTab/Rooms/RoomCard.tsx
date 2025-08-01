@@ -1,9 +1,16 @@
 import { Dialog } from "@/ui";
 import React, { useState } from "react";
-import { LocationResponse, RoomResponse, RoomTaskResponse, TaskResponse } from "@/api/admin";
+import {
+	getGetRoomTasksQueryKey,
+	LocationResponse,
+	RoomResponse,
+	RoomTaskResponse,
+	TaskResponse,
+} from "@/api/admin";
 import { DeleteRoomConfirm, EditRoomForm } from "@/ui/forms/common/RoomForms";
 import TasksListDialog from "@/components/lists/TasksListDialog";
 import RoomCardHeader from "@/components/adminTabs/LocationsTab/Rooms/RoomCardHeader";
+import { useQueryClient } from "@tanstack/react-query";
 
 export interface RoomCardProps {
 	room: RoomResponse;
@@ -13,8 +20,8 @@ export interface RoomCardProps {
 	roomTasks: RoomTaskResponse[];
 	roomMutation: any;
 	roomTaskMutation: any;
-	roomTasksRefetch: any;
-	tasksRefetch: any;
+	// roomTasksRefetch: any;
+	// tasksRefetch: any;
 }
 
 export default function RoomCard({
@@ -25,12 +32,13 @@ export default function RoomCard({
 	roomTasks,
 	roomMutation,
 	roomTaskMutation,
-	roomTasksRefetch,
-	tasksRefetch,
+	// roomTasksRefetch,
 }: RoomCardProps) {
 	const [showEdit, setShowEdit] = useState(false);
 	const [showDelete, setShowDelete] = useState(false);
 	const [showCreateRoomTask, setShowCreateRoomTask] = useState(false);
+
+	const queryClient = useQueryClient();
 
 	const handleUnlinkTask = async (taskId: number) => {
 		const roomTask = roomTasks.find(rt => rt.room_id === room.id && rt.task_id === taskId);
@@ -39,7 +47,8 @@ export default function RoomCard({
 			await roomTaskMutation.handleDeleteRoomTask({
 				room_task_id: roomTask.id,
 			});
-			roomTasksRefetch();
+			// roomTasksRefetch();
+			await queryClient.invalidateQueries({ queryKey: getGetRoomTasksQueryKey() });
 		}
 	};
 
@@ -81,8 +90,6 @@ export default function RoomCard({
 				room={room}
 				locations={locations}
 				roomTasks={roomTasks}
-				tasksRefetch={tasksRefetch}
-				roomTasksRefetch={roomTasksRefetch}
 			/>
 		</>
 	);

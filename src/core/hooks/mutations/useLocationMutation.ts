@@ -2,27 +2,30 @@ import { createGenericMutation } from "./createGenericMutation";
 import {
 	DeleteLocationParams,
 	EditLocationParams,
+	getGetLocationsQueryKey,
 	LocationCreate,
 	LocationUpdate,
 	useCreateLocation,
 	useDeleteLocation,
 	useEditLocation,
 } from "@/api/admin";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function useLocationMutation(options: {
 	onSuccessCreate: () => void;
 	onSuccessUpdate: () => void;
 	onSuccessDelete: () => void;
-	refetch: () => void;
 }) {
-	const { onSuccessCreate, onSuccessUpdate, onSuccessDelete, refetch } = options;
+	const { onSuccessCreate, onSuccessUpdate, onSuccessDelete } = options;
 
+	const queryClient = useQueryClient();
 	const createLocationMutation = useCreateLocation(
 		createGenericMutation({
 			mutation: {},
 			entityName: "Location created",
 			onSuccess: onSuccessCreate,
-			refetch,
+			invalidateQuery: () =>
+				queryClient.invalidateQueries({ queryKey: getGetLocationsQueryKey() }),
 		})
 	);
 
@@ -31,7 +34,8 @@ export function useLocationMutation(options: {
 			mutation: {},
 			entityName: "Location updated",
 			onSuccess: onSuccessUpdate,
-			refetch,
+			invalidateQuery: () =>
+				queryClient.invalidateQueries({ queryKey: getGetLocationsQueryKey() }),
 		})
 	);
 
@@ -40,7 +44,8 @@ export function useLocationMutation(options: {
 			mutation: {},
 			entityName: "Location deleted",
 			onSuccess: onSuccessDelete,
-			refetch,
+			invalidateQuery: () =>
+				queryClient.invalidateQueries({ queryKey: getGetLocationsQueryKey() }),
 		})
 	);
 

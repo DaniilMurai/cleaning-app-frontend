@@ -1,6 +1,7 @@
 import {
 	DeleteTaskParams,
 	EditTaskParams,
+	getGetTasksQueryKey,
 	TaskCreate,
 	TaskUpdate,
 	useCreateTask,
@@ -8,21 +9,24 @@ import {
 	useEditTask,
 } from "@/api/admin";
 import { AlertUtils } from "@/core/utils/alerts";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function useTaskMutation(options: {
 	onSuccessCreate: () => void;
 	onSuccessUpdate: () => void;
 	onSuccessDelete: () => void;
-	refetch: () => void;
 }) {
-	const { onSuccessCreate, onSuccessUpdate, onSuccessDelete, refetch } = options;
+	const { onSuccessCreate, onSuccessUpdate, onSuccessDelete } = options;
+
+	const queryClient = useQueryClient();
 
 	const createTaskMutation = useCreateTask({
 		mutation: {
-			onSuccess: () => {
+			onSuccess: async () => {
 				AlertUtils.showSuccess("Task created successfully");
 				onSuccessCreate?.();
-				refetch();
+				// refetch();
+				await queryClient.invalidateQueries({ queryKey: getGetTasksQueryKey() });
 			},
 			onError: error => {
 				AlertUtils.showError(error.message || "Failed to create task");
@@ -32,10 +36,11 @@ export default function useTaskMutation(options: {
 
 	const updateTaskMutation = useEditTask({
 		mutation: {
-			onSuccess: () => {
+			onSuccess: async () => {
 				AlertUtils.showSuccess("Task updated successfully");
 				onSuccessUpdate?.();
-				refetch();
+				// refetch();
+				await queryClient.invalidateQueries({ queryKey: getGetTasksQueryKey() });
 			},
 			onError: error => {
 				AlertUtils.showError(error.message || "Failed to update task");
@@ -45,10 +50,11 @@ export default function useTaskMutation(options: {
 
 	const deleteTaskMutation = useDeleteTask({
 		mutation: {
-			onSuccess: () => {
+			onSuccess: async () => {
 				AlertUtils.showSuccess("Task deleted successfully");
 				onSuccessDelete?.();
-				refetch();
+				// refetch();
+				await queryClient.invalidateQueries({ queryKey: getGetTasksQueryKey() });
 			},
 			onError: error => {
 				AlertUtils.showError(error.message || "Failed to delete task");

@@ -4,13 +4,6 @@
  * Neuer Standard Admin API
  * OpenAPI spec version: 0.1.0
  */
-import {
-	useInfiniteQuery,
-	useMutation,
-	useQuery,
-	useSuspenseInfiniteQuery,
-	useSuspenseQuery,
-} from "@tanstack/react-query";
 import type {
 	DataTag,
 	DefinedInitialDataOptions,
@@ -33,6 +26,13 @@ import type {
 	UseSuspenseQueryOptions,
 	UseSuspenseQueryResult,
 } from "@tanstack/react-query";
+import {
+	useInfiniteQuery,
+	useMutation,
+	useQuery,
+	useSuspenseInfiniteQuery,
+	useSuspenseQuery,
+} from "@tanstack/react-query";
 
 import type {
 	DeleteReportParams,
@@ -42,8 +42,8 @@ import type {
 	SuccessResponse,
 } from ".././schemas";
 
-import { getAxios } from "../../instance";
 import type { ErrorType } from "../../instance";
+import { getAxios } from "../../instance";
 
 /**
  * @summary Get Reports

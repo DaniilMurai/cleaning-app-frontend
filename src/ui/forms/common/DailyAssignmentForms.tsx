@@ -300,7 +300,7 @@ interface DeleteGroupDailyAssignmentsConfirmProps {
 	onGroupConfirm: (assignmentId: DeleteDailyAssignmentsGroupParams) => void;
 	onSingleConfirm: (assignmentId: DeleteDailyAssignmentParams) => void;
 	onClose: () => void;
-	isLoading: boolean;
+	isLoading?: boolean;
 }
 
 export function DeleteGroupDailyAssignmentsConfirm({
