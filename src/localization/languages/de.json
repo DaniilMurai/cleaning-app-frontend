@@ -22,7 +22,9 @@
     "timezone": "Zeitzone",
     "generation": "Berichtserstellung",
     "selectedPeriod": "Ausgewählter Zeitraum",
-    "chooseFormat": "Format wählen"
+    "chooseFormat": "Format wählen",
+    "create_export": "Exportberichte erstellen",
+    "view_exports": "Exporte ansehen"
   },
   "tabs": {
     "home": "Startseite",

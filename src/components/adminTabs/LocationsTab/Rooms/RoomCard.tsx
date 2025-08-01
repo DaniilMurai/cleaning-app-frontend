@@ -20,8 +20,6 @@ export interface RoomCardProps {
 	roomTasks: RoomTaskResponse[];
 	roomMutation: any;
 	roomTaskMutation: any;
-	// roomTasksRefetch: any;
-	// tasksRefetch: any;
 }
 
 export default function RoomCard({
@@ -32,7 +30,6 @@ export default function RoomCard({
 	roomTasks,
 	roomMutation,
 	roomTaskMutation,
-	// roomTasksRefetch,
 }: RoomCardProps) {
 	const [showEdit, setShowEdit] = useState(false);
 	const [showDelete, setShowDelete] = useState(false);
@@ -47,7 +44,7 @@ export default function RoomCard({
 			await roomTaskMutation.handleDeleteRoomTask({
 				room_task_id: roomTask.id,
 			});
-			// roomTasksRefetch();
+
 			await queryClient.invalidateQueries({ queryKey: getGetRoomTasksQueryKey() });
 		}
 	};

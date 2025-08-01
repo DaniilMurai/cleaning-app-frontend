@@ -22,7 +22,9 @@
     "timezone": "Часовой пояс",
     "generation": "Генерация отчетов",
     "selectedPeriod": "Выбранный период",
-    "chooseFormat": "Выберите формат"
+    "chooseFormat": "Выберите формат",
+    "create_export": "Создать экспорт отчетов",
+    "view_exports": "Просмотреть экспорты"
   },
   "tabs": {
     "home": "Главная",

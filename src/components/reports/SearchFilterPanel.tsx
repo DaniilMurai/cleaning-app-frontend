@@ -8,7 +8,6 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { useDebounce } from "@uidotdev/usehooks";
 import { useTranslation } from "react-i18next";
 import ExportReportsPicker from "@/components/reports/ExportReportsPicker";
-import ExportReportsDialog from "@/components/reports/ExportReportsDialog";
 
 interface props {
 	params: GetReportsParams;
@@ -23,7 +22,7 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 	const { t } = useTranslation();
 
 	const debouncedSearch = useDebounce(search, 300);
-	const [showCreateExport, setShowCreateExport] = useState<boolean>(false);
+	// const [showCreateExport, setShowCreateExport] = useState<boolean>(false);
 	useEffect(() => {
 		newParams.search = debouncedSearch;
 		console.log("render useEffect" + newParams.search);
@@ -77,13 +76,13 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 					{t("components.searchFilterPanel.searchAndFilters")}
 				</Typography>
 				<View style={{ flexDirection: "row", gap: 8 }}>
-					<Button
-						variant={"contained"}
-						color={"black"}
-						onPress={() => setShowCreateExport(true)}
-					>
-						Создать экспорт отчетов
-					</Button>
+					{/*<Button*/}
+					{/*	variant={"contained"}*/}
+					{/*	color={"black"}*/}
+					{/*	onPress={() => setShowCreateExport(true)}*/}
+					{/*>*/}
+					{/*	Создать экспорт отчетов*/}
+					{/*</Button>*/}
 					<Button variant={"contained"} color={"black"} onPress={handleClear}>
 						{t("components.searchFilterPanel.clearAll")}
 					</Button>
@@ -154,12 +153,14 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 							}}
 						/>
 					</View>
-					<ExportReportsPicker />
+					<View style={{ alignSelf: "flex-end" }}>
+						<ExportReportsPicker />
+					</View>
 
-					<ExportReportsDialog
-						isVisible={showCreateExport}
-						onClose={() => setShowCreateExport(false)}
-					/>
+					{/*<ExportReportsDialog*/}
+					{/*	isVisible={showCreateExport}*/}
+					{/*	onClose={() => setShowCreateExport(false)}*/}
+					{/*/>*/}
 				</View>
 			</View>
 		</View>

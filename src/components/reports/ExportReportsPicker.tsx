@@ -9,12 +9,14 @@ import downloadAndShareFile from "@/core/utils/downloadAndShareFile";
 import { ApiUrl } from "@/constants";
 import GetStatusBadge from "@/components/reports/StatusBadge";
 import StatusBadgeIcon from "./StatusBadgeIcon";
+import { useTranslation } from "react-i18next";
 
 const LIMIT = 5;
 
 interface ExportReportsPickerProps extends ViewProps {}
 
 export default function ExportReportsPicker({ ...props }: ExportReportsPickerProps) {
+	const { t } = useTranslation();
 	const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetExportReportsInfinite(
 		{ limit: LIMIT },
 		{
@@ -27,7 +29,6 @@ export default function ExportReportsPicker({ ...props }: ExportReportsPickerPro
 		}
 	);
 	console.log("data: ", data);
-
 	const downloadExp = async (id: number, status: ReportStatus) => {
 		console.log("status: ", status);
 		const response = await exportType(id);
@@ -38,16 +39,17 @@ export default function ExportReportsPicker({ ...props }: ExportReportsPickerPro
 	};
 
 	return (
-		<View style={{ zIndex: 10, minWidth: 300, maxWidth: 325 }} {...props}>
+		<View style={{ minWidth: 300, maxWidth: 325 }} {...props}>
 			<BasePopover
 				trigger={
-					<Button variant={"contained"} color={"black"}>
-						<FontAwesome5 name={"file"} size={16} /> Просмотреть репорты
+					<Button variant={"contained"} color={"black"} size={"large"}>
+						<FontAwesome5 name={"file"} size={16} /> {t("reports.view_exports")}
 					</Button>
 				}
 				itemHeight={400}
 				isScrolled={false}
 				maxWidth={300}
+				style={{ zIndex: 10000 }}
 			>
 				<ScrollView
 					style={{ height: 400, maxHeight: 600, minWidth: 300, width: 320 }}

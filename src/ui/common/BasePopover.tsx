@@ -41,7 +41,6 @@ export default function BasePopover({
 		height.value = withTiming(open ? calculatedHeight : 0, { duration: 200 });
 		opacity.value = withTiming(open ? 1 : 0, { duration: 150 });
 	};
-
 	const close = () => {
 		setIsVisible(false);
 		height.value = withTiming(0, { duration: 200 });
@@ -71,7 +70,7 @@ export default function BasePopover({
 		: children;
 
 	return (
-		<View {...props} style={[styles.container, { zIndex: isVisible ? 1000 : 1 }]}>
+		<View {...props} style={[styles.container, { zIndex: isVisible ? 10000 : 1 }]}>
 			{isValidElement(trigger) && typeof trigger.type !== "string" ? (
 				cloneElement(trigger as ReactElement<any>, { onPress: toggle })
 			) : (
@@ -85,6 +84,7 @@ export default function BasePopover({
 					{
 						minWidth: maxWidth ?? 300,
 						alignSelf: "flex-start",
+						zIndex: 10000, // Добавлено
 					},
 				]}
 			>
@@ -108,18 +108,17 @@ const styles = StyleSheet.create(theme => ({
 		position: "absolute",
 		top: "100%",
 		left: 0,
-
 		right: 0,
 		backgroundColor: theme.colors.background.paper,
 		borderRadius: 8,
 		overflow: "hidden",
 		borderWidth: 1,
 		borderColor: theme.colors.border,
-		elevation: 4,
+		elevation: 10, // Увеличенное значение для Android
 		shadowColor: "#000",
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.2,
-		shadowRadius: 4,
+		shadowOffset: { width: 0, height: 4 }, // Увеличенный offset
+		shadowOpacity: 0.3, // Более заметная тень
+		shadowRadius: 6, // Увеличенный радиус
 	},
 	content: {
 		paddingVertical: 8,

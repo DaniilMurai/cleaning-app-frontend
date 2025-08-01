@@ -3,14 +3,16 @@ import {
 	ReportWithAssignmentDateResponse,
 	useGetReportsInfinite,
 } from "@/api/admin";
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet } from "react-native-unistyles";
 import { ActivityIndicator, ScrollView, View } from "react-native";
-import { Typography } from "@/ui";
+import { Button, Typography } from "@/ui";
 import { formatTime, formatToDate, formatToDateTime, formatToTime } from "@/core/utils/dateUtils";
 import { LegendList } from "@legendapp/list";
 import GetStatusBadge from "@/components/reports/StatusBadge";
 import { useTranslation } from "react-i18next";
+import ExportReportsDialog from "@/components/reports/ExportReportsDialog";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 interface Props {
 	queryParams: Partial<GetReportsParams>;
@@ -34,32 +36,69 @@ export default function ReportsTable({ queryParams }: Props) {
 			},
 		},
 	});
+	const [showCreateExport, setShowCreateExport] = useState<boolean>(false);
 
 	const data = reports?.pages?.flat() ?? [];
 
 	const renderHeader = () => (
-		<View style={[styles.row, styles.header, { height: 48 }]}>
-			<Typography style={[styles.cell, { flex: 2 }]}>
-				{t("components.reportsTable.username")}
-			</Typography>
-			<Typography style={[styles.cell, { flex: 2 }]}>
-				{t("components.reportsTable.location")}
-			</Typography>
-			<Typography style={[styles.cell, { flex: 2 }]}>
-				{t("components.reportsTable.date")}
-			</Typography>
-			<Typography style={[styles.cell, { flex: 2.5 }]}>
-				{t("components.reportsTable.status")}
-			</Typography>
-			<Typography style={[styles.cell, { flex: 1 }]}>
-				{t("components.reportsTable.start")}
-			</Typography>
-			<Typography style={[styles.cell, { flex: 1 }]}>
-				{t("components.reportsTable.end")}
-			</Typography>
-			<Typography style={[styles.cell, { flex: 1.5 }]}>
-				{t("components.reportsTable.duration")}
-			</Typography>
+		<View style={{ flex: 1 }}>
+			<View
+				style={[
+					{
+						flexDirection: "row",
+						justifyContent: "space-between",
+						paddingHorizontal: 12,
+						paddingTop: 8,
+					},
+					styles.header,
+				]}
+			>
+				<View
+					style={{
+						flexDirection: "row",
+						justifyContent: "center",
+						alignItems: "center",
+						gap: 12,
+					}}
+				>
+					<FontAwesome5 name={"file-alt"} color={styles.iconColor.color} size={20} />
+
+					<Typography variant={"h5"}>{t("reports.reports")}</Typography>
+				</View>
+				{/*<ExportReportsPicker />*/}
+
+				<Button
+					variant={"contained"}
+					color={"black"}
+					size={"large"}
+					onPress={() => setShowCreateExport(true)}
+				>
+					{t("reports.create_export")}
+				</Button>
+			</View>
+			<View style={[styles.row, styles.header, { height: 48 }]}>
+				<Typography style={[styles.cell, { flex: 2 }]}>
+					{t("components.reportsTable.username")}
+				</Typography>
+				<Typography style={[styles.cell, { flex: 2 }]}>
+					{t("components.reportsTable.location")}
+				</Typography>
+				<Typography style={[styles.cell, { flex: 2 }]}>
+					{t("components.reportsTable.date")}
+				</Typography>
+				<Typography style={[styles.cell, { flex: 2.5 }]}>
+					{t("components.reportsTable.status")}
+				</Typography>
+				<Typography style={[styles.cell, { flex: 1 }]}>
+					{t("components.reportsTable.start")}
+				</Typography>
+				<Typography style={[styles.cell, { flex: 1 }]}>
+					{t("components.reportsTable.end")}
+				</Typography>
+				<Typography style={[styles.cell, { flex: 1.5 }]}>
+					{t("components.reportsTable.duration")}
+				</Typography>
+			</View>
 		</View>
 	);
 
@@ -127,6 +166,10 @@ export default function ReportsTable({ queryParams }: Props) {
 				onEndReachedThreshold={0.2}
 				ListFooterComponent={isFetchingNextPage ? <ActivityIndicator /> : null}
 			/>
+			<ExportReportsDialog
+				isVisible={showCreateExport}
+				onClose={() => setShowCreateExport(false)}
+			/>
 		</ScrollView>
 	);
 }
@@ -150,5 +193,8 @@ const styles = StyleSheet.create(theme => ({
 	legendList: {
 		borderRadius: theme.spacing(8),
 		borderColor: theme.colors.border,
+	},
+	iconColor: {
+		color: theme.colors.primary.main,
 	},
 }));
