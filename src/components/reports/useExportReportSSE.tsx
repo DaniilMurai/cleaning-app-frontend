@@ -5,54 +5,73 @@ import { AccessTokenStorage } from "@/core/auth/storage";
 import { useQueryClient } from "@tanstack/react-query";
 
 const LIMIT = 5;
+const RECONNECT_DELAY = 3000;
 
 export default function useExportReportSSE() {
 	const queryClient = useQueryClient();
 
+	//TODO если не будет токена нужно его обновить, хз как это сделать
 	useEffect(() => {
-		const controller = new AbortController();
-		//TODO если не будет токена нужно его обновить, хз как это сделать
-		AccessTokenStorage.get().then(response => {
-			fetch(`${ApiUrl}${getStreamExportReportsQueryKey()}`, {
-				method: "GET",
-				headers: { Authorization: `${response}`, Accept: "text/event-stream" },
-				signal: controller.signal,
-			}).then(response => {
-				const reader = response.body?.getReader();
+		let controller: AbortController | null = null;
+		let stopped = false;
+		let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
+
+		const connect = async () => {
+			if (stopped) return;
+
+			controller = new AbortController();
+			const token = await AccessTokenStorage.get();
+
+			try {
+				const res = await fetch(`${ApiUrl}${getStreamExportReportsQueryKey()}`, {
+					method: "GET",
+					headers: {
+						Authorization: `${token}`,
+						Accept: "text/event-stream",
+					},
+					signal: controller.signal,
+				});
+
+				const reader = res.body?.getReader();
 				const decoder = new TextDecoder("utf-8");
 				if (!reader) return;
 
 				let buffer = "";
 
-				const read = async () => {
-					try {
-						while (true) {
-							const { value, done } = await reader.read();
-							if (done) break;
+				while (true) {
+					const { value, done } = await reader.read();
+					if (done) break; // сервер закрыл соединение
 
-							buffer += decoder.decode(value, { stream: true });
-							const parts = buffer.split("\n\n");
+					buffer += decoder.decode(value, { stream: true });
+					const parts = buffer.split("\n\n");
 
-							if (parts.length > 1) {
-								const queryKey = getGetExportReportsQueryKey({ limit: LIMIT });
-								await queryClient.invalidateQueries({ queryKey });
-							}
-
-							buffer = parts[parts.length - 1];
-							setTimeout(() => {}, 1000);
-						}
-					} catch (err) {
-						if ((err as DOMException).name !== "AbortError") {
-							console.error("Произошла ошибка при чтении SSE: ", err);
-						}
+					if (parts.length > 1) {
+						const queryKey = getGetExportReportsQueryKey({ limit: LIMIT });
+						await queryClient.invalidateQueries({ queryKey });
 					}
-				};
-				read();
-			});
-		});
+
+					buffer = parts[parts.length - 1];
+				}
+
+				if (!stopped) {
+					reconnectTimeout = setTimeout(connect, RECONNECT_DELAY);
+				}
+			} catch (err) {
+				if ((err as DOMException).name !== "AbortError") {
+					console.error("Ошибка SSE:", err);
+					if (!stopped) {
+						reconnectTimeout = setTimeout(connect, RECONNECT_DELAY);
+					}
+				}
+			}
+		};
+
+		connect();
 
 		return () => {
-			controller.abort();
+			stopped = true;
+			if (controller) controller.abort();
+			if (reconnectTimeout) clearTimeout(reconnectTimeout);
 		};
 	}, []);
 }
