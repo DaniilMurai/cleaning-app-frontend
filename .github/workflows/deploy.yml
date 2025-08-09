@@ -37,20 +37,26 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.DEPLOY_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
 
+      - name: Check known_hosts content
+        run: cat ~/.ssh/known_hosts
+
+      - name: Check SSH key
+        run: cat key.pem
+
       - name: Download build files to server
         run: |
-          ssh -i key.pem ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} '
+          ssh -i key.pem -o UserKnownHostsFile=$HOME/.ssh/known_hosts ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} '
             rm -rf /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/ &&
             mkdir -p /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/
           '
-          scp -i key.pem -r dist/* \
-            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/
-          ssh -i key.pem ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} '
+          scp -i key.pem -o UserKnownHostsFile=$HOME/.ssh/known_hosts -r dist/* ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/
+          ssh -i key.pem -o UserKnownHostsFile=$HOME/.ssh/known_hosts ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} '
             rm -rf /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_old/ &&
             mv /var/www/nginx/neuer-standard /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_old/ &&
             mv /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/ /var/www/nginx/neuer-standard/ &&
             rm -rf /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_old/
           '
+      
 
 
 
