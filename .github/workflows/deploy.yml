@@ -28,6 +28,7 @@ jobs:
         run: npx expo export --platform web
 
 
+
       - name: Setup SSH
         run: |
           echo "${{ secrets.DEPLOY_SSH_KEY }}" > key.pem
@@ -43,6 +44,10 @@ jobs:
 
       - name: Check SSH key
         run: cat key.pem
+
+      - name: Check remote user
+        run: |
+          ssh -i key.pem -o UserKnownHostsFile=$HOME/.ssh/known_hosts ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} 'whoami && id'      
 
       - name: Download build files to server
         run: |
