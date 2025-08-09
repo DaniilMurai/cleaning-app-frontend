@@ -34,17 +34,17 @@ jobs:
 
       - name: Download build files to server
         run: |
-          ssh -i key.pem -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} '
+          ssh -i key.pem ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} '
             rm -rf /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/ &&
             mkdir -p /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/
           '
           scp -i key.pem -o StrictHostKeyChecking=no -r dist/* \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/
-          ssh -i key.pem -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} '
-            rm -rf /var/www/nginx/neuer-standard/web-old/ &&
-            mv /var/www/nginx/neuer-standard/web /var/www/nginx/neuer-standard/web-old/ &&
-            mv /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/ /var/www/nginx/neuer-standard/web &&
-            rm -rf /var/www/nginx/neuer-standard/web-old
+          ssh -i key.pem ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} '
+            rm -rf /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_old/ &&
+            mv /var/www/nginx/neuer-standard /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_old/ &&
+            mv /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/ /var/www/nginx/neuer-standard/ &&
+            rm -rf /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_old/
           '
 
 
