@@ -62,7 +62,7 @@ jobs:
             mv /var/www/nginx/neuer-standard/web /var/www/nginx/neuer-standard/web-old/ &&
             mv /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/ /var/www/nginx/neuer-standard/web &&
             rm -rf /var/www/nginx/neuer-standard/web-old
-      
+            '
 
 
 
