@@ -98,18 +98,19 @@ export default function AssignmentsTab() {
 	const renderModals = () => (
 		<>
 			{modal.modals.createAssignment && (
-				<Dialog
-					visible={modal.modals.createAssignment}
+				// <Dialog
+				// 	visible={modal.modals.createAssignment}
+				// 	onClose={() => modal.closeModal("createAssignment")}
+				// >
+				<CreateDailyAssignmentForm
+					onSubmit={async assignmentData =>
+						await createDailyAssignmentSubmit(assignmentData)
+					}
 					onClose={() => modal.closeModal("createAssignment")}
-				>
-					<CreateDailyAssignmentForm
-						onSubmit={async assignmentData =>
-							await createDailyAssignmentSubmit(assignmentData)
-						}
-						onClose={() => modal.closeModal("createAssignment")}
-						isLoading={dailyAssignmentMutation.createDailyAssignmentMutation.isPending}
-					/>
-				</Dialog>
+					isLoading={dailyAssignmentMutation.createDailyAssignmentMutation.isPending}
+					isVisible={modal.modals.createAssignment}
+				/>
+				// </Dialog>
 			)}
 
 			{modal.modals.editAssignment && !!selectedAssignment && (
@@ -122,6 +123,7 @@ export default function AssignmentsTab() {
 						onSubmit={async (assignmentId, assignmentData) =>
 							await editDailyAssignmentSubmit(assignmentId, assignmentData)
 						}
+						isVisible={modal.modals.editAssignment}
 						onClose={() => modal.closeModal("editAssignment")}
 						isLoading={dailyAssignmentMutation.updateDailyAssignmentMutation.isPending}
 					/>

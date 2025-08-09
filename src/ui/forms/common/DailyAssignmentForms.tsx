@@ -1,7 +1,7 @@
 // src/ui/components/DailyAssignmentForms.tsx
 
 import { View } from "react-native";
-import { Button } from "@/ui";
+import { Button, Dialog } from "@/ui";
 import Input from "@/ui/common/Input";
 import React, { useState } from "react";
 import Card from "@/ui/common/Card";
@@ -30,6 +30,7 @@ import { v4 as uuidv4 } from "uuid";
 interface CreateDailyAssignmentFormProps {
 	onSubmit: (assignmentData: DailyAssignmentCreate[]) => void;
 	onClose: () => void;
+	isVisible: boolean;
 	isLoading?: boolean;
 }
 
@@ -37,6 +38,7 @@ export function CreateDailyAssignmentForm({
 	onSubmit,
 	onClose,
 	isLoading,
+	isVisible,
 }: CreateDailyAssignmentFormProps) {
 	const { t } = useTranslation();
 
@@ -92,10 +94,35 @@ export function CreateDailyAssignmentForm({
 	};
 
 	return (
-		<Card size="large" style={styles.container}>
-			<Typography variant="h5" style={styles.title}>
-				{t("admin.createDailyAssignment")}
-			</Typography>
+		<Dialog
+			onClose={onClose}
+			card
+			visible={isVisible}
+			cardProps={{
+				size: "large",
+				variant: "contained",
+			}}
+			scrollView
+			header={
+				<Typography variant="h5" style={styles.title}>
+					{t("admin.createDailyAssignment")}
+				</Typography>
+			}
+			actions={
+				<View style={styles.buttonsContainer}>
+					<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
+						{t("admin.createDailyAssignment")}
+					</Button>
+					<Button variant="outlined" onPress={onClose}>
+						{t("common.close")}
+					</Button>
+				</View>
+			}
+		>
+			{/*<Card size="large" style={styles.container}>*/}
+			{/*<Typography variant="h5" style={styles.title}>*/}
+			{/*	{t("admin.createDailyAssignment")}*/}
+			{/*</Typography>*/}
 
 			<View style={styles.zIndex10}>
 				<CustomPicker
@@ -167,15 +194,16 @@ export function CreateDailyAssignmentForm({
 				multiline
 			/>
 
-			<View style={styles.buttonsContainer}>
-				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
-					{t("admin.createDailyAssignment")}
-				</Button>
-				<Button variant="outlined" onPress={onClose}>
-					{t("common.close")}
-				</Button>
-			</View>
-		</Card>
+			{/*<View style={styles.buttonsContainer}>*/}
+			{/*	<Button variant="contained" onPress={handleSubmit} loading={isLoading}>*/}
+			{/*		{t("admin.createDailyAssignment")}*/}
+			{/*	</Button>*/}
+			{/*	<Button variant="outlined" onPress={onClose}>*/}
+			{/*		{t("common.close")}*/}
+			{/*	</Button>*/}
+			{/*</View>*/}
+			{/*</Card>*/}
+		</Dialog>
 	);
 }
 
@@ -188,6 +216,7 @@ interface EditDailyAssignmentFormProps {
 		assignmentData: DailyAssignmentUpdate
 	) => void;
 	onClose: () => void;
+	isVisible: boolean;
 	isLoading?: boolean;
 }
 
@@ -195,6 +224,7 @@ export function EditDailyAssignmentForm({
 	assignment,
 	onSubmit,
 	onClose,
+	isVisible,
 	isLoading,
 }: EditDailyAssignmentFormProps) {
 	const { t } = useTranslation();
@@ -231,11 +261,31 @@ export function EditDailyAssignmentForm({
 		}));
 
 	return (
-		<Card size="large" style={styles.container}>
-			<Typography variant="h5" style={styles.title}>
-				{t("admin.editDailyAssignment")}
-			</Typography>
-
+		<Dialog
+			visible={isVisible}
+			onClose={onClose}
+			card
+			cardProps={{
+				size: "large",
+				variant: "contained",
+			}}
+			scrollView
+			header={
+				<Typography variant="h5" style={styles.title}>
+					{t("admin.editDailyAssignment")}
+				</Typography>
+			}
+			actions={
+				<View style={styles.buttonsContainer}>
+					<Button variant="contained" onPress={handleSubmitEdit} loading={isLoading}>
+						{t("common.save")}
+					</Button>
+					<Button variant="outlined" onPress={onClose}>
+						{t("common.cancel")}
+					</Button>
+				</View>
+			}
+		>
 			<View style={styles.zIndex10}>
 				<CustomPicker
 					label={t("components.dailyAssignmentsList.user") + "*"}
@@ -282,16 +332,7 @@ export function EditDailyAssignmentForm({
 				style={styles.input}
 				multiline
 			/>
-
-			<View style={styles.buttonsContainer}>
-				<Button variant="contained" onPress={handleSubmitEdit} loading={isLoading}>
-					{t("common.save")}
-				</Button>
-				<Button variant="outlined" onPress={onClose}>
-					{t("common.cancel")}
-				</Button>
-			</View>
-		</Card>
+		</Dialog>
 	);
 }
 
@@ -453,12 +494,15 @@ const styles = StyleSheet.create(theme => ({
 		justifyContent: "flex-end",
 		marginTop: theme.spacing(3),
 		gap: theme.spacing(2),
+		flexWrap: "wrap",
 	},
+	
 	buttonError: {
 		backgroundColor: theme.colors.error.main,
 	},
 	modesContainer: {
 		flexDirection: "row",
 		gap: theme.spacing(2),
+		flexWrap: "wrap",
 	},
 }));
