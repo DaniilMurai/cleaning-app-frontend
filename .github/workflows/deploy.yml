@@ -43,7 +43,7 @@ jobs:
             rm -rf /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/ &&
             mkdir -p /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/
           '
-          scp -i key.pem -o StrictHostKeyChecking=no -r dist/* \
+          scp -i key.pem -r dist/* \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_tmp/
           ssh -i key.pem ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} '
             rm -rf /home/${{ secrets.DEPLOY_USER }}/neuer-standard/web_old/ &&
