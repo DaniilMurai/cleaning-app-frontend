@@ -32,6 +32,11 @@ jobs:
           echo "${{ secrets.DEPLOY_SSH_KEY }}" > key.pem
           chmod 600 key.pem
 
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+
       - name: Download build files to server
         run: |
           ssh -i key.pem ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} '
