@@ -119,11 +119,6 @@ export function CreateDailyAssignmentForm({
 				</View>
 			}
 		>
-			{/*<Card size="large" style={styles.container}>*/}
-			{/*<Typography variant="h5" style={styles.title}>*/}
-			{/*	{t("admin.createDailyAssignment")}*/}
-			{/*</Typography>*/}
-
 			<View style={styles.zIndex10}>
 				<CustomPicker
 					label={t("components.dailyAssignmentsList.user") + "*"}
@@ -193,16 +188,6 @@ export function CreateDailyAssignmentForm({
 				style={styles.input}
 				multiline
 			/>
-
-			{/*<View style={styles.buttonsContainer}>*/}
-			{/*	<Button variant="contained" onPress={handleSubmit} loading={isLoading}>*/}
-			{/*		{t("admin.createDailyAssignment")}*/}
-			{/*	</Button>*/}
-			{/*	<Button variant="outlined" onPress={onClose}>*/}
-			{/*		{t("common.close")}*/}
-			{/*	</Button>*/}
-			{/*</View>*/}
-			{/*</Card>*/}
 		</Dialog>
 	);
 }
@@ -496,7 +481,7 @@ const styles = StyleSheet.create(theme => ({
 		gap: theme.spacing(2),
 		flexWrap: "wrap",
 	},
-	
+
 	buttonError: {
 		backgroundColor: theme.colors.error.main,
 	},

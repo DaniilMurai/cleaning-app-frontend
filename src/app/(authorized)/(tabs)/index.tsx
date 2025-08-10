@@ -125,10 +125,7 @@ const styles = StyleSheet.create(theme => ({
 	scrollContainer: {
 		flex: 1,
 	},
-	emptyStateContainer: {
-		flex: 1,
-		textAlign: "center",
-	},
+
 	page: {
 		flex: 1,
 		flexDirection: {
@@ -139,7 +136,7 @@ const styles = StyleSheet.create(theme => ({
 		gap: { xs: theme.spacing(3), sm: theme.spacing(0), md: theme.spacing(6) },
 	},
 	sidebar: {
-		flex: { sm: 1, md: 0.5 },
+		flex: { sm: 0.5, md: 0.5 },
 
 		alignSelf: "flex-start",
 		alignContent: "center",

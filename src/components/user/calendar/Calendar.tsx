@@ -33,8 +33,8 @@ export default function Calendar({ assignedDates, onConfirm }: Props) {
 		const isAssigned = assignedDates.some(d => dayjs(d).isSame(dayjsDate, "day"));
 		const isToday = dayjsDate.isSame(today, "day");
 
-		let dayStyle = {};
-		let textStyle = {};
+		let dayStyle: {};
+		let textStyle: {};
 
 		if (isPressed) {
 			// Стиль для нажатого дня
@@ -134,11 +134,11 @@ export default function Calendar({ assignedDates, onConfirm }: Props) {
 
 const styles = StyleSheet.create(theme => ({
 	modalOverlay: {
-		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
 		width: "100%",
-		marginTop: theme.spacing(0),
+		//flex: 1,
+		flexShrink: 1,
 		marginStart: {
 			xs: 0,
 			md: theme.spacing(6),
