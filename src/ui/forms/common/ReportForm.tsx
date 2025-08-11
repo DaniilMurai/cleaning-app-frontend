@@ -1,5 +1,5 @@
 // src/ui/components/reports/ReportForm.tsx
-import React, { useEffect, useState } from "react";
+import React, { JSX, useEffect, useState } from "react";
 import { Image, ScrollView, TouchableOpacity, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { Button, Card, Dialog, Input, Typography } from "@/ui";
@@ -45,6 +45,7 @@ export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }
 	const [localAssignmentAndReport, setLocalAssignmentAndReport] =
 		useState<DailyAssignmentForUserResponse | null>(assignment);
 
+	console.log("assignedTasks in ReportForm: ", localAssignmentAndReport?.assigned_tasks);
 	const handleCancel = () => {
 		// Вызываем переданный обработчик отмены
 		onCancel();
@@ -65,15 +66,17 @@ export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }
 			if (data) {
 				setLocalAssignmentAndReport(data);
 				const checks: TasksRoomChecks = {};
-				data.tasks?.forEach(task => {
-					checks[task.id] = {};
-					const roomIds = data.room_tasks
-						?.filter(rt => rt.task_id === task.id)
-						.map(rt => rt.room_id);
-					roomIds?.forEach(id => {
-						checks[task.id][id] = true;
-					});
+
+				data.assigned_tasks?.forEach(task => {
+					if (!checks[task.task.id]) {
+						checks[task.task.id] = {};
+					}
+					checks[task.task.id][task.room.id] = true;
 				});
+
+				console.log("data: ", data);
+				console.log("Data assigned tasks: ", data.assigned_tasks);
+
 				setTasksRoomChecks(checks);
 			}
 		};
@@ -122,8 +125,6 @@ export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }
 			Object.values(taskChecks).some(checked => checked)
 		);
 
-		// let status = "not_completed";
-		// Если пользователь вообще не сможет сделать задагние нужно будет поставить это
 		let status: AssignmentStatus = "not_completed";
 		if (allTasksDone) {
 			status = "completed";
@@ -142,6 +143,8 @@ export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }
 			console.log("submitting status: " + status);
 
 			const onlyUris = media.map(item => item.uri);
+			//TODO передавать статус каждой комнаты, что бы в отчете были видны комнаты которые не сделаны
+
 			await onSubmit({
 				text,
 				media: onlyUris,
@@ -153,6 +156,29 @@ export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }
 		} finally {
 			setIsSubmitting(false);
 		}
+	};
+
+	const renderRoomTaskCollapses = () => {
+		return localAssignmentAndReport?.assigned_tasks?.reduce(
+			(acc, at) => {
+				if (!acc.seen.has(at.task.id)) {
+					acc.seen.add(at.task.id);
+					acc.elements.push(
+						<Card variant={"standard"} style={styles.borderColor}>
+							<RoomTaskCollapse
+								key={at.task.id}
+								rooms={localAssignmentAndReport?.rooms ?? []}
+								task={at.task}
+								roomTasks={localAssignmentAndReport?.room_tasks ?? []}
+								onRoomChecksChange={handleRoomChecksChange}
+							/>
+						</Card>
+					);
+				}
+				return acc;
+			},
+			{ seen: new Set(), elements: [] as JSX.Element[] }
+		).elements;
 	};
 
 	return (
@@ -183,17 +209,7 @@ export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }
 						</View>
 					</View>
 
-					{localAssignmentAndReport?.tasks?.map(task => (
-						<Card variant={"standard"} style={styles.borderColor}>
-							<RoomTaskCollapse
-								key={task.id}
-								rooms={localAssignmentAndReport?.rooms ?? []}
-								task={task}
-								roomTasks={localAssignmentAndReport?.room_tasks ?? []}
-								onRoomChecksChange={handleRoomChecksChange}
-							/>
-						</Card>
-					))}
+					{renderRoomTaskCollapses()}
 				</Card>
 				<View style={styles.inputContainer}>
 					<Card variant={"standard"} style={styles.borderColor}>

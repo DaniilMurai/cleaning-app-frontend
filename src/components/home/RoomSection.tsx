@@ -18,7 +18,7 @@ export default function RoomSection({ assignment, room }: Props) {
 	const toggleExpand = () => setIsExpanded(prev => !prev);
 
 	const roomTasks = assignment.assigned_tasks?.filter(task => task.room.id === room.id);
-	
+
 	return (
 		<View style={styles.roomSection}>
 			<TouchableOpacity style={styles.roomHeader} onPress={toggleExpand}>
