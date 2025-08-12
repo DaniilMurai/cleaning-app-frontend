@@ -18,6 +18,7 @@ const LanguageContext = createContext<LanguageContextProps>({
 	availableLanguages: [
 		{ code: "de", name: "Deutsch" },
 		{ code: "ru", name: "Русский" },
+		{ code: "uk", name: "Українська" },
 	],
 });
 
@@ -28,6 +29,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 	const availableLanguages = [
 		{ code: "de", name: "Deutsch" },
 		{ code: "ru", name: "Русский" },
+		{ code: "uk", name: "Українська" },
 	];
 
 	// Загружаем сохраненный язык при первом рендере

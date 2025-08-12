@@ -3,7 +3,7 @@ import { initReactI18next } from "react-i18next";
 import * as Localization from "expo-localization"; // если используете Expo
 import de from "./languages/de.json";
 import ru from "./languages/ru.json";
-
+import uk from "./languages/uk.json";
 // Объединяем ресурсы для всех локалей
 const resources = {
 	de: {
@@ -12,9 +12,12 @@ const resources = {
 	ru: {
 		translation: ru,
 	},
+	uk: {
+		translation: uk,
+	},
 };
 
-const supportedLanguage = ["de", "ru"];
+const supportedLanguage = ["de", "ru", "uk"];
 const systemLang = Localization.locale.split("-")[0];
 const initialLanguage = supportedLanguage.includes(systemLang) ? systemLang : "ru";
 
