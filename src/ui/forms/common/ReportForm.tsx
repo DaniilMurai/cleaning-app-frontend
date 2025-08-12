@@ -6,11 +6,16 @@ import { Button, Card, Dialog, Input, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useTranslation } from "react-i18next";
-import { AssignmentStatus, DailyAssignmentForUserResponse } from "@/api/client";
+import {
+	AssignmentStatus,
+	CreateReportReportRooms,
+	DailyAssignmentForUserResponse,
+} from "@/api/client";
 import RoomTaskCollapse from "@/components/reports/RoomTaskCollapse";
 import { formatTime } from "@/core/utils/dateUtils";
 import GetStatusBadge from "@/components/reports/StatusBadge";
 import { AssignmentStorage } from "@/core/auth/storage";
+import { RoomStatus } from "@/api/admin";
 
 interface Media {
 	type: "image" | "video";
@@ -23,12 +28,18 @@ interface ReportFormProps extends React.ComponentProps<typeof View> {
 		text?: string;
 		media?: string[];
 		status: AssignmentStatus;
+		reportRooms?: CreateReportReportRooms;
 	}) => Promise<void>;
 	onCancel: () => void;
 	totalTime: number;
 }
 
 type TasksRoomChecks = Record<number, Record<number, boolean>>;
+
+interface RoomsCountStatus {
+	total: number;
+	done: number;
+}
 
 export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }: ReportFormProps) {
 	const { t } = useTranslation();
@@ -143,12 +154,43 @@ export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }
 			console.log("submitting status: " + status);
 
 			const onlyUris = media.map(item => item.uri);
-			//TODO передавать статус каждой комнаты, что бы в отчете были видны комнаты которые не сделаны
 
+			const uniqueRoomsStatuses: Record<string, RoomsCountStatus> = {};
+
+			Object.keys(tasksRoomChecks).forEach(taskId => {
+				const rooms = tasksRoomChecks[Number(taskId)];
+
+				Object.keys(rooms).forEach((roomId: string) => {
+					if (!uniqueRoomsStatuses[roomId]) {
+						uniqueRoomsStatuses[roomId] = { total: 0, done: 0 };
+					}
+					uniqueRoomsStatuses[roomId].total += 1;
+					if (rooms[Number(roomId)]) {
+						uniqueRoomsStatuses[roomId].done += 1;
+					}
+				});
+			});
+
+			const reportRooms: CreateReportReportRooms = [];
+
+			Object.entries(uniqueRoomsStatuses).forEach(([roomId, { total, done }]) => {
+				let roomStatus: RoomStatus;
+				if (!done) {
+					roomStatus = RoomStatus.not_done;
+				} else if (done === total) {
+					roomStatus = RoomStatus.done;
+				} else {
+					roomStatus = RoomStatus.partially_done;
+				}
+				reportRooms.push({ room_id: Number(roomId), status: roomStatus });
+			});
+
+			console.log("reportRooms: ", reportRooms);
 			await onSubmit({
 				text,
 				media: onlyUris,
 				status, // Передаем статус
+				reportRooms,
 			});
 
 			setText("");

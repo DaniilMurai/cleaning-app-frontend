@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
 	AssignmentStatus,
+	CreateReportReportRooms,
 	DailyAssignmentForUserResponse,
 	DailyAssignmentForUserUpdate,
 	useCreateReport,
@@ -85,6 +86,7 @@ export default function useAssignmentStatusHandler({
 		text?: string;
 		media?: string[];
 		status: AssignmentStatus;
+		reportRooms?: CreateReportReportRooms;
 	}) => {
 		console.log(
 			" userid: " +
@@ -126,6 +128,7 @@ export default function useAssignmentStatusHandler({
 					start_time: convertMsToUTC(startTime),
 					end_time: convertMsToUTC(endTime),
 					status: data.status,
+					report_rooms: data.reportRooms || undefined,
 				},
 			});
 
