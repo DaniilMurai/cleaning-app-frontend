@@ -56,7 +56,7 @@ export default function AssignmentsTab() {
 
 	const invalidateDailyAssignments = async () => {
 		const queryKey = getGetDailyAssignmentsQueryKey();
-		await queryClient.invalidateQueries({ queryKey, exact: false });
+		await queryClient.invalidateQueries({ queryKey });
 		await refetchAssignmentsDates();
 	};
 

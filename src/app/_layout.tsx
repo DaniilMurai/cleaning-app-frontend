@@ -10,6 +10,8 @@ import PopperContextProvider from "@/components/Popper/PopperContext";
 import { AuthProvider, useAuth } from "@/core/auth";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { ToastProvider, useToast } from "react-native-toast-notifications";
+import { AlertUtils } from "@/core/utils/alerts";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -25,32 +27,56 @@ export default function RootLayout() {
 	return (
 		<QueryClientProvider client={queryClient}>
 			<AuthProvider>
-				<LanguageProvider>
-					<HideSplash />
-					<ThemeProvider
-						value={{
-							...(rt.themeName === "dark" ? DarkTheme : DefaultTheme),
-							colors: {
-								primary: theme.colors.primary.main,
-								background: theme.colors.background.main,
-								card: theme.colors.background.paper,
-								text: theme.colors.text.primary,
-								border: theme.colors.divider,
-								notification: theme.colors.error.main,
-							},
-						}}
-					>
-						<EventProvider>
-							<PortalProvider>
-								<PopperContextProvider>
-									<Slot />
-								</PopperContextProvider>
-							</PortalProvider>
-						</EventProvider>
-					</ThemeProvider>
-				</LanguageProvider>
+				<ToastProvider
+					placement={"top"}
+					duration={3000}
+					animationType={"slide-in"}
+					animationDuration={250}
+					swipeEnabled={true}
+					textStyle={{ fontSize: 16 }}
+					successColor={theme.colors.success.main}
+					dangerColor={theme.colors.error.main}
+					warningColor={theme.colors.warning.main}
+				>
+					<LanguageProvider>
+						<HideSplash />
+						<ThemeProvider
+							value={{
+								...(rt.themeName === "dark" ? DarkTheme : DefaultTheme),
+								colors: {
+									primary: theme.colors.primary.main,
+									background: theme.colors.background.main,
+									card: theme.colors.background.paper,
+									text: theme.colors.text.primary,
+									border: theme.colors.divider,
+									notification: theme.colors.error.main,
+								},
+							}}
+						>
+							<InnerApp />
+						</ThemeProvider>
+					</LanguageProvider>
+				</ToastProvider>
 			</AuthProvider>
 		</QueryClientProvider>
+	);
+}
+
+function InnerApp() {
+	const toast = useToast();
+
+	useEffect(() => {
+		AlertUtils.setToast(toast);
+	}, [toast]);
+
+	return (
+		<EventProvider>
+			<PortalProvider>
+				<PopperContextProvider>
+					<Slot />
+				</PopperContextProvider>
+			</PortalProvider>
+		</EventProvider>
 	);
 }
 

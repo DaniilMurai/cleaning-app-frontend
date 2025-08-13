@@ -1,26 +1,34 @@
 // src/utils/alerts.ts
 import { Alert, Platform } from "react-native";
+import { useToast } from "react-native-toast-notifications";
 
 /**
  * Утилита для показа alert/confirm сообщений, с кроссплатформенной поддержкой web/mobile
  */
+let toastRef: ReturnType<typeof useToast> | null = null;
 export const AlertUtils = {
 	/**
 	 * Показывает информационное сообщение
 	 */
+
+	setToast: (toast: ReturnType<typeof useToast>) => {
+		toastRef = toast;
+	},
 	showMessage: (title: string, message?: string) => {
-		if (Platform.OS === "web") {
-			window.alert(message ? `${title}: ${message}` : title);
-		} else {
-			Alert.alert(title, message);
-		}
+		// if (Platform.OS === "web") {
+		// 	window.alert(message ? `${title}: ${message}` : title);
+		// } else {
+		// 	Alert.alert(title, message);
+		// }
+		toastRef?.show(message ? `${title}: ${message}` : title);
 	},
 
 	/**
 	 * Показывает сообщение об успехе
 	 */
 	showSuccess: (message: string) => {
-		AlertUtils.showMessage("Success", message);
+		// AlertUtils.showMessage("Success", message);
+		toastRef?.show("Success" + message, { type: "success" });
 	},
 
 	/**
@@ -30,7 +38,8 @@ export const AlertUtils = {
 		const errorMessage =
 			typeof error === "string" ? error : error.message || "An error occurred";
 
-		AlertUtils.showMessage("Error", errorMessage);
+		// AlertUtils.showMessage("Error", errorMessage);
+		toastRef?.show("Error" + errorMessage, { type: "danger" });
 	},
 
 	/**
