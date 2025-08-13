@@ -98,6 +98,9 @@ export default function ReportsTable({ queryParams }: Props) {
 				<Typography style={[styles.cell, { flex: 1.5 }]}>
 					{t("components.reportsTable.duration")}
 				</Typography>
+				<Typography style={[styles.cell, { flex: 3 }]}>
+					{t("components.reportsTable.message")}
+				</Typography>
 			</View>
 		</View>
 	);
@@ -138,6 +141,7 @@ export default function ReportsTable({ queryParams }: Props) {
 				<Typography style={[styles.cell, { flex: 1 }]}>{start_time}</Typography>
 				<Typography style={[styles.cell, { flex: 1 }]}>{end_time}</Typography>
 				<Typography style={[styles.cell, { flex: 1.5 }]}>{duration}</Typography>
+				<Typography style={[styles.cell, { flex: 3 }]}>{item.message}</Typography>
 			</View>
 		);
 	};

@@ -203,7 +203,8 @@
       "status": "Статус",
       "start": "Початок",
       "end": "Кінець",
-      "duration": "Тривалість"
+      "duration": "Тривалість",
+      "message": "Коментар"
     },
     "status": {
       "completed": "Виконано",

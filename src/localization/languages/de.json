@@ -203,7 +203,8 @@
       "status": "Status",
       "start": "Start",
       "end": "Ende",
-      "duration": "Dauer"
+      "duration": "Dauer",
+      "message": "Kommentar"
     },
     "status": {
       "completed": "Abgeschlossen",
