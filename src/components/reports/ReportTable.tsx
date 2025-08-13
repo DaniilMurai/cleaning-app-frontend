@@ -77,28 +77,28 @@ export default function ReportsTable({ queryParams }: Props) {
 				</Button>
 			</View>
 			<View style={[styles.row, styles.header, { height: 48 }]}>
-				<Typography style={[styles.cell, { flex: 2 }]}>
+				<Typography style={[styles.cell, { flex: 1 }]}>
 					{t("components.reportsTable.username")}
 				</Typography>
-				<Typography style={[styles.cell, { flex: 2 }]}>
+				<Typography style={[styles.cell, { flex: 1.5 }]}>
 					{t("components.reportsTable.location")}
 				</Typography>
-				<Typography style={[styles.cell, { flex: 2 }]}>
+				<Typography style={[styles.cell, { flex: 1 }]}>
 					{t("components.reportsTable.date")}
 				</Typography>
-				<Typography style={[styles.cell, { flex: 2.5 }]}>
+				<Typography style={[styles.cell, { flex: 2 }]}>
 					{t("components.reportsTable.status")}
 				</Typography>
-				<Typography style={[styles.cell, { flex: 1 }]}>
+				<Typography style={[styles.cell, { flex: 0.5 }]}>
 					{t("components.reportsTable.start")}
 				</Typography>
-				<Typography style={[styles.cell, { flex: 1 }]}>
+				<Typography style={[styles.cell, { flex: 0.5 }]}>
 					{t("components.reportsTable.end")}
 				</Typography>
-				<Typography style={[styles.cell, { flex: 1.5 }]}>
+				<Typography style={[styles.cell, { flex: 1 }]}>
 					{t("components.reportsTable.duration")}
 				</Typography>
-				<Typography style={[styles.cell, { flex: 3 }]}>
+				<Typography style={[styles.cell, { flex: 2.5 }]}>
 					{t("components.reportsTable.message")}
 				</Typography>
 			</View>
@@ -132,16 +132,16 @@ export default function ReportsTable({ queryParams }: Props) {
 
 		return (
 			<View style={[styles.row]}>
-				<Typography style={[styles.cell, { flex: 2 }]}>{userFullName}</Typography>
-				<Typography style={[styles.cell, { flex: 2 }]}>{locationName}</Typography>
-				<Typography style={[styles.cell, { flex: 2 }]}>{date}</Typography>
-				<Typography style={[styles.cell, { flex: 2.5 }]}>
+				<Typography style={[styles.cell, { flex: 1 }]}>{userFullName}</Typography>
+				<Typography style={[styles.cell, { flex: 1.5 }]}>{locationName}</Typography>
+				<Typography style={[styles.cell, { flex: 1 }]}>{date}</Typography>
+				<Typography style={[styles.cell, { flex: 2 }]}>
 					<GetStatusBadge status={item.status} />
 				</Typography>
-				<Typography style={[styles.cell, { flex: 1 }]}>{start_time}</Typography>
-				<Typography style={[styles.cell, { flex: 1 }]}>{end_time}</Typography>
-				<Typography style={[styles.cell, { flex: 1.5 }]}>{duration}</Typography>
-				<Typography style={[styles.cell, { flex: 3 }]}>{item.message}</Typography>
+				<Typography style={[styles.cell, { flex: 0.5 }]}>{start_time}</Typography>
+				<Typography style={[styles.cell, { flex: 0.5 }]}>{end_time}</Typography>
+				<Typography style={[styles.cell, { flex: 1 }]}>{duration}</Typography>
+				<Typography style={[styles.cell, { flex: 2.5 }]}>{item.message}</Typography>
 			</View>
 		);
 	};
