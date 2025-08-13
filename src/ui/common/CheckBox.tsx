@@ -3,6 +3,7 @@ import { Pressable, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Typography from "./Typography";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
 export interface CheckboxProps {
 	checked: boolean;
@@ -30,6 +31,12 @@ const Checkbox = forwardRef<View, CheckboxProps>(function Checkbox(
 	const { theme } = useUnistyles();
 	styles.useVariants({ size, color, checked, disabled });
 
+	const scale = useSharedValue(1);
+
+	const animatedStyle = useAnimatedStyle(() => ({
+		transform: [{ scale: scale.value }],
+	}));
+
 	const iconColor = useMemo(() => {
 		if (indeterminate) return theme.colors.warning.main; // Особый цвет для промежуточного состояния
 		if (!checked && color != "error") return "transparent";
@@ -55,7 +62,7 @@ const Checkbox = forwardRef<View, CheckboxProps>(function Checkbox(
 			onChange(!checked);
 		}
 	};
-	
+
 	return (
 		<Pressable
 			ref={ref}
@@ -63,9 +70,11 @@ const Checkbox = forwardRef<View, CheckboxProps>(function Checkbox(
 			style={state => [styles.container, state.pressed && !disabled && styles.pressed]}
 			accessibilityRole="checkbox"
 			accessibilityState={{ checked, disabled }}
+			onPressIn={() => (scale.value = withSpring(0.9, { damping: 2, stiffness: 300 }))}
+			onPressOut={() => (scale.value = withSpring(1))}
 			{...props}
 		>
-			<View style={styles.checkbox}>
+			<Animated.View style={[styles.checkbox, animatedStyle]}>
 				{indeterminate ? (
 					<FontAwesome5
 						name="minus"
@@ -85,7 +94,7 @@ const Checkbox = forwardRef<View, CheckboxProps>(function Checkbox(
 						color={iconColor}
 					/>
 				) : null}
-			</View>
+			</Animated.View>
 
 			{label && (
 				<Typography
