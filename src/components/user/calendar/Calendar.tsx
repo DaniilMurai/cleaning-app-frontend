@@ -112,11 +112,12 @@ export default function Calendar({ assignedDates, onConfirm }: Props) {
 						day: {
 							color: theme.colors.text.primary,
 						},
-
 						time_label: { color: theme.colors.text.primary },
 						day_label: {
 							color: theme.colors.text.primary,
 						},
+						month_label: { color: theme.colors.text.primary },
+						year_label: { color: theme.colors.text.primary },
 						button_prev_image: { tintColor: theme.colors.primary.text },
 						button_next_image: { tintColor: theme.colors.primary.text },
 						weekday_label: { color: theme.colors.text.primary },

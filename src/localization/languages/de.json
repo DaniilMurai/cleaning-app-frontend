@@ -119,6 +119,7 @@
     "noAssignments": "Keine Zuweisungen",
     "noAssignmentsForToday": "🎉 Keine Aufgaben für heute!",
     "noAssignmentsPlanned": "Für {{date}} ist noch nichts geplant",
+    "noAssignmentsWasPlanned": "Am {{date}} war nichts geplant",
     "enjoyTime": "Genieße deine Freizeit ✨",
     "scheduleAssignment": "Zuweisung planen",
     "taskDetails": "Aufgabendetails",

@@ -55,18 +55,37 @@ export default function NoAssignments({ selectedDate }: props) {
 								alignItems: "center",
 							}}
 						>
-							<View style={styles.iconContainer}>
-								<FontAwesome5
-									name={"clock"}
-									color={styles.iconColor.color}
-									size={26}
-								/>
+							<View
+								style={[
+									styles.iconContainer,
+									getFormatedDate(selectedDate) < getFormatedDate(new Date())
+										? styles.iconContainerSuccess
+										: styles.iconContainerPrimary,
+								]}
+							>
+								{getFormatedDate(selectedDate) < getFormatedDate(new Date()) ? (
+									<FontAwesome5
+										name={"check"}
+										color={styles.iconColorCheck.color}
+										size={26}
+									/>
+								) : (
+									<FontAwesome5
+										name={"clock"}
+										color={styles.iconColor.color}
+										size={26}
+									/>
+								)}
 							</View>
 						</View>
 						<Typography variant="h5" style={{ alignSelf: "center", marginBottom: 8 }}>
-							{t("admin.noAssignmentsPlanned", {
-								date: getFormatedDate(selectedDate),
-							})}
+							{getFormatedDate(selectedDate) < getFormatedDate(new Date())
+								? t("admin.noAssignmentsWasPlanned", {
+										date: getFormatedDate(selectedDate),
+									})
+								: t("admin.noAssignmentsPlanned", {
+										date: getFormatedDate(selectedDate),
+									})}
 						</Typography>
 					</Card>
 				</View>
@@ -85,9 +104,16 @@ const styles = StyleSheet.create(theme => ({
 	iconColor: {
 		color: theme.colors.primary.main,
 	},
-
-	iconContainer: {
+	iconColorCheck: {
+		color: theme.colors.success.main,
+	},
+	iconContainerPrimary: {
 		backgroundColor: theme.colors.primary.mainOpacity,
+	},
+	iconContainerSuccess: {
+		backgroundColor: theme.colors.success.background,
+	},
+	iconContainer: {
 		borderRadius: theme.borderRadius(999),
 		padding: theme.spacing(2),
 	},
