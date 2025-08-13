@@ -106,8 +106,11 @@
     "tasks": "Aufgaben",
     "addTask": "Aufgabe hinzufügen",
     "frequency": "Häufigkeit",
-    "daily": "Täglich",
-    "everyXDays": "Alle {{count}} Tage",
+    "everyAssignment": "Bei jeder Aufgabe",
+    "everyXAssignments": {
+      "twoFour": "Einmal alle {{count}} Aufgaben",
+      "other": "Einmal alle {{count}} Aufgaben"
+    },
     "assignedRooms": "Zugewiesene Räume",
     "assignRoom": "Raum zuweisen",
     "assignments": "Zuweisungen",

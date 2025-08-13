@@ -166,8 +166,14 @@ export default function TasksListDialog({
 								<Typography variant="h5">
 									{t("admin.frequency")}:{" "}
 									{task.frequency === 1
-										? t("admin.daily")
-										: t("admin.everyXDays", { count: task.frequency })}
+										? t("admin.everyAssignment")
+										: task.frequency >= 2 && task.frequency <= 4
+											? t("admin.everyXAssignments.twoFour", {
+													count: task.frequency,
+												})
+											: t("admin.everyXAssignments.other", {
+													count: task.frequency,
+												})}
 								</Typography>
 
 								<View style={styles.divider} />

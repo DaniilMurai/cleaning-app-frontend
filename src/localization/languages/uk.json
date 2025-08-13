@@ -106,8 +106,11 @@
     "tasks": "Завдання",
     "addTask": "Додати завдання",
     "frequency": "Частота",
-    "daily": "Щоденно",
-    "everyXDays": "Кожні {{count}} днів",
+    "everyAssignment": "На кожне призначення",
+    "everyXAssignments": {
+      "twoFour": "Раз в {{count}} призначення",
+      "other": "Раз в {{count}} призначень"
+    },
     "assignedRooms": "Призначені кімнати",
     "assignRoom": "Призначити кімнату",
     "assignments": "Призначення",

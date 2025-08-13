@@ -106,8 +106,11 @@
     "tasks": "Задачи",
     "addTask": "Добавить задачу",
     "frequency": "Частота",
-    "daily": "Ежедневно",
-    "everyXDays": "Каждые {{count}} дней",
+    "everyAssignment": "На каждое назначение",
+    "everyXAssignments": {
+      "twoFour": "Раз в {{count}} назначения",
+      "other": "Раз в {{count}} назначений"
+    },
     "assignedRooms": "Назначенные комнаты",
     "assignRoom": "Назначить комнату",
     "assignments": "Назначения",
