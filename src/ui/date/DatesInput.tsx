@@ -38,7 +38,7 @@ export function DatesInput({
 		setSelectedDates(prev => {
 			const newDates = dates.map(d => dayjs(d)).filter(d => d.isValid());
 			console.log("values in handleDateChange: ", values);
-
+			console.log("MULTIPLEMODE: ", multipleEnterMode);
 			// Если режим "normal", просто сохраняем выбранные даты
 			if (multipleEnterMode === "normal") {
 				onChange(newDates.map(d => d.format("YYYY-MM-DD HH:mm")));
@@ -108,6 +108,7 @@ export function DatesInput({
 			>
 				<DateTimePicker
 					mode="multiple"
+					key={multipleEnterMode}
 					dates={selectedDates.map(d => d.toDate())}
 					onChange={({ dates }) => handleDateChange(dates as Date[])}
 					timePicker={true}
