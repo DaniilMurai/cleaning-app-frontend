@@ -2,7 +2,7 @@
 import { ScrollView, useWindowDimensions, View } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { Button, Dialog, Loading } from "@/ui";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { AdminReadUser, useGetUsers } from "@/api/admin";
 import EditUserForm from "@/ui/forms/user/EditUserForm";
@@ -59,18 +59,22 @@ export default function UsersPage() {
 	if (isLoading) {
 		return <Loading />;
 	}
-
 	const ManyColumnButton = React.memo(() => {
 		const { width } = useWindowDimensions();
 		const { theme } = useUnistyles();
 
-		width < theme.breakpoints.lg && setManyColumns(false);
+		useEffect(() => {
+			if (width < theme.breakpoints.lg) {
+				setManyColumns(false);
+			}
+		}, [width, theme.breakpoints.lg]);
+
 		return (
 			width >= theme.breakpoints.lg && (
 				<Button
-					variant={"outlined"}
+					variant="outlined"
 					style={{ marginHorizontal: 10 }}
-					onPress={() => setManyColumns(!manyColumns)}
+					onPress={() => setManyColumns(prev => !prev)}
 				>
 					<FontAwesome5 name={manyColumns ? "list" : "th"} size={24} />
 				</Button>

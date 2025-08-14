@@ -96,10 +96,10 @@ export default function EditUserForm({ user, onClose, onSubmit, isLoading }: Edi
 					disabled={isDisabled}
 					loading={isLoading}
 				>
-					Save Changes
+					{t("admin.editUser")}
 				</Button>
 				<Button variant="outlined" onPress={onClose}>
-					Cancel
+					{t("common.cancel")}
 				</Button>
 			</View>
 		</Card>
