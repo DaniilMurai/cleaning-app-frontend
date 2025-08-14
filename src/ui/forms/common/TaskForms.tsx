@@ -23,6 +23,8 @@ export function CreateTaskForm({ onSubmit, onClose, isLoading }: CreateTaskFormP
 		frequency: 1,
 	});
 
+	const isDisabled = formData.title === "" || formData.frequency === 0;
+
 	const handleSubmit = () => {
 		onSubmit(formData);
 	};
@@ -57,7 +59,12 @@ export function CreateTaskForm({ onSubmit, onClose, isLoading }: CreateTaskFormP
 			/>
 
 			<DialogActions>
-				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
+				<Button
+					variant="contained"
+					onPress={handleSubmit}
+					disabled={isDisabled}
+					loading={isLoading}
+				>
 					{t("admin.createTask")}
 				</Button>
 				<Button variant="outlined" onPress={onClose}>
@@ -82,6 +89,7 @@ export function EditTaskForm({ task, onSubmit, onClose, isLoading }: EditTaskFor
 		description: task.description,
 		frequency: task.frequency,
 	});
+	const isDisabled = formData.title === "" || formData.frequency === 0;
 
 	const handleSubmit = () => {
 		onSubmit({ task_id: task.id }, formData);
@@ -117,7 +125,12 @@ export function EditTaskForm({ task, onSubmit, onClose, isLoading }: EditTaskFor
 			/>
 
 			<DialogActions>
-				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
+				<Button
+					variant="contained"
+					onPress={handleSubmit}
+					disabled={isDisabled}
+					loading={isLoading}
+				>
 					{t("common.save")}
 				</Button>
 				<Button variant="outlined" onPress={onClose}>

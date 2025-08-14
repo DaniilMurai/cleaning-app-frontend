@@ -46,6 +46,8 @@ export function CreateRoomForm({ onSubmit, onClose, isLoading, location_id }: Cr
 		location_id: location_id,
 	});
 
+	const isDisabled = formData.name === "";
+
 	const handleSubmit = () => {
 		onSubmit(formData);
 	};
@@ -67,7 +69,12 @@ export function CreateRoomForm({ onSubmit, onClose, isLoading, location_id }: Cr
 			{/* This is a simplified version - you might want to add a proper dropdown */}
 
 			<View style={styles.buttonsContainer}>
-				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
+				<Button
+					variant="contained"
+					onPress={handleSubmit}
+					disabled={isDisabled}
+					loading={isLoading}
+				>
 					{t("admin.createRoom")}
 				</Button>
 				<Button variant="outlined" onPress={onClose}>
@@ -92,6 +99,8 @@ export function EditRoomForm({ room, onSubmit, onClose, isLoading }: EditRoomFor
 		location_id: room.location_id,
 	});
 
+	const isDisabled = formData.name === "";
+
 	const handleSubmit = () => {
 		onSubmit({ room_id: room.id }, formData);
 	};
@@ -112,7 +121,12 @@ export function EditRoomForm({ room, onSubmit, onClose, isLoading }: EditRoomFor
 			{/* Location dropdown/selector could be implemented here */}
 
 			<View style={styles.buttonsContainer}>
-				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
+				<Button
+					variant="contained"
+					onPress={handleSubmit}
+					disabled={isDisabled}
+					loading={isLoading}
+				>
 					{t("common.save")}
 				</Button>
 				<Button variant="outlined" onPress={onClose}>

@@ -32,6 +32,8 @@ export default function EditUserForm({ user, onClose, onSubmit, isLoading }: Edi
 		admin_note: user.admin_note,
 	});
 
+	const isDisabled = formData.nickname === "" || formData.full_name === "";
+
 	const handleSubmit = () => {
 		onSubmit(formData);
 	};
@@ -88,7 +90,12 @@ export default function EditUserForm({ user, onClose, onSubmit, isLoading }: Edi
 			/>
 
 			<View style={styles.buttonsContainer}>
-				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
+				<Button
+					variant="contained"
+					onPress={handleSubmit}
+					disabled={isDisabled}
+					loading={isLoading}
+				>
 					Save Changes
 				</Button>
 				<Button variant="outlined" onPress={onClose}>

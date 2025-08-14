@@ -34,6 +34,10 @@ interface CreateDailyAssignmentFormProps {
 	isLoading?: boolean;
 }
 
+const getUserDisplayName = (user: AdminReadUser) => {
+	return user.full_name || user.nickname || `User ${user.id}`;
+};
+
 export function CreateDailyAssignmentForm({
 	onSubmit,
 	onClose,
@@ -44,11 +48,6 @@ export function CreateDailyAssignmentForm({
 
 	const { data: users } = useGetUsers();
 	const { data: locations } = useGetLocations();
-
-	const getUserDisplayName = (user: AdminReadUser) => {
-		return user.full_name || user.nickname || `User ${user.id}`;
-	};
-
 	const userOptions =
 		users &&
 		users.map(user => ({
@@ -74,12 +73,12 @@ export function CreateDailyAssignmentForm({
 	console.log("formData: ", formData);
 
 	const [mode, setMode] = useState<"normal" | "everyWeek" | "everyTwoWeeks" | "everyMonth">(
-		"everyWeek"
+		"normal"
 	);
 
 	const [dates, setDates] = useState<Dayjs[]>([]);
 
-	console.log("dates in DailyAssignmentForms: ", dates);
+	const isDisabled = formData.user_id === 0 || formData.location_id === 0 || dates.length === 0;
 
 	// Изменяем обработчик сабмита
 	const handleSubmit = () => {
@@ -110,7 +109,12 @@ export function CreateDailyAssignmentForm({
 			}
 			actions={
 				<View style={styles.buttonsContainer}>
-					<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
+					<Button
+						variant="contained"
+						onPress={handleSubmit}
+						disabled={isDisabled}
+						loading={isLoading}
+					>
 						{t("admin.createDailyAssignment")}
 					</Button>
 					<Button variant="outlined" onPress={onClose}>
@@ -226,10 +230,6 @@ export function EditDailyAssignmentForm({
 
 	const handleSubmitEdit = () => {
 		onSubmit({ daily_assignment_id: assignment.id }, formData);
-	};
-
-	const getUserDisplayName = (user: AdminReadUser) => {
-		return user.full_name || user.nickname || `User ${user.id}`;
 	};
 
 	const userOptions =

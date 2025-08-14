@@ -33,7 +33,7 @@ export function CreateLocationForm({ onSubmit, onClose, isLoading }: CreateLocat
 		name: "",
 		address: "",
 	});
-
+	const isDisabled = formData.name === "";
 	const handleSubmit = () => {
 		onSubmit(formData);
 	};
@@ -60,7 +60,12 @@ export function CreateLocationForm({ onSubmit, onClose, isLoading }: CreateLocat
 			/>
 
 			<View style={styles.buttonsContainer}>
-				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
+				<Button
+					variant="contained"
+					onPress={handleSubmit}
+					disabled={isDisabled}
+					loading={isLoading}
+				>
 					{t("admin.createLocation")}
 				</Button>
 				<Button variant="outlined" onPress={onClose}>
@@ -90,6 +95,8 @@ export function EditLocationForm({
 		address: location.address,
 	});
 
+	const isDisabled = formData.name === "";
+
 	const handleSubmit = () => {
 		onSubmit({ location_id: location.id }, formData);
 	};
@@ -116,7 +123,12 @@ export function EditLocationForm({
 			/>
 
 			<View style={styles.buttonsContainer}>
-				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
+				<Button
+					variant="contained"
+					onPress={handleSubmit}
+					disabled={isDisabled}
+					loading={isLoading}
+				>
 					{t("common.save")}
 				</Button>
 				<Button variant="outlined" onPress={onClose}>

@@ -27,6 +27,8 @@ export default function CreateUserForm({ onSubmit, onClose, isLoading }: CreateU
 		admin_note: "",
 	});
 
+	const isDisabled = formData.full_name === "";
+
 	const handleSubmit = () => {
 		onSubmit(formData);
 	};
@@ -68,7 +70,12 @@ export default function CreateUserForm({ onSubmit, onClose, isLoading }: CreateU
 			/>
 
 			<View style={styles.buttonsContainer}>
-				<Button variant="contained" onPress={handleSubmit} loading={isLoading}>
+				<Button
+					variant="contained"
+					onPress={handleSubmit}
+					disabled={isDisabled}
+					loading={isLoading}
+				>
 					{t("admin.createUser")}
 				</Button>
 				<Button variant="outlined" onPress={onClose}>
