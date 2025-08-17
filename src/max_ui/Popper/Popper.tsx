@@ -1,21 +1,19 @@
-import Paper, { PaperProps } from "@/ui/common/Paper";
-import { ReactNode, useCallback, useEffect, useState } from "react";
-import { Platform, StyleSheet, View, ViewProps } from "react-native";
-import { UnistylesRuntime } from "react-native-unistyles";
-import { NativeMethods } from "react-native/types/public/ReactNativeTypes";
 import Animated, {
 	runOnJS,
 	useAnimatedStyle,
 	useSharedValue,
 	withTiming,
 } from "react-native-reanimated";
-import OutsidePressHandler from "react-native-outside-press";
 import { Portal } from "@/features/Portal";
-import usePopperInsets from "./usePopperInsets";
+import { UniOutsidePressHandler } from "@/max_ui/uni.tsx";
+import usePopperInsets from "@/max_ui/Popper/usePopperInsets.ts";
+import { ReactNode, useCallback, useEffect, useState } from "react";
+import { NativeMethods, Platform, StyleSheet, View, ViewProps } from "react-native";
+import { StyleSheet as UniStyleSheet, UnistylesRuntime } from "react-native-unistyles";
 
 type RectType = Partial<Record<"top" | "bottom" | "left" | "right", number>>;
 
-export interface PopperProps {
+export type PopperProps = {
 	visible: boolean;
 	setVisible: (visible: boolean) => void;
 	anchorEl?: NativeMethods | null;
@@ -25,7 +23,7 @@ export interface PopperProps {
 	rect?: RectType;
 	children?: ReactNode;
 	disablePaper?: boolean;
-	paperProps?: PaperProps<Animated.View>;
+	paperProps?: ViewProps;
 	wrapperProps?: ViewProps;
 	measureMinusInsetTopAndroid?: boolean;
 	onShowing?: () => void;
@@ -35,7 +33,9 @@ export interface PopperProps {
 	topDelta?: number;
 	leftDelta?: number;
 	animateByYAxis?: boolean;
-}
+	elevation?: number;
+	spacing?: "normal" | "dense" | "disabled";
+};
 
 export default function Popper({
 	visible,
@@ -56,6 +56,8 @@ export default function Popper({
 	topDelta = 0,
 	leftDelta = 0,
 	animateByYAxis,
+	elevation = 2,
+	spacing = "normal",
 }: PopperProps) {
 	const animation = useSharedValue(0);
 	const [position, setPosition] = useState<RectType | undefined>(rect);
@@ -239,6 +241,8 @@ export default function Popper({
 		setVisible(false);
 	}, [setVisible]);
 
+	styles.useVariants({ spacing });
+
 	if (!internalVisible) return null;
 
 	return (
@@ -248,10 +252,12 @@ export default function Popper({
 					StyleSheet.absoluteFill,
 					{
 						position: "absolute",
+						zIndex: 999,
 					},
 				]}
+				pointerEvents="box-none"
 			>
-				<OutsidePressHandler
+				<UniOutsidePressHandler
 					disabled={!visible}
 					onOutsidePress={onClose}
 					{...wrapperProps}
@@ -280,26 +286,50 @@ export default function Popper({
 							{children}
 						</Animated.View>
 					) : (
-						<Paper
+						<Animated.View
 							onLayout={
 								visible
 									? ({ nativeEvent }) => setChildLayout(nativeEvent.layout)
 									: undefined
 							}
-							component={Animated.View}
-							elevation={10}
 							{...paperProps}
 							style={[
+								styles.paper,
 								animatedStyle,
-								{ transformOrigin: "top right" },
+								styles.elevation(elevation),
 								paperProps?.style,
 							]}
 						>
 							{children}
-						</Paper>
+						</Animated.View>
 					)}
-				</OutsidePressHandler>
+				</UniOutsidePressHandler>
 			</View>
 		</Portal>
 	);
 }
+
+const styles = UniStyleSheet.create(theme => ({
+	paper: {
+		transformOrigin: "top right",
+		borderRadius: theme.borderRadius(3),
+		backgroundColor: theme.colors.background.paper,
+		color: theme.colors.text.primary,
+		variants: {
+			spacing: {
+				normal: {
+					padding: theme.spacing(3),
+				},
+				dense: {
+					padding: theme.spacing(1),
+				},
+				disabled: {
+					padding: 0,
+				},
+			},
+		},
+	},
+	elevation: (elevation: number) => ({
+		...theme.shadow(elevation),
+	}),
+}));

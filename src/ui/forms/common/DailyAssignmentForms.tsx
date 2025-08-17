@@ -48,6 +48,7 @@ export function CreateDailyAssignmentForm({
 
 	const { data: users } = useGetUsers();
 	const { data: locations } = useGetLocations();
+
 	const userOptions =
 		users &&
 		users.map(user => ({
@@ -123,75 +124,77 @@ export function CreateDailyAssignmentForm({
 				</View>
 			}
 		>
-			<View style={styles.zIndex10}>
-				<CustomPicker
-					label={t("components.dailyAssignmentsList.user") + "*"}
-					value={formData.user_id?.toString() || ""}
-					options={userOptions ?? []}
-					onChange={value =>
-						value &&
-						setFormData(prev => ({
-							...prev,
-							user_id: parseInt(value, 10),
-						}))
-					}
-					style={styles.input}
-				/>
-			</View>
+			<View style={styles.gapContainer}>
+				<View style={styles.zIndex10}>
+					<CustomPicker
+						label={t("components.dailyAssignmentsList.user") + "*"}
+						value={formData.user_id?.toString() || ""}
+						options={userOptions ?? []}
+						onChange={value =>
+							value &&
+							setFormData(prev => ({
+								...prev,
+								user_id: parseInt(value, 10),
+							}))
+						}
+						style={styles.input}
+					/>
+				</View>
 
-			<View style={styles.zIndex1}>
-				<CustomPicker
-					label={t("components.dailyAssignmentsList.location") + "*"}
-					value={formData.location_id?.toString() || ""}
-					options={locationOptions ?? []}
-					onChange={value =>
-						value &&
-						setFormData(prev => ({
-							...prev,
-							location_id: parseInt(value, 10),
-						}))
-					}
-					style={styles.input}
-				/>
-			</View>
+				<View style={styles.zIndex1}>
+					<CustomPicker
+						label={t("components.dailyAssignmentsList.location") + "*"}
+						value={formData.location_id?.toString() || ""}
+						options={locationOptions ?? []}
+						onChange={value =>
+							value &&
+							setFormData(prev => ({
+								...prev,
+								location_id: parseInt(value, 10),
+							}))
+						}
+						style={styles.input}
+					/>
+				</View>
 
-			<DatesInput
-				label={t("components.dailyAssignmentsList.date") + "*"}
-				values={dates.map(date => date.format("YYYY-MM-DD HH:mm"))}
-				onChange={newDates => setDates(newDates.map(v => dayjs(v)))}
-				style={styles.dateContainer}
-				multipleEnterMode={mode}
-				limitYear={1}
-			/>
-			<View style={styles.modesContainer}>
-				<Checkbox
-					label={"Normal Mode"}
-					checked={mode === "normal"}
-					onChange={() => setMode("normal")}
+				<DatesInput
+					label={t("components.dailyAssignmentsList.date") + "*"}
+					values={dates.map(date => date.format("YYYY-MM-DD HH:mm"))}
+					onChange={newDates => setDates(newDates.map(v => dayjs(v)))}
+					style={styles.dateContainer}
+					multipleEnterMode={mode}
+					limitYear={1}
 				/>
-				<Checkbox
-					label={"Every Week"}
-					checked={mode === "everyWeek"}
-					onChange={() => setMode("everyWeek")}
-				/>
-				<Checkbox
-					label={"Every Two Weeks"}
-					checked={mode === "everyTwoWeeks"}
-					onChange={() => setMode("everyTwoWeeks")}
-				/>
-				<Checkbox
-					label={"Every Month"}
-					checked={mode === "everyMonth"}
-					onChange={() => setMode("everyMonth")}
+				<View style={styles.modesContainer}>
+					<Checkbox
+						label={"Normal Mode"}
+						checked={mode === "normal"}
+						onChange={() => setMode("normal")}
+					/>
+					<Checkbox
+						label={"Every Week"}
+						checked={mode === "everyWeek"}
+						onChange={() => setMode("everyWeek")}
+					/>
+					<Checkbox
+						label={"Every Two Weeks"}
+						checked={mode === "everyTwoWeeks"}
+						onChange={() => setMode("everyTwoWeeks")}
+					/>
+					<Checkbox
+						label={"Every Month"}
+						checked={mode === "everyMonth"}
+						onChange={() => setMode("everyMonth")}
+					/>
+				</View>
+				<Input
+					label={t("components.dailyAssignmentsList.adminNote")}
+					value={formData.admin_note || ""}
+					onChangeText={text => setFormData(prev => ({ ...prev, admin_note: text }))}
+					style={styles.input}
+					multiline
 				/>
 			</View>
-			<Input
-				label={t("components.dailyAssignmentsList.adminNote")}
-				value={formData.admin_note || ""}
-				onChangeText={text => setFormData(prev => ({ ...prev, admin_note: text }))}
-				style={styles.input}
-				multiline
-			/>
 		</Dialog>
 	);
 }
@@ -271,52 +274,54 @@ export function EditDailyAssignmentForm({
 				</View>
 			}
 		>
-			<View style={styles.zIndex10}>
-				<CustomPicker
-					label={t("components.dailyAssignmentsList.user") + "*"}
-					value={formData.user_id?.toString() || ""}
-					options={userOptions ?? []}
-					onChange={value =>
-						value &&
-						setFormData(prev => ({
-							...prev,
-							user_id: parseInt(value, 10),
-						}))
-					}
+			<View style={styles.gapContainer}>
+				<View style={styles.zIndex10}>
+					<CustomPicker
+						label={t("components.dailyAssignmentsList.user") + "*"}
+						value={formData.user_id?.toString() || ""}
+						options={userOptions ?? []}
+						onChange={value =>
+							value &&
+							setFormData(prev => ({
+								...prev,
+								user_id: parseInt(value, 10),
+							}))
+						}
+						style={styles.input}
+					/>
+				</View>
+
+				<View style={styles.zIndex1}>
+					<CustomPicker
+						label={t("components.dailyAssignmentsList.location") + "*"}
+						value={formData.location_id?.toString() || ""}
+						options={locationOptions ?? []}
+						onChange={value =>
+							value &&
+							setFormData(prev => ({
+								...prev,
+								location_id: parseInt(value, 10),
+							}))
+						}
+						style={styles.input}
+					/>
+				</View>
+
+				<DateInput
+					label={t("components.dailyAssignmentsList.date") + "*"}
+					value={formData.date || ""}
+					onChange={newDate => setFormData(prev => ({ ...prev, date: newDate }))}
+					style={styles.dateContainer}
+				/>
+
+				<Input
+					label={t("components.dailyAssignmentsList.adminNote")}
+					value={formData.admin_note || ""}
+					onChangeText={text => setFormData(prev => ({ ...prev, admin_note: text }))}
 					style={styles.input}
+					multiline
 				/>
 			</View>
-
-			<View style={styles.zIndex1}>
-				<CustomPicker
-					label={t("components.dailyAssignmentsList.location") + "*"}
-					value={formData.location_id?.toString() || ""}
-					options={locationOptions ?? []}
-					onChange={value =>
-						value &&
-						setFormData(prev => ({
-							...prev,
-							location_id: parseInt(value, 10),
-						}))
-					}
-					style={styles.input}
-				/>
-			</View>
-
-			<DateInput
-				label={t("components.dailyAssignmentsList.date") + "*"}
-				value={formData.date || ""}
-				onChange={newDate => setFormData(prev => ({ ...prev, date: newDate }))}
-				style={styles.dateContainer}
-			/>
-
-			<Input
-				label={t("components.dailyAssignmentsList.adminNote")}
-				value={formData.admin_note || ""}
-				onChangeText={text => setFormData(prev => ({ ...prev, admin_note: text }))}
-				style={styles.input}
-				multiline
-			/>
 		</Dialog>
 	);
 }
@@ -444,6 +449,9 @@ const styles = StyleSheet.create(theme => ({
 		padding: 20,
 		width: "90%",
 		maxWidth: 400,
+	},
+	gapContainer: {
+		gap: theme.spacing(1.5),
 	},
 	container: {
 		padding: theme.spacing(3),

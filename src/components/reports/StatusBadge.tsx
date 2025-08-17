@@ -11,9 +11,17 @@ interface Props extends ViewProps {
 	reportStatus?: ReportStatus;
 	text?: string;
 	color?: any;
+	fontSize?: number;
 }
 
-export default function GetStatusBadge({ status, reportStatus, text, color, ...props }: Props) {
+export default function GetStatusBadge({
+	status,
+	reportStatus,
+	text,
+	color,
+	fontSize,
+	...props
+}: Props) {
 	const { theme } = useUnistyles();
 	const { t } = useTranslation();
 
@@ -34,9 +42,9 @@ export default function GetStatusBadge({ status, reportStatus, text, color, ...p
 				<Typography
 					style={[
 						{
-							color: theme.colors.not_started.main,
+							color: color ?? theme.colors.not_started.main,
+							fontSize: fontSize,
 						},
-						{ color: color },
 					]}
 				>
 					{text}

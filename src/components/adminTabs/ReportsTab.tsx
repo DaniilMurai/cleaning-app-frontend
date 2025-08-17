@@ -69,13 +69,11 @@ const styles = StyleSheet.create(theme => ({
 		flex: 1,
 	},
 	headerContainer: {
-		// flexDirection: "column",
 		flexDirection: "row",
-		// justifyContent: "center",
+		// flex: 1,
 		alignItems: "center",
 		marginBottom: theme.spacing(2),
 		zIndex: 10,
-		// gap: theme.spacing(2),
 	},
 	buttonContainer: {
 		flexDirection: "row-reverse",

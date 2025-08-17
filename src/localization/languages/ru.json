@@ -55,7 +55,9 @@
     "twoWeeks": "2 недели",
     "month": "месяц",
     "days": "{{count}} дней",
-    "unknownInterval": "неизвестный интервал"
+    "unknownInterval": "неизвестный интервал",
+    "placeholder": "Выберите опцию",
+    "reset": "Сбросить"
   },
   "auth": {
     "login": "Логин",

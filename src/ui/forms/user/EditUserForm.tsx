@@ -41,11 +41,11 @@ export default function EditUserForm({ user, onClose, onSubmit, isLoading }: Edi
 	return (
 		<Card size="large" style={styles.container}>
 			<Typography variant="h5" style={styles.title}>
-				Edit User: {user.nickname}
+				{t("admin.editUser")}: {user.nickname}
 			</Typography>
 
 			<Input
-				label="Nickname"
+				label={t("profile.username")}
 				value={formData.nickname ?? ""}
 				onChangeText={text => setFormData({ ...formData, nickname: text })}
 				style={styles.input}
@@ -74,14 +74,14 @@ export default function EditUserForm({ user, onClose, onSubmit, isLoading }: Edi
 				/>
 			</View>
 			<Input
-				label="Full Name"
+				label={t("profile.fullName")}
 				value={formData.full_name ?? undefined}
 				onChangeText={text => setFormData({ ...formData, full_name: text })}
 				style={styles.input}
 			/>
 
 			<Input
-				label="Admin Note"
+				label={t("admin.adminNote")}
 				value={formData.admin_note ?? undefined}
 				onChangeText={text => setFormData({ ...formData, admin_note: text })}
 				style={styles.input}

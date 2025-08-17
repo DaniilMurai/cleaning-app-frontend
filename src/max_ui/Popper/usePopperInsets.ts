@@ -1,5 +1,5 @@
 import { useContext, useMemo } from "react";
-import { PopperContext, PopperInsets } from "./PopperContext";
+import { PopperContext, PopperInsets } from "@/max_ui/Popper/PopperContext.tsx";
 
 export default function usePopperInsets() {
 	const context = useContext(PopperContext);

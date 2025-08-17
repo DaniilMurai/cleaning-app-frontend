@@ -84,7 +84,7 @@ const styles = StyleSheet.create((theme, rt) => ({
 					paddingVertical: theme.spacing(0.75),
 				},
 				medium: {
-					borderRadius: theme.borderRadius(1),
+					borderRadius: theme.borderRadius(1.5),
 					paddingHorizontal: theme.spacing(1.25),
 					paddingVertical: theme.spacing(1),
 				},

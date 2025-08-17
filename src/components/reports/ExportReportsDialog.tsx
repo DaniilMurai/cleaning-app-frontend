@@ -23,8 +23,8 @@ export default function ExportReportsDialog({ isVisible, onClose }: ExportReport
 	const { t } = useTranslation();
 	const { currentLanguage } = useLanguage();
 	const mutation = useCreateExportReports();
-	const [showCsv, setShowCsv] = useState<boolean>(true);
-	const [showExcel, setShowExcel] = useState<boolean>(false);
+	const [showCsv, setShowCsv] = useState<boolean>(false);
+	const [showExcel, setShowExcel] = useState<boolean>(true);
 	const today = dayjs(Date.now()).format(DATE_FORMAT);
 
 	const [userId, setUserId] = useState<number | null>(null);
@@ -32,7 +32,7 @@ export default function ExportReportsDialog({ isVisible, onClose }: ExportReport
 
 	const timeZone = getTimeZone();
 	const [formData, setFormData] = useState<ReportExportParams>({
-		export_type: "csv",
+		export_type: "excel",
 		start_date: today,
 		end_date: today,
 		timezone: timeZone ?? "Europe/Berlin",
@@ -68,7 +68,7 @@ export default function ExportReportsDialog({ isVisible, onClose }: ExportReport
 			value: user.id.toString(),
 		}));
 
-		return [{ label: "All users", value: null }, ...mappedUsers];
+		return [{ label: "All users", value: undefined }, ...mappedUsers];
 	};
 
 	const selectFormat = (format: "csv" | "excel") => {
@@ -133,7 +133,8 @@ export default function ExportReportsDialog({ isVisible, onClose }: ExportReport
 					value={userId ? userId.toString() : null}
 					placeholder={"All users"}
 					onChange={value => {
-						const parsed = value !== null ? parseInt(value) : null;
+						const parsed =
+							value !== undefined && value !== null ? parseInt(value) : null;
 						setUserId(parsed);
 						setFormData(prev => ({
 							...prev,
@@ -169,15 +170,15 @@ export default function ExportReportsDialog({ isVisible, onClose }: ExportReport
 					<Typography>{t("reports.chooseFormat")}:</Typography>
 					<Checkbox
 						size={"large"}
-						label={"CSV (.csv)"}
-						checked={showCsv}
-						onChange={() => selectFormat("csv")}
-					/>
-					<Checkbox
-						size={"large"}
 						label={"Excel (.xlsx)"}
 						checked={showExcel}
 						onChange={() => selectFormat("excel")}
+					/>
+					<Checkbox
+						size={"large"}
+						label={"CSV (.csv)"}
+						checked={showCsv}
+						onChange={() => selectFormat("csv")}
 					/>
 				</View>
 			</View>

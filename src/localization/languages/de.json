@@ -55,7 +55,9 @@
     "twoWeeks": "zwei Wochen",
     "month": "einem Monat",
     "days": "{{count}} Tagen",
-    "unknownInterval": "unbekanntem Intervall"
+    "unknownInterval": "unbekanntem Intervall",
+    "placeholder": "Option auswählen",
+    "reset": "Zurücksetzen"
   },
   "auth": {
     "login": "Anmeldung",

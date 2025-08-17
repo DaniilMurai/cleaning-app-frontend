@@ -11,7 +11,7 @@ export { default as Picker } from "./common/Picker";
 export { default as Select } from "./common/Select";
 export { default as Typography } from "./common/Typography";
 
-export { PopperContext } from "@/components/Popper/PopperContext";
+// export { PopperContext } from "@/components/Popper/PopperContext";
 
 // TabBarIcon Components
 export { default as TabBarIcon } from "@/ui/TabBarIcon/TabBarIcon";

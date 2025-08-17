@@ -11,7 +11,8 @@ import GetStatusBadge from "@/components/reports/StatusBadge";
 import StatusBadgeIcon from "./StatusBadgeIcon";
 import { useTranslation } from "react-i18next";
 
-const LIMIT = 5;
+const LIMIT = 7;
+const USER_FULL_NAME_LEN_LIMIT = 20;
 
 interface ExportReportsPickerProps extends ViewProps {}
 
@@ -38,21 +39,25 @@ export default function ExportReportsPicker({ ...props }: ExportReportsPickerPro
 		);
 	};
 
+	function editUserFullName(fullName: string) {
+		const len = fullName.length;
+		if (len <= USER_FULL_NAME_LEN_LIMIT) return fullName;
+
+		for (let i = USER_FULL_NAME_LEN_LIMIT; i >= 0; i--) {
+			if (fullName[i] === " " && i <= USER_FULL_NAME_LEN_LIMIT) return fullName.slice(0, i);
+		}
+		return fullName.slice(0, USER_FULL_NAME_LEN_LIMIT - 2) + "..";
+	}
+
 	return (
-		<View style={{ minWidth: 300, maxWidth: 325 }} {...props}>
+		<View {...props}>
 			<BasePopover
-				trigger={
-					<Button variant={"contained"} color={"black"} size={"large"}>
-						<FontAwesome5 name={"file"} size={16} /> {t("reports.view_exports")}
-					</Button>
-				}
-				itemHeight={400}
-				isScrolled={false}
-				maxWidth={300}
-				style={{ zIndex: 10000 }}
+				buttonTriggerVariant={"contained"}
+				buttonTriggerColor={"black"}
+				buttonTriggerSize={"large"}
 			>
 				<ScrollView
-					style={{ height: 400, maxHeight: 600, minWidth: 300, width: 320 }}
+					style={{ height: 400 }}
 					onScroll={({ nativeEvent }) => {
 						const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
 						const isBottom =
@@ -62,8 +67,9 @@ export default function ExportReportsPicker({ ...props }: ExportReportsPickerPro
 							fetchNextPage();
 						}
 					}}
+					showsVerticalScrollIndicator={false}
 					scrollEventThrottle={100}
-					contentContainerStyle={{ flexGrow: 1 }}
+					// contentContainerStyle={{  }}
 				>
 					{data?.pages?.map(pages =>
 						pages.map(report => (
@@ -88,43 +94,48 @@ export default function ExportReportsPicker({ ...props }: ExportReportsPickerPro
 											<FontAwesome5 name={"download"} size={16} />
 										</Button>
 									</View>
-
-									{report.user_full_name && (
-										<Typography variant={"body2"}>
-											<FontAwesome5 name={"user"} size={16} />{" "}
-											{report.user_full_name}
-										</Typography>
-									)}
-
 									<View style={styles.badgesContainer}>
+										<GetStatusBadge
+											text={report.export_type.toUpperCase()}
+											style={styles.formatLabel}
+											color={styles.formatLabel.color}
+											fontSize={14}
+										/>
 										{report.timezone && (
 											<GetStatusBadge
 												text={report.timezone}
 												style={styles.timezoneLabel}
 												color={styles.timezoneLabel.color}
+												fontSize={14}
 											/>
 										)}
-										<GetStatusBadge
-											text={report.export_type.toUpperCase()}
-											style={styles.formatLabel}
-											color={styles.formatLabel.color}
-										/>
 										{report.lang && (
 											<GetStatusBadge
 												style={styles.langLabel}
 												text={report.lang.toUpperCase()}
 												color={styles.langLabel.color}
+												fontSize={14}
 											/>
 										)}
-
-										{/*<GetStatusBadge reportStatus={report.status} />*/}
+										{report.user_full_name && (
+											<GetStatusBadge
+												text={editUserFullName(report.user_full_name)}
+												style={styles.userLabel}
+												color={styles.userLabel.color}
+												fontSize={14}
+											/>
+											// <Typography variant={"body2"}>
+											// 	<FontAwesome5 name={"user"} size={16} />{" "}
+											// 	{report.user_full_name}
+											// </Typography>
+										)}
 									</View>
 								</View>
 								<View style={styles.divider} />
 							</>
 						))
 					)}
-					{isFetchingNextPage && <Typography>Loading more...</Typography>}
+					{isFetchingNextPage && <Typography>{t("common.loading")}</Typography>}
 				</ScrollView>
 			</BasePopover>
 		</View>
@@ -134,8 +145,8 @@ export default function ExportReportsPicker({ ...props }: ExportReportsPickerPro
 const styles = StyleSheet.create(theme => ({
 	container: {
 		flex: 1,
-		padding: 12,
-		marginBottom: 8,
+		// padding: 12,
+		// marginBottom: 8,
 		// borderRadius: 8,
 		// borderWidth: 1,
 		// borderColor: theme.colors.border,
@@ -161,6 +172,10 @@ const styles = StyleSheet.create(theme => ({
 	timezoneLabel: {
 		color: theme.colors.primary.main,
 		backgroundColor: theme.colors.primary.mainOpacity,
+	},
+	userLabel: {
+		color: theme.colors.progress.main,
+		backgroundColor: theme.colors.progress.background,
 	},
 	badgesContainer: {
 		flexDirection: "row",

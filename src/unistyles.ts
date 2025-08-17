@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native-unistyles";
+import { Platform } from "react-native";
 
 const themedColors = {
 	light: {
@@ -63,6 +64,17 @@ const themedColors = {
 			secondary: "#374348",
 			disabled: "rgba(0, 0, 0, 0.38)", // Add this line
 		},
+		skeleton: {
+			background: "#e6edf2", // чуть темнее, чем background.main, для контраста
+			foreground: "#f8fbfd", // чуть светлее, для "мерцания" skeleton
+		},
+		components: {
+			input: {
+				background: "#ffffff", // чисто белый для ввода
+				border: "#d0d7de", // нейтрально-серый, не слишком заметный
+				outline: "#3bd0c7", // твой primary.main
+			},
+		},
 		divider: "rgba(0, 0, 0, 0.12)",
 		shadow: "rgba(0, 0, 0, 0.1)", // Добавлено
 		border: "#989898", // Добавлено
@@ -81,7 +93,7 @@ const themedColors = {
 			mainOpacity: "#38a29d1a",
 		},
 		secondary: {
-			main: "#834a4a",
+			main: "#b24040",
 			light: "#a46a6a",
 			dark: "#592929",
 			text: "#fff",
@@ -132,6 +144,17 @@ const themedColors = {
 			primary: "#ECEDEE",
 			secondary: "#999a9a",
 			disabled: "rgba(255, 255, 255, 0.38)", // Add this line
+		},
+		skeleton: {
+			background: "#2d3032", // светлее, чем background.paper
+			foreground: "#3a3e41", // чуть светлее background, создаёт shimmer
+		},
+		components: {
+			input: {
+				background: "#1a1c1d", // тёмный, но не чёрный, для полей ввода
+				border: "#3f4447", // серо-графитовый
+				outline: "#38a29d", // твой primary.main
+			},
 		},
 		divider: "rgba(255, 255, 255, 0.12)",
 		shadow: "rgba(0, 0, 0, 0.3)", // Добавлено
@@ -187,6 +210,79 @@ const buildTheme = (colors: ColorsType) => {
 			23: "0px 11px 14px -7px rgba(0,0,0,0.2),0px 23px 36px 3px rgba(0,0,0,0.14),0px 9px 44px 8px rgba(0,0,0,0.12)",
 			24: "0px 11px 15px -7px rgba(0,0,0,0.2),0px 24px 38px 3px rgba(0,0,0,0.14),0px 9px 46px 8px rgba(0,0,0,0.12)",
 		} as Record<number, string>,
+		shadow: (elevation: number, color = "#000000") => {
+			if (!elevation) {
+				return {
+					elevation: 0,
+					shadowOffset: {
+						width: 0,
+						height: 0,
+					},
+					shadowOpacity: 0,
+					shadowRadius: 0,
+					shadowColor: color,
+				};
+			}
+
+			const androidDepth = {
+				penumbra: [
+					"0px 1px 1px 0px",
+					"0px 2px 2px 0px",
+					"0px 3px 4px 0px",
+					"0px 4px 5px 0px",
+					"0px 5px 8px 0px",
+					"0px 6px 10px 0px",
+					"0px 7px 10px 1px",
+					"0px 8px 10px 1px",
+					"0px 9px 12px 1px",
+					"0px 10px 14px 1px",
+					"0px 11px 15px 1px",
+					"0px 12px 17px 2px",
+					"0px 13px 19px 2px",
+					"0px 14px 21px 2px",
+					"0px 15px 22px 2px",
+					"0px 16px 24px 2px",
+					"0px 17px 26px 2px",
+					"0px 18px 28px 2px",
+					"0px 19px 29px 2px",
+					"0px 20px 31px 3px",
+					"0px 21px 33px 3px",
+					"0px 22px 35px 3px",
+					"0px 23px 36px 3px",
+					"0px 24px 38px 3px",
+				],
+			};
+
+			function parseShadow(raw: string) {
+				const values = raw.split(" ").map(val => +val.replace("px", ""));
+				return {
+					x: values[0],
+					y: values[1],
+					blur: values[2],
+					spread: values[3], // unused
+				};
+			}
+
+			function interpolate(i: number, a: number, b: number, a2: number, b2: number) {
+				return ((i - a) * (b2 - a2)) / (b - a) + a2;
+			}
+
+			const depthIndex = elevation - 1; // Indexing starts at 0
+			const s = parseShadow(androidDepth.penumbra[depthIndex]);
+			const y = s.y === 1 ? 1 : Math.floor(s.y * 0.5);
+
+			return {
+				shadowColor: color,
+				shadowOffset: {
+					width: s.x,
+					height: y,
+				},
+				shadowOpacity: parseFloat(interpolate(elevation, 1, 24, 0.2, 0.3).toFixed(2)),
+				shadowRadius: parseFloat(interpolate(s.blur, 1, 38, 1, 10).toFixed(2)),
+				elevation: elevation || 0,
+			};
+		},
+
 		breakpoints,
 	};
 };
@@ -225,9 +321,9 @@ export const SHADOWS = StyleSheet.create(theme =>
 	Object.fromEntries(
 		Object.entries(theme.shadows).map(([key, shadow]) => [
 			key.toString(),
-			{
-				boxShadow: shadow,
-			},
+			Platform.OS === "web"
+				? { boxShadow: shadow as any }
+				: theme.shadow(Number(key), theme.colors.shadow),
 		])
 	)
 );

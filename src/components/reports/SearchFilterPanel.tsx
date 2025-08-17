@@ -1,13 +1,13 @@
 import { GetReportsParams } from "@/api/admin";
 import { StyleSheet } from "react-native-unistyles";
-import { Button, Input, Picker, Typography } from "@/ui";
+import { Button, Picker, Typography } from "@/ui";
 import { PickerOption } from "@/ui/common/Picker";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useDebounce } from "@uidotdev/usehooks";
 import { useTranslation } from "react-i18next";
-import ExportReportsPicker from "@/components/reports/ExportReportsPicker";
+import TextField from "@/max_ui/TextField.tsx";
 
 interface props {
 	params: GetReportsParams;
@@ -75,16 +75,15 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 					<FontAwesome5 name="filter" size={20} color={styles.iconColor.color} />
 					{t("components.searchFilterPanel.searchAndFilters")}
 				</Typography>
+
 				<View style={{ flexDirection: "row", gap: 8 }}>
-					{/*<Button*/}
-					{/*	variant={"contained"}*/}
-					{/*	color={"black"}*/}
-					{/*	onPress={() => setShowCreateExport(true)}*/}
-					{/*>*/}
-					{/*	Создать экспорт отчетов*/}
-					{/*</Button>*/}
-					<Button variant={"contained"} color={"black"} onPress={handleClear}>
-						{t("components.searchFilterPanel.clearAll")}
+					<Button
+						variant={"contained"}
+						color={"black"}
+						size={"medium"}
+						onPress={handleClear}
+					>
+						{t("common.reset")}
 					</Button>
 					<Button
 						onPress={() => onChangeVisible(false)}
@@ -97,71 +96,46 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 			</View>
 			<View style={styles.contentContainer}>
 				<View style={styles.searchContainer}>
-					<Input
+					<TextField
 						label={t("components.searchFilterPanel.search")}
-						size={"large"}
-						placeholder={t("components.searchFilterPanel.searchPlaceholder")}
-						style={styles.input}
+						size={"small"}
 						value={search}
-						icon={
-							<FontAwesome5
-								name={"search"}
-								size={16}
-								color={styles.iconColor.color}
-							/>
-						}
 						onChangeText={setSearch}
 					/>
 				</View>
-				<View style={styles.pickersContainer}>
-					<View style={styles.pickerContainer}>
-						<Picker
-							placeholder={t("components.searchFilterPanel.allStatuses")}
-							style={styles.picker}
-							label={t("components.searchFilterPanel.status")}
-							options={statusOptions}
-							value={params.status ?? "All statuses"}
-							onChange={value => {
-								newParams.status = value;
-								onAction(newParams);
-							}}
-						/>
-					</View>
+				<Picker
+					placeholder={t("components.searchFilterPanel.allStatuses")}
+					style={styles.picker}
+					label={t("components.searchFilterPanel.status")}
+					options={statusOptions}
+					value={params.status ?? "All statuses"}
+					onChange={value => {
+						newParams.status = value;
+						onAction(newParams);
+					}}
+				/>
 
-					<View style={styles.pickerContainer}>
-						<Picker
-							placeholder={t("components.searchFilterPanel.orderByOptions.id")}
-							style={styles.picker}
-							label={t("components.searchFilterPanel.orderBy")}
-							options={orderByOptions}
-							value={params.order_by ?? "id"}
-							onChange={value => {
-								value ? (newParams.order_by = value) : "id";
-								onAction(newParams);
-							}}
-						/>
-					</View>
-					<View style={styles.pickerContainer}>
-						<Picker
-							label={t("components.searchFilterPanel.direction")}
-							style={styles.picker}
-							options={directionOptions}
-							value={params.direction ?? "desc"}
-							onChange={value => {
-								value ? (newParams.direction = value) : "desc";
-								onAction(newParams);
-							}}
-						/>
-					</View>
-					<View style={{ alignSelf: "flex-end" }}>
-						<ExportReportsPicker />
-					</View>
-
-					{/*<ExportReportsDialog*/}
-					{/*	isVisible={showCreateExport}*/}
-					{/*	onClose={() => setShowCreateExport(false)}*/}
-					{/*/>*/}
-				</View>
+				<Picker
+					placeholder={t("components.searchFilterPanel.orderByOptions.id")}
+					style={styles.picker}
+					label={t("components.searchFilterPanel.orderBy")}
+					options={orderByOptions}
+					value={params.order_by ?? "id"}
+					onChange={value => {
+						value ? (newParams.order_by = value) : "id";
+						onAction(newParams);
+					}}
+				/>
+				<Picker
+					label={t("components.searchFilterPanel.direction")}
+					style={styles.picker}
+					options={directionOptions}
+					value={params.direction ?? "desc"}
+					onChange={value => {
+						value ? (newParams.direction = value) : "desc";
+						onAction(newParams);
+					}}
+				/>
 			</View>
 		</View>
 	);
@@ -177,25 +151,44 @@ const styles = StyleSheet.create(theme => ({
 		width: "100%",
 	},
 	contentContainer: {
-		flexDirection: {
-			xs: "column",
-			md: "row",
-		},
+		// flexDirection: {
+		// 	xs: "column",
+		// 	md: "row",
+		// },
+		flexDirection: "row",
+		justifyContent: "center",
 		flex: 1,
 		flexWrap: "wrap",
 		gap: theme.spacing(4),
 	},
 	pickerContainer: {
-		flex: 1,
+		// flex: 1,
 	},
 	button: {
 		alignSelf: "flex-end",
 	},
 	input: {
 		backgroundColor: theme.colors.background.main,
+		// _web: {
+		// 	":-webkit-autofill": {
+		// 		WebkitBoxShadow: `0 0 0 1000px ${theme.colors.background.main} inset`,
+		// 		boxShadow: `0 0 0 1000px ${theme.colors.background.main} inset`,
+		// 		WebkitTextFillColor: theme.colors.text.primary,
+		// 	},
+		// 	":-webkit-autofill:hover": {
+		// 		WebkitBoxShadow: `0 0 0 1000px ${theme.colors.background.main} inset`,
+		// 		boxShadow: `0 0 0 1000px ${theme.colors.background.main} inset`,
+		// 		WebkitTextFillColor: theme.colors.text.primary,
+		// 	},
+		// 	":-webkit-autofill:focus": {
+		// 		WebkitBoxShadow: `0 0 0 1000px ${theme.colors.background.main} inset`,
+		// 		boxShadow: `0 0 0 1000px ${theme.colors.background.main} inset`,
+		// 		WebkitTextFillColor: theme.colors.text.primary,
+		// 	},
+		// },
 	},
 	picker: {
-		flex: 0.8,
+		// flex: 0.8,
 		minWidth: 200,
 		width: "100%",
 	},
@@ -207,16 +200,17 @@ const styles = StyleSheet.create(theme => ({
 	},
 	headerContainer: {
 		flexDirection: "row",
-		flex: 1,
+		// flex: 1,
 		justifyContent: "space-between",
 	},
 	searchContainer: {
 		minWidth: 250,
 		maxWidth: 400,
-		flex: {
-			xs: 2,
-			md: 1.5,
-		},
+		justifyContent: "flex-end",
+		// flex: {
+		// 	xs: 2,
+		// 	md: 1.5,
+		// },
 	},
 	pickersContainer: {
 		flexDirection: {

@@ -55,7 +55,9 @@
     "twoWeeks": "2 тижні",
     "month": "місяць",
     "days": "{{count}} днів",
-    "unknownInterval": "невідомий інтервал"
+    "unknownInterval": "невідомий інтервал",
+    "placeholder": "Виберіть опцію",
+    "reset": "Скинути"
   },
   "auth": {
     "login": "Логін",

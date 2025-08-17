@@ -13,6 +13,7 @@ import GetStatusBadge from "@/components/reports/StatusBadge";
 import { useTranslation } from "react-i18next";
 import ExportReportsDialog from "@/components/reports/ExportReportsDialog";
 import { FontAwesome5 } from "@expo/vector-icons";
+import ExportReportsPicker from "./ExportReportsPicker";
 
 interface Props {
 	queryParams: Partial<GetReportsParams>;
@@ -65,16 +66,18 @@ export default function ReportsTable({ queryParams }: Props) {
 
 					<Typography variant={"h5"}>{t("reports.reports")}</Typography>
 				</View>
-				{/*<ExportReportsPicker />*/}
-
-				<Button
-					variant={"contained"}
-					color={"black"}
-					size={"large"}
-					onPress={() => setShowCreateExport(true)}
-				>
-					{t("reports.create_export")}
-				</Button>
+				<View style={styles.exportButtonsContainer}>
+					<ExportReportsPicker />
+					<Button
+						variant={"contained"}
+						color={"black"}
+						size={"large"}
+						onPress={() => setShowCreateExport(true)}
+					>
+						<FontAwesome5 name={"plus"} size={16} />
+						{/*{t("reports.create_export")}*/}
+					</Button>
+				</View>
 			</View>
 			<View style={[styles.row, styles.header, { height: 48 }]}>
 				<Typography style={[styles.cell, { flex: 1 }]}>
@@ -200,5 +203,9 @@ const styles = StyleSheet.create(theme => ({
 	},
 	iconColor: {
 		color: theme.colors.primary.main,
+	},
+	exportButtonsContainer: {
+		flexDirection: "row",
+		gap: theme.spacing(2),
 	},
 }));
