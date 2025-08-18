@@ -19,7 +19,7 @@ interface Props {
 	queryParams: Partial<GetReportsParams>;
 }
 
-const LIMIT = 20;
+const LIMIT = 30;
 
 export default function ReportsTable({ queryParams }: Props) {
 	const { t } = useTranslation();
