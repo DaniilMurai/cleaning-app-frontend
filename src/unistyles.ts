@@ -58,6 +58,7 @@ const themedColors = {
 			main: "#F5FCFF",
 			paper: "#F5FCFF",
 			default: "#FFFFFF", // Добавлено
+			modal: "#FFFFFFF2", // белый с прозрачностью
 		},
 		text: {
 			primary: "#1A353C",
@@ -139,6 +140,7 @@ const themedColors = {
 			main: "#141617",
 			paper: "#272a2c",
 			default: "#212426", // Добавлено
+			modal: "#272a2cF2", // почти как paper, но с прозрачностью
 		},
 		text: {
 			primary: "#ECEDEE",

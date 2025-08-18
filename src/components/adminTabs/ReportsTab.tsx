@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { Button } from "@/ui";
 import { GetReportsParams } from "@/api/admin";
@@ -13,6 +13,8 @@ export default function ReportsTab() {
 	const { t } = useTranslation();
 	useExportReportSSE();
 	const [queryParams, setQueryParams] = useState<GetReportsParams>({
+		search: "",
+		status: "",
 		order_by: "id",
 		direction: "desc",
 	});
@@ -28,16 +30,21 @@ export default function ReportsTab() {
 
 	return (
 		<View style={styles.container}>
-			<View style={styles.headerContainer}>
-				{!isVisibleFilterPanel && (
-					<Button
-						variant={"outlined"}
-						onPress={() => setIsVisibleFilterPanel(!isVisibleFilterPanel)}
-						style={{ marginStart: "auto" }}
-					>
-						{t("components.searchFilterPanel.showFilterPanel")}
-					</Button>
-				)}
+			{!isVisibleFilterPanel && (
+				<Button
+					variant={"outlined"}
+					onPress={() => setIsVisibleFilterPanel(!isVisibleFilterPanel)}
+					style={{ marginStart: "auto" }}
+				>
+					{t("components.searchFilterPanel.showFilterPanel")}
+				</Button>
+			)}
+			<View
+				style={[
+					styles.headerContainer,
+					isVisibleFilterPanel && Platform.OS !== "web" && { flex: 4 },
+				]}
+			>
 				<SearchFilterPanel
 					isVisible={isVisibleFilterPanel}
 					params={queryParams}

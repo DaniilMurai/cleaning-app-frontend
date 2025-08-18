@@ -1,7 +1,7 @@
 import { HTMLAttributes } from "react";
 import { PopperProps } from "@/max_ui/Popper";
 import { TextProps, ViewProps } from "react-native";
-import { ButtonProps } from "@/max_ui/Button";
+import { ButtonProps } from "@/ui/common/Button";
 
 export interface SelectDataItem<TValue extends string | number | undefined> {
 	label: string;

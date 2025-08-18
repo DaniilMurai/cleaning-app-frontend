@@ -298,6 +298,11 @@ export default function Popper({
 								animatedStyle,
 								styles.elevation(elevation),
 								paperProps?.style,
+								// {
+								// 	elevation: 20,
+								// 	zIndex: 9999,
+								// 	position: "absolute",
+								// },
 							]}
 						>
 							{children}

@@ -1,8 +1,8 @@
-import Typography, { TypographyProps } from "@/max_ui/Typography.tsx";
 import { forwardRef, ReactNode } from "react";
 import { Text } from "react-native";
 import PlatformExt from "@/features/PlatformExt.ts";
 import { StyleSheet } from "react-native-unistyles";
+import Typography, { TypographyProps } from "@/ui/common/Typography";
 
 export interface DialogTitleProps extends TypographyProps {
 	children?: ReactNode;

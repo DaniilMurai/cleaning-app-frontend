@@ -2,7 +2,6 @@ import Select from "@/max_ui/Select";
 import React from "react";
 import { View } from "react-native";
 import { Typography } from "@/ui";
-import { useTranslation } from "react-i18next";
 
 export interface PickerOption {
 	label: string;
@@ -16,6 +15,7 @@ interface CustomPickerProps {
 	onChange: (value: string | undefined) => void;
 	style?: any;
 	placeholder?: string;
+	size?: "small" | "medium" | "large";
 }
 
 export default function CustomPicker({
@@ -23,13 +23,13 @@ export default function CustomPicker({
 	value,
 	options,
 	onChange,
-	style,
-	placeholder,
+	// style,
+	// placeholder,
+	size = "large",
 }: CustomPickerProps) {
-	const { t } = useTranslation();
 	const selectedOption = options.find(option => option.value === value);
 
-	const selectPlaceholder = placeholder ?? t("common.placeholder");
+	// const selectPlaceholder = placeholder ?? t("common.placeholder");
 
 	console.log(
 		"selectedOption?.value + selectedOption?.label:  ",
@@ -41,13 +41,13 @@ export default function CustomPicker({
 			<Typography>{label}</Typography>
 			<Select
 				data={options}
-				value={selectedOption?.value || selectPlaceholder}
+				value={
+					selectedOption?.value
+					// || selectPlaceholder
+				}
+				// fullWidth={true}
 				onChange={e => onChange(e)}
-				size={"large"}
-				// containerProps={style.select}
-				// wrapperProps={style.select}
-				// itemProps={style.select}
-				// popperProps={style.select}
+				size={size}
 			/>
 		</View>
 	);

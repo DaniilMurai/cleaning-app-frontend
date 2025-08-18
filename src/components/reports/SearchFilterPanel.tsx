@@ -20,7 +20,6 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 	const [search, setSearch] = useState<string>(params.search ?? "");
 
 	const { t } = useTranslation();
-
 	const debouncedSearch = useDebounce(search, 300);
 	// const [showCreateExport, setShowCreateExport] = useState<boolean>(false);
 	useEffect(() => {
@@ -108,7 +107,7 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 					style={styles.picker}
 					label={t("components.searchFilterPanel.status")}
 					options={statusOptions}
-					value={params.status ?? "All statuses"}
+					value={params.status}
 					onChange={value => {
 						newParams.status = value;
 						onAction(newParams);
@@ -151,41 +150,24 @@ const styles = StyleSheet.create(theme => ({
 		width: "100%",
 	},
 	contentContainer: {
-		// flexDirection: {
-		// 	xs: "column",
-		// 	md: "row",
-		// },
-		flexDirection: "row",
-		justifyContent: "center",
+		flexDirection: {
+			xs: "column",
+			md: "row",
+		},
 		flex: 1,
+		// flexDirection: "row",
+		justifyContent: { md: "center" },
 		flexWrap: "wrap",
-		gap: theme.spacing(4),
+		gap: {
+			xs: theme.spacing(3),
+			md: theme.spacing(4),
+		},
 	},
 	pickerContainer: {
 		// flex: 1,
 	},
 	button: {
 		alignSelf: "flex-end",
-	},
-	input: {
-		backgroundColor: theme.colors.background.main,
-		// _web: {
-		// 	":-webkit-autofill": {
-		// 		WebkitBoxShadow: `0 0 0 1000px ${theme.colors.background.main} inset`,
-		// 		boxShadow: `0 0 0 1000px ${theme.colors.background.main} inset`,
-		// 		WebkitTextFillColor: theme.colors.text.primary,
-		// 	},
-		// 	":-webkit-autofill:hover": {
-		// 		WebkitBoxShadow: `0 0 0 1000px ${theme.colors.background.main} inset`,
-		// 		boxShadow: `0 0 0 1000px ${theme.colors.background.main} inset`,
-		// 		WebkitTextFillColor: theme.colors.text.primary,
-		// 	},
-		// 	":-webkit-autofill:focus": {
-		// 		WebkitBoxShadow: `0 0 0 1000px ${theme.colors.background.main} inset`,
-		// 		boxShadow: `0 0 0 1000px ${theme.colors.background.main} inset`,
-		// 		WebkitTextFillColor: theme.colors.text.primary,
-		// 	},
-		// },
 	},
 	picker: {
 		// flex: 0.8,

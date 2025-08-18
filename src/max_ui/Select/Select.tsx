@@ -23,7 +23,7 @@ export default function Select<TValue extends string | number | undefined>({
 }: SelectProps<TValue>) {
 	const popperAnchorRef = useRef<View>(null);
 	const [popperVisible, setPopperVisible] = useState(false);
-
+	console.log("popperVisible: ", popperVisible);
 	const currentValue = useMemo(() => data.find(x => x.value === value), [data, value]);
 
 	const { theme } = useUnistyles();
@@ -105,11 +105,11 @@ export default function Select<TValue extends string | number | undefined>({
 								onChange && onChange(item.value);
 								setPopperVisible(false);
 							}}
-							fullWidth
-							endIcon={
-								value === item.value && <Ionicons name="checkmark" size={16} />
-							}
-							wrapInText={false}
+							// fullWidth
+							// endIcon={
+							// 	value === item.value && <Ionicons name="checkmark" size={16} />
+							// }
+							// wrapInText={false}
 							{...itemProps}
 						>
 							<View
