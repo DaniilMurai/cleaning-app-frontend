@@ -1,4 +1,4 @@
-import "./select-web.scss";
+import "./select-web.css";
 
 import { SelectProps } from "@/max_ui/Select/types";
 import { useUnistyles } from "react-native-unistyles";

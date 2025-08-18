@@ -12,7 +12,7 @@ import { useEffect } from "react";
 import { ToastProvider, useToast } from "react-native-toast-notifications";
 import { AlertUtils } from "@/core/utils/alerts";
 import PopperContextProvider from "@/max_ui/Popper/PopperContext";
-import "../max_ui/Select/select-web.scss";
+import "../max_ui/Select/select-web.css";
 
 SplashScreen.preventAutoHideAsync();
 
