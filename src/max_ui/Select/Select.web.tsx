@@ -68,16 +68,26 @@ export default function Select<TValue extends string | number | undefined>({
 					height: "100%",
 					maxWidth: "100%",
 					borderWidth: 0,
+
 					appearance: "none",
 					fontSize: currentSize.fontSize,
 					color: theme.colors.text.primary,
 					outlineStyle: "none",
 					backgroundColor: "transparent",
+					// backgroundColor: "#EDEEEF", // из твоего SCSS
+					// color: "#02303A",            // из твоего SCSS
 					...selectWebProps?.style,
 				}}
 			>
 				{data.map(el => (
-					<option key={el.value || el.label} value={el.value}>
+					<option
+						key={el.value || el.label}
+						value={el.value}
+						style={{
+							backgroundColor: "#EDEEEF", // из твоего SCSS
+							color: "#02303A", // из твоего SCSS
+						}}
+					>
 						{el.label}
 					</option>
 				))}
