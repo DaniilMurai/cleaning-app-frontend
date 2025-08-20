@@ -10,6 +10,7 @@ import { ApiUrl } from "@/constants";
 import GetStatusBadge from "@/components/reports/StatusBadge";
 import StatusBadgeIcon from "./StatusBadgeIcon";
 import { useTranslation } from "react-i18next";
+import React, { Fragment } from "react";
 
 const LIMIT = 7;
 const USER_FULL_NAME_LEN_LIMIT = 20;
@@ -71,9 +72,9 @@ export default function ExportReportsPicker({ ...props }: ExportReportsPickerPro
 					scrollEventThrottle={100}
 					// contentContainerStyle={{  }}
 				>
-					{data?.pages?.map(pages =>
+					{data?.pages?.flatMap(pages =>
 						pages.map(report => (
-							<>
+							<Fragment key={report.id}>
 								<View style={styles.container}>
 									<View
 										style={{
@@ -124,15 +125,11 @@ export default function ExportReportsPicker({ ...props }: ExportReportsPickerPro
 												color={styles.userLabel.color}
 												fontSize={14}
 											/>
-											// <Typography variant={"body2"}>
-											// 	<FontAwesome5 name={"user"} size={16} />{" "}
-											// 	{report.user_full_name}
-											// </Typography>
 										)}
 									</View>
 								</View>
 								<View style={styles.divider} />
-							</>
+							</Fragment>
 						))
 					)}
 					{isFetchingNextPage && <Typography>{t("common.loading")}</Typography>}
@@ -155,6 +152,7 @@ const styles = StyleSheet.create(theme => ({
 	divider: {
 		height: 1,
 		backgroundColor: theme.colors.border,
+		marginVertical: theme.spacing(1),
 	},
 	iconTypographyContainer: {
 		flexDirection: "row",

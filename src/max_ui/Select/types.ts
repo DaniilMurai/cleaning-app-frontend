@@ -20,7 +20,7 @@ export interface SelectProps<TValue extends string | number | undefined> {
 	valueTextProps?: TextProps;
 	itemProps?: ButtonProps;
 	disablePaperSaveWidthAsInput?: boolean;
-	selectWebWrapperProps?: HTMLAttributes<HTMLDivElement>;
+	selectWebWrapperProps?: HTMLAttributes<HTMLButtonElement>;
 	selectWebProps?: HTMLAttributes<HTMLSelectElement>;
 	selectWebIconWrapperProps?: HTMLAttributes<HTMLDivElement>;
 	popperProps?: Partial<PopperProps>;

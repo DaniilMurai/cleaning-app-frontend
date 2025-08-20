@@ -1,4 +1,4 @@
 import Select from "./Select";
-import "./select-web.css";
+import "./select-web.scss";
 
 export default Select;

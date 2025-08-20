@@ -3,7 +3,7 @@
 import { View } from "react-native";
 import { Button, Dialog } from "@/ui";
 import Input from "@/ui/common/Input";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "@/ui/common/Card";
 import Typography from "@/ui/common/Typography";
 import { StyleSheet } from "react-native-unistyles";
@@ -63,6 +63,8 @@ export function CreateDailyAssignmentForm({
 			value: loc.id.toString(),
 		}));
 
+	console.log("locations[0]: ", (locations && locations[0]) || "no location");
+	console.log("users[0]: ", (users && users[0]) || "no users");
 	const [formData, setFormData] = useState<DailyAssignmentCreate>({
 		location_id: locations && locations.length > 0 ? locations[0].id : 0,
 		user_id: users && users.length > 0 ? users[0].id : 0,
@@ -80,6 +82,16 @@ export function CreateDailyAssignmentForm({
 	const [dates, setDates] = useState<Dayjs[]>([]);
 
 	const isDisabled = formData.user_id === 0 || formData.location_id === 0 || dates.length === 0;
+
+	useEffect(() => {
+		if (locations?.length && users?.length) {
+			setFormData(prev => ({
+				...prev,
+				location_id: locations[0].id,
+				user_id: users[0].id,
+			}));
+		}
+	}, [users, locations]);
 
 	// Изменяем обработчик сабмита
 	const handleSubmit = () => {

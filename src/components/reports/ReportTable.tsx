@@ -23,7 +23,8 @@ const LIMIT = 30;
 
 export default function ReportsTable({ queryParams }: Props) {
 	const { t } = useTranslation();
-	const params = { ...queryParams, limit: LIMIT };
+	const status = queryParams.status === "no-value" ? "" : queryParams.status;
+	const params = { ...queryParams, status, limit: LIMIT };
 	const {
 		data: reports,
 		fetchNextPage,

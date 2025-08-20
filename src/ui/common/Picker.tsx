@@ -31,11 +31,6 @@ export default function CustomPicker({
 
 	// const selectPlaceholder = placeholder ?? t("common.placeholder");
 
-	console.log(
-		"selectedOption?.value + selectedOption?.label:  ",
-		selectedOption?.value + " " + selectedOption?.label
-	);
-
 	return (
 		<View style={{ justifyContent: "space-between" }}>
 			<Typography>{label}</Typography>

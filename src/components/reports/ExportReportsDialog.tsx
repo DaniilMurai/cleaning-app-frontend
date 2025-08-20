@@ -51,8 +51,12 @@ export default function ExportReportsDialog({ isVisible, onClose }: ExportReport
 			return;
 		}
 		try {
-			await mutation.mutateAsync({ data: formData });
-			alert("succes");
+			if (formData.user_id === 0) {
+				await mutation.mutateAsync({ data: { ...formData, user_id: null } });
+			} else {
+				await mutation.mutateAsync({ data: formData });
+			}
+			alert("success");
 			onClose();
 		} catch (e) {
 			console.error(e);
@@ -68,7 +72,7 @@ export default function ExportReportsDialog({ isVisible, onClose }: ExportReport
 			value: user.id.toString(),
 		}));
 
-		return [{ label: "All users", value: undefined }, ...mappedUsers];
+		return [{ label: "All users", value: "0" }, ...mappedUsers];
 	};
 
 	const selectFormat = (format: "csv" | "excel") => {
@@ -130,7 +134,7 @@ export default function ExportReportsDialog({ isVisible, onClose }: ExportReport
 		>
 			<View style={styles.contentContainer}>
 				<Picker
-					value={userId ? userId.toString() : null}
+					value={userId ? userId.toString() : "0"}
 					placeholder={"All users"}
 					onChange={value => {
 						const parsed =

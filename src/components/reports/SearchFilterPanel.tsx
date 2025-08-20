@@ -37,7 +37,7 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 	const handleClear = () => {
 		setSearch("");
 		newParams.search = "";
-		newParams.status = "";
+		newParams.status = "no-value";
 		newParams.order_by = "id";
 		newParams.direction = "desc";
 		onAction(newParams);
@@ -45,10 +45,10 @@ export default function SearchFilterPanel({ params, onAction, isVisible, onChang
 
 	// Локализованные опции
 	const statusOptions: PickerOption[] = [
-		{ label: t("components.searchFilterPanel.allStatuses"), value: "" },
+		{ label: t("components.searchFilterPanel.allStatuses"), value: "no-value" },
 		{ label: t("components.status.completed"), value: "completed" },
 		{ label: t("components.status.not_started"), value: "not_started" },
-		{ label: t("components.status.in_progress"), value: "in_progress" },
+		// { label: t("components.status.in_progress"), value: "in_progress" },
 		{ label: t("components.status.partially_completed"), value: "partially_completed" },
 		{ label: t("components.status.not_completed"), value: "not_completed" },
 		{ label: t("components.status.expired"), value: "expired" },

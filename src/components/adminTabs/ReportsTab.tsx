@@ -14,7 +14,7 @@ export default function ReportsTab() {
 	useExportReportSSE();
 	const [queryParams, setQueryParams] = useState<GetReportsParams>({
 		search: "",
-		status: "",
+		status: "no-value",
 		order_by: "id",
 		direction: "desc",
 	});
