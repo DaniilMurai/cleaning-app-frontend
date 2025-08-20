@@ -104,6 +104,9 @@ export default function Select<TValue extends string | number | undefined>({
 									cursor: "pointer",
 									fontSize: currentSize.fontSize,
 									color: theme.colors.text.primary,
+									...(el.value === value
+										? { color: theme.colors.primary.main }
+										: {}),
 								}}
 							>
 								<RadixSelect.ItemText>{el.label}</RadixSelect.ItemText>
