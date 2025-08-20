@@ -80,7 +80,7 @@ export default function ReportsTable({ queryParams }: Props) {
 					</Button>
 				</View>
 			</View>
-			<View style={[styles.row, styles.header, { height: 48 }]}>
+			<View style={[styles.row, styles.header, { height: 60 }]}>
 				<Typography style={[styles.cell, { flex: 1 }]}>
 					{t("components.reportsTable.username")}
 				</Typography>

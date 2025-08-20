@@ -4,84 +4,84 @@ import { Platform } from "react-native";
 const themedColors = {
 	light: {
 		primary: {
-			main: "#3bd0c7",
-			light: "#65eee5",
-			dark: "#338883",
-			text: "#000",
-			contrastText: "#ffffff", // Добавлено
-			mainOpacity: "#3bd0c71a",
+			main: "#0D9488", // teal-600 — более солидный и контрастный
+			light: "#2DD4BF", // teal-400 — светлее, но still fresh
+			dark: "#0F766E", // teal-700 — оставляем, хороший тёмный оттенок
+			text: "#FFFFFF",
+			contrastText: "#FFFFFF",
+			mainOpacity: "#0D94881A", // Обновлён под новый main
 		},
 		secondary: {
-			main: "#FF6B6B",
-			light: "#ffaaaa",
-			dark: "#a83f3f",
+			main: "#EC4899", // pink-500 — современнее и мягче, чем красный
+			light: "#FBCFE8", // pink-200
+			dark: "#BE185D", // pink-700
 			text: "#000",
-			background: "#FF6B6B1A",
+			background: "#FDF2F8", // pink-50 — очень светлый розовый для фона
 		},
 		info: {
-			light: "#03a9f4",
-			main: "#03a9f4",
-			dark: "#01579b",
-			text: "#000000",
+			main: "#0369A1", // sky-700 — более глубокий и доверительный синий
+			light: "#BAE6FD", // sky-200
+			dark: "#0C4A6E", // sky-900
+			text: "#000",
 		},
 		warning: {
-			light: "#e7b989",
-			main: "#ef8d1e",
-			dark: "#a96209",
-			text: "#fff",
-			background: "#ef8d1e1a",
+			main: "#D97706", // amber-600 — менее "кислотный"
+			light: "#FDE68A", // amber-200
+			dark: "#92400E", // amber-800
+			text: "#000", // Сменил на чёрный, лучше читается на светлом жёлтом
+			background: "#FFFBEB", // amber-50
 		},
 		error: {
-			light: "#ef9a9a",
-			main: "#f44336",
-			dark: "#c62828",
-			text: "#ffffff",
-			background: "#f443361a",
+			main: "#DC2626", // red-600 — классическая ошибка, но чуть приглушённее
+			light: "#FECACA", // red-200
+			dark: "#7F1D1D", // red-800
+			text: "#fff",
+			background: "#FEF2F2", // red-50
 		},
 		success: {
-			light: "#e5f6ea",
-			main: "#17C13E",
-			dark: "#0f9128",
+			main: "#059669", // emerald-600 — более спокойный и естественный зелёный
+			light: "#A7F3D0", // emerald-200
+			dark: "#065F46", // emerald-800
 			text: "#fff",
-			textOnBackground: "#166534",
-			background: "#BBF7D0",
+			textOnBackground: "#065F46", // Используем dark оттенок
+			background: "#ECFDF5", // emerald-50
 		},
 		progress: {
-			main: "#1E40AF",
-			background: "#DBEAFE",
+			main: "#2563EB", // blue-600 — оставляем, хороший
+			background: "#DBEAFE", // blue-100 — светлее, соответствует новой схеме
 		},
 		not_started: {
-			main: "#1F2937",
-			background: "#f3f6f3",
+			main: "#9CA3AF", // gray-400 — светлее, чтобы лучше контрастировал с активными статусами
+			background: "#F3F4F6", // gray-100 — оставляем
 		},
 		background: {
-			main: "#F5FCFF",
-			paper: "#F5FCFF",
-			default: "#FFFFFF", // Добавлено
-			modal: "#FFFFFFF2", // белый с прозрачностью
+			main: "#F9FAFB", // gray-50 — отличный выбор, оставляем
+			paper: "#FFFFFF",
+			default: "#FFFFFF",
+			modal: "#FFFFFFF2", // Полупрозрачный белый для модалок — хорошо
 		},
 		text: {
-			primary: "#1A353C",
-			secondary: "#374348",
-			disabled: "rgba(0, 0, 0, 0.38)", // Add this line
+			primary: "#111827", // gray-900 — идеально, оставляем
+			secondary: "#4B5563", // gray-600 — чуть светлее, чем было, для вторичного текста
+			disabled: "#9CA3AF", // gray-400 — явный цвет вместо прозрачности, лучше для доступности
 		},
 		skeleton: {
-			background: "#e6edf2", // чуть темнее, чем background.main, для контраста
-			foreground: "#f8fbfd", // чуть светлее, для "мерцания" skeleton
+			background: "#E5E7EB", // gray-200 — хорошо
+			foreground: "#F3F4F6", // gray-100 — хорошо
 		},
 		components: {
 			input: {
-				background: "#ffffff", // чисто белый для ввода
-				border: "#d0d7de", // нейтрально-серый, не слишком заметный
-				outline: "#3bd0c7", // твой primary.main
+				background: "#FFFFFF",
+				border: "#D1D5DB", // gray-300 — хорошо
+				outline: "#0D9488", // Обновлён под новый primary.main
 			},
 		},
-		divider: "rgba(0, 0, 0, 0.12)",
-		shadow: "rgba(0, 0, 0, 0.1)", // Добавлено
-		border: "#989898", // Добавлено
+		divider: "rgba(0, 0, 0, 0.06)", // Ещё более нежная линия
+		shadow: "rgba(0, 0, 0, 0.05)", // Более лёгкая и воздушная тень
+		border: "#E5E7EB", // gray-200 — хорошо
 		disabled: {
-			background: "rgba(0, 0, 0, 0.12)",
-			text: "rgba(0, 0, 0, 0.26)",
+			background: "rgba(0, 0, 0, 0.04)", // Ещё более прозрачный
+			text: "#9CA3AF", // Синхронизировал с text.disabled
 		},
 	},
 	dark: {
