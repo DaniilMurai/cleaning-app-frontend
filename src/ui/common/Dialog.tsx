@@ -5,6 +5,7 @@ import React, { ReactNode } from "react";
 import { UniBlurView } from "@/ui/uni";
 import { AppBreakpoint } from "@/unistyles";
 import Card, { CardProps } from "@/ui/common/Card";
+import { PortalProvider } from "@/features/Portal";
 
 export interface DialogProps extends React.ComponentProps<typeof Modal> {
 	visible: boolean;
@@ -49,23 +50,25 @@ export default function Dialog({
 	return (
 		<Modal visible={visible} transparent={true} animationType="fade" onRequestClose={onClose}>
 			<UniBlurView intensity={20} tint="dark" style={styles.blurView}>
-				<View style={styles.modalOverlay}>
-					<View style={[styles.modalContent]}>
-						{card ? (
-							<Card {...cardProps} style={[styles.card, cardProps?.style]}>
-								{header}
-								{content}
-								{actions}
-							</Card>
-						) : (
-							<>
-								{header}
-								{content}
-								{actions}
-							</>
-						)}
+				<PortalProvider>
+					<View style={styles.modalOverlay}>
+						<View style={[styles.modalContent]}>
+							{card ? (
+								<Card {...cardProps} style={[styles.card, cardProps?.style]}>
+									{header}
+									{content}
+									{actions}
+								</Card>
+							) : (
+								<>
+									{header}
+									{content}
+									{actions}
+								</>
+							)}
+						</View>
 					</View>
-				</View>
+				</PortalProvider>
 			</UniBlurView>
 		</Modal>
 	);

@@ -109,20 +109,15 @@ export default function AssignmentsTab() {
 			)}
 
 			{modal.modals.editAssignment && !!selectedAssignment && (
-				<Dialog
-					visible={modal.modals.editAssignment}
+				<EditDailyAssignmentForm
+					assignment={selectedAssignment}
+					onSubmit={async (assignmentId, assignmentData) =>
+						await editDailyAssignmentSubmit(assignmentId, assignmentData)
+					}
+					isVisible={modal.modals.editAssignment}
 					onClose={() => modal.closeModal("editAssignment")}
-				>
-					<EditDailyAssignmentForm
-						assignment={selectedAssignment}
-						onSubmit={async (assignmentId, assignmentData) =>
-							await editDailyAssignmentSubmit(assignmentId, assignmentData)
-						}
-						isVisible={modal.modals.editAssignment}
-						onClose={() => modal.closeModal("editAssignment")}
-						isLoading={dailyAssignmentMutation.updateDailyAssignmentMutation.isPending}
-					/>
-				</Dialog>
+					isLoading={dailyAssignmentMutation.updateDailyAssignmentMutation.isPending}
+				/>
 			)}
 			{modal.modals.deleteAssignmentGroup && !!selectedAssignment && (
 				<Dialog
