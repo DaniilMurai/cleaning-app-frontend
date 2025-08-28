@@ -1,55 +1,78 @@
 import React, { useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { Typography } from "@/ui";
+import { Button, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Collapse from "@/ui/common/Collapse";
 import { useTranslation } from "react-i18next";
-import { DailyAssignmentForUserResponse, RoomResponse } from "@/api/client";
+import { DailyAssignmentForUserWithHintsResponse, RoomResponse } from "@/api/client";
+import { TaskWithHintsResponse } from "@/api/admin";
+import HintsModal from "@/ui/common/HintsModal.tsx";
 
 interface Props {
-	assignment: DailyAssignmentForUserResponse;
+	assignment: DailyAssignmentForUserWithHintsResponse;
 	room: RoomResponse;
 }
 
 export default function RoomSection({ assignment, room }: Props) {
 	const { t } = useTranslation();
 	const [isExpanded, setIsExpanded] = useState(false);
+	const [task, setTask] = useState<TaskWithHintsResponse | null>(null);
+	const [isHintsModalVisible, setIsHintsModalVisible] = useState<boolean>(false);
 	const toggleExpand = () => setIsExpanded(prev => !prev);
 
 	const roomTasks = assignment.assigned_tasks?.filter(task => task.room.id === room.id);
 
 	return (
-		<View style={styles.roomSection}>
-			<TouchableOpacity style={styles.roomHeader} onPress={toggleExpand}>
-				<View style={styles.headerWithIcon}>
-					<FontAwesome5
-						name={isExpanded ? "angle-down" : "angle-right"}
-						size={14}
-						color={styles.collapseIcon.color}
-					/>
-					<Typography style={styles.wrappableText}>{room.name}</Typography>
-				</View>
-			</TouchableOpacity>
-			<Collapse expanded={isExpanded}>
-				<View style={styles.roomTasks}>
-					<Typography variant="subtitle2" style={styles.wrappableText}>
-						{t("admin.tasks")}
-					</Typography>
-					{roomTasks && roomTasks.length > 0 ? (
-						roomTasks.map(task => (
-							<View key={task.id} style={styles.roomTaskItem}>
-								<Typography style={styles.wrappableText}>
-									{task.task.title}
-								</Typography>
-							</View>
-						))
-					) : (
-						<Typography style={styles.emptyState}>{t("admin.noTasks")}</Typography>
-					)}
-				</View>
-			</Collapse>
-		</View>
+		<>
+			<View style={styles.roomSection}>
+				<TouchableOpacity style={styles.roomHeader} onPress={toggleExpand}>
+					<View style={styles.headerWithIcon}>
+						<FontAwesome5
+							name={isExpanded ? "angle-down" : "angle-right"}
+							size={14}
+							color={styles.collapseIcon.color}
+						/>
+						<Typography style={styles.wrappableText}>{room.name}</Typography>
+					</View>
+				</TouchableOpacity>
+				<Collapse expanded={isExpanded}>
+					<View style={styles.roomTasks}>
+						<Typography variant="subtitle2" style={styles.wrappableText}>
+							{t("admin.tasks")}
+						</Typography>
+						{roomTasks && roomTasks.length > 0 ? (
+							roomTasks.map(task => (
+								<View key={task.id} style={styles.roomTaskItem}>
+									<Typography style={styles.wrappableText}>
+										{task.task.title}
+									</Typography>
+									{task.task.hints.length > 0 && (
+										<Button
+											onPress={() => {
+												setTask(task.task);
+												setIsHintsModalVisible(true);
+											}}
+										>
+											<FontAwesome5 name={"lightbulb"} size={14} />
+										</Button>
+									)}
+								</View>
+							))
+						) : (
+							<Typography style={styles.emptyState}>{t("admin.noTasks")}</Typography>
+						)}
+					</View>
+				</Collapse>
+			</View>
+			{task && isHintsModalVisible && (
+				<HintsModal
+					hints={task.hints}
+					onClose={() => setIsHintsModalVisible(false)}
+					visible={isHintsModalVisible}
+				/>
+			)}
+		</>
 	);
 }
 

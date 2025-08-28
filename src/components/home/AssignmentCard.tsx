@@ -8,11 +8,11 @@ import { useTranslation } from "react-i18next";
 import TaskTimer from "@/ui/date/TaskTimer";
 import { formatToDate, getFormatedDate } from "@/core/utils/dateUtils";
 import RoomSection from "./RoomSection";
-import { AssignmentStatus, DailyAssignmentForUserResponse } from "@/api/client";
+import { AssignmentStatus, DailyAssignmentForUserWithHintsResponse } from "@/api/client";
 import GetStatusBadge from "@/components/reports/StatusBadge";
 
 interface Props {
-	assignment: DailyAssignmentForUserResponse;
+	assignment: DailyAssignmentForUserWithHintsResponse;
 	onStatusChange?: (
 		status: AssignmentStatus,
 		totalTime: number,

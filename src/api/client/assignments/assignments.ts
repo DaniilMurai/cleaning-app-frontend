@@ -23,7 +23,7 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
-	AssignmentReportResponse,
+	AssignmentWithHintsReportResponse,
 	DailyAssignmentForUserResponse,
 	DailyAssignmentForUserUpdate,
 	GetDailyAssignmentByIdParams,
@@ -807,7 +807,7 @@ export const getDailyAssignmentsAndReports = (
 	params?: GetDailyAssignmentsAndReportsParams,
 	signal?: AbortSignal
 ) => {
-	return getAxios<AssignmentReportResponse[]>({
+	return getAxios<AssignmentWithHintsReportResponse[]>({
 		url: `/client/assignments/daily-assignments-and-reports`,
 		method: "GET",
 		params,

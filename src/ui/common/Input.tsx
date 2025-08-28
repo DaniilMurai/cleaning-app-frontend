@@ -1,7 +1,8 @@
-import { TextInput, TextInputProps, View } from "react-native";
+import { Pressable, TextInput, TextInputProps, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import React, { forwardRef } from "react";
 import Typography from "@/ui/common/Typography";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
 export type InputVariant = "outlined" | "filled";
 export type InputColor = "primary" | "secondary";
@@ -15,6 +16,7 @@ export interface InputProps extends Omit<TextInputProps, "placeholderTextColor">
 	error?: string;
 	helperText?: string;
 	icon?: React.ReactNode;
+	textArea?: boolean;
 }
 
 const Input = forwardRef<TextInput, InputProps>(function Input(
@@ -25,6 +27,7 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
 		label,
 		error,
 		helperText,
+		textArea = false,
 		...props
 	},
 	ref
@@ -35,6 +38,12 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
 		color,
 		error: !!error,
 	});
+
+	const scale = useSharedValue(1);
+
+	const animatedStyle = useAnimatedStyle(() => ({
+		transform: [{ scale: scale.value }],
+	}));
 
 	return (
 		<View style={styles.container}>
@@ -47,15 +56,23 @@ const Input = forwardRef<TextInput, InputProps>(function Input(
 					{label}
 				</Typography>
 			)}
-			<View style={styles.inputWrapper}>
+			<Animated.View style={[styles.inputWrapper, animatedStyle]}>
 				{props.icon && <View style={styles.icon}>{props.icon}</View>}
-				<TextInput
-					ref={ref}
-					{...props}
-					style={[styles.input, props.style, props.icon ? styles.paddingLeft : undefined]}
-					// placeholderTextColor={theme => theme.colors.text.secondary}
-				/>
-			</View>
+				<Pressable
+					onPressIn={() => (scale.value = withSpring(0.98))}
+					onPressOut={() => (scale.value = withSpring(1))}
+				>
+					<TextInput
+						ref={ref}
+						{...props}
+						style={[
+							styles.input,
+							props.style,
+							props.icon ? styles.paddingLeft : undefined,
+						]}
+					/>
+				</Pressable>
+			</Animated.View>
 			{(error || helperText) && (
 				<Typography
 					variant="body2"

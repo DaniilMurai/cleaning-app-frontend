@@ -7,4 +7,5 @@ export * from "./daily-assignments/daily-assignments";
 export * from "./daily-extra-tasks/daily-extra-tasks";
 export * from "./reports/reports";
 export * from "./export-reports/export-reports";
+export * from "./hints/hints";
 export * from "./schemas";

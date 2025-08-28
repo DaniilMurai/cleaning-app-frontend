@@ -4,6 +4,5 @@
  * Neuer Standart Client API
  * OpenAPI spec version: 0.1.0
  */
-import type { ReportResponse } from "./reportResponse";
 
-export type AssignmentReportResponseReport = ReportResponse | null;
+export type DailyAssignmentForUserWithHintsResponseEndTime = string | null;

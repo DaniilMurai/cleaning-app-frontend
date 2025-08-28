@@ -1,10 +1,9 @@
 // src/ui/components/reports/ReportForm.tsx
 import React, { JSX, useEffect, useState } from "react";
-import { Image, ScrollView, TouchableOpacity, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { Button, Card, Dialog, Input, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
 import { useTranslation } from "react-i18next";
 import {
 	AssignmentStatus,
@@ -16,6 +15,7 @@ import { formatTime } from "@/core/utils/dateUtils";
 import GetStatusBadge from "@/components/reports/StatusBadge";
 import { AssignmentStorage } from "@/core/auth/storage";
 import { RoomStatus } from "@/api/admin";
+import ImagePickerForm from "@/ui/forms/common/ImagePickerForm.tsx";
 
 interface Media {
 	type: "image" | "video";
@@ -32,6 +32,7 @@ interface ReportFormProps extends React.ComponentProps<typeof View> {
 	}) => Promise<void>;
 	onCancel: () => void;
 	totalTime: number;
+	isVisible: boolean;
 }
 
 type TasksRoomChecks = Record<number, Record<number, boolean>>;
@@ -41,12 +42,17 @@ interface RoomsCountStatus {
 	done: number;
 }
 
-export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }: ReportFormProps) {
+export default function ReportForm({
+	assignment,
+	onCancel,
+	onSubmit,
+	totalTime,
+	isVisible,
+}: ReportFormProps) {
 	const { t } = useTranslation();
 	const [text, setText] = useState("");
 	const [media, setMedia] = useState<Media[]>([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [mediaPickerVisible, setMediaPickerVisible] = useState(false);
 
 	const [status, setStatus] = useState<AssignmentStatus>("completed");
 	// Состояние для хранения отметок комнат всех задач
@@ -101,24 +107,6 @@ export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }
 			...prev,
 			[taskId]: roomChecks,
 		}));
-	};
-	// Обработчик для выбора изображения из галереи
-	const pickImage = async () => {
-		const result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.Images,
-			allowsEditing: true,
-			quality: 0.8,
-		});
-
-		if (!result.canceled && result.assets && result.assets.length > 0) {
-			setMedia([...media, { type: "image", uri: result.assets[0].uri }]);
-		}
-		setMediaPickerVisible(false);
-	};
-
-	// Удаление медиафайла
-	const removeMedia = (index: number) => {
-		setMedia(media.filter((_, i) => i !== index));
 	};
 
 	useEffect(() => {
@@ -224,8 +212,48 @@ export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }
 	};
 
 	return (
-		<>
-			<ScrollView style={{ flexShrink: 1 }} contentContainerStyle={styles.scrollViewContent}>
+		<Dialog
+			visible={isVisible}
+			onClose={onCancel}
+			maxWidth={"md"}
+			fullWidth
+			cardProps={{ variant: "outlined" }}
+			card
+			scrollView={true}
+			scrollViewProps={{ contentContainerStyle: styles.scrollViewContent }}
+			actions={
+				<View style={styles.actionButtons}>
+					<Button
+						style={styles.ButtonAction}
+						variant="outlined"
+						color="secondary"
+						size="medium"
+						onPress={handleCancel}
+					>
+						<FontAwesome5 name="times" size={16} color={styles.iconColorCancel.color} />
+						{"  "}
+						{t("common.cancel")}
+					</Button>
+
+					<Button
+						variant="contained"
+						color="primary"
+						style={styles.ButtonAction}
+						size="medium"
+						loading={isSubmitting}
+						onPress={handleSubmit}
+					>
+						<FontAwesome5 name="check" size={16} color={styles.iconColorSubmit.color} />
+						{"  "}
+						{t("reports.submit")}
+					</Button>
+				</View>
+			}
+		>
+			<View
+				style={{ flexShrink: 1 }}
+				// contentContainerStyle={styles.scrollViewContent}
+			>
 				<View style={styles.headerContainer}>
 					<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
 						<Typography>{localAssignmentAndReport?.location.name}</Typography>
@@ -278,134 +306,24 @@ export default function ReportForm({ assignment, onCancel, onSubmit, totalTime }
 								variant={"filled"}
 								style={styles.textInputMultiLine}
 								value={text}
+								size={"large"}
 								onChangeText={text => setText(text)}
 								placeholder={t("reports.enterReportText")}
 								multiline={true}
 							/>
 						</ScrollView>
 					</Card>
-
-					<Card variant={"standard"} style={styles.borderColor}>
-						<View style={styles.taskContainer}>
-							<View style={styles.mediaIconContainer}>
-								<FontAwesome5
-									name="image"
-									size={20}
-									color={styles.mediaIconColor.color}
-								/>
-							</View>
-							<View style={styles.helpTextContainer}>
-								<Typography variant={"h6"}>Фото для отчета</Typography>
-								<Typography color={styles.dateText.color}>
-									Добавьте фотографии выполненной работы
-								</Typography>
-							</View>
-						</View>
-						<TouchableOpacity style={styles.mediaContainer} onPress={pickImage}>
-							<FontAwesome5
-								name={"share-square"}
-								size={30}
-								color={styles.dateText.color}
-							/>
-							<Typography variant={"body1"}>Добавить фотографии</Typography>
-
-							<Typography variant={"body2"} color={styles.dateText.color}>
-								Перетащите файлы сюда или нажмите для выбора
-							</Typography>
-						</TouchableOpacity>
-						{media.length > 0 && (
-							<ScrollView horizontal style={styles.mediaPreviewContainer}>
-								{media.map((item, index) => (
-									<View key={index} style={styles.mediaPreview}>
-										<Image
-											source={{ uri: item.uri }}
-											style={styles.previewImage}
-										/>
-										<TouchableOpacity
-											style={styles.removeButton}
-											onPress={() => removeMedia(index)}
-										>
-											<FontAwesome5
-												name="times-circle"
-												size={20}
-												color="red"
-											/>
-										</TouchableOpacity>
-										{item.type === "video" && (
-											<View style={styles.videoIndicator}>
-												<FontAwesome5
-													name="video"
-													size={16}
-													color="white"
-												/>
-											</View>
-										)}
-									</View>
-								))}
-							</ScrollView>
-						)}
-					</Card>
+					<ImagePickerForm externalMedia={media} onChange={m => setMedia(m)} />
 				</View>
-			</ScrollView>
-
-			<View style={styles.actionButtons}>
-				<Button
-					style={styles.ButtonAction}
-					variant="outlined"
-					color="secondary"
-					size="medium"
-					onPress={handleCancel}
-				>
-					<FontAwesome5 name="times" size={16} color={styles.iconColorCancel.color} />
-					{"  "}
-					{t("common.cancel")}
-				</Button>
-
-				<Button
-					variant="contained"
-					color="primary"
-					style={styles.ButtonAction}
-					size="medium"
-					loading={isSubmitting}
-					onPress={handleSubmit}
-				>
-					<FontAwesome5 name="check" size={16} color={styles.iconColorSubmit.color} />
-					{"  "}
-					{t("reports.submit")}
-				</Button>
 			</View>
-
-			{/* Модальное окно для выбора типа медиа */}
-			<Dialog visible={mediaPickerVisible} onClose={() => setMediaPickerVisible(false)}>
-				<Card style={styles.mediaPickerCard}>
-					<Typography variant="h5" style={styles.mediaPickerTitle}>
-						{t("reports.selectMediaType")}
-					</Typography>
-
-					<View style={styles.mediaOptions}>
-						<Button variant="tint" color="primary" size="medium" onPress={pickImage}>
-							{t("reports.chooseFromGallery")}
-						</Button>
-					</View>
-
-					<Button
-						variant="outlined"
-						color="secondary"
-						size="medium"
-						onPress={() => setMediaPickerVisible(false)}
-						style={styles.cancelButton}
-					>
-						{t("common.cancel")}
-					</Button>
-				</Card>
-			</Dialog>
-		</>
+		</Dialog>
 	);
 }
 
 const styles = StyleSheet.create(theme => ({
 	scrollViewContent: {
-		flex: 1,
+		// flex: 1,
+		flexGrow: 1,
 		gap: theme.spacing(3),
 	},
 	dateText: {

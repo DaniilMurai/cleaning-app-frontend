@@ -1,7 +1,7 @@
 import {
 	DeleteTaskParams,
 	EditTaskParams,
-	getGetTasksQueryKey,
+	getGetTasksWithHintsQueryKey,
 	TaskCreate,
 	TaskUpdate,
 	useCreateTask,
@@ -26,7 +26,7 @@ export default function useTaskMutation(options: {
 				AlertUtils.showSuccess("Task created successfully");
 				onSuccessCreate?.();
 				// refetch();
-				await queryClient.invalidateQueries({ queryKey: getGetTasksQueryKey() });
+				await queryClient.invalidateQueries({ queryKey: getGetTasksWithHintsQueryKey() });
 			},
 			onError: error => {
 				AlertUtils.showError(error.message || "Failed to create task");
@@ -40,7 +40,7 @@ export default function useTaskMutation(options: {
 				AlertUtils.showSuccess("Task updated successfully");
 				onSuccessUpdate?.();
 				// refetch();
-				await queryClient.invalidateQueries({ queryKey: getGetTasksQueryKey() });
+				await queryClient.invalidateQueries({ queryKey: getGetTasksWithHintsQueryKey() });
 			},
 			onError: error => {
 				AlertUtils.showError(error.message || "Failed to update task");
@@ -54,7 +54,7 @@ export default function useTaskMutation(options: {
 				AlertUtils.showSuccess("Task deleted successfully");
 				onSuccessDelete?.();
 				// refetch();
-				await queryClient.invalidateQueries({ queryKey: getGetTasksQueryKey() });
+				await queryClient.invalidateQueries({ queryKey: getGetTasksWithHintsQueryKey() });
 			},
 			onError: error => {
 				AlertUtils.showError(error.message || "Failed to delete task");

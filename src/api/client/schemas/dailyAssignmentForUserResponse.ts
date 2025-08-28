@@ -7,7 +7,6 @@
 import type { DailyAssignmentForUserResponseGroupUuid } from "./dailyAssignmentForUserResponseGroupUuid";
 import type { LocationResponse } from "./locationResponse";
 import type { RoomResponse } from "./roomResponse";
-import type { DailyAssignmentForUserResponseAssignedTasks } from "./dailyAssignmentForUserResponseAssignedTasks";
 import type { TaskResponse } from "./taskResponse";
 import type { RoomTaskResponse } from "./roomTaskResponse";
 import type { AssignmentStatus } from "./assignmentStatus";
@@ -15,6 +14,7 @@ import type { DailyAssignmentForUserResponseAdminNote } from "./dailyAssignmentF
 import type { DailyAssignmentForUserResponseUserNote } from "./dailyAssignmentForUserResponseUserNote";
 import type { DailyAssignmentForUserResponseStartTime } from "./dailyAssignmentForUserResponseStartTime";
 import type { DailyAssignmentForUserResponseEndTime } from "./dailyAssignmentForUserResponseEndTime";
+import type { DailyAssignmentForUserResponseAssignedTasks } from "./dailyAssignmentForUserResponseAssignedTasks";
 import type { DailyAssignmentForUserResponseDurationSeconds } from "./dailyAssignmentForUserResponseDurationSeconds";
 import type { DailyAssignmentForUserResponseDurationMinutes } from "./dailyAssignmentForUserResponseDurationMinutes";
 import type { DailyAssignmentForUserResponseDurationHours } from "./dailyAssignmentForUserResponseDurationHours";
@@ -24,7 +24,6 @@ export interface DailyAssignmentForUserResponse {
 	group_uuid?: DailyAssignmentForUserResponseGroupUuid;
 	location: LocationResponse;
 	rooms?: RoomResponse[];
-	assigned_tasks?: DailyAssignmentForUserResponseAssignedTasks;
 	tasks?: TaskResponse[];
 	room_tasks?: RoomTaskResponse[];
 	user_id: number;
@@ -34,6 +33,7 @@ export interface DailyAssignmentForUserResponse {
 	user_note?: DailyAssignmentForUserResponseUserNote;
 	start_time?: DailyAssignmentForUserResponseStartTime;
 	end_time?: DailyAssignmentForUserResponseEndTime;
+	assigned_tasks?: DailyAssignmentForUserResponseAssignedTasks;
 	/** Вычисляет длительность в секундах */
 	readonly duration_seconds: DailyAssignmentForUserResponseDurationSeconds;
 	/** Возвращает длительность в минутах */

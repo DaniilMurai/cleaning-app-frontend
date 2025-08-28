@@ -1,7 +1,7 @@
 import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import React, { useState } from "react";
-import { Dialog, Typography } from "@/ui";
+import { Typography } from "@/ui";
 import { useGetDailyAssignmentsAndReports, useGetDailyAssignmentsDates } from "@/api/client";
 import ReportForm from "@/ui/forms/common/ReportForm";
 import { useTranslation } from "react-i18next";
@@ -87,22 +87,13 @@ export default function DailyAssignmentsList() {
 			</View>
 
 			{showReport && (
-				<Dialog
-					visible={showReport}
-					onClose={() => setShowReport(false)}
-					maxWidth={"md"}
-					fullWidth
-					cardProps={{ variant: "outlined" }}
-					card
-					scrollView={false}
-				>
-					<ReportForm
-						onCancel={() => setShowReport(false)}
-						onSubmit={handleReportSubmit}
-						assignment={assignment}
-						totalTime={totalTime}
-					/>
-				</Dialog>
+				<ReportForm
+					isVisible={showReport}
+					onCancel={() => setShowReport(false)}
+					onSubmit={handleReportSubmit}
+					assignment={assignment}
+					totalTime={totalTime}
+				/>
 			)}
 		</ScrollView>
 	);
@@ -112,6 +103,11 @@ const styles = StyleSheet.create(theme => ({
 	container: {
 		flex: 1,
 		backgroundColor: theme.colors.background.main,
+	},
+	contentContainerStyle: {
+		// flex: 1,
+		flexGrow: 1,
+		gap: theme.spacing(3),
 	},
 	contentContainer: {
 		paddingVertical: theme.spacing(2),

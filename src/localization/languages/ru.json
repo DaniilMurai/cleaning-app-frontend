@@ -57,7 +57,8 @@
     "days": "{{count}} дней",
     "unknownInterval": "неизвестный интервал",
     "placeholder": "Выберите опцию",
-    "reset": "Сбросить"
+    "reset": "Сбросить",
+    "create": "Создать"
   },
   "auth": {
     "login": "Логин",
@@ -265,5 +266,15 @@
       "futureAssignmentsInfo": "Помимо задания №{{id}} на {{date}}, в будущем запланировано ещё {{count}} задач с интервалом в {{interval}}.",
       "deleteGroupButton": "Удалить всю серию задач"
     }
+  },
+  "hints": {
+    "taskHintTitle": "Подсказка для {{taskTitle}}",
+    "title": "Подсказки"
+  },
+  "media": {
+    "photos": "Фото",
+    "youCanAddPhotos": "Вы можете добавить фотографии",
+    "addPhotos": "Добавить фотографии",
+    "dragOrSelect": "Перетащите файлы сюда или нажмите для выбора"
   }
 }

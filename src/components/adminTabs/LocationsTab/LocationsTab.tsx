@@ -4,7 +4,7 @@ import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import { Button, Dialog } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { useGetLocations, useGetRooms, useGetRoomTasks, useGetTasks } from "@/api/admin";
+import { useGetLocations, useGetRooms, useGetRoomTasks, useGetTasksWithHints } from "@/api/admin";
 import { CreateLocationForm } from "@/ui/forms/common/LocationForms";
 import LocationCard from "@/components/adminTabs/LocationsTab/LocationCard";
 import useModals from "@/core/hooks/shared/useModals";
@@ -15,7 +15,8 @@ export default function LocationsTab() {
 
 	const { data: locations } = useGetLocations();
 	const { data: rooms } = useGetRooms();
-	const { data: tasks } = useGetTasks();
+	// const { data: tasks } = useGetTasks();
+	const { data: tasks } = useGetTasksWithHints();
 	const { data: roomTasks } = useGetRoomTasks();
 
 	const modal = useModals({

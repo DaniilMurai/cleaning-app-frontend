@@ -57,7 +57,8 @@
     "days": "{{count}} Tagen",
     "unknownInterval": "unbekanntem Intervall",
     "placeholder": "Option auswählen",
-    "reset": "Zurücksetzen"
+    "reset": "Zurücksetzen",
+    "create": "Erstellen"
   },
   "auth": {
     "login": "Anmeldung",
@@ -265,5 +266,15 @@
       "futureAssignmentsInfo": "Zusätzlich zur Aufgabe Nr. {{id}} am {{date}} sind noch {{count}} weitere Aufgaben mit einem Intervall von {{interval}} geplant.",
       "deleteGroupButton": "Gesamte Aufgabenserie löschen"
     }
+  },
+  "hints": {
+    "taskHintTitle": "Tipp für {{taskTitle}}",
+    "title": "Tipps"
+  },
+  "media": {
+    "photos": "Fotos",
+    "youCanAddPhotos": "Sie können Fotos hinzufügen",
+    "addPhotos": "Fotos hinzufügen",
+    "dragOrSelect": "Ziehen Sie Dateien hierher oder klicken Sie zur Auswahl"
   }
 }

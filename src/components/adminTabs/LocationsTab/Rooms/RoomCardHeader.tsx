@@ -3,14 +3,15 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import Typography from "../../../../ui/common/Typography";
 import { Button } from "@/ui";
 import Collapse from "../../../../ui/common/Collapse";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet } from "react-native-unistyles";
-import { RoomResponse, RoomTaskResponse, TaskResponse } from "@/api/admin";
+import { HintsResponse, RoomResponse, RoomTaskResponse, TaskWithHintsResponse } from "@/api/admin";
+import HintsModal from "@/ui/common/HintsModal.tsx";
 
 export interface RoomCardHeaderProps {
 	room: RoomResponse;
-	tasks: TaskResponse[];
+	tasks: TaskWithHintsResponse[];
 	roomTasks: RoomTaskResponse[];
 	onEdit: () => void;
 	onDelete: () => void;
@@ -28,8 +29,9 @@ export default function RoomCardHeader({
 	onUnlinkTask,
 }: RoomCardHeaderProps) {
 	const { t } = useTranslation();
-	const [expanded, setExpanded] = React.useState(false);
-
+	const [expanded, setExpanded] = useState(false);
+	const [isHintsModalVisible, setIsHintsModalVisible] = useState<boolean>(false);
+	const [hints, setHints] = useState<HintsResponse[]>([]);
 	const roomTasksFiltered = useMemo(() => {
 		if (!roomTasks || !tasks) return [];
 
@@ -39,55 +41,79 @@ export default function RoomCardHeader({
 	}, [roomTasks, tasks, room.id]);
 
 	return (
-		<View key={room.id} style={styles.roomSection}>
-			<TouchableOpacity style={styles.roomHeader} onPress={() => setExpanded(prev => !prev)}>
-				<View style={styles.headerWithIcon}>
-					<FontAwesome5
-						name={expanded ? "angle-down" : "angle-right"}
-						size={14}
-						color={styles.collapseIcon.color}
-					/>
-					<Typography>{room.name}</Typography>
-				</View>
-				<View style={styles.actionButtons}>
-					<Button variant="text" onPress={onEdit}>
-						<FontAwesome5 name="edit" size={14} />
-					</Button>
-					<Button variant="text" style={styles.deleteButton} onPress={onDelete}>
-						<FontAwesome5 name="trash" size={14} />
-					</Button>
-				</View>
-			</TouchableOpacity>
+		<>
+			<View key={room.id} style={styles.roomSection}>
+				<TouchableOpacity
+					style={styles.roomHeader}
+					onPress={() => setExpanded(prev => !prev)}
+				>
+					<View style={styles.headerWithIcon}>
+						<FontAwesome5
+							name={expanded ? "angle-down" : "angle-right"}
+							size={14}
+							color={styles.collapseIcon.color}
+						/>
+						<Typography>{room.name}</Typography>
+					</View>
+					<View style={styles.actionButtons}>
+						<Button variant="text" onPress={onEdit}>
+							<FontAwesome5 name="edit" size={14} />
+						</Button>
+						<Button variant="text" style={styles.deleteButton} onPress={onDelete}>
+							<FontAwesome5 name="trash" size={14} />
+						</Button>
+					</View>
+				</TouchableOpacity>
 
-			<Collapse expanded={expanded}>
-				<View style={styles.roomTasks}>
-					<Typography variant="subtitle2">{t("admin.tasks")}</Typography>
-					{roomTasksFiltered.length > 0 ? (
-						roomTasksFiltered.map(task => (
-							<View key={task.id} style={styles.roomTaskItem}>
-								<Typography>{task.title}</Typography>
-								<View style={styles.actionButtons}>
-									<Button
-										variant="text"
-										style={styles.deleteButton}
-										onPress={() => onUnlinkTask(task.id)}
-									>
-										<FontAwesome5 name="unlink" size={12} />
-									</Button>
+				<Collapse expanded={expanded}>
+					<View style={styles.roomTasks}>
+						<Typography variant="subtitle2">{t("admin.tasks")}</Typography>
+						{roomTasksFiltered.length > 0 ? (
+							roomTasksFiltered.map(task => (
+								<View key={task.id} style={styles.roomTaskItem}>
+									<Typography>{task.title}</Typography>
+									<View style={styles.actionButtons}>
+										{task.hints.length > 0 ? (
+											<Button
+												variant="text"
+												style={styles.deleteButton}
+												onPress={() => {
+													setHints(task.hints);
+													setIsHintsModalVisible(true);
+												}}
+											>
+												<FontAwesome5 name="lightbulb" size={13} />
+											</Button>
+										) : null}
+										<Button
+											variant="text"
+											style={styles.deleteButton}
+											onPress={() => onUnlinkTask(task.id)}
+										>
+											<FontAwesome5 name="unlink" size={13} />
+										</Button>
+									</View>
 								</View>
-							</View>
-						))
-					) : (
-						<Typography style={styles.emptyState}>
-							{t("admin.noAssignments")}
-						</Typography>
-					)}
-					<Button variant="text" style={styles.addButton} onPress={onAddTask}>
-						<FontAwesome5 name="plus" size={14} /> {t("admin.addTask")}
-					</Button>
-				</View>
-			</Collapse>
-		</View>
+							))
+						) : (
+							<Typography style={styles.emptyState}>
+								{t("admin.noAssignments")}
+							</Typography>
+						)}
+						<Button variant="text" style={styles.addButton} onPress={onAddTask}>
+							<FontAwesome5 name="plus" size={14} /> {t("admin.addTask")}
+						</Button>
+					</View>
+				</Collapse>
+			</View>
+			{isHintsModalVisible && hints && (
+				<HintsModal
+					hints={hints}
+					onClose={() => setIsHintsModalVisible(false)}
+					visible={isHintsModalVisible}
+				/>
+			)}
+		</>
 	);
 }
 

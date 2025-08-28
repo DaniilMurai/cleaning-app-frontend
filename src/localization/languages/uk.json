@@ -57,7 +57,8 @@
     "days": "{{count}} днів",
     "unknownInterval": "невідомий інтервал",
     "placeholder": "Виберіть опцію",
-    "reset": "Скинути"
+    "reset": "Скинути",
+    "create": "Створити"
   },
   "auth": {
     "login": "Логін",
@@ -265,5 +266,15 @@
       "futureAssignmentsInfo": "Окрім завдання №{{id}} на {{date}}, у майбутньому заплановано ще {{count}} задач з інтервалом у {{interval}}.",
       "deleteGroupButton": "Видалити всю серію задач"
     }
+  },
+  "hints": {
+    "taskHintTitle": "Підказка для {{taskTitle}}",
+    "title": "Підказки"
+  },
+  "media": {
+    "photos": "Фото",
+    "youCanAddPhotos": "Ви можете додати фотографії",
+    "addPhotos": "Додати фотографії",
+    "dragOrSelect": "Перетягніть файли сюди або натисніть для вибору"
   }
 }

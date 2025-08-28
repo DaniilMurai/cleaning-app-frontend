@@ -5,7 +5,7 @@ import {
 	LocationResponse,
 	RoomResponse,
 	RoomTaskResponse,
-	TaskResponse,
+	TaskWithHintsResponse,
 } from "@/api/admin";
 import { DeleteRoomConfirm, EditRoomForm } from "@/ui/forms/common/RoomForms";
 import TasksListDialog from "@/components/lists/TasksListDialog";
@@ -16,7 +16,7 @@ export interface RoomCardProps {
 	room: RoomResponse;
 	rooms: RoomResponse[];
 	locations: LocationResponse[];
-	tasks: TaskResponse[];
+	tasks: TaskWithHintsResponse[];
 	roomTasks: RoomTaskResponse[];
 	roomMutation: any;
 	roomTaskMutation: any;

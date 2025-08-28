@@ -38,11 +38,13 @@ import type {
 	DeleteTaskParams,
 	EditTaskParams,
 	GetTasksParams,
+	GetTasksWithHintsParams,
 	HTTPValidationError,
 	SuccessResponse,
 	TaskCreate,
 	TaskResponse,
 	TaskUpdate,
+	TaskWithHintsResponse,
 } from ".././schemas";
 
 import { getAxios } from "../../instance";
@@ -755,3 +757,543 @@ export const useDeleteTask = <TError = ErrorType<HTTPValidationError>, TContext 
 
 	return useMutation(mutationOptions, queryClient);
 };
+/**
+ * @summary Get Tasks With Hints
+ */
+export const getTasksWithHints = (params?: GetTasksWithHintsParams, signal?: AbortSignal) => {
+	return getAxios<TaskWithHintsResponse[]>({
+		url: `/admin/tasks/hints`,
+		method: "GET",
+		params,
+		signal,
+	});
+};
+
+export const getGetTasksWithHintsQueryKey = (params?: GetTasksWithHintsParams) => {
+	return [`/admin/tasks/hints`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetTasksWithHintsInfiniteQueryOptions = <
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getTasksWithHints>>,
+		GetTasksWithHintsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksWithHintsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getTasksWithHints>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getTasksWithHints>>,
+				QueryKey,
+				GetTasksWithHintsParams["offset"]
+			>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetTasksWithHintsQueryKey(params);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getTasksWithHints>>,
+		QueryKey,
+		GetTasksWithHintsParams["offset"]
+	> = ({ signal, pageParam }) =>
+		getTasksWithHints({ ...params, offset: pageParam || params?.["offset"] }, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getTasksWithHints>>,
+		TError,
+		TData,
+		Awaited<ReturnType<typeof getTasksWithHints>>,
+		QueryKey,
+		GetTasksWithHintsParams["offset"]
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetTasksWithHintsInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getTasksWithHints>>
+>;
+export type GetTasksWithHintsInfiniteQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetTasksWithHintsInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getTasksWithHints>>,
+		GetTasksWithHintsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: undefined | GetTasksWithHintsParams,
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getTasksWithHints>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getTasksWithHints>>,
+				QueryKey,
+				GetTasksWithHintsParams["offset"]
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getTasksWithHints>>,
+					TError,
+					Awaited<ReturnType<typeof getTasksWithHints>>,
+					QueryKey
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetTasksWithHintsInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getTasksWithHints>>,
+		GetTasksWithHintsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksWithHintsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getTasksWithHints>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getTasksWithHints>>,
+				QueryKey,
+				GetTasksWithHintsParams["offset"]
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getTasksWithHints>>,
+					TError,
+					Awaited<ReturnType<typeof getTasksWithHints>>,
+					QueryKey
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetTasksWithHintsInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getTasksWithHints>>,
+		GetTasksWithHintsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksWithHintsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getTasksWithHints>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getTasksWithHints>>,
+				QueryKey,
+				GetTasksWithHintsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Tasks With Hints
+ */
+
+export function useGetTasksWithHintsInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getTasksWithHints>>,
+		GetTasksWithHintsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksWithHintsParams,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getTasksWithHints>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getTasksWithHints>>,
+				QueryKey,
+				GetTasksWithHintsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetTasksWithHintsInfiniteQueryOptions(params, options);
+
+	const query = useInfiniteQuery(queryOptions, queryClient) as UseInfiniteQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetTasksWithHintsQueryOptions = <
+	TData = Awaited<ReturnType<typeof getTasksWithHints>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksWithHintsParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getTasksWithHints>>, TError, TData>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetTasksWithHintsQueryKey(params);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof getTasksWithHints>>> = ({ signal }) =>
+		getTasksWithHints(params, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof getTasksWithHints>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetTasksWithHintsQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getTasksWithHints>>
+>;
+export type GetTasksWithHintsQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetTasksWithHints<
+	TData = Awaited<ReturnType<typeof getTasksWithHints>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: undefined | GetTasksWithHintsParams,
+	options: {
+		query: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getTasksWithHints>>, TError, TData>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getTasksWithHints>>,
+					TError,
+					Awaited<ReturnType<typeof getTasksWithHints>>
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetTasksWithHints<
+	TData = Awaited<ReturnType<typeof getTasksWithHints>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksWithHintsParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getTasksWithHints>>, TError, TData>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getTasksWithHints>>,
+					TError,
+					Awaited<ReturnType<typeof getTasksWithHints>>
+				>,
+				"initialData"
+			>;
+	},
+	queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetTasksWithHints<
+	TData = Awaited<ReturnType<typeof getTasksWithHints>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksWithHintsParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getTasksWithHints>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Tasks With Hints
+ */
+
+export function useGetTasksWithHints<
+	TData = Awaited<ReturnType<typeof getTasksWithHints>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksWithHintsParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof getTasksWithHints>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetTasksWithHintsQueryOptions(params, options);
+
+	const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetTasksWithHintsSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof getTasksWithHints>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksWithHintsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<Awaited<ReturnType<typeof getTasksWithHints>>, TError, TData>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetTasksWithHintsQueryKey(params);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof getTasksWithHints>>> = ({ signal }) =>
+		getTasksWithHints(params, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+		Awaited<ReturnType<typeof getTasksWithHints>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetTasksWithHintsSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getTasksWithHints>>
+>;
+export type GetTasksWithHintsSuspenseQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetTasksWithHintsSuspense<
+	TData = Awaited<ReturnType<typeof getTasksWithHints>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: undefined | GetTasksWithHintsParams,
+	options: {
+		query: Partial<
+			UseSuspenseQueryOptions<Awaited<ReturnType<typeof getTasksWithHints>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetTasksWithHintsSuspense<
+	TData = Awaited<ReturnType<typeof getTasksWithHints>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksWithHintsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<Awaited<ReturnType<typeof getTasksWithHints>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetTasksWithHintsSuspense<
+	TData = Awaited<ReturnType<typeof getTasksWithHints>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksWithHintsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<Awaited<ReturnType<typeof getTasksWithHints>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Tasks With Hints
+ */
+
+export function useGetTasksWithHintsSuspense<
+	TData = Awaited<ReturnType<typeof getTasksWithHints>>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksWithHintsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<Awaited<ReturnType<typeof getTasksWithHints>>, TError, TData>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetTasksWithHintsSuspenseQueryOptions(params, options);
+
+	const query = useSuspenseQuery(queryOptions, queryClient) as UseSuspenseQueryResult<
+		TData,
+		TError
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetTasksWithHintsSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getTasksWithHints>>,
+		GetTasksWithHintsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksWithHintsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getTasksWithHints>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getTasksWithHints>>,
+				QueryKey,
+				GetTasksWithHintsParams["offset"]
+			>
+		>;
+	}
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetTasksWithHintsQueryKey(params);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getTasksWithHints>>,
+		QueryKey,
+		GetTasksWithHintsParams["offset"]
+	> = ({ signal, pageParam }) =>
+		getTasksWithHints({ ...params, offset: pageParam || params?.["offset"] }, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getTasksWithHints>>,
+		TError,
+		TData,
+		Awaited<ReturnType<typeof getTasksWithHints>>,
+		QueryKey,
+		GetTasksWithHintsParams["offset"]
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetTasksWithHintsSuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getTasksWithHints>>
+>;
+export type GetTasksWithHintsSuspenseInfiniteQueryError = ErrorType<HTTPValidationError>;
+
+export function useGetTasksWithHintsSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getTasksWithHints>>,
+		GetTasksWithHintsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params: undefined | GetTasksWithHintsParams,
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getTasksWithHints>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getTasksWithHints>>,
+				QueryKey,
+				GetTasksWithHintsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetTasksWithHintsSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getTasksWithHints>>,
+		GetTasksWithHintsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksWithHintsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getTasksWithHints>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getTasksWithHints>>,
+				QueryKey,
+				GetTasksWithHintsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetTasksWithHintsSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getTasksWithHints>>,
+		GetTasksWithHintsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksWithHintsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getTasksWithHints>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getTasksWithHints>>,
+				QueryKey,
+				GetTasksWithHintsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get Tasks With Hints
+ */
+
+export function useGetTasksWithHintsSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getTasksWithHints>>,
+		GetTasksWithHintsParams["offset"]
+	>,
+	TError = ErrorType<HTTPValidationError>,
+>(
+	params?: GetTasksWithHintsParams,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getTasksWithHints>>,
+				TError,
+				TData,
+				Awaited<ReturnType<typeof getTasksWithHints>>,
+				QueryKey,
+				GetTasksWithHintsParams["offset"]
+			>
+		>;
+	},
+	queryClient?: QueryClient
+): UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+	const queryOptions = getGetTasksWithHintsSuspenseInfiniteQueryOptions(params, options);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}

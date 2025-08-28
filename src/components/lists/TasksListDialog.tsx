@@ -1,9 +1,16 @@
-import { LocationResponse, RoomResponse, RoomTaskResponse, TaskResponse } from "@/api/admin";
+import {
+	HintsResponse,
+	LocationResponse,
+	RoomResponse,
+	RoomTaskResponse,
+	TaskResponse,
+	TaskWithHintsResponse,
+} from "@/api/admin";
 import { Button, Card, Dialog } from "@/ui";
 import { TouchableOpacity, View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Typography from "../../ui/common/Typography";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet } from "react-native-unistyles";
 import Collapse from "@/ui/common/Collapse";
 import { useTranslation } from "react-i18next";
@@ -13,9 +20,11 @@ import useModals from "@/core/hooks/shared/useModals";
 import { createMutationHandlersFactory } from "@/core/utils/mutationHandlers";
 import { DialogProps } from "@/ui/common/Dialog";
 import { CreateTaskForm, DeleteTaskConfirm, EditTaskForm } from "@/ui/forms/common/TaskForms";
+import { CreateHintForm, EditHintForm } from "@/ui/forms/common/HintFrom.tsx";
+import useHintMutation from "@/core/hooks/mutations/useHintMutation.ts";
 
 interface TasksListProps extends DialogProps {
-	tasks?: TaskResponse[];
+	tasks?: TaskWithHintsResponse[];
 	rooms?: RoomResponse[];
 	room?: RoomResponse;
 	locations?: LocationResponse[];
@@ -36,16 +45,17 @@ export default function TasksListDialog({
 
 	const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
 	const [expandedTasks, setExpandedTasks] = useState<Record<number, boolean>>({});
+	const [selectedHint, setSelectedHint] = useState<HintsResponse | null>(null);
 
 	// In your component
 	const modal = useModals({
 		createTask: false,
 		editTask: false,
 		deleteTask: false,
-	});
-
-	useEffect(() => {
-		console.log("TasksList rendering");
+		createHint: false,
+		readHint: false,
+		editHint: false,
+		deleteHint: false,
 	});
 
 	const toggleTask = (id: number) => {
@@ -63,6 +73,9 @@ export default function TasksListDialog({
 
 	const roomTaskMutationHandlers = createMutationHandlers("RoomTask");
 
+	const hintMutationHandlers = createMutationHandlers("Hint");
+
+	const hintMutation = useHintMutation(hintMutationHandlers);
 	const taskMutation = useTaskMutation(taskMutationHandlers);
 	const roomTaskMutation = useRoomTaskMutation(roomTaskMutationHandlers);
 
@@ -81,7 +94,7 @@ export default function TasksListDialog({
 				card
 				cardProps={{
 					size: "large",
-					variant: "standard",
+					variant: "contained",
 				}}
 				scrollView
 				header={
@@ -107,6 +120,7 @@ export default function TasksListDialog({
 					const isAlreadyInRoom = roomTasks?.find(
 						rt => rt.task_id === task.id && rt.room_id === room?.id
 					);
+
 					return (
 						<Card key={task.id} variant="outlined" style={styles.card}>
 							<TouchableOpacity
@@ -124,6 +138,15 @@ export default function TasksListDialog({
 									</Typography>
 								</View>
 								<View style={styles.actionButtons}>
+									<Button
+										variant={"outlined"}
+										onPress={() => {
+											setSelectedTask(task);
+											modal.openModal("createHint");
+										}}
+									>
+										<FontAwesome5 name={"lightbulb"} size={14} />
+									</Button>
 									<Button
 										variant="outlined"
 										onPress={() => {
@@ -176,6 +199,34 @@ export default function TasksListDialog({
 												})}
 								</Typography>
 
+								{task.hints.length > 0 ? (
+									<View>
+										<View style={styles.divider} />
+										<View style={styles.hintsContainer}>
+											<Typography variant={"h6"}>
+												{t("hints.title")}
+											</Typography>
+											<View style={styles.hintsButtonContainer}>
+												{task.hints.map(hint => (
+													<Button
+														variant={"tint"}
+														onPress={() => {
+															setSelectedTask(task);
+															setSelectedHint(hint);
+															modal.openModal("editHint");
+														}}
+													>
+														<FontAwesome5
+															name={"lightbulb"}
+															size={14}
+														/>{" "}
+														{hint.title}
+													</Button>
+												))}
+											</View>
+										</View>
+									</View>
+								) : null}
 								<View style={styles.divider} />
 								<Typography variant="subtitle2">
 									{t("admin.assignedRooms")}
@@ -184,9 +235,21 @@ export default function TasksListDialog({
 								{rooms &&
 									locations &&
 									roomTasks &&
-									roomTasks
-										.filter(rt => rt.task_id === task.id)
-										.map(roomTask => {
+									(() => {
+										const assignedRoomTask = roomTasks.filter(
+											rt => rt.task_id === task.id
+										);
+
+										if (assignedRoomTask.length === 0) {
+											return (
+												<Typography style={styles.noRoomsAssignedText}>
+													{"  "}
+													{t("admin.noAssignments")}
+												</Typography>
+											);
+										}
+
+										return assignedRoomTask.map(roomTask => {
 											const room = rooms.find(r => r.id === roomTask.room_id);
 											const location = room
 												? locations.find(l => l.id === room.location_id)
@@ -208,12 +271,35 @@ export default function TasksListDialog({
 													</Button>
 												</View>
 											) : null;
-										})}
+										});
+									})()}
 							</Collapse>
 						</Card>
 					);
 				})}
 			</Dialog>
+			{modal.modals.createHint && selectedTask && (
+				<CreateHintForm
+					isVisible={modal.modals.createHint}
+					onClose={() => modal.closeModal("createHint")}
+					onSubmit={hintMutation.handleCreateHint}
+					isLoading={hintMutation.createHintMutation.isPending}
+					taskId={selectedTask?.id}
+					taskTitle={selectedTask?.title}
+				/>
+			)}
+
+			{modal.modals.editHint && selectedHint && (
+				<EditHintForm
+					taskTitle={selectedTask?.title || ""}
+					isVisible={modal.modals.editHint}
+					onClose={() => modal.closeModal("editHint")}
+					onSubmitEdit={hintMutation.handleUpdateHint}
+					isLoading={hintMutation.updateHintMutation.isPending}
+					onSubmitDelete={hintMutation.handleDeleteHint}
+					hint={selectedHint}
+				/>
+			)}
 
 			<Dialog
 				visible={modal.modals.createTask}
@@ -295,6 +381,7 @@ const styles = StyleSheet.create(theme => ({
 	actionButtons: {
 		flexDirection: "row",
 		gap: theme.spacing(1),
+		flexWrap: "wrap",
 	},
 	deleteButton: {
 		borderColor: theme.colors.error.main,
@@ -324,5 +411,19 @@ const styles = StyleSheet.create(theme => ({
 		flexShrink: 1,
 		overflow: "hidden",
 		textOverflow: "ellipsis",
+	},
+	noRoomsAssignedText: {
+		color: theme.colors.disabled.text,
+		fontStyle: "italic",
+	},
+	hintsButtonContainer: {
+		flexDirection: "row",
+		gap: theme.spacing(1),
+		flexWrap: "wrap",
+		justifyContent: "center",
+	},
+	hintsContainer: {
+		justifyContent: "center",
+		alignItems: "center",
 	},
 }));

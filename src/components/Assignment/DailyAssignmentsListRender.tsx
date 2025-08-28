@@ -1,9 +1,9 @@
 import React from "react";
 import AssignmentCard from "@/components/home/AssignmentCard";
-import { AssignmentReportResponse, AssignmentStatus } from "@/api/client";
+import { AssignmentStatus, AssignmentWithHintsReportResponse } from "@/api/client";
 
 interface Props {
-	assignments: AssignmentReportResponse[];
+	assignments: AssignmentWithHintsReportResponse[];
 	onStatusChange: (
 		assignmentId: number,
 		newStatus: AssignmentStatus,
