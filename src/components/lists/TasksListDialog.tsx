@@ -137,48 +137,57 @@ export default function TasksListDialog({
 										{task.title}
 									</Typography>
 								</View>
-								<View style={styles.actionButtons}>
-									<Button
-										variant={"outlined"}
-										onPress={() => {
-											setSelectedTask(task);
-											modal.openModal("createHint");
-										}}
-									>
-										<FontAwesome5 name={"lightbulb"} size={14} />
-									</Button>
-									<Button
-										variant="outlined"
-										onPress={() => {
-											setSelectedTask(task);
-											handleCreateRoomTask(task, room!).then(
-												() => roomTaskMutationHandlers.onSuccessCreate
-											);
-										}}
-										disabled={!!isAlreadyInRoom}
-									>
-										{/*Добавить*/}
-										<FontAwesome5 name="link" size={14} />
-									</Button>
-									<Button
-										variant="outlined"
-										onPress={() => {
-											setSelectedTask(task);
-											modal.openModal("editTask");
-										}}
-									>
-										<FontAwesome5 name="edit" size={14} />
-									</Button>
-									<Button
-										variant="outlined"
-										style={styles.deleteButton}
-										onPress={() => {
-											setSelectedTask(task);
-											modal.openModal("deleteTask");
-										}}
-									>
-										<FontAwesome5 name="trash" size={14} />
-									</Button>
+								<View style={styles.actionButtonsWrapper}>
+									<View style={styles.actionButtons}>
+										<Button
+											variant={"outlined"}
+											onPress={() => {
+												setSelectedTask(task);
+												modal.openModal("createHint");
+											}}
+											style={{
+												width: 36,
+												height: 36,
+												alignItems: "center",
+											}}
+										>
+											<FontAwesome5 name={"lightbulb"} size={16} />
+										</Button>
+										<Button
+											variant="outlined"
+											onPress={() => {
+												setSelectedTask(task);
+												handleCreateRoomTask(task, room!).then(
+													() => roomTaskMutationHandlers.onSuccessCreate
+												);
+											}}
+											disabled={!!isAlreadyInRoom}
+										>
+											{/*Добавить*/}
+											<FontAwesome5 name="link" size={14} />
+										</Button>
+									</View>
+									<View style={styles.actionButtons}>
+										<Button
+											variant="outlined"
+											onPress={() => {
+												setSelectedTask(task);
+												modal.openModal("editTask");
+											}}
+										>
+											<FontAwesome5 name="edit" size={14} />
+										</Button>
+										<Button
+											variant="outlined"
+											style={styles.deleteButton}
+											onPress={() => {
+												setSelectedTask(task);
+												modal.openModal("deleteTask");
+											}}
+										>
+											<FontAwesome5 name="trash" size={14} />
+										</Button>
+									</View>
 								</View>
 							</TouchableOpacity>
 
@@ -425,5 +434,10 @@ const styles = StyleSheet.create(theme => ({
 	hintsContainer: {
 		justifyContent: "center",
 		alignItems: "center",
+	},
+	actionButtonsWrapper: {
+		flexDirection: "column",
+		gap: theme.spacing(1),
+		flexWrap: "wrap",
 	},
 }));
