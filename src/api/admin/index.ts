@@ -8,4 +8,6 @@ export * from "./daily-extra-tasks/daily-extra-tasks";
 export * from "./reports/reports";
 export * from "./export-reports/export-reports";
 export * from "./hints/hints";
+export * from "./inventories/inventories";
+export * from "./inventory-users/inventory-users";
 export * from "./schemas";

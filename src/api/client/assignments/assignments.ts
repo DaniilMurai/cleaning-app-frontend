@@ -26,6 +26,7 @@ import type {
 	AssignmentWithHintsReportResponse,
 	DailyAssignmentForUserResponse,
 	DailyAssignmentForUserUpdate,
+	DailyAssignmentForUserWithHintsResponse,
 	GetDailyAssignmentByIdParams,
 	GetDailyAssignmentsAndReportsParams,
 	GetDailyAssignmentsParams,
@@ -1343,7 +1344,7 @@ export const updateDailyAssignment = (
 	dailyAssignmentForUserUpdate: DailyAssignmentForUserUpdate,
 	params: UpdateDailyAssignmentParams
 ) => {
-	return getAxios<DailyAssignmentForUserResponse>({
+	return getAxios<DailyAssignmentForUserWithHintsResponse>({
 		url: `/client/assignments/`,
 		method: "PATCH",
 		headers: { "Content-Type": "application/json" },

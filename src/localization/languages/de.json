@@ -24,7 +24,11 @@
     "selectedPeriod": "Ausgewählter Zeitraum",
     "chooseFormat": "Format wählen",
     "create_export": "Exportberichte erstellen",
-    "view_exports": "Exporte ansehen"
+    "view_exports": "Exporte ansehen",
+    "completedTasks": "Abgeschlossene Aufgaben",
+    "markCompleted": "Markieren Sie erledigte Aufgaben und Räume",
+    "reportText": "Berichtstext (optional)",
+    "addComments": "Fügen Sie Kommentare zur Aufgabenerledigung hinzu"
   },
   "tabs": {
     "home": "Startseite",
@@ -208,7 +212,9 @@
       "start": "Start",
       "end": "Ende",
       "duration": "Dauer",
-      "message": "Kommentar"
+      "message": "Kommentar",
+      "ending": "Geht zur Neige",
+      "photo": "Foto"
     },
     "status": {
       "completed": "Abgeschlossen",
@@ -265,6 +271,13 @@
     "assignmentGroup": {
       "futureAssignmentsInfo": "Zusätzlich zur Aufgabe Nr. {{id}} am {{date}} sind noch {{count}} weitere Aufgaben mit einem Intervall von {{interval}} geplant.",
       "deleteGroupButton": "Gesamte Aufgabenserie löschen"
+    },
+    "inventory": {
+      "title": "Inventar",
+      "titleForTask": "Inventar für {{taskTitle}}",
+      "check": "Überprüfen Sie die Verfügbarkeit",
+      "description": "Beschreibung",
+      "noDescription": "Keine Beschreibung"
     }
   },
   "hints": {
@@ -272,7 +285,7 @@
     "title": "Tipps"
   },
   "media": {
-    "photos": "Fotos",
+    "photos": "Fotos (optional)",
     "youCanAddPhotos": "Sie können Fotos hinzufügen",
     "addPhotos": "Fotos hinzufügen",
     "dragOrSelect": "Ziehen Sie Dateien hierher oder klicken Sie zur Auswahl"

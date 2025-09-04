@@ -4,6 +4,5 @@
  * Neuer Standart Client API
  * OpenAPI spec version: 0.1.0
  */
-import type { AssignmentStatus } from "./assignmentStatus";
 
-export type UpdateReportStatus = AssignmentStatus | null;
+export type InventoryUserCreateEnding = boolean | null;

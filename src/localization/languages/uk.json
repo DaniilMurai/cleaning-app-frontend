@@ -24,7 +24,11 @@
     "selectedPeriod": "Обраний період",
     "chooseFormat": "Виберіть формат",
     "create_export": "Створити експорт звітів",
-    "view_exports": "Переглянути експорти"
+    "view_exports": "Переглянути експорти",
+    "completedTasks": "Виконані завдання",
+    "markCompleted": "Позначте виконані завдання та кімнати",
+    "reportText": "Текст звіту (необов’язково)",
+    "addComments": "Додайте коментарі щодо виконання завдань"
   },
   "tabs": {
     "home": "Головна",
@@ -208,7 +212,9 @@
       "start": "Початок",
       "end": "Кінець",
       "duration": "Тривалість",
-      "message": "Коментар"
+      "message": "Коментар",
+      "ending": "Закінчується",
+      "photo": "Фото"
     },
     "status": {
       "completed": "Виконано",
@@ -265,6 +271,13 @@
     "assignmentGroup": {
       "futureAssignmentsInfo": "Окрім завдання №{{id}} на {{date}}, у майбутньому заплановано ще {{count}} задач з інтервалом у {{interval}}.",
       "deleteGroupButton": "Видалити всю серію задач"
+    },
+    "inventory": {
+      "title": "Інвентар",
+      "titleForTask": "Інвентар для {{taskTitle}}",
+      "check": "Перевірте наявність",
+      "description": "Опис",
+      "noDescription": "Немає опису"
     }
   },
   "hints": {
@@ -272,7 +285,7 @@
     "title": "Підказки"
   },
   "media": {
-    "photos": "Фото",
+    "photos": "Фото (необов’язково)",
     "youCanAddPhotos": "Ви можете додати фотографії",
     "addPhotos": "Додати фотографії",
     "dragOrSelect": "Перетягніть файли сюди або натисніть для вибору"

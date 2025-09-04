@@ -5,7 +5,7 @@ import { AccessTokenStorage } from "@/core/auth/storage";
 import { useQueryClient } from "@tanstack/react-query";
 
 const LIMIT = 5;
-const RECONNECT_DELAY = 3000;
+const RECONNECT_DELAY = 1000;
 
 export default function useExportReportSSE() {
 	const queryClient = useQueryClient();

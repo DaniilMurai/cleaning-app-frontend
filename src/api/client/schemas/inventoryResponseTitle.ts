@@ -4,6 +4,5 @@
  * Neuer Standart Client API
  * OpenAPI spec version: 0.1.0
  */
-import type { ReportRoomRequest } from "./reportRoomRequest";
 
-export type UpdateReportReportRooms = ReportRoomRequest[] | null;
+export type InventoryResponseTitle = string | null;

@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import ExportReportsDialog from "@/components/reports/ExportReportsDialog";
 import { FontAwesome5 } from "@expo/vector-icons";
 import ExportReportsPicker from "./ExportReportsPicker";
+import ImageShower from "@/ui/forms/common/ImageShower";
 
 interface Props {
 	queryParams: Partial<GetReportsParams>;
@@ -102,8 +103,14 @@ export default function ReportsTable({ queryParams }: Props) {
 				<Typography style={[styles.cell, { flex: 1 }]}>
 					{t("components.reportsTable.duration")}
 				</Typography>
+				<Typography style={[styles.cell, { flex: 1 }]}>
+					{t("components.reportsTable.ending")}
+				</Typography>
 				<Typography style={[styles.cell, { flex: 2.5 }]}>
 					{t("components.reportsTable.message")}
+				</Typography>
+				<Typography style={[styles.cell, { flex: 2 }]}>
+					{t("components.reportsTable.photo")}
 				</Typography>
 			</View>
 		</View>
@@ -115,6 +122,7 @@ export default function ReportsTable({ queryParams }: Props) {
 		const durationInMs = item.duration_seconds ? item.duration_seconds * 1000 : 0;
 		const duration = formatTime(durationInMs);
 		const userFullName = item.user_full_name;
+		const endingInventory = item.inventory_ending_titles?.join(", ");
 
 		let start_time = "-";
 		if (item.start_time) {
@@ -133,7 +141,6 @@ export default function ReportsTable({ queryParams }: Props) {
 				end_time = formatToDateTime(item.end_time);
 			}
 		}
-
 		return (
 			<View style={[styles.row]}>
 				<Typography style={[styles.cell, { flex: 1 }]}>{userFullName}</Typography>
@@ -145,7 +152,22 @@ export default function ReportsTable({ queryParams }: Props) {
 				<Typography style={[styles.cell, { flex: 0.5 }]}>{start_time}</Typography>
 				<Typography style={[styles.cell, { flex: 0.5 }]}>{end_time}</Typography>
 				<Typography style={[styles.cell, { flex: 1 }]}>{duration}</Typography>
+				<Typography style={[styles.cell, { flex: 1 }]}>
+					{endingInventory && (
+						<FontAwesome5
+							name={"exclamation-triangle"}
+							color={styles.dangerIcon.color}
+							size={14}
+						/>
+					)}{" "}
+					{endingInventory}
+				</Typography>
 				<Typography style={[styles.cell, { flex: 2.5 }]}>{item.message}</Typography>
+				<ImageShower
+					style={[styles.cell, { flex: 2 }]}
+					showsHorizontalScrollIndicator={false}
+					media={item.media_links ?? []}
+				/>
 			</View>
 		);
 	};
@@ -155,14 +177,14 @@ export default function ReportsTable({ queryParams }: Props) {
 			horizontal
 			nestedScrollEnabled // Android: позволяет вертикальному и горизонтальному скроллам работать вместе
 			showsHorizontalScrollIndicator={false}
-			contentContainerStyle={{ width: "100%", minWidth: 140 * 7 }}
+			contentContainerStyle={{ width: "100%", minWidth: 140 * 10 }}
 		>
 			<LegendList
 				data={data ?? []}
 				keyExtractor={(item, index) => `${item.id}-${index}`}
-				estimatedItemSize={48}
+				estimatedItemSize={33.33}
 				// Ширина списка равна контенту, а не экрану
-				style={{ minWidth: 118 * 7 }}
+				style={{ minWidth: 120 * 10 }}
 				ListHeaderComponent={renderHeader}
 				renderItem={renderItem}
 				recycleItems
@@ -189,6 +211,10 @@ const styles = StyleSheet.create(theme => ({
 		borderBottomWidth: 1,
 		borderBottomColor: theme.colors.border,
 		backgroundColor: theme.colors.background.paper,
+	},
+	dangerIcon: {
+		color: theme.colors.error.main,
+		backgroundColor: theme.colors.error.background,
 	},
 	header: {
 		backgroundColor: theme.colors.background.default,

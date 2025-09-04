@@ -1,15 +1,20 @@
 import React from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, ScrollViewProps, View } from "react-native";
 import ImageItemWrapper from "@/ui/forms/common/ImageItemWrapper.tsx";
 import { StyleSheet } from "react-native-unistyles";
 
-interface ImageShowerProps {
+interface ImageShowerProps extends ScrollViewProps {
 	media: string[];
 }
 
-export default function ImageShower({ media }: ImageShowerProps) {
+export default function ImageShower({ media, ...props }: ImageShowerProps) {
 	return (
-		<ScrollView horizontal style={styles.mediaPreviewContainer}>
+		<ScrollView
+			horizontal
+			style={[styles.mediaPreviewContainer, props.style]}
+			contentContainerStyle={props.contentContainerStyle}
+			{...props}
+		>
 			{media.map((item, idx) => (
 				<View key={idx} style={styles.mediaPreview}>
 					<ImageItemWrapper images={media} uri={item} index={idx}></ImageItemWrapper>

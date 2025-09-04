@@ -27,8 +27,6 @@ import type {
 	GetReportsByAssignmentIdsParams,
 	HTTPValidationError,
 	ReportResponse,
-	UpdateReport,
-	UpdateReportParams,
 } from ".././schemas";
 
 import { getAxios } from "../../instance";
@@ -345,81 +343,6 @@ export const useCreateReport = <TError = ErrorType<HTTPValidationError>, TContex
 	TContext
 > => {
 	const mutationOptions = getCreateReportMutationOptions(options);
-
-	return useMutation(mutationOptions, queryClient);
-};
-/**
- * @summary Update Report
- */
-export const updateReport = (updateReport: UpdateReport, params: UpdateReportParams) => {
-	return getAxios<ReportResponse>({
-		url: `/client/reports/`,
-		method: "PATCH",
-		headers: { "Content-Type": "application/json" },
-		data: updateReport,
-		params,
-	});
-};
-
-export const getUpdateReportMutationOptions = <
-	TError = ErrorType<HTTPValidationError>,
-	TContext = unknown,
->(options?: {
-	mutation?: UseMutationOptions<
-		Awaited<ReturnType<typeof updateReport>>,
-		TError,
-		{ data: UpdateReport; params: UpdateReportParams },
-		TContext
-	>;
-}): UseMutationOptions<
-	Awaited<ReturnType<typeof updateReport>>,
-	TError,
-	{ data: UpdateReport; params: UpdateReportParams },
-	TContext
-> => {
-	const mutationKey = ["updateReport"];
-	const { mutation: mutationOptions } = options
-		? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
-			? options
-			: { ...options, mutation: { ...options.mutation, mutationKey } }
-		: { mutation: { mutationKey } };
-
-	const mutationFn: MutationFunction<
-		Awaited<ReturnType<typeof updateReport>>,
-		{ data: UpdateReport; params: UpdateReportParams }
-	> = props => {
-		const { data, params } = props ?? {};
-
-		return updateReport(data, params);
-	};
-
-	return { mutationFn, ...mutationOptions };
-};
-
-export type UpdateReportMutationResult = NonNullable<Awaited<ReturnType<typeof updateReport>>>;
-export type UpdateReportMutationBody = UpdateReport;
-export type UpdateReportMutationError = ErrorType<HTTPValidationError>;
-
-/**
- * @summary Update Report
- */
-export const useUpdateReport = <TError = ErrorType<HTTPValidationError>, TContext = unknown>(
-	options?: {
-		mutation?: UseMutationOptions<
-			Awaited<ReturnType<typeof updateReport>>,
-			TError,
-			{ data: UpdateReport; params: UpdateReportParams },
-			TContext
-		>;
-	},
-	queryClient?: QueryClient
-): UseMutationResult<
-	Awaited<ReturnType<typeof updateReport>>,
-	TError,
-	{ data: UpdateReport; params: UpdateReportParams },
-	TContext
-> => {
-	const mutationOptions = getUpdateReportMutationOptions(options);
 
 	return useMutation(mutationOptions, queryClient);
 };

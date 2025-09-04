@@ -2,13 +2,14 @@ import { useState } from "react";
 import {
 	AssignmentStatus,
 	CreateReportReportRooms,
-	DailyAssignmentForUserResponse,
 	DailyAssignmentForUserUpdate,
+	DailyAssignmentForUserWithHintsResponse,
 	useCreateReport,
 	useUpdateDailyAssignment,
 } from "@/api/client";
 import { AssignmentStorage } from "@/core/auth/storage";
 import { convertMsToUTC } from "@/core/utils/dateUtils";
+import { InventoryUserCreate } from "@/api/admin";
 
 interface StatusHandlerParams {
 	dailyAssignmentsAndReportsRefetch: () => Promise<any>;
@@ -25,7 +26,10 @@ export default function useAssignmentStatusHandler({
 	const [showReport, setShowReport] = useState(false);
 	const [totalTime, setTotalTime] = useState(0);
 
-	const [assignment, setAssignment] = useState<DailyAssignmentForUserResponse | null>(null);
+	//TODO сделдать ассаймент DailyAssignmentForUserWithHintsResponse
+	const [assignment, setAssignment] = useState<DailyAssignmentForUserWithHintsResponse | null>(
+		null
+	);
 
 	const createReportMutation = useCreateReport();
 	const updateAssignmentMutation = useUpdateDailyAssignment();
@@ -61,10 +65,11 @@ export default function useAssignmentStatusHandler({
 				status: newStatus,
 			};
 
-			const updateAssignmentResponse = await updateAssignmentMutation.mutateAsync({
-				params: { assignment_id: assignmentId },
-				data: updateAssignmentData,
-			});
+			const updateAssignmentResponse: DailyAssignmentForUserWithHintsResponse =
+				await updateAssignmentMutation.mutateAsync({
+					params: { assignment_id: assignmentId },
+					data: updateAssignmentData,
+				});
 
 			console.log(
 				"Server response in useAssignmentStatusHandler:",
@@ -87,6 +92,7 @@ export default function useAssignmentStatusHandler({
 		media?: string[];
 		status: AssignmentStatus;
 		reportRooms?: CreateReportReportRooms;
+		inventoryUserCreate: InventoryUserCreate[];
 	}) => {
 		console.log(
 			" userid: " +
@@ -129,6 +135,7 @@ export default function useAssignmentStatusHandler({
 					end_time: convertMsToUTC(endTime),
 					status: data.status,
 					report_rooms: data.reportRooms || undefined,
+					inventory_users: data.inventoryUserCreate,
 				},
 			});
 

@@ -10,6 +10,7 @@ import type { CreateReportMessage } from "./createReportMessage";
 import type { CreateReportMediaLinks } from "./createReportMediaLinks";
 import type { AssignmentStatus } from "./assignmentStatus";
 import type { CreateReportReportRooms } from "./createReportReportRooms";
+import type { CreateReportInventoryUsers } from "./createReportInventoryUsers";
 
 export interface CreateReport {
 	start_time?: CreateReportStartTime;
@@ -20,4 +21,5 @@ export interface CreateReport {
 	media_links?: CreateReportMediaLinks;
 	status: AssignmentStatus;
 	report_rooms?: CreateReportReportRooms;
+	inventory_users?: CreateReportInventoryUsers;
 }

@@ -9,7 +9,6 @@ import { ReportExportParams, useCreateExportReports, useGetUsers } from "@/api/a
 import { getTimeZone } from "@/core/utils/dateUtils";
 import { useLanguage } from "@/core/context/LanguageContext";
 import dayjs from "dayjs";
-import Checkbox from "@/ui/common/CheckBox";
 import { PickerOption } from "@/ui/common/Picker";
 
 interface ExportReportsPanelProps {
@@ -23,8 +22,8 @@ export default function ExportReportsDialog({ isVisible, onClose }: ExportReport
 	const { t } = useTranslation();
 	const { currentLanguage } = useLanguage();
 	const mutation = useCreateExportReports();
-	const [showCsv, setShowCsv] = useState<boolean>(false);
-	const [showExcel, setShowExcel] = useState<boolean>(true);
+	// const [showCsv, setShowCsv] = useState<boolean>(false);
+	// const [showExcel, setShowExcel] = useState<boolean>(true);
 	const today = dayjs(Date.now()).format(DATE_FORMAT);
 
 	const [userId, setUserId] = useState<number | null>(null);
@@ -75,11 +74,11 @@ export default function ExportReportsDialog({ isVisible, onClose }: ExportReport
 		return [{ label: "All users", value: "0" }, ...mappedUsers];
 	};
 
-	const selectFormat = (format: "csv" | "excel") => {
-		setShowCsv(format === "csv");
-		setShowExcel(format === "excel");
-		setFormData(prev => ({ ...prev, export_type: format }));
-	};
+	// const selectFormat = (format: "csv" | "excel") => {
+	// 	setShowCsv(format === "csv");
+	// 	setShowExcel(format === "excel");
+	// 	setFormData(prev => ({ ...prev, export_type: format }));
+	// };
 
 	return (
 		<Dialog
@@ -170,21 +169,21 @@ export default function ExportReportsDialog({ isVisible, onClose }: ExportReport
 						</Typography>
 					</View>
 				)}
-				<View style={styles.checkBoxContainer}>
-					<Typography>{t("reports.chooseFormat")}:</Typography>
-					<Checkbox
-						size={"large"}
-						label={"Excel (.xlsx)"}
-						checked={showExcel}
-						onChange={() => selectFormat("excel")}
-					/>
-					<Checkbox
-						size={"large"}
-						label={"CSV (.csv)"}
-						checked={showCsv}
-						onChange={() => selectFormat("csv")}
-					/>
-				</View>
+				{/*<View style={styles.checkBoxContainer}>*/}
+				{/*	<Typography>{t("reports.chooseFormat")}:</Typography>*/}
+				{/*	<Checkbox*/}
+				{/*		size={"large"}*/}
+				{/*		label={"Excel (.xlsx)"}*/}
+				{/*		checked={showExcel}*/}
+				{/*		onChange={() => selectFormat("excel")}*/}
+				{/*	/>*/}
+				{/*	<Checkbox*/}
+				{/*		size={"large"}*/}
+				{/*		label={"CSV (.csv)"}*/}
+				{/*		checked={showCsv}*/}
+				{/*		onChange={() => selectFormat("csv")}*/}
+				{/*	/>*/}
+				{/*</View>*/}
 			</View>
 		</Dialog>
 	);

@@ -9,7 +9,7 @@ import type { RoomTaskUpdateTaskId } from "./roomTaskUpdateTaskId";
 import type { RoomTaskUpdateTimesSinceDone } from "./roomTaskUpdateTimesSinceDone";
 
 export interface RoomTaskUpdate {
-	room_id: RoomTaskUpdateRoomId;
-	task_id: RoomTaskUpdateTaskId;
+	room_id?: RoomTaskUpdateRoomId;
+	task_id?: RoomTaskUpdateTaskId;
 	times_since_done?: RoomTaskUpdateTimesSinceDone;
 }

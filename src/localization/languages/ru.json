@@ -24,7 +24,11 @@
     "selectedPeriod": "Выбранный период",
     "chooseFormat": "Выберите формат",
     "create_export": "Создать экспорт отчетов",
-    "view_exports": "Просмотреть экспорты"
+    "view_exports": "Просмотреть экспорты",
+    "completedTasks": "Выполненные задания",
+    "markCompleted": "Отметьте выполненные задачи и комнаты",
+    "reportText": "Текст отчёта (необязательно)",
+    "addComments": "Добавьте комментарии о выполнении задач"
   },
   "tabs": {
     "home": "Главная",
@@ -208,7 +212,9 @@
       "start": "Начало",
       "end": "Конец",
       "duration": "Длительность",
-      "message": "Комментарий"
+      "message": "Комментарий",
+      "ending": "Заканчивается",
+      "photo": "Фото"
     },
     "status": {
       "completed": "Выполнено",
@@ -265,6 +271,13 @@
     "assignmentGroup": {
       "futureAssignmentsInfo": "Помимо задания №{{id}} на {{date}}, в будущем запланировано ещё {{count}} задач с интервалом в {{interval}}.",
       "deleteGroupButton": "Удалить всю серию задач"
+    },
+    "inventory": {
+      "title": "Инвентарь",
+      "titleForTask": "Инвентарь для {{taskTitle}}",
+      "check": "Проверьте наличие",
+      "description": "Описание",
+      "noDescription": "Нет описания"
     }
   },
   "hints": {
@@ -272,7 +285,7 @@
     "title": "Подсказки"
   },
   "media": {
-    "photos": "Фото",
+    "photos": "Фото (необязательно)",
     "youCanAddPhotos": "Вы можете добавить фотографии",
     "addPhotos": "Добавить фотографии",
     "dragOrSelect": "Перетащите файлы сюда или нажмите для выбора"

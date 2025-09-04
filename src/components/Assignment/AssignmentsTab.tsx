@@ -11,9 +11,14 @@ import {
 	DeleteDailyAssignmentParams,
 	DeleteDailyAssignmentsGroupParams,
 	EditDailyAssignmentParams,
+	getGetDailyAssignmentsDatesQueryKey,
 	getGetDailyAssignmentsQueryKey,
 	useGetDailyAssignmentsDates,
 } from "@/api/admin";
+import {
+	getGetDailyAssignmentsAndReportsQueryKey,
+	getGetDailyAssignmentsDatesQueryKey as clientDailyGetGetDailyAssignmentsDatesQueryKey,
+} from "@/api/client";
 import {
 	CreateDailyAssignmentForm,
 	DeleteDailyAssignmentConfirm,
@@ -49,15 +54,21 @@ export default function AssignmentsTab() {
 	const queryClient = useQueryClient();
 
 	// Состояния для управления развернутыми/свернутыми элементами
-	const [selectedAssignment, setSelectedAssignment] = useState<DailyAssignmentResponse | null>();
+	const [selectedAssignment, setSelectedAssignment] = useState<DailyAssignmentResponse | null>(
+		null
+	);
 
-	const { data: assignmentsDates, refetch: refetchAssignmentsDates } =
-		useGetDailyAssignmentsDates();
+	const { data: assignmentsDates } = useGetDailyAssignmentsDates();
 
 	const invalidateDailyAssignments = async () => {
-		const queryKey = getGetDailyAssignmentsQueryKey();
-		await queryClient.invalidateQueries({ queryKey });
-		await refetchAssignmentsDates();
+		await queryClient.invalidateQueries({ queryKey: getGetDailyAssignmentsQueryKey() });
+		await queryClient.invalidateQueries({
+			queryKey: getGetDailyAssignmentsAndReportsQueryKey(),
+		});
+		await queryClient.invalidateQueries({ queryKey: getGetDailyAssignmentsDatesQueryKey() });
+		await queryClient.invalidateQueries({
+			queryKey: clientDailyGetGetDailyAssignmentsDatesQueryKey(),
+		});
 	};
 
 	const deleteDailyAssignmentGroupConfirm = async (

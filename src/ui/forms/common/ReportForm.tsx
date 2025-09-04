@@ -1,21 +1,24 @@
 // src/ui/components/reports/ReportForm.tsx
 import React, { JSX, useEffect, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
-import { Button, Card, Dialog, Input, Typography } from "@/ui";
+import { Button, Card, Collapse, Dialog, Input, Typography } from "@/ui";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import {
 	AssignmentStatus,
 	CreateReportReportRooms,
-	DailyAssignmentForUserResponse,
+	DailyAssignmentForUserWithHintsResponse,
+	type InventoryResponse,
 } from "@/api/client";
 import RoomTaskCollapse from "@/components/reports/RoomTaskCollapse";
 import { formatTime } from "@/core/utils/dateUtils";
 import GetStatusBadge from "@/components/reports/StatusBadge";
 import { AssignmentStorage } from "@/core/auth/storage";
-import { RoomStatus } from "@/api/admin";
+import { InventoryUserCreate, RoomStatus } from "@/api/admin";
 import ImagePickerForm from "@/ui/forms/common/ImagePickerForm.tsx";
+import Checkbox from "@/ui/common/CheckBox.tsx";
+import ImageShower from "@/ui/forms/common/ImageShower.tsx";
 
 interface Media {
 	type: "image" | "video";
@@ -23,12 +26,13 @@ interface Media {
 }
 
 interface ReportFormProps extends React.ComponentProps<typeof View> {
-	assignment: DailyAssignmentForUserResponse | null;
+	assignment: DailyAssignmentForUserWithHintsResponse | null;
 	onSubmit: (data: {
 		text?: string;
 		media?: string[];
 		status: AssignmentStatus;
 		reportRooms?: CreateReportReportRooms;
+		inventoryUserCreate: InventoryUserCreate[];
 	}) => Promise<void>;
 	onCancel: () => void;
 	totalTime: number;
@@ -54,19 +58,26 @@ export default function ReportForm({
 	const [media, setMedia] = useState<Media[]>([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
+	const handleInventoryCheck = (inventoryId: number, checked: boolean) => {
+		const newChecked = new Set(checkedInventory);
+		if (checked) {
+			newChecked.add(inventoryId);
+		} else {
+			newChecked.delete(inventoryId);
+		}
+		setCheckedInventory(newChecked);
+	};
 	const [status, setStatus] = useState<AssignmentStatus>("completed");
 	// Состояние для хранения отметок комнат всех задач
 	const [tasksRoomChecks, setTasksRoomChecks] = useState<TasksRoomChecks>({});
 
 	// Добавим в начало компонента ReportForm
-	const [localAssignmentAndReport, setLocalAssignmentAndReport] =
-		useState<DailyAssignmentForUserResponse | null>(assignment);
+	const [localAssignment, setLocalAssignment] =
+		useState<DailyAssignmentForUserWithHintsResponse | null>(assignment);
 
-	console.log("assignedTasks in ReportForm: ", localAssignmentAndReport?.assigned_tasks);
-	const handleCancel = () => {
-		// Вызываем переданный обработчик отмены
-		onCancel();
-	};
+	const [checkedInventory, setCheckedInventory] = useState<Set<number>>(new Set());
+	const [isOpenedInventory, setIsOpenedInventory] = useState<Record<number, boolean>>({});
+	const [openInventoryContainer, setOpenInventoryContainer] = useState<boolean>(false);
 
 	useEffect(() => {
 		const init = async () => {
@@ -81,20 +92,20 @@ export default function ReportForm({
 			}
 
 			if (data) {
-				setLocalAssignmentAndReport(data);
-				const checks: TasksRoomChecks = {};
+				setLocalAssignment(data);
 
+				const checks: TasksRoomChecks = {};
 				data.assigned_tasks?.forEach(task => {
 					if (!checks[task.task.id]) {
 						checks[task.task.id] = {};
 					}
 					checks[task.task.id][task.room.id] = true;
 				});
-
-				console.log("data: ", data);
-				console.log("Data assigned tasks: ", data.assigned_tasks);
-
 				setTasksRoomChecks(checks);
+
+				const defaultChecked =
+					data.assigned_tasks?.flatMap(at => at.task.inventory.map(inv => inv.id)) || [];
+				setCheckedInventory(new Set(defaultChecked));
 			}
 		};
 
@@ -139,7 +150,6 @@ export default function ReportForm({
 
 		try {
 			const status = getStatus();
-			console.log("submitting status: " + status);
 
 			const onlyUris = media.map(item => item.uri);
 
@@ -173,12 +183,31 @@ export default function ReportForm({
 				reportRooms.push({ room_id: Number(roomId), status: roomStatus });
 			});
 
-			console.log("reportRooms: ", reportRooms);
+			const allInventory = new Set(
+				localAssignment?.assigned_tasks?.flatMap(at => at.task.inventory.map(i => i.id))
+			);
+
+			const endingInventory = allInventory.difference(checkedInventory);
+
+			if (!localAssignment?.user_id) {
+				console.error("No localAssignment?.user_id");
+				return;
+			}
+
+			const inventoryUserCreate: InventoryUserCreate[] = Array.from(
+				endingInventory.values().map(endingId => ({
+					inventory_id: endingId,
+					user_id: localAssignment.user_id,
+					ending: true,
+				}))
+			);
+
 			await onSubmit({
 				text,
 				media: onlyUris,
 				status, // Передаем статус
 				reportRooms,
+				inventoryUserCreate,
 			});
 
 			setText("");
@@ -189,7 +218,7 @@ export default function ReportForm({
 	};
 
 	const renderRoomTaskCollapses = () => {
-		return localAssignmentAndReport?.assigned_tasks?.reduce(
+		return localAssignment?.assigned_tasks?.reduce(
 			(acc, at) => {
 				if (!acc.seen.has(at.task.id)) {
 					acc.seen.add(at.task.id);
@@ -197,9 +226,9 @@ export default function ReportForm({
 						<Card variant={"standard"} style={styles.borderColor}>
 							<RoomTaskCollapse
 								key={at.task.id}
-								rooms={localAssignmentAndReport?.rooms ?? []}
+								rooms={localAssignment?.rooms ?? []}
 								task={at.task}
-								roomTasks={localAssignmentAndReport?.room_tasks ?? []}
+								roomTasks={localAssignment?.room_tasks ?? []}
 								onRoomChecksChange={handleRoomChecksChange}
 							/>
 						</Card>
@@ -209,6 +238,109 @@ export default function ReportForm({
 			},
 			{ seen: new Set(), elements: [] as JSX.Element[] }
 		).elements;
+	};
+
+	const renderInventoryCollapse = () => {
+		// Собираем уникальный инвентарь из всех задач
+		const uniqueInventory: Map<number, InventoryResponse> = new Map();
+
+		localAssignment?.assigned_tasks?.forEach(at => {
+			at.task.inventory?.forEach(invent => {
+				if (!uniqueInventory.has(invent.id)) {
+					uniqueInventory.set(invent.id, invent);
+				}
+			});
+		});
+		// Если нет инвентаря, не показываем секцию
+		if (uniqueInventory.size === 0) {
+			return null;
+		}
+
+		return (
+			<Card variant={"standard"} style={styles.inventoryMainContainer}>
+				<TouchableOpacity
+					style={{ flexDirection: "row", justifyContent: "space-between" }}
+					onPress={() => setOpenInventoryContainer(prev => !prev)}
+				>
+					<View style={styles.taskContainer}>
+						<View style={styles.submitIconContainer}>
+							<FontAwesome5 name={"box"} color={styles.iconColor.color} size={20} />
+						</View>
+						<View style={styles.helpTextContainer}>
+							<Typography variant={"h6"}>
+								{" "}
+								{t("components.inventory.title")}
+							</Typography>
+							<Typography variant={"subtitle2"} color={styles.dateText.color}>
+								{t("components.inventory.check")}
+							</Typography>
+						</View>
+					</View>
+					<View style={{ justifyContent: "center" }}>
+						<FontAwesome5
+							name={openInventoryContainer ? "angle-down" : "angle-left"}
+							size={26}
+							color={styles.collapseIcon.color}
+						/>
+					</View>
+				</TouchableOpacity>
+				<Collapse expanded={openInventoryContainer}>
+					<View style={{ gap: 12 }}>
+						{Array.from(uniqueInventory.values()).map((invent: InventoryResponse) => (
+							<View key={invent.id} style={styles.inventoryContainer}>
+								<TouchableOpacity
+									style={styles.inventoryTouchContainer}
+									onPress={() =>
+										setIsOpenedInventory(prev => ({
+											...prev,
+											[invent.id]: !prev[invent.id],
+										}))
+									}
+								>
+									<View style={styles.inventoryHeaderWithIcon}>
+										<FontAwesome5
+											name={
+												isOpenedInventory[invent.id]
+													? "angle-down"
+													: "angle-right"
+											}
+											size={20}
+											color={styles.collapseIcon.color}
+										/>
+										<Typography variant={"h6"}>{invent.title}</Typography>
+									</View>
+									<Checkbox
+										color={
+											checkedInventory.has(invent.id) ? "success" : "error"
+										}
+										size={"large"}
+										checked={checkedInventory.has(invent.id)}
+										onChange={checked =>
+											handleInventoryCheck(invent.id, checked)
+										}
+									/>
+								</TouchableOpacity>
+								<Collapse expanded={isOpenedInventory[invent.id]}>
+									<View style={{ gap: 8 }}>
+										<Typography
+											variant={"subtitle2"}
+											color={styles.dateText.color}
+										>
+											{t("components.inventory.description")}
+										</Typography>
+										<Typography>
+											{invent.description ??
+												t("components.inventory.noDescription")}
+										</Typography>
+										<ImageShower media={invent.media_links ?? []} />
+									</View>
+								</Collapse>
+							</View>
+						))}
+					</View>
+				</Collapse>
+			</Card>
+		);
 	};
 
 	return (
@@ -228,7 +360,7 @@ export default function ReportForm({
 						variant="outlined"
 						color="secondary"
 						size="medium"
-						onPress={handleCancel}
+						onPress={onCancel}
 					>
 						<FontAwesome5 name="times" size={16} color={styles.iconColorCancel.color} />
 						{"  "}
@@ -256,7 +388,7 @@ export default function ReportForm({
 			>
 				<View style={styles.headerContainer}>
 					<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-						<Typography>{localAssignmentAndReport?.location.name}</Typography>
+						<Typography>{localAssignment?.location.name}</Typography>
 						<GetStatusBadge status={status} />
 					</View>
 					<Typography color={styles.dateText.color}>
@@ -272,15 +404,16 @@ export default function ReportForm({
 							<FontAwesome5 name={"check"} color={styles.iconColor.color} size={20} />
 						</View>
 						<View style={styles.helpTextContainer}>
-							<Typography variant={"h6"}>Выполненные задания</Typography>
+							<Typography variant={"h6"}> {t("reports.completedTasks")}</Typography>
 							<Typography variant={"subtitle2"} color={styles.dateText.color}>
-								Отметьте выполненные задачи и комнаты
+								{t("reports.markCompleted")}
 							</Typography>
 						</View>
 					</View>
 
 					{renderRoomTaskCollapses()}
 				</Card>
+				{renderInventoryCollapse()}
 				<View style={styles.inputContainer}>
 					<Card variant={"standard"} style={styles.borderColor}>
 						<View style={styles.taskContainer}>
@@ -292,9 +425,9 @@ export default function ReportForm({
 								/>
 							</View>
 							<View style={styles.helpTextContainer}>
-								<Typography variant={"h6"}>Текст отчета</Typography>
+								<Typography variant={"h6"}>{t("reports.reportText")}</Typography>
 								<Typography color={styles.dateText.color}>
-									Добавьте дополнительные комментарии о выполнении задач
+									{t("reports.addComments")}
 								</Typography>
 							</View>
 						</View>
@@ -326,6 +459,24 @@ const styles = StyleSheet.create(theme => ({
 		flexGrow: 1,
 		gap: theme.spacing(3),
 	},
+	inventoryTouchContainer: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+	},
+	inventoryContainer: {
+		paddingHorizontal: theme.spacing(2),
+		paddingVertical: theme.spacing(1),
+		borderRadius: theme.borderRadius(2),
+		borderWidth: 1,
+		borderColor: theme.colors.border,
+		// marginTop: theme.spacing(1.5),
+	},
+	inventoryHeaderWithIcon: {
+		flexDirection: "row",
+		alignItems: "center",
+		gap: theme.spacing(1),
+	},
 	dateText: {
 		color: theme.colors.text.disabled,
 		flexWrap: "wrap",
@@ -338,6 +489,11 @@ const styles = StyleSheet.create(theme => ({
 	borderColor: {
 		borderColor: theme.colors.border,
 		borderWidth: 1,
+	},
+	inventoryMainContainer: {
+		borderColor: theme.colors.border,
+		borderWidth: 1,
+		marginTop: theme.spacing(2),
 	},
 	mediaContainer: {
 		padding: theme.spacing(2),
@@ -472,5 +628,8 @@ const styles = StyleSheet.create(theme => ({
 		flexDirection: "row",
 		gap: theme.spacing(2),
 		flex: 1,
+	},
+	collapseIcon: {
+		color: theme.colors.text.primary,
 	},
 }));

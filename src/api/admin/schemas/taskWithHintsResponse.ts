@@ -5,6 +5,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { TaskWithHintsResponseDescription } from "./taskWithHintsResponseDescription";
+import type { InventoryResponse } from "./inventoryResponse";
 import type { HintsResponse } from "./hintsResponse";
 
 export interface TaskWithHintsResponse {
@@ -12,5 +13,6 @@ export interface TaskWithHintsResponse {
 	description?: TaskWithHintsResponseDescription;
 	frequency: number;
 	id: number;
+	inventory: InventoryResponse[];
 	hints: HintsResponse[];
 }

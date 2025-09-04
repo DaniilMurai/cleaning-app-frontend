@@ -1,5 +1,6 @@
 import {
 	HintsResponse,
+	InventoryResponse,
 	LocationResponse,
 	RoomResponse,
 	RoomTaskResponse,
@@ -20,8 +21,11 @@ import useModals from "@/core/hooks/shared/useModals";
 import { createMutationHandlersFactory } from "@/core/utils/mutationHandlers";
 import { DialogProps } from "@/ui/common/Dialog";
 import { CreateTaskForm, DeleteTaskConfirm, EditTaskForm } from "@/ui/forms/common/TaskForms";
-import { CreateHintForm, EditHintForm } from "@/ui/forms/common/HintFrom.tsx";
+import { CreateHintForm, EditHintForm } from "@/ui/forms/common/HintForm.tsx";
 import useHintMutation from "@/core/hooks/mutations/useHintMutation.ts";
+import DropdownMenu from "@/ui/common/DropdownMenu.tsx";
+import { CreateInventoryForm, EditInventoryForm } from "@/ui/forms/common/InventoryForm.tsx";
+import useInventoryMutation from "@/core/hooks/mutations/useInventoryMutation.ts";
 
 interface TasksListProps extends DialogProps {
 	tasks?: TaskWithHintsResponse[];
@@ -46,7 +50,7 @@ export default function TasksListDialog({
 	const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
 	const [expandedTasks, setExpandedTasks] = useState<Record<number, boolean>>({});
 	const [selectedHint, setSelectedHint] = useState<HintsResponse | null>(null);
-
+	const [selectedInventory, setSelectedInventory] = useState<InventoryResponse | null>(null);
 	// In your component
 	const modal = useModals({
 		createTask: false,
@@ -56,6 +60,9 @@ export default function TasksListDialog({
 		readHint: false,
 		editHint: false,
 		deleteHint: false,
+		createInventory: false,
+		editInventory: false,
+		deleteInventory: false,
 	});
 
 	const toggleTask = (id: number) => {
@@ -74,8 +81,10 @@ export default function TasksListDialog({
 	const roomTaskMutationHandlers = createMutationHandlers("RoomTask");
 
 	const hintMutationHandlers = createMutationHandlers("Hint");
+	const inventoryMutationHandlers = createMutationHandlers("Inventory");
 
 	const hintMutation = useHintMutation(hintMutationHandlers);
+	const inventoryMutation = useInventoryMutation(inventoryMutationHandlers);
 	const taskMutation = useTaskMutation(taskMutationHandlers);
 	const roomTaskMutation = useRoomTaskMutation(roomTaskMutationHandlers);
 
@@ -106,7 +115,6 @@ export default function TasksListDialog({
 							}}
 						>
 							<FontAwesome5 name="plus" size={16} color={styles.iconColor.color} />
-							{/*+*/}
 						</Button>
 					</View>
 				}
@@ -137,58 +145,110 @@ export default function TasksListDialog({
 										{task.title}
 									</Typography>
 								</View>
-								<View style={styles.actionButtonsWrapper}>
-									<View style={styles.actionButtons}>
-										<Button
-											variant={"outlined"}
-											onPress={() => {
+								<DropdownMenu
+									placement={"left"}
+									items={[
+										{
+											label: "привязать",
+											icon: "link",
+											onPress: () => {
+												setSelectedTask(task);
+												handleCreateRoomTask(task, room!).then(() =>
+													roomTaskMutationHandlers.onSuccessCreate()
+												);
+											},
+											// Показывать только если статус не active или disabled
+											condition: !isAlreadyInRoom,
+										},
+										{
+											label: "инвентарь",
+											icon: "box",
+											onPress: () => {
+												setSelectedTask(task);
+												modal.openModal("createInventory");
+											},
+										},
+										{
+											label: "подсказка",
+											icon: "lightbulb",
+											onPress: () => {
 												setSelectedTask(task);
 												modal.openModal("createHint");
-											}}
-											style={{
-												width: 36,
-												height: 36,
-												alignItems: "center",
-											}}
-										>
-											<FontAwesome5 name={"lightbulb"} size={16} />
-										</Button>
-										<Button
-											variant="outlined"
-											onPress={() => {
-												setSelectedTask(task);
-												handleCreateRoomTask(task, room!).then(
-													() => roomTaskMutationHandlers.onSuccessCreate
-												);
-											}}
-											disabled={!!isAlreadyInRoom}
-										>
-											{/*Добавить*/}
-											<FontAwesome5 name="link" size={14} />
-										</Button>
-									</View>
-									<View style={styles.actionButtons}>
-										<Button
-											variant="outlined"
-											onPress={() => {
+											},
+										},
+										{
+											label: t("common.edit"),
+											icon: "edit",
+											onPress: () => {
 												setSelectedTask(task);
 												modal.openModal("editTask");
-											}}
-										>
-											<FontAwesome5 name="edit" size={14} />
-										</Button>
-										<Button
-											variant="outlined"
-											style={styles.deleteButton}
-											onPress={() => {
+											},
+										},
+										{
+											label: t("common.delete"),
+											icon: "trash-alt",
+											onPress: () => {
 												setSelectedTask(task);
 												modal.openModal("deleteTask");
-											}}
-										>
-											<FontAwesome5 name="trash" size={14} />
-										</Button>
-									</View>
-								</View>
+											},
+										},
+									]}
+								/>
+								{/*<View style={styles.actionButtons}>*/}
+								{/*	/!*<View style={styles.actionButtons}>*!/*/}
+								{/*	<Button variant={"outlined"}>*/}
+								{/*		<FontAwesome5 name={"box"} size={16} />*/}
+								{/*	</Button>*/}
+								{/*	<Button*/}
+								{/*		variant={"outlined"}*/}
+								{/*		onPress={() => {*/}
+								{/*			setSelectedTask(task);*/}
+								{/*			modal.openModal("createHint");*/}
+								{/*		}}*/}
+								{/*		style={{*/}
+								{/*			width: 36,*/}
+								{/*			height: 36,*/}
+								{/*			alignItems: "center",*/}
+								{/*		}}*/}
+								{/*	>*/}
+								{/*		<FontAwesome5 name={"lightbulb"} size={16} />*/}
+								{/*	</Button>*/}
+								{/*	<Button*/}
+								{/*		variant="outlined"*/}
+								{/*		onPress={() => {*/}
+								{/*			setSelectedTask(task);*/}
+								{/*			handleCreateRoomTask(task, room!).then(() =>*/}
+								{/*				roomTaskMutationHandlers.onSuccessCreate()*/}
+								{/*			);*/}
+								{/*		}}*/}
+								{/*		disabled={!!isAlreadyInRoom}*/}
+								{/*	>*/}
+								{/*		/!*Добавить*!/*/}
+								{/*		<FontAwesome5 name="link" size={14} />*/}
+								{/*	</Button>*/}
+								{/*	/!*</View>*!/*/}
+								{/*	/!*<View style={styles.actionButtons}>*!/*/}
+								{/*	<Button*/}
+								{/*		variant="outlined"*/}
+								{/*		onPress={() => {*/}
+								{/*			setSelectedTask(task);*/}
+								{/*			modal.openModal("editTask");*/}
+								{/*		}}*/}
+								{/*	>*/}
+								{/*		<FontAwesome5 name="edit" size={14} />*/}
+								{/*	</Button>*/}
+								{/*	<Button*/}
+								{/*		variant="outlined"*/}
+								{/*		style={styles.deleteButton}*/}
+								{/*		onPress={() => {*/}
+								{/*			setSelectedTask(task);*/}
+								{/*			modal.openModal("deleteTask");*/}
+								{/*		}}*/}
+								{/*	>*/}
+								{/*		<FontAwesome5 name="trash" size={14} />*/}
+								{/*	</Button>*/}
+								{/*	/!*</View>*!/*/}
+								{/*</View>*/}
 							</TouchableOpacity>
 
 							<Collapse expanded={expandedTasks[task.id]}>
@@ -208,6 +268,31 @@ export default function TasksListDialog({
 												})}
 								</Typography>
 
+								{task.inventory.length > 0 ? (
+									<View>
+										<View style={styles.divider} />
+										<View style={styles.hintsContainer}>
+											<Typography variant={"h6"}>
+												{t("components.inventory.title")}
+											</Typography>
+											<View style={styles.hintsButtonContainer}>
+												{task.inventory.map(invent => (
+													<Button
+														variant={"tint"}
+														onPress={() => {
+															setSelectedTask(task);
+															setSelectedInventory(invent);
+															modal.openModal("editInventory");
+														}}
+													>
+														<FontAwesome5 name={"box"} size={14} />{" "}
+														{invent.title}
+													</Button>
+												))}
+											</View>
+										</View>
+									</View>
+								) : null}
 								{task.hints.length > 0 ? (
 									<View>
 										<View style={styles.divider} />
@@ -307,6 +392,29 @@ export default function TasksListDialog({
 					isLoading={hintMutation.updateHintMutation.isPending}
 					onSubmitDelete={hintMutation.handleDeleteHint}
 					hint={selectedHint}
+				/>
+			)}
+
+			{modal.modals.createInventory && selectedTask && (
+				<CreateInventoryForm
+					isVisible={modal.modals.createInventory}
+					onClose={() => modal.closeModal("createInventory")}
+					onSubmit={inventoryMutation.handleCreateInventory}
+					isLoading={inventoryMutation.createInventoryMutation.isPending}
+					taskId={selectedTask?.id}
+					taskTitle={selectedTask?.title}
+				/>
+			)}
+
+			{modal.modals.editInventory && selectedInventory && (
+				<EditInventoryForm
+					taskTitle={selectedTask?.title || ""}
+					isVisible={modal.modals.editInventory}
+					onClose={() => modal.closeModal("editInventory")}
+					onSubmitEdit={inventoryMutation.handleUpdateInventory}
+					isLoading={inventoryMutation.updateInventoryMutation.isPending}
+					onSubmitDelete={inventoryMutation.handleDeleteInventory}
+					inventory={selectedInventory}
 				/>
 			)}
 

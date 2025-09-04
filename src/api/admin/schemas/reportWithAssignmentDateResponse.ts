@@ -13,6 +13,7 @@ import type { ReportWithAssignmentDateResponseMessage } from "./reportWithAssign
 import type { ReportWithAssignmentDateResponseMediaLinks } from "./reportWithAssignmentDateResponseMediaLinks";
 import type { AssignmentStatus } from "./assignmentStatus";
 import type { ReportWithAssignmentDateResponseAssignmentDate } from "./reportWithAssignmentDateResponseAssignmentDate";
+import type { ReportWithAssignmentDateResponseInventoryEndingTitles } from "./reportWithAssignmentDateResponseInventoryEndingTitles";
 import type { ReportWithAssignmentDateResponseDurationSeconds } from "./reportWithAssignmentDateResponseDurationSeconds";
 import type { ReportWithAssignmentDateResponseDurationMinutes } from "./reportWithAssignmentDateResponseDurationMinutes";
 import type { ReportWithAssignmentDateResponseDurationHours } from "./reportWithAssignmentDateResponseDurationHours";
@@ -30,6 +31,7 @@ export interface ReportWithAssignmentDateResponse {
 	media_links?: ReportWithAssignmentDateResponseMediaLinks;
 	status: AssignmentStatus;
 	assignment_date: ReportWithAssignmentDateResponseAssignmentDate;
+	inventory_ending_titles?: ReportWithAssignmentDateResponseInventoryEndingTitles;
 	/** Вычисляет длительность в секундах */
 	readonly duration_seconds: ReportWithAssignmentDateResponseDurationSeconds;
 	/** Возвращает длительность в минутах */
