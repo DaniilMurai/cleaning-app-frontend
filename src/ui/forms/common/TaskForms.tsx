@@ -42,13 +42,13 @@ export function CreateTaskForm({ onSubmit, onClose, isLoading }: CreateTaskFormP
 				style={styles.input}
 			/>
 
-			<Input
-				label={t("components.tasksList.description")}
-				value={formData.description || ""}
-				onChangeText={text => setFormData({ ...formData, description: text })}
-				style={styles.input}
-				multiline
-			/>
+			{/*<Input*/}
+			{/*	label={t("components.tasksList.description")}*/}
+			{/*	value={formData.description || ""}*/}
+			{/*	onChangeText={text => setFormData({ ...formData, description: text })}*/}
+			{/*	style={styles.input}*/}
+			{/*	multiline*/}
+			{/*/>*/}
 
 			<Input
 				label={t("components.tasksList.frequency") + "*"}
@@ -108,13 +108,13 @@ export function EditTaskForm({ task, onSubmit, onClose, isLoading }: EditTaskFor
 				style={styles.input}
 			/>
 
-			<Input
-				label={t("components.tasksList.description")}
-				value={formData.description || ""}
-				onChangeText={text => setFormData({ ...formData, description: text })}
-				style={styles.input}
-				multiline
-			/>
+			{/*<Input*/}
+			{/*	label={t("components.tasksList.description")}*/}
+			{/*	value={formData.description || ""}*/}
+			{/*	onChangeText={text => setFormData({ ...formData, description: text })}*/}
+			{/*	style={styles.input}*/}
+			{/*	multiline*/}
+			{/*/>*/}
 
 			<Input
 				label={t("components.tasksList.frequency") + "*"}

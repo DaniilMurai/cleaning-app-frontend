@@ -149,7 +149,7 @@ export default function TasksListDialog({
 									placement={"left"}
 									items={[
 										{
-											label: "привязать",
+											label: t("components.tasksList.link"),
 											icon: "link",
 											onPress: () => {
 												setSelectedTask(task);
@@ -161,7 +161,7 @@ export default function TasksListDialog({
 											condition: !isAlreadyInRoom,
 										},
 										{
-											label: "инвентарь",
+											label: t("components.tasksList.inventory"),
 											icon: "box",
 											onPress: () => {
 												setSelectedTask(task);
@@ -169,7 +169,7 @@ export default function TasksListDialog({
 											},
 										},
 										{
-											label: "подсказка",
+											label: t("components.tasksList.hint"),
 											icon: "lightbulb",
 											onPress: () => {
 												setSelectedTask(task);

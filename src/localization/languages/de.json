@@ -254,7 +254,10 @@
     "tasksList": {
       "title": "Titel",
       "description": "Beschreibung",
-      "frequency": "Häufigkeit (nach jeweils N erledigten Aufgaben)"
+      "frequency": "Häufigkeit (nach jeweils N erledigten Aufgaben)",
+      "link": "Verbinden",
+      "inventory": "Inventar",
+      "hint": "Hinweis"
     },
     "usersList": {
       "name": "Name",
