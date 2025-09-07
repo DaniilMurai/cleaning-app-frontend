@@ -62,7 +62,8 @@
     "unknownInterval": "неизвестный интервал",
     "placeholder": "Выберите опцию",
     "reset": "Сбросить",
-    "create": "Создать"
+    "create": "Создать",
+    "noTitle": "Нет названия"
   },
   "auth": {
     "login": "Логин",

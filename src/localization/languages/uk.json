@@ -62,7 +62,8 @@
     "unknownInterval": "невідомий інтервал",
     "placeholder": "Виберіть опцію",
     "reset": "Скинути",
-    "create": "Створити"
+    "create": "Створити",
+    "noTitle": "Немає назви"
   },
   "auth": {
     "login": "Логін",

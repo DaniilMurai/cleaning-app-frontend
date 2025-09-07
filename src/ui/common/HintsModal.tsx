@@ -55,11 +55,11 @@ export default function HintsModal({ visible, onClose, hints }: HintsModalProps)
 				<Typography color={styles.labels.color}>
 					{t("components.tasksList.title")}
 				</Typography>
-				<Typography>{hint.title || "No description"}</Typography>
+				<Typography>{hint.title || t("common.noTitle")}</Typography>
 				<Typography color={styles.labels.color}>
 					{t("components.tasksList.description")}
 				</Typography>
-				<Typography>{hint.text || "No description"}</Typography>
+				<Typography>{hint.text || t("common.noDescription")}</Typography>
 				<ImageShower media={hint.media_links ?? []} />
 			</View>
 		</Dialog>
@@ -75,7 +75,7 @@ const styles = StyleSheet.create(theme => ({
 		color: theme.colors.disabled.text,
 	},
 	scrollContainer: {
-		justifyContent: "center",
+		// justifyContent: "center",
 	},
 	closeButton: {
 		alignSelf: "flex-end",
