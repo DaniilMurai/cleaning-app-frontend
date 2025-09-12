@@ -13,6 +13,7 @@ import { ToastProvider, useToast } from "react-native-toast-notifications";
 import { AlertUtils } from "@/core/utils/alerts";
 import PopperContextProvider from "@/max_ui/Popper/PopperContext";
 import "../max_ui/Select/select-web.scss";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -31,13 +32,18 @@ export default function RootLayout() {
 				<ToastProvider
 					placement={"top"}
 					duration={3000}
-					animationType={"slide-in"}
+					animationType={"zoom-in"}
 					animationDuration={250}
 					swipeEnabled={true}
 					textStyle={{ fontSize: 16 }}
-					successColor={theme.colors.success.main}
-					dangerColor={theme.colors.error.main}
-					warningColor={theme.colors.warning.main}
+					offset={50} // offset for both top and bottom toasts
+					offsetTop={30}
+					offsetBottom={40}
+					successIcon={<FontAwesome5 name={"check-circle"} size={12} color={"white"} />}
+					dangerIcon={<FontAwesome5 name={"times-circle"} size={12} color={"white"} />}
+					warningIcon={
+						<FontAwesome5 name={"exclamation-triangle"} size={12} color={"white"} />
+					}
 				>
 					<LanguageProvider>
 						<HideSplash />
